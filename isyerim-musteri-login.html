@@ -233,6 +233,8 @@
 		sessionStorage.removeItem('tekliften_cekildi');
 		sessionStorage.removeItem('selected_bayi');
 		sessionStorage.removeItem('isNewUser');
+		sessionStorage.removeItem('isyerim_phone');
+		sessionStorage.removeItem('isyerim_customer_id');
 
 		// Phone number formatting
 		document.getElementById('phone').addEventListener('input', function(e) {
@@ -261,11 +263,11 @@
 				return;
 			}
 
-			// Yeni üye kontrolü (1111111111 = yeni üye)
-			var isNewUser = (phone === '1111111111');
+			// Telefon numarasını sessionStorage'a kaydet
+			sessionStorage.setItem('isyerim_phone', phone);
 
-			// Redirect to OTP page
-			window.location.href = 'isyerim-musteri-otp.html?phone=' + phone + '&isNewUser=' + isNewUser;
+			// OTP sayfasına yönlendir (isNewUser kontrolü OTP sayfasında Supabase'den yapılacak)
+			window.location.href = 'isyerim-musteri-otp.html?phone=' + phone;
 		});
 	</script>
 </body>

@@ -100,6 +100,37 @@ const CustomersService = {
     },
 
     /**
+     * Telefon numarası ile müşteri getir
+     */
+    async getByPhone(phone) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('customers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code),
+                    customer_prices(
+                        id,
+                        unit_price,
+                        commitment_quantity,
+                        this_month_quantity,
+                        last_month_quantity,
+                        is_active,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('phone', phone)
+                .single();
+
+            // PGRST116 = kayıt bulunamadı, bu hata değil
+            if (error && error.code !== 'PGRST116') throw error;
+            return { data: data || null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'CustomersService.getByPhone');
+        }
+    },
+
+    /**
      * Yeni müşteri oluştur
      */
     async create(customerData) {

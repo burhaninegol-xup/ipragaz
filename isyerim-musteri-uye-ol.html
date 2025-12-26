@@ -367,8 +367,8 @@
 			</div>
 
 			<div class="form-group">
-				<label class="form-label">Vergi / TC Kimlik Numarası</label>
-				<input type="text" class="form-input" id="vergiNo" placeholder="" maxlength="11">
+				<label class="form-label required">Vergi / TC Kimlik Numarası</label>
+				<input type="text" class="form-input" id="vergiNo" placeholder="" maxlength="11" required>
 			</div>
 
 			<div class="form-group">
@@ -493,7 +493,23 @@
 		</div>
 	</div>
 
+	<!-- Supabase CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<!-- Supabase Client -->
+	<script src="./js/supabase-client.js"></script>
+	<!-- Service Dosyaları -->
+	<script src="./js/services/customers-service.js"></script>
+
 	<script>
+		// Telefon numarasını sessionStorage'dan al
+		var phone = sessionStorage.getItem('isyerim_phone');
+
+		// Telefon yoksa login'e yönlendir
+		if (!phone) {
+			alert('Lütfen önce telefon numaranızı giriniz.');
+			window.location.href = 'isyerim-musteri-login.html';
+		}
+
 		// Panel elements
 		var sozlesmePanel = document.getElementById('sozlesmePanel');
 		var panelClose = document.getElementById('panelClose');
@@ -528,14 +544,26 @@
 		});
 
 		// Form submission
-		document.getElementById('registerForm').addEventListener('submit', function(e) {
+		document.getElementById('registerForm').addEventListener('submit', async function(e) {
 			e.preventDefault();
 
 			var sektor = document.getElementById('sektor').value;
+			var vergiNo = document.getElementById('vergiNo').value.trim();
+			var sirketUnvani = document.getElementById('sirketUnvani').value.trim();
+			var ad = document.getElementById('ad').value.trim();
+			var soyad = document.getElementById('soyad').value.trim();
+			var email = document.getElementById('email').value.trim();
+			var tabelaUnvani = document.getElementById('tabelaUnvani').value.trim();
 			var sozlesmeKabul = document.getElementById('sozlesmeKabul').checked;
 
+			// Validasyon
 			if (!sektor) {
 				alert('Lütfen sektör seçiniz.');
+				return;
+			}
+
+			if (!vergiNo) {
+				alert('Lütfen Vergi / TC Kimlik Numarası giriniz.');
 				return;
 			}
 
@@ -544,8 +572,48 @@
 				return;
 			}
 
-			// Form is valid - redirect to anasayfa
-			window.location.href = 'isyerim-musteri-anasayfa.html';
+			// Submit butonunu devre dışı bırak
+			var submitBtn = document.querySelector('.btn-submit');
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Kaydediliyor...';
+
+			try {
+				// Müşteri verisini hazırla
+				var customerData = {
+					phone: phone,
+					vkn: vergiNo,
+					name: (ad && soyad) ? (ad + ' ' + soyad) : (ad || soyad || sirketUnvani || 'Müşteri'),
+					company_name: sirketUnvani || null,
+					email: email || null,
+					sector: sektor,
+					tabela_unvani: tabelaUnvani || null,
+					is_active: true
+				};
+
+				// Supabase'e kaydet
+				var result = await CustomersService.create(customerData);
+
+				if (result.error) {
+					console.error('Kayıt hatası:', result.error);
+					alert('Kayıt sırasında bir hata oluştu: ' + (result.error.message || result.error));
+					submitBtn.disabled = false;
+					submitBtn.textContent = 'Devam';
+					return;
+				}
+
+				// Başarılı - customer_id'yi kaydet
+				sessionStorage.setItem('isyerim_customer_id', result.data.id);
+				sessionStorage.setItem('isNewUser', 'false');
+
+				// Anasayfaya yönlendir
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+
+			} catch (error) {
+				console.error('Kayıt hatası:', error);
+				alert('Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Devam';
+			}
 		});
 	</script>
 </body>

@@ -298,13 +298,21 @@
 		</div>
 	</div>
 
+	<!-- Supabase CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<!-- Supabase Client -->
+	<script src="./js/supabase-client.js"></script>
+	<!-- Service Dosyaları -->
+	<script src="./js/services/customers-service.js"></script>
+
 	<script>
-		// Get phone and isNewUser from URL
+		// Get phone from URL or sessionStorage
 		var urlParams = new URLSearchParams(window.location.search);
-		var phone = urlParams.get('phone');
-		var isNewUser = urlParams.get('isNewUser') === 'true';
+		var phone = urlParams.get('phone') || sessionStorage.getItem('isyerim_phone');
 
 		if (phone) {
+			// Telefonu sessionStorage'a da kaydet (eğer URL'den geldiyse)
+			sessionStorage.setItem('isyerim_phone', phone);
 			// Format phone for display
 			var formatted = '0 ' + phone.slice(0, 3) + ' ' + phone.slice(3, 6) + ' ' + phone.slice(6, 10);
 			document.getElementById('phone-display').textContent = formatted;
@@ -386,7 +394,7 @@
 		var timerInterval = setInterval(updateTimer, 1000);
 
 		// Submit button
-		submitBtn.addEventListener('click', function() {
+		submitBtn.addEventListener('click', async function() {
 			var code = '';
 			var hasEmpty = false;
 
@@ -409,14 +417,29 @@
 				return;
 			}
 
-			// isNewUser durumunu sessionStorage'a kaydet
-			sessionStorage.setItem('isNewUser', isNewUser ? 'true' : 'false');
+			// Butonu devre dışı bırak
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Kontrol ediliyor...';
 
-			// Yeni üye ise üye ol sayfasına, değilse anasayfaya yönlendir
-			if (isNewUser) {
+			try {
+				// Supabase'den telefon numarası ile müşteri kontrolü yap
+				var result = await CustomersService.getByPhone(phone);
+
+				if (result.data) {
+					// Kullanıcı mevcut - customer_id'yi kaydet ve anasayfaya yönlendir
+					sessionStorage.setItem('isyerim_customer_id', result.data.id);
+					sessionStorage.setItem('isNewUser', 'false');
+					window.location.href = 'isyerim-musteri-anasayfa.html';
+				} else {
+					// Yeni kullanıcı - üye ol sayfasına yönlendir
+					sessionStorage.setItem('isNewUser', 'true');
+					window.location.href = 'isyerim-musteri-uye-ol.html';
+				}
+			} catch (error) {
+				console.error('Müşteri kontrolü hatası:', error);
+				// Hata durumunda yeni kullanıcı gibi davran
+				sessionStorage.setItem('isNewUser', 'true');
 				window.location.href = 'isyerim-musteri-uye-ol.html';
-			} else {
-				window.location.href = 'isyerim-musteri-anasayfa.html';
 			}
 		});
 
