@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sipariş Özeti - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f5f5;
+			color: #333;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			padding: 20px 60px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #eee;
+		}
+
+		.header-logo svg {
+			height: 40px;
+			width: auto;
+		}
+
+		/* Stepper */
+		.stepper {
+			display: flex;
+			align-items: center;
+			gap: 0;
+		}
+
+		.step {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.step-number {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		.step-number.completed {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.step-label {
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		.step-label.active {
+			color: #333;
+		}
+
+		.step-line {
+			width: 80px;
+			height: 1px;
+			background: #ddd;
+			margin: 0 15px;
+		}
+
+		/* Main Container */
+		.main-container {
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 0 20px;
+			flex: 1;
+			width: 100%;
+		}
+
+		/* Order Summary Card */
+		.order-card {
+			background: #fff;
+			border-radius: 8px;
+			overflow: hidden;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		}
+
+		/* Card Header */
+		.card-header {
+			background: #f8f8f8;
+			padding: 16px 24px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.card-header-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		/* Success Section */
+		.success-section {
+			background: #fafafa;
+			padding: 40px 24px;
+			text-align: center;
+		}
+
+		.success-title {
+			font-size: 20px;
+			font-weight: 600;
+			color: #28a745;
+			margin-bottom: 10px;
+		}
+
+		.success-subtitle {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 30px;
+		}
+
+		.success-icon {
+			position: relative;
+			display: inline-block;
+		}
+
+		.success-icon .cart-icon {
+			width: 80px;
+			height: 80px;
+			color: #e31e24;
+		}
+
+		.success-icon .check-badge {
+			position: absolute;
+			top: -5px;
+			right: -5px;
+			width: 32px;
+			height: 32px;
+			background: #28a745;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.success-icon .check-badge svg {
+			width: 18px;
+			height: 18px;
+			color: #fff;
+		}
+
+		/* Order Details */
+		.order-details {
+			padding: 24px;
+		}
+
+		.details-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		/* Details Grid */
+		.details-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+			margin-bottom: 20px;
+		}
+
+		.detail-item {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.detail-label {
+			font-size: 13px;
+			color: #888;
+			margin-bottom: 6px;
+		}
+
+		.detail-value {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		/* Address Boxes */
+		.address-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			margin-top: 20px;
+		}
+
+		.address-box {
+			border: 1px solid #eee;
+			border-radius: 8px;
+			padding: 16px;
+			min-height: 100px;
+		}
+
+		.address-box-label {
+			font-size: 13px;
+			color: #888;
+			margin-bottom: 8px;
+		}
+
+		.address-box-value {
+			font-size: 14px;
+			color: #333;
+			line-height: 1.6;
+		}
+
+		/* Divider */
+		.divider {
+			height: 1px;
+			background: #eee;
+			margin: 0 24px;
+		}
+
+		/* Payment Section */
+		.payment-section {
+			padding: 24px;
+		}
+
+		.payment-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.payment-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.payment-value {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.payment-value span {
+			font-weight: 400;
+			margin-left: 5px;
+		}
+
+		/* Product Item */
+		.product-item {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+		}
+
+		.product-image {
+			width: 60px;
+			height: 70px;
+			background: #f5f5f5;
+			border: 1px solid #eee;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.product-image svg {
+			width: 40px;
+			height: 50px;
+			color: #0066cc;
+		}
+
+		.product-info {
+			flex: 1;
+		}
+
+		.product-name {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		.product-quantity {
+			font-size: 13px;
+			color: #888;
+			margin-left: 10px;
+		}
+
+		/* Warnings Section */
+		.warnings-section {
+			border-top: 1px solid #eee;
+		}
+
+		.warnings-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16px 24px;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.warnings-header:hover {
+			background: #f9f9f9;
+		}
+
+		.warnings-title {
+			font-size: 14px;
+			color: #333;
+		}
+
+		.warnings-header svg {
+			width: 18px;
+			height: 18px;
+			color: #666;
+			transition: transform 0.3s;
+		}
+
+		.warnings-header.open svg {
+			transform: rotate(180deg);
+		}
+
+		.warnings-content {
+			padding: 0 24px 20px;
+			display: none;
+		}
+
+		.warnings-content.open {
+			display: block;
+		}
+
+		.warnings-text {
+			font-size: 13px;
+			color: #666;
+			line-height: 1.6;
+		}
+
+		/* Cancel Button */
+		.cancel-section {
+			padding: 24px;
+			text-align: center;
+			border-top: 1px solid #eee;
+		}
+
+		.btn-cancel {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 14px 50px;
+			background: #fff;
+			color: #e31e24;
+			border: 1px solid #e31e24;
+			border-radius: 30px;
+			font-size: 14px;
+			font-weight: 500;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-cancel:hover {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		/* Footer */
+		.footer {
+			background: #333;
+			color: #fff;
+			padding: 40px;
+			margin-top: auto;
+		}
+
+		.footer-container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 0 60px;
+			display: flex;
+			justify-content: space-between;
+			gap: 40px;
+		}
+
+		.footer-about {
+			flex: 1;
+			max-width: 350px;
+		}
+
+		.footer-about p {
+			font-size: 13px;
+			line-height: 1.7;
+			color: #ccc;
+		}
+
+		.footer-links {
+			flex: 1;
+		}
+
+		.footer-title {
+			font-size: 14px;
+			font-weight: 600;
+			margin-bottom: 15px;
+		}
+
+		.footer-links ul {
+			list-style: none;
+		}
+
+		.footer-links ul li {
+			margin-bottom: 8px;
+		}
+
+		.footer-links ul li a {
+			font-size: 13px;
+			color: #ccc;
+			transition: color 0.2s;
+		}
+
+		.footer-links ul li a:hover {
+			color: #fff;
+		}
+
+		.footer-social {
+			text-align: right;
+		}
+
+		.footer-social-icons {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+		}
+
+		.footer-social-icons a {
+			width: 36px;
+			height: 36px;
+			background: #444;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			transition: background 0.2s;
+		}
+
+		.footer-social-icons a:hover {
+			background: #e31e24;
+		}
+
+		.footer-social-icons svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.footer-bottom {
+			background: #222;
+			padding: 15px 40px;
+			text-align: left;
+		}
+
+		.footer-bottom p {
+			font-size: 12px;
+			color: #888;
+		}
+
+		/* Cancel Modal Overlay */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+			padding: 20px;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+		}
+
+		.cancel-modal {
+			background: #fff;
+			border-radius: 16px;
+			width: 100%;
+			max-width: 500px;
+			max-height: 90vh;
+			overflow-y: auto;
+			padding: 30px;
+		}
+
+		.modal-title {
+			font-size: 20px;
+			font-weight: 600;
+			color: #333;
+			text-align: center;
+			margin-bottom: 10px;
+		}
+
+		.modal-subtitle {
+			font-size: 14px;
+			color: #888;
+			text-align: center;
+			margin-bottom: 25px;
+		}
+
+		/* Modal Product List */
+		.modal-product-list {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		.modal-product-item {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			padding-bottom: 20px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.modal-product-item:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
+
+		.modal-product-header {
+			display: flex;
+			align-items: flex-start;
+			gap: 12px;
+		}
+
+		/* Custom Checkbox */
+		.modal-checkbox {
+			position: relative;
+			width: 22px;
+			height: 22px;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+
+		.modal-checkbox input {
+			position: absolute;
+			opacity: 0;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+			z-index: 1;
+		}
+
+		.modal-checkbox .checkmark {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 22px;
+			height: 22px;
+			border: 2px solid #ddd;
+			border-radius: 4px;
+			background: #fff;
+			transition: all 0.2s;
+		}
+
+		.modal-checkbox input:checked + .checkmark {
+			background: #fff;
+			border-color: #e31e24;
+		}
+
+		.modal-checkbox .checkmark:after {
+			content: '';
+			position: absolute;
+			display: none;
+			left: 6px;
+			top: 2px;
+			width: 6px;
+			height: 11px;
+			border: solid #e31e24;
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg);
+		}
+
+		.modal-checkbox input:checked + .checkmark:after {
+			display: block;
+		}
+
+		.modal-product-details {
+			flex: 1;
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+		}
+
+		.modal-product-name {
+			font-size: 15px;
+			font-weight: 500;
+			color: #333;
+			line-height: 1.4;
+		}
+
+		.modal-product-price {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			white-space: nowrap;
+			margin-left: 15px;
+		}
+
+		/* Quantity Controls */
+		.modal-quantity-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-left: 34px;
+		}
+
+		.modal-quantity-controls {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.qty-btn {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			border: 2px solid #e31e24;
+			background: #fff;
+			color: #e31e24;
+			font-size: 20px;
+			font-weight: 500;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s;
+		}
+
+		.qty-btn:hover {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.qty-btn:disabled {
+			border-color: #ddd;
+			color: #ddd;
+			cursor: not-allowed;
+		}
+
+		.qty-btn:disabled:hover {
+			background: #fff;
+			color: #ddd;
+		}
+
+		.qty-value {
+			font-size: 16px;
+			font-weight: 500;
+			color: #333;
+			min-width: 20px;
+			text-align: center;
+		}
+
+		.qty-total {
+			font-size: 13px;
+			color: #888;
+		}
+
+		/* Modal Buttons */
+		.modal-buttons {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.btn-modal-cancel {
+			width: 100%;
+			padding: 16px;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 500;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+		}
+
+		.btn-modal-cancel:hover {
+			background: #c41a1f;
+		}
+
+		.btn-modal-cancel:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+		}
+
+		.btn-modal-back {
+			width: 100%;
+			padding: 16px;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 500;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+			background: #fff;
+			color: #e31e24;
+			border: 2px solid #e31e24;
+		}
+
+		.btn-modal-back:hover {
+			background: #fff5f5;
+		}
+
+		/* Responsive */
+		@media (max-width: 900px) {
+			.header {
+				padding: 15px 20px;
+				flex-direction: column;
+				gap: 20px;
+			}
+
+			.stepper {
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.step-line {
+				width: 30px;
+				margin: 0 10px;
+			}
+
+			.main-container {
+				padding: 20px;
+				margin: 20px auto;
+			}
+
+			.details-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			.address-row {
+				grid-template-columns: 1fr;
+			}
+
+			.footer-container {
+				flex-direction: column;
+				gap: 30px;
+				padding: 0 20px;
+			}
+
+			.footer-social {
+				text-align: left;
+			}
+
+			.footer-social-icons {
+				justify-content: flex-start;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.step-label {
+				display: none;
+			}
+
+			.step-line {
+				width: 20px;
+			}
+
+			.details-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Header -->
+	<header class="header">
+		<!-- Logo -->
+		<a href="isyerim-musteri-anasayfa.html" class="header-logo">
+			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+				<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+				<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+			</svg>
+		</a>
+
+		<!-- Stepper -->
+		<div class="stepper">
+			<div class="step">
+				<span class="step-number completed">1</span>
+				<span class="step-label active">Sipariş Detayı</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number completed">2</span>
+				<span class="step-label active">Sepet</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number completed">3</span>
+				<span class="step-label active">Teslimat ve Ödeme</span>
+			</div>
+		</div>
+
+		<!-- Spacer for alignment -->
+		<div style="width: 150px;"></div>
+	</header>
+
+	<!-- Main Container -->
+	<div class="main-container">
+		<!-- Order Summary Card -->
+		<div class="order-card">
+			<!-- Card Header -->
+			<div class="card-header">
+				<h1 class="card-header-title">Sipariş Özeti</h1>
+			</div>
+
+			<!-- Success Section -->
+			<div class="success-section">
+				<h2 class="success-title">Sipariş Talebiniz İletildi!</h2>
+				<p class="success-subtitle">Hibizz 0 Test Bayisi size telefon numaranızdan ulaşacak.</p>
+				<div class="success-icon">
+					<svg class="cart-icon" viewBox="0 0 24 24" fill="currentColor">
+						<path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+					</svg>
+					<div class="check-badge">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+							<polyline points="20 6 9 17 4 12"/>
+						</svg>
+					</div>
+				</div>
+			</div>
+
+			<!-- Order Details -->
+			<div class="order-details">
+				<h3 class="details-title">Sipariş Detayları</h3>
+
+				<!-- Details Grid -->
+				<div class="details-grid">
+					<div class="detail-item">
+						<span class="detail-label">Sipariş Numarası</span>
+						<span class="detail-value">155832447</span>
+					</div>
+					<div class="detail-item">
+						<span class="detail-label">Teslimat Tarihi</span>
+						<span class="detail-value">Cuma-12:00-15:00</span>
+					</div>
+					<div class="detail-item">
+						<span class="detail-label">Bayi</span>
+						<span class="detail-value">Hibizz 0 Test Bayisi</span>
+					</div>
+					<div class="detail-item">
+						<span class="detail-label">Ödeme Yöntemi</span>
+						<span class="detail-value">Kapıda nakit ödeyeceğim.</span>
+					</div>
+				</div>
+
+				<!-- Address Row -->
+				<div class="address-row">
+					<div class="address-box">
+						<div class="address-box-label">Teslimat Adresi</div>
+						<div class="address-box-value">Burhan - BARBAROS MAH. 3004. CD. BİNA NO:12 DAİRE:1 K:2 Ataşehir/İstanbul</div>
+					</div>
+					<div class="address-box">
+						<div class="address-box-label">Sipariş Notu</div>
+						<div class="address-box-value"></div>
+					</div>
+				</div>
+			</div>
+
+			<div class="divider"></div>
+
+			<!-- Payment Section -->
+			<div class="payment-section">
+				<div class="payment-header">
+					<span class="payment-title">Ödenecek Tutar</span>
+					<span class="payment-value" id="totalPayment">0<span>Puan</span></span>
+				</div>
+
+				<!-- Product Items Container -->
+				<div id="productItemsContainer">
+					<!-- Dinamik olarak doldurulacak -->
+				</div>
+			</div>
+
+			<!-- Warnings Section -->
+			<div class="warnings-section">
+				<div class="warnings-header" id="warningsHeader">
+					<span class="warnings-title">Uyarılar</span>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="6 9 12 15 18 9"/>
+					</svg>
+				</div>
+				<div class="warnings-content" id="warningsContent">
+					<p class="warnings-text">
+						LPG tüplerini güneş ışığından uzak, serin ve havalandırılmış ortamlarda muhafaza ediniz.
+						Tüpü kesinlikle yatay konumda kullanmayınız ve taşımayınız.
+						Tüpün vanasını ve regulatörünü kesinlikle kendiniz tamir etmeye çalışmayınız.
+					</p>
+				</div>
+			</div>
+
+			<!-- Cancel Section -->
+			<div class="cancel-section">
+				<button class="btn-cancel" id="cancelBtn">Siparişi İptal Et</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="footer-container">
+			<div class="footer-about">
+				<p>Adı "kalite" ve "güven" ile özdeşleşen İpragaz; Türkiye enerji sektörüne öncülük etmesinin yanı sıra gerek şirket hacmi, gerek Türkiye'nin dört bir yanında sağlamış olduğu istihdam olanakları ile Türkiye ekonomisine 1961'den bu yana önemli katkılarda bulunmaya devam etmektedir.</p>
+			</div>
+			<div class="footer-links">
+				<h4 class="footer-title">Bilgi Toplumu Hizmetleri</h4>
+				<ul>
+					<li><a href="#">Kurumsal</a></li>
+					<li><a href="#">Kişisel Verilerin Korunması</a></li>
+					<li><a href="#">Çerez Politikası ve Çerez Tercihleriniz</a></li>
+				</ul>
+			</div>
+			<div class="footer-social">
+				<h4 class="footer-title">Bizi takip et</h4>
+				<div class="footer-social-icons">
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+							<polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+							<rect x="2" y="9" width="4" height="12"/>
+							<circle cx="4" cy="4" r="2"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+							<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+							<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+						</svg>
+					</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Footer Bottom -->
+	<div class="footer-bottom">
+		<p>&copy;2025 İpragaz</p>
+	</div>
+
+	<!-- Cancel Order Modal -->
+	<div class="modal-overlay" id="cancelModal">
+		<div class="cancel-modal">
+			<h2 class="modal-title">Sipariş İptali</h2>
+			<p class="modal-subtitle">Sipariş miktarlarını düşürerek iptal edin. 0'a düşen ürünler tamamen iptal edilir.</p>
+
+			<div class="modal-product-list" id="modalProductList">
+				<!-- Products will be populated by JavaScript -->
+			</div>
+
+			<div class="modal-buttons">
+				<button class="btn-modal-cancel" id="confirmCancelBtn">Siparişi İptal Et</button>
+				<button class="btn-modal-back" id="closeModalBtn">Vazgeç</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Supabase CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<!-- Supabase Client -->
+	<script src="./js/supabase-client.js"></script>
+	<!-- Service Dosyaları -->
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-prices-service.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/cart-service.js"></script>
+
+	<script>
+		// Global değişkenler
+		var currentOrder = null;
+		var orderProducts = [];
+
+		// Warnings toggle
+		document.getElementById('warningsHeader').addEventListener('click', function() {
+			this.classList.toggle('open');
+			document.getElementById('warningsContent').classList.toggle('open');
+		});
+
+		// Sipariş detaylarını Supabase'den yükle
+		async function loadOrderDetails() {
+			var orderId = sessionStorage.getItem('isyerim_last_order_id');
+			var orderNumber = sessionStorage.getItem('isyerim_last_order_number');
+
+			if (!orderId) {
+				// Sipariş ID yoksa anasayfaya yönlendir
+				alert('Sipariş bilgisi bulunamadı.');
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+				return;
+			}
+
+			try {
+				// Siparişi Supabase'den getir
+				var result = await OrdersService.getById(orderId);
+
+				if (result.error || !result.data) {
+					console.error('Sipariş yükleme hatası:', result.error);
+					// Fallback: sessionStorage'dan yükle
+					loadFromSessionStorage();
+					return;
+				}
+
+				currentOrder = result.data;
+
+				// Sipariş detaylarını güncelle
+				updateOrderDetailsUI(currentOrder);
+
+				// Ürünleri order_items'dan al
+				if (currentOrder.order_items && currentOrder.order_items.length > 0) {
+					orderProducts = currentOrder.order_items.map(function(item) {
+						var product = item.product || {};
+						return {
+							id: item.product_id,
+							name: product.name || 'Ürün',
+							quantity: item.quantity,
+							unitPrice: item.unit_price,
+							points: item.points || 0
+						};
+					});
+				}
+
+				renderOrderProducts();
+
+			} catch (error) {
+				console.error('Sipariş yükleme hatası:', error);
+				loadFromSessionStorage();
+			}
+		}
+
+		// SessionStorage'dan yükle (fallback)
+		function loadFromSessionStorage() {
+			var cart = CartService.getCart();
+			orderProducts = cart.items.map(function(item) {
+				return {
+					id: item.id,
+					name: item.name,
+					quantity: item.quantity,
+					unitPrice: item.price,
+					points: item.points || 0
+				};
+			});
+			renderOrderProducts();
+		}
+
+		// UI'ı sipariş bilgileriyle güncelle
+		function updateOrderDetailsUI(order) {
+			// Sipariş numarası
+			var orderNumberEl = document.querySelector('.details-grid .detail-item:nth-child(1) .detail-value');
+			if (orderNumberEl && order.order_number) {
+				orderNumberEl.textContent = order.order_number;
+			}
+
+			// Teslimat tarihi
+			var deliveryDateEl = document.querySelector('.details-grid .detail-item:nth-child(2) .detail-value');
+			if (deliveryDateEl && order.delivery_date) {
+				var date = new Date(order.delivery_date);
+				var gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+				var deliveryText = gunler[date.getDay()];
+				if (order.delivery_time) {
+					deliveryText += '-' + order.delivery_time;
+				}
+				deliveryDateEl.textContent = deliveryText;
+			}
+
+			// Bayi adı
+			var dealerEl = document.querySelector('.details-grid .detail-item:nth-child(3) .detail-value');
+			if (dealerEl && order.dealer) {
+				dealerEl.textContent = order.dealer.name || 'Bayi';
+			}
+
+			// Ödeme yöntemi
+			var paymentEl = document.querySelector('.details-grid .detail-item:nth-child(4) .detail-value');
+			if (paymentEl && order.payment_method) {
+				var paymentText = order.payment_method === 'cash' ? 'Kapıda nakit ödeyeceğim.' : 'Kredi kartı ile ödeyeceğim.';
+				paymentEl.textContent = paymentText;
+			}
+
+			// Teslimat adresi
+			var addressEl = document.querySelector('.address-box:nth-child(1) .address-box-value');
+			if (addressEl && order.delivery_address) {
+				addressEl.textContent = order.delivery_address;
+			}
+
+			// Sipariş notu
+			var notesEl = document.querySelector('.address-box:nth-child(2) .address-box-value');
+			if (notesEl) {
+				notesEl.textContent = order.notes || '-';
+			}
+
+			// Success subtitle güncelle
+			var subtitleEl = document.querySelector('.success-subtitle');
+			if (subtitleEl && order.dealer) {
+				subtitleEl.textContent = (order.dealer.name || 'Bayi') + ' size telefon numaranızdan ulaşacak.';
+			}
+		}
+
+		// Sayfa yüklendiğinde ürünleri render et
+		function renderOrderProducts() {
+			var container = document.getElementById('productItemsContainer');
+			var totalPayment = document.getElementById('totalPayment');
+
+			if (orderProducts.length === 0) {
+				container.innerHTML = '<p style="color: #888; font-size: 14px;">Sipariş bulunamadı.</p>';
+				totalPayment.innerHTML = '0<span>Puan</span>';
+				return;
+			}
+
+			// Ürünleri render et
+			container.innerHTML = orderProducts.map(function(item) {
+				return '<div class="product-item">' +
+					'<div class="product-image">' +
+						'<svg viewBox="0 0 40 60" fill="currentColor">' +
+							'<rect x="5" y="8" width="30" height="45" rx="4" fill="#0066cc" opacity="0.8"/>' +
+							'<rect x="12" y="0" width="16" height="10" rx="2" fill="#666"/>' +
+							'<rect x="10" y="20" width="20" height="25" rx="2" fill="#fff" opacity="0.3"/>' +
+						'</svg>' +
+					'</div>' +
+					'<div class="product-info">' +
+						'<span class="product-name">' + item.name + '</span>' +
+						'<span class="product-quantity">' + item.quantity + ' Adet</span>' +
+					'</div>' +
+				'</div>';
+			}).join('');
+
+			// Toplam puan hesapla
+			var totalPoints = orderProducts.reduce(function(sum, item) {
+				return sum + (item.points * item.quantity);
+			}, 0);
+			totalPayment.innerHTML = totalPoints + '<span>Puan</span>';
+		}
+
+		// Sayfa yüklendiğinde çalıştır
+		window.onload = function() {
+			console.log('Window loaded, checking services...');
+			console.log('CartService:', typeof CartService);
+			console.log('OrdersService:', typeof OrdersService);
+
+			if (typeof CartService === 'undefined' || typeof OrdersService === 'undefined') {
+				console.error('Service dosyaları yüklenemedi!');
+				// Fallback olarak sessionStorage'dan yükle
+				loadFromSessionStorage();
+				return;
+			}
+			loadOrderDetails();
+		};
+
+		// Modal elements
+		var cancelModal = document.getElementById('cancelModal');
+		var modalProductList = document.getElementById('modalProductList');
+		var confirmCancelBtn = document.getElementById('confirmCancelBtn');
+		var closeModalBtn = document.getElementById('closeModalBtn');
+		var cancelBtn = document.getElementById('cancelBtn');
+
+		// Track cancel quantities
+		var cancelItems = [];
+
+		// Format price
+		function formatPrice(price) {
+			return '₺' + price.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		}
+
+		// Initialize cancel items (called once when modal opens)
+		function initCancelItems() {
+			cancelItems = orderProducts.map(function(p) {
+				return {
+					id: p.id,
+					name: p.name,
+					maxQuantity: p.quantity,
+					currentQuantity: p.quantity,
+					unitPrice: p.unitPrice,
+					points: p.points
+				};
+			});
+		}
+
+		// Render modal products (only updates HTML, doesn't reset state)
+		function renderModalProducts() {
+			modalProductList.innerHTML = cancelItems.map(function(item, index) {
+				var cancelledQty = item.maxQuantity - item.currentQuantity;
+				var statusText = item.currentQuantity === 0
+					? '<span style="color: #e31e24; font-weight: 500;">Tamamen iptal edilecek</span>'
+					: (cancelledQty > 0
+						? '<span style="color: #e31e24;">' + cancelledQty + ' adet iptal edilecek</span>'
+						: '<span style="color: #888;">Değişiklik yok</span>');
+
+				return '<div class="modal-product-item" data-index="' + index + '">' +
+					'<div class="modal-product-header">' +
+						'<div class="modal-product-details" style="width: 100%;">' +
+							'<span class="modal-product-name">' + item.name + '</span>' +
+							'<span class="modal-product-price">' + formatPrice(item.currentQuantity * item.unitPrice) + '</span>' +
+						'</div>' +
+					'</div>' +
+					'<div class="modal-quantity-row" style="margin-left: 0;">' +
+						'<div class="modal-quantity-controls">' +
+							'<button class="qty-btn" onclick="decreaseQty(' + index + ')" ' + (item.currentQuantity <= 0 ? 'disabled' : '') + '>−</button>' +
+							'<span class="qty-value">' + item.currentQuantity + '</span>' +
+							'<button class="qty-btn" onclick="increaseQty(' + index + ')" ' + (item.currentQuantity >= item.maxQuantity ? 'disabled' : '') + '>+</button>' +
+						'</div>' +
+						'<span class="qty-total">/ ' + item.maxQuantity + ' adet</span>' +
+					'</div>' +
+					'<div style="margin-top: 8px; font-size: 13px;">' + statusText + '</div>' +
+				'</div>';
+			}).join('');
+
+			updateCancelButton();
+		}
+
+		// Decrease quantity (minimum 0)
+		function decreaseQty(index) {
+			if (cancelItems[index].currentQuantity > 0) {
+				cancelItems[index].currentQuantity--;
+				renderModalProducts();
+			}
+		}
+
+		// Increase quantity (maximum = original order quantity)
+		function increaseQty(index) {
+			if (cancelItems[index].currentQuantity < cancelItems[index].maxQuantity) {
+				cancelItems[index].currentQuantity++;
+				renderModalProducts();
+			}
+		}
+
+		// Update cancel button state
+		function updateCancelButton() {
+			// En az bir üründe değişiklik varsa buton aktif
+			var hasChanges = cancelItems.some(function(item) {
+				return item.currentQuantity < item.maxQuantity;
+			});
+			confirmCancelBtn.disabled = !hasChanges;
+		}
+
+		// Open modal
+		cancelBtn.addEventListener('click', function() {
+			if (orderProducts.length === 0) {
+				alert('İptal edilecek ürün bulunamadı.');
+				return;
+			}
+			initCancelItems();
+			renderModalProducts();
+			cancelModal.classList.add('active');
+			document.body.style.overflow = 'hidden';
+		});
+
+		// Close modal
+		closeModalBtn.addEventListener('click', function() {
+			cancelModal.classList.remove('active');
+			document.body.style.overflow = '';
+		});
+
+		// Close modal on overlay click
+		cancelModal.addEventListener('click', function(e) {
+			if (e.target === cancelModal) {
+				cancelModal.classList.remove('active');
+				document.body.style.overflow = '';
+			}
+		});
+
+		// Confirm cancel - Supabase entegrasyonlu
+		confirmCancelBtn.addEventListener('click', async function() {
+			// Değişiklik olan ürünleri bul
+			var changedItems = cancelItems.filter(function(item) {
+				return item.currentQuantity < item.maxQuantity;
+			});
+
+			if (changedItems.length === 0) {
+				alert('Herhangi bir değişiklik yapmadınız.');
+				return;
+			}
+
+			// İptal özeti oluştur
+			var cancelSummary = changedItems.map(function(item) {
+				var cancelledQty = item.maxQuantity - item.currentQuantity;
+				if (item.currentQuantity === 0) {
+					return item.name + ' tamamen iptal';
+				} else {
+					return cancelledQty + ' adet ' + item.name;
+				}
+			}).join(', ');
+
+			// Tüm ürünler tamamen iptal mi?
+			var allFullyCancelled = cancelItems.every(function(item) {
+				return item.currentQuantity === 0;
+			});
+
+			var message = allFullyCancelled
+				? 'Siparişiniz tamamen iptal edilecek. Onaylıyor musunuz?'
+				: cancelSummary + ' iptal edilecek. Onaylıyor musunuz?';
+
+			if (confirm(message)) {
+				// Butonu devre dışı bırak
+				confirmCancelBtn.disabled = true;
+				confirmCancelBtn.textContent = 'İptal ediliyor...';
+
+				try {
+					var orderId = sessionStorage.getItem('isyerim_last_order_id');
+
+					if (allFullyCancelled && orderId) {
+						// Tüm siparişi iptal et - Supabase'de durumu güncelle
+						var result = await OrdersService.updateStatus(orderId, 'cancelled');
+
+						if (result.error) {
+							alert('Sipariş iptal edilirken hata oluştu: ' + result.error.message);
+							confirmCancelBtn.disabled = false;
+							confirmCancelBtn.textContent = 'Siparişi İptal Et';
+							return;
+						}
+
+						// SessionStorage temizle
+						sessionStorage.removeItem('isyerim_last_order_id');
+						sessionStorage.removeItem('isyerim_last_order_number');
+
+						alert('Siparişiniz tamamen iptal edilmiştir.');
+						cancelModal.classList.remove('active');
+						document.body.style.overflow = '';
+						window.location.href = 'isyerim-musteri-anasayfa.html';
+					} else {
+						// Kısmi iptal - sayfayı güncelle
+						// Not: Kısmi iptal için order_items güncellemesi gerekir
+						// Şimdilik sadece UI'da göster
+						var remainingProducts = cancelItems
+							.filter(function(item) { return item.currentQuantity > 0; })
+							.map(function(item) {
+								return {
+									id: item.id,
+									name: item.name,
+									quantity: item.currentQuantity,
+									unitPrice: item.unitPrice,
+									points: item.points
+								};
+							});
+
+						orderProducts = remainingProducts;
+						renderOrderProducts();
+						alert('Seçilen ürünler iptal edilmiştir.');
+						cancelModal.classList.remove('active');
+						document.body.style.overflow = '';
+						confirmCancelBtn.disabled = false;
+						confirmCancelBtn.textContent = 'Siparişi İptal Et';
+					}
+
+				} catch (error) {
+					console.error('Sipariş iptal hatası:', error);
+					alert('Sipariş iptal edilirken bir hata oluştu.');
+					confirmCancelBtn.disabled = false;
+					confirmCancelBtn.textContent = 'Siparişi İptal Et';
+				}
+			}
+		});
+	</script>
+</body>
+</html>

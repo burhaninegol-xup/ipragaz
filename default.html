@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İpragaz - Ana Sayfa</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh;
+			background: linear-gradient(135deg, #002c77 0%, #001a4d 100%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+
+		.logo {
+			margin-bottom: 50px;
+			text-align: center;
+		}
+
+		.logo svg {
+			width: 180px;
+			height: auto;
+		}
+
+		.buttons-container {
+			display: flex;
+			flex-direction: column;
+			gap: 25px;
+			width: 100%;
+			max-width: 400px;
+		}
+
+		.nav-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 15px;
+			padding: 25px 40px;
+			border-radius: 16px;
+			font-size: 18px;
+			font-weight: 600;
+			text-decoration: none;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			border: none;
+		}
+
+		.nav-btn svg {
+			width: 28px;
+			height: 28px;
+			flex-shrink: 0;
+		}
+
+		/* Bayi Button - Blue Theme */
+		.nav-btn.bayi {
+			background: #fff;
+			color: #002c77;
+			box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+		}
+
+		.nav-btn.bayi:hover {
+			background: #f0f4ff;
+			transform: translateY(-3px);
+			box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+		}
+
+		/* Isyerim Button - Red Theme */
+		.nav-btn.isyerim {
+			background: #e31e24;
+			color: #fff;
+			box-shadow: 0 8px 30px rgba(227, 30, 36, 0.4);
+		}
+
+		.nav-btn.isyerim:hover {
+			background: #c41a1f;
+			transform: translateY(-3px);
+			box-shadow: 0 12px 40px rgba(227, 30, 36, 0.5);
+		}
+
+		@media (max-width: 480px) {
+			.logo svg {
+				width: 140px;
+			}
+
+			.nav-btn {
+				padding: 20px 30px;
+				font-size: 16px;
+			}
+
+			.nav-btn svg {
+				width: 24px;
+				height: 24px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Logo -->
+	<div class="logo">
+		<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="3"/>
+			<path d="M25 10 L25 25" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+			<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#fff">iPRAGAZ</text>
+		</svg>
+	</div>
+
+	<!-- Navigation Buttons -->
+	<div class="buttons-container">
+		<a href="bayi-anasayfa.html" class="nav-btn bayi">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+			</svg>
+			Bayi Anasayfa
+		</a>
+
+		<a href="isyerim-musteri-login.html" class="nav-btn isyerim">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+			</svg>
+			İşyerim Müşterisi Anasayfa
+		</a>
+	</div>
+</body>
+</html>

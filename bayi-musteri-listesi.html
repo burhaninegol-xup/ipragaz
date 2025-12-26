@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Müşteri Listesi - İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		.header .container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		.header__wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 70px;
+		}
+
+		.header__logo img {
+			height: 40px;
+		}
+
+		.header__nav {
+			display: flex;
+			align-items: center;
+			gap: 30px;
+		}
+
+		.header__nav nav ul {
+			display: flex;
+			list-style: none;
+			gap: 25px;
+		}
+
+		.header__nav nav ul li a {
+			text-decoration: none;
+			color: #333;
+			font-size: 14px;
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		.header__nav nav ul li a:hover {
+			color: #002c77;
+		}
+
+		.header__user-panel ul {
+			display: flex;
+			align-items: center;
+			list-style: none;
+			gap: 20px;
+		}
+
+		.header__user-panel .date-display {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			font-size: 12px;
+			color: #666;
+		}
+
+		.header__user-panel .date-display span:first-child {
+			font-weight: 600;
+			color: #333;
+		}
+
+		.header__user-panel .icon-btn {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			transition: background 0.2s;
+		}
+
+		.header__user-panel .icon-btn:hover {
+			background: #e8ecf1;
+		}
+
+		.header__user-panel .icon-btn img {
+			width: 20px;
+			height: 20px;
+		}
+
+		.header__user-panel .badge {
+			position: absolute;
+			top: -5px;
+			right: -5px;
+			background: #e53935;
+			color: #fff;
+			font-size: 11px;
+			font-weight: 600;
+			min-width: 18px;
+			height: 18px;
+			border-radius: 9px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.header__mobile {
+			display: none;
+			width: 40px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.header__mobile span,
+		.header__mobile span::before,
+		.header__mobile span::after {
+			display: block;
+			width: 24px;
+			height: 2px;
+			background: #333;
+			position: relative;
+			transition: all 0.3s;
+		}
+
+		.header__mobile span::before,
+		.header__mobile span::after {
+			content: '';
+			position: absolute;
+			left: 0;
+		}
+
+		.header__mobile span::before {
+			top: -7px;
+		}
+
+		.header__mobile span::after {
+			top: 7px;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 26px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: #666;
+			font-size: 14px;
+		}
+
+		.page-header-right .btn-primary {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+			text-decoration: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+		}
+
+		.page-header-right .btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+		}
+
+		.page-header-right .btn-primary svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Search & Filter Section */
+		.filter-section {
+			background: #fff;
+			border-radius: 16px;
+			padding: 20px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.filter-row {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.search-box {
+			flex: 1;
+			min-width: 250px;
+			position: relative;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 12px 16px 12px 45px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 14px;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.search-box svg {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.filter-buttons {
+			display: flex;
+			background: #f5f7fa;
+			border-radius: 10px;
+			padding: 4px;
+		}
+
+		.filter-btn {
+			padding: 10px 18px;
+			border: none;
+			background: transparent;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-weight: 500;
+		}
+
+		.filter-btn.active {
+			background: #fff;
+			color: #002c77;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		}
+
+		.filter-btn:hover:not(.active) {
+			color: #333;
+		}
+
+		.filter-btn .count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			background: #e0e0e0;
+			border-radius: 10px;
+			font-size: 11px;
+			margin-left: 6px;
+		}
+
+		.filter-btn.active .count {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.filter-btn.warning .count {
+			background: #fff3e0;
+			color: #e65100;
+		}
+
+		.filter-btn.warning.active .count {
+			background: #ff9800;
+			color: #fff;
+		}
+
+		.filter-btn.passive .count {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.filter-btn.passive.active .count {
+			background: #e53935;
+			color: #fff;
+		}
+
+		/* Customer List */
+		.customer-list {
+			background: #fff;
+			border-radius: 20px;
+			padding: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.customer-card {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			padding: 18px;
+			border: 1px solid #e8ecf1;
+			border-radius: 14px;
+			margin-bottom: 12px;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.customer-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.customer-card:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.08);
+		}
+
+		.customer-card.has-warning {
+			background: #fffbf5;
+			border-color: #ffe0b2;
+		}
+
+		.customer-card.has-warning:hover {
+			background: #fff8e1;
+			border-color: #ffcc80;
+		}
+
+		.customer-avatar {
+			width: 50px;
+			height: 50px;
+			border-radius: 12px;
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.customer-avatar svg {
+			width: 24px;
+			height: 24px;
+			color: #1976d2;
+		}
+
+		.customer-card.has-warning .customer-avatar {
+			background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+		}
+
+		.customer-card.has-warning .customer-avatar svg {
+			color: #fff;
+		}
+
+		.customer-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.customer-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.customer-vkn {
+			font-size: 12px;
+			color: #888;
+		}
+
+		/* Warning Badge with Tooltip */
+		.customer-warning {
+			position: relative;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: #fff3e0;
+			border-radius: 20px;
+			flex-shrink: 0;
+			cursor: pointer;
+		}
+
+		.customer-warning svg {
+			width: 16px;
+			height: 16px;
+			color: #ff9800;
+		}
+
+		.customer-warning > span {
+			font-size: 12px;
+			color: #e65100;
+			font-weight: 500;
+		}
+
+		/* Tooltip */
+		.warning-tooltip {
+			position: absolute;
+			bottom: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			background: #333;
+			border-radius: 10px;
+			padding: 12px 14px;
+			min-width: 180px;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.2s ease;
+			z-index: 100;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+		}
+
+		.warning-tooltip::after {
+			content: '';
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX(-50%);
+			border: 8px solid transparent;
+			border-top-color: #333;
+		}
+
+		.customer-warning:hover .warning-tooltip {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		.tooltip-title {
+			font-size: 11px;
+			color: #999;
+			margin-bottom: 8px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		.tooltip-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 6px 0;
+			border-bottom: 1px solid #444;
+			font-size: 12px;
+		}
+
+		.tooltip-item:last-child {
+			border-bottom: none;
+		}
+
+		.tooltip-item .product-name {
+			color: #fff;
+		}
+
+		.tooltip-item .product-percent {
+			font-weight: 600;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-size: 11px;
+		}
+
+		.tooltip-item .product-percent.low {
+			background: #f44336;
+			color: #fff;
+		}
+
+		.tooltip-item .product-percent.medium {
+			background: #ff9800;
+			color: #fff;
+		}
+
+		.customer-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			flex-shrink: 0;
+		}
+
+		.customer-action:hover {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.customer-action svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Passive Badge */
+		.customer-passive-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: #ffebee;
+			border: 1px solid #ffcdd2;
+			border-radius: 20px;
+			flex-shrink: 0;
+		}
+
+		.customer-passive-badge svg {
+			width: 16px;
+			height: 16px;
+			color: #e53935;
+		}
+
+		.customer-passive-badge span {
+			font-size: 11px;
+			color: #c62828;
+			font-weight: 500;
+			text-transform: uppercase;
+		}
+
+		/* Passive Customer Card Style */
+		.customer-card.is-passive {
+			background: #fafafa;
+			border-color: #e0e0e0;
+		}
+
+		.customer-card.is-passive:hover {
+			background: #f5f5f5;
+			border-color: #bdbdbd;
+		}
+
+		.customer-card.is-passive .customer-avatar {
+			background: linear-gradient(135deg, #eeeeee 0%, #e0e0e0 100%);
+		}
+
+		.customer-card.is-passive .customer-avatar svg {
+			color: #9e9e9e;
+		}
+
+		@media (max-width: 768px) {
+			.customer-passive-badge span {
+				display: none;
+			}
+		}
+
+		/* No Price Badge */
+		.customer-noprice-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: #e3f2fd;
+			border: 1px solid #bbdefb;
+			border-radius: 20px;
+			flex-shrink: 0;
+		}
+
+		.customer-noprice-badge svg {
+			width: 16px;
+			height: 16px;
+			color: #1976d2;
+		}
+
+		.customer-noprice-badge span {
+			font-size: 11px;
+			color: #1565c0;
+			font-weight: 500;
+		}
+
+		/* No Price Customer Card Style */
+		.customer-card.no-price {
+			background: #f5f9ff;
+			border-color: #e3f2fd;
+		}
+
+		.customer-card.no-price:hover {
+			background: #e8f4ff;
+			border-color: #bbdefb;
+		}
+
+		.customer-card.no-price .customer-avatar {
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+		}
+
+		.customer-card.no-price .customer-avatar svg {
+			color: #1976d2;
+		}
+
+		/* No Price Filter Button */
+		.filter-btn.noprice .count {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.filter-btn.noprice.active .count {
+			background: #1976d2;
+			color: #fff;
+		}
+
+		@media (max-width: 768px) {
+			.customer-noprice-badge span {
+				display: none;
+			}
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: #666;
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #999;
+		}
+
+		/* Mobile Sidebar */
+		.mobile-sidebar {
+			position: fixed;
+			top: 0;
+			right: -300px;
+			width: 300px;
+			height: 100vh;
+			background: #fff;
+			z-index: 1001;
+			transition: right 0.3s ease;
+			display: flex;
+			flex-direction: column;
+			box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+		}
+
+		.mobile-sidebar.active {
+			right: 0;
+		}
+
+		.mobile-sidebar-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.mobile-sidebar-header .logo {
+			height: 35px;
+		}
+
+		.mobile-sidebar-close {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.mobile-sidebar-close:hover {
+			background: #eee;
+		}
+
+		.mobile-sidebar-close svg {
+			width: 20px;
+			height: 20px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu {
+			flex: 1;
+			overflow-y: auto;
+			padding: 15px 0;
+		}
+
+		.mobile-sidebar-menu ul {
+			list-style: none;
+		}
+
+		.mobile-sidebar-menu li a {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 14px 20px;
+			text-decoration: none;
+			color: #333;
+			font-size: 15px;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-menu li a:hover,
+		.mobile-sidebar-menu li.active a {
+			background: #f8f9fa;
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu li.active a {
+			border-right: 3px solid #002c77;
+			font-weight: 600;
+		}
+
+		.mobile-sidebar-menu .menu-icon {
+			width: 22px;
+			height: 22px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu li.active .menu-icon,
+		.mobile-sidebar-menu li a:hover .menu-icon {
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu .menu-divider {
+			height: 1px;
+			background: #eee;
+			margin: 10px 20px;
+		}
+
+		.mobile-sidebar-footer {
+			border-top: 1px solid #eee;
+			padding: 15px 20px;
+		}
+
+		.mobile-sidebar-footer-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.mobile-sidebar-footer .date-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.mobile-sidebar-footer .date-info svg {
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.mobile-sidebar-footer .footer-icons {
+			display: flex;
+			gap: 10px;
+		}
+
+		.mobile-sidebar-footer .footer-icons a {
+			position: relative;
+			width: 36px;
+			height: 36px;
+			border-radius: 8px;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .footer-icons img {
+			width: 18px;
+			height: 18px;
+		}
+
+		.mobile-sidebar-footer .cart-badge {
+			position: absolute;
+			top: -4px;
+			right: -4px;
+			background: #e53935;
+			color: #fff;
+			font-size: 10px;
+			min-width: 16px;
+			height: 16px;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .logout-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			width: 100%;
+			padding: 12px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 10px;
+			color: #666;
+			font-size: 14px;
+			text-decoration: none;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-footer .logout-btn:hover {
+			background: #fee;
+			color: #e53935;
+		}
+
+		.mobile-sidebar-footer .logout-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.menu-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s;
+		}
+
+		.menu-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.header__nav nav {
+				display: none;
+			}
+
+			.header__mobile {
+				display: flex;
+			}
+
+
+			.customer-card {
+				gap: 15px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.header__user-panel .desktop-panel {
+				display: none;
+			}
+
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.page-header-right {
+				width: 100%;
+			}
+
+			.page-header-right .btn-primary {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.filter-row {
+				flex-direction: column;
+			}
+
+			.search-box {
+				width: 100%;
+			}
+
+			.filter-buttons {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.customer-info {
+				flex: 1;
+			}
+
+			.customer-warning {
+				padding: 4px 8px;
+			}
+
+			.customer-warning span {
+				display: none;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.main-content {
+				padding: 20px 15px;
+			}
+
+			.page-header-left h1 {
+				font-size: 22px;
+			}
+
+			.customer-card {
+				padding: 14px;
+			}
+
+			.customer-avatar {
+				width: 44px;
+				height: 44px;
+			}
+
+			.filter-btn {
+				padding: 8px 12px;
+				font-size: 12px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header class="header">
+		<div class="container">
+			<div class="header__wrapper">
+				<div class="header__logo">
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/">
+						<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
+					</a>
+				</div>
+
+				<div class="header__nav">
+					<nav>
+						<ul>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">Raporlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">Sipariş Ver</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">Dolum Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">Çalışanlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout">Çıkış</a></li>
+						</ul>
+					</nav>
+
+					<div class="header__user-panel">
+						<ul class="desktop-panel">
+							<li>
+								<div class="date-display">
+									<span>21 Aralık</span>
+									<span>Cumartesi</span>
+								</div>
+							</li>
+							<li>
+								<a href="#" class="icon-btn">
+									<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+								</a>
+							</li>
+							<li>
+								<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart" class="icon-btn">
+									<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+									<span class="badge">3</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="header__mobile"><span></span></div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Müşteri Listesi</h1>
+				<p>Fiyat tanımladığınız tüm müşterilerinizi görüntüleyin</p>
+			</div>
+			<div class="page-header-right">
+				<a href="bayi-musteri-ekle.html" class="btn-primary">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+					</svg>
+					Yeni Müşteri Ekle
+				</a>
+			</div>
+		</div>
+
+		<!-- Filter Section -->
+		<div class="filter-section">
+			<div class="filter-row">
+				<div class="search-box">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+					</svg>
+					<input type="text" id="search-input" placeholder="Müşteri adı veya VKN ile ara...">
+				</div>
+				<div class="filter-buttons">
+					<button class="filter-btn active" data-filter="all">
+						Tümü
+						<span class="count">9</span>
+					</button>
+					<button class="filter-btn warning" data-filter="warning">
+						Uyarılı
+						<span class="count">2</span>
+					</button>
+					<button class="filter-btn passive" data-filter="passive">
+						Pasif
+						<span class="count">2</span>
+					</button>
+					<button class="filter-btn noprice" data-filter="noprice">
+						Fiyatsız
+						<span class="count">1</span>
+					</button>
+					<button class="filter-btn" data-filter="normal">
+						Normal
+						<span class="count">4</span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Customer List -->
+		<div class="customer-list" id="customer-list">
+			<!-- Müşteriler Supabase'den dinamik olarak yüklenir -->
+			<div class="loading-placeholder" style="text-align: center; padding: 40px; color: #666;">
+				<div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #e31e24; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+				<p>Müşteriler yükleniyor...</p>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar -->
+	<div class="mobile-sidebar" id="mobile-sidebar">
+		<div class="mobile-sidebar-header">
+			<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz" class="logo">
+			<div class="mobile-sidebar-close" id="mobile-sidebar-close">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+			</div>
+		</div>
+		<div class="mobile-sidebar-menu">
+			<ul>
+				<li class="active">
+					<a href="bayi-musteri-listesi.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Müşteri Listesi
+					</a>
+				</li>
+				<li>
+					<a href="bayi-musteri-ekle.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+						Müşteri Ekle
+					</a>
+				</li>
+				<li>
+					<a href="bayi-baremli-fiyat-tanimla.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+						Baremli Fiyatlar
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li>
+					<a href="bayi-anasayfa.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+						Anasayfa
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 14h-2v-4h-2v4H9V9h2v2h2V9h2v8z"/></svg>
+						Raporlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+						Sipariş Ver
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+						Dolum Siparişlerim
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+						Siparişlerim
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Çalışanlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/work-schedule?siteName=ipragaz-b2c">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+						Çalışma Takvimi
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="mobile-sidebar-footer">
+			<div class="mobile-sidebar-footer-top">
+				<div class="date-info">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z"/></svg>
+					<span>21 Aralık, Cumartesi</span>
+				</div>
+				<div class="footer-icons">
+					<a href="#">
+						<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+					</a>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart">
+						<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+						<span class="cart-badge">3</span>
+					</a>
+				</div>
+			</div>
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout" class="logout-btn">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+				Çıkış Yap
+			</a>
+		</div>
+	</div>
+	<div class="menu-overlay" id="menu-overlay"></div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script>
+		$(document).ready(async function() {
+			var $sidebar = $('#mobile-sidebar');
+			var $overlay = $('#menu-overlay');
+			var $hamburger = $('.header__mobile');
+			var allCustomers = [];
+			var currentDealerId = null;
+
+			// Loading overlay
+			function showLoading() {
+				if (!$('#loading-overlay').length) {
+					$('body').append('<div id="loading-overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="width:40px;height:40px;border:3px solid #e0e0e0;border-top-color:#002c77;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 15px;"></div><div style="color:#333;font-size:14px;">Yükleniyor...</div></div></div>');
+					$('head').append('<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
+				}
+				$('#loading-overlay').show();
+			}
+
+			function hideLoading() {
+				$('#loading-overlay').hide();
+			}
+
+			// Müşteri listesini Supabase'den yükle
+			async function loadCustomers() {
+				showLoading();
+				try {
+					// Bayi ID'sini al
+					const { data: dealers } = await DealersService.getAll();
+					if (dealers && dealers.length > 0) {
+						currentDealerId = dealers[0].id;
+					}
+
+					// Müşterileri çek
+					const { data: customers, error } = await CustomersService.getAll(currentDealerId);
+					if (error) throw new Error(error);
+
+					allCustomers = customers || [];
+					renderCustomerList(allCustomers);
+					updateFilterCounts();
+					hideLoading();
+				} catch (err) {
+					hideLoading();
+					console.error('Müşteri yükleme hatası:', err);
+					$('.customer-list').html('<div class="empty-state"><p>Müşteriler yüklenirken hata oluştu</p></div>');
+				}
+			}
+
+			// Müşteri kartı oluştur
+			function createCustomerCard(customer) {
+				var hasPrices = customer.customer_prices && customer.customer_prices.some(p => p.unit_price);
+				var isPassive = !customer.is_active;
+				var warnings = getWarnings(customer);
+				var hasWarning = warnings.length > 0;
+
+				var cardClass = isPassive ? 'is-passive' : (!hasPrices ? 'no-price' : (hasWarning ? 'has-warning' : ''));
+				var status = isPassive ? 'passive' : (!hasPrices ? 'noprice' : (hasWarning ? 'warning' : 'normal'));
+
+				var badgeHtml = '';
+				if (isPassive) {
+					badgeHtml = '<div class="customer-passive-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg><span>Fiyatlar Pasif</span></div>';
+				} else if (!hasPrices) {
+					badgeHtml = '<div class="customer-noprice-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg><span>Fiyat Girilmedi</span></div>';
+				} else if (hasWarning) {
+					badgeHtml = '<div class="customer-warning"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><span>' + warnings.length + ' Uyarı</span></div>';
+				}
+
+				return '<div class="customer-card ' + cardClass + '" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-status="' + status + '">' +
+					'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
+					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div></div>' +
+					badgeHtml +
+					'<a href="bayi-musteri-ekle.html?vkn=' + customer.vkn + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
+				'</div>';
+			}
+
+			// Uyarıları hesapla
+			function getWarnings(customer) {
+				var warnings = [];
+				if (!customer.customer_prices) return warnings;
+				customer.customer_prices.forEach(function(cp) {
+					if (cp.commitment_quantity > 0 && cp.this_month_quantity !== undefined) {
+						var percent = (cp.this_month_quantity / cp.commitment_quantity) * 100;
+						if (percent < 50) {
+							warnings.push({ product: cp.product, percent: Math.round(percent) });
+						}
+					}
+				});
+				return warnings;
+			}
+
+			// Müşteri listesini render et
+			function renderCustomerList(customers) {
+				var $list = $('.customer-list');
+				$list.empty();
+
+				if (customers.length === 0) {
+					$list.html('<div class="empty-state"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><h3>Müşteri bulunamadı</h3><p>Arama kriterlerinize uygun müşteri yok</p></div>');
+					return;
+				}
+
+				customers.forEach(function(customer) {
+					$list.append(createCustomerCard(customer));
+				});
+
+				// Kart tıklama olayını yeniden bağla
+				$('.customer-card').on('click', function(e) {
+					if (!$(e.target).closest('.customer-action').length) {
+						var vkn = $(this).data('vkn');
+						window.location.href = 'bayi-musteri-ekle.html?vkn=' + vkn;
+					}
+				});
+			}
+
+			// Filtre sayılarını güncelle
+			function updateFilterCounts() {
+				var counts = { all: 0, warning: 0, passive: 0, noprice: 0, normal: 0 };
+				allCustomers.forEach(function(c) {
+					counts.all++;
+					var hasPrices = c.customer_prices && c.customer_prices.some(p => p.unit_price);
+					var isPassive = !c.is_active;
+					var hasWarning = getWarnings(c).length > 0;
+
+					if (isPassive) counts.passive++;
+					else if (!hasPrices) counts.noprice++;
+					else if (hasWarning) counts.warning++;
+					else counts.normal++;
+				});
+
+				$('.filter-btn[data-filter="all"] .count').text(counts.all);
+				$('.filter-btn[data-filter="warning"] .count').text(counts.warning);
+				$('.filter-btn[data-filter="passive"] .count').text(counts.passive);
+				$('.filter-btn[data-filter="noprice"] .count').text(counts.noprice);
+				$('.filter-btn[data-filter="normal"] .count').text(counts.normal);
+			}
+
+			// Müşterileri yükle
+			loadCustomers();
+
+			// Open sidebar
+			$hamburger.on('click', function() {
+				$sidebar.addClass('active');
+				$overlay.addClass('active');
+				$('body').css('overflow', 'hidden');
+			});
+
+			// Close sidebar
+			$('#mobile-sidebar-close, #menu-overlay').on('click', function() {
+				$sidebar.removeClass('active');
+				$overlay.removeClass('active');
+				$('body').css('overflow', '');
+			});
+
+			// Filter functionality
+			$('.filter-btn').on('click', function() {
+				var $btn = $(this);
+				var filter = $btn.data('filter');
+
+				// Update active state
+				$('.filter-btn').removeClass('active');
+				$btn.addClass('active');
+
+				// Filter customers
+				$('.customer-card').each(function() {
+					var $card = $(this);
+					var status = $card.data('status');
+
+					if (filter === 'all') {
+						$card.show();
+					} else if (filter === 'warning' && status === 'warning') {
+						$card.show();
+					} else if (filter === 'passive' && status === 'passive') {
+						$card.show();
+					} else if (filter === 'noprice' && status === 'noprice') {
+						$card.show();
+					} else if (filter === 'normal' && status === 'normal') {
+						$card.show();
+					} else {
+						$card.hide();
+					}
+				});
+			});
+
+			// Search functionality
+			$('#search-input').on('keyup', function() {
+				var searchTerm = $(this).val().toLowerCase();
+
+				$('.customer-card').each(function() {
+					var $card = $(this);
+					var name = $card.data('name').toLowerCase();
+					var vkn = $card.data('vkn').toString();
+
+					if (name.indexOf(searchTerm) > -1 || vkn.indexOf(searchTerm) > -1) {
+						$card.show();
+					} else {
+						$card.hide();
+					}
+				});
+
+				// Reset filter buttons when searching
+				if (searchTerm.length > 0) {
+					$('.filter-btn').removeClass('active');
+					$('.filter-btn[data-filter="all"]').addClass('active');
+				}
+			});
+
+			// Customer card click - navigate to detail
+			$('.customer-card').on('click', function(e) {
+				if (!$(e.target).closest('.customer-action').length) {
+					var vkn = $(this).data('vkn');
+					window.location.href = 'bayi-musteri-ekle.html?vkn=' + vkn;
+				}
+			});
+		});
+	</script>
+</body>
+</html>

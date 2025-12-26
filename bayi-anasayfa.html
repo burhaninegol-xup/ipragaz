@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		.header .container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		.header__wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 70px;
+		}
+
+		.header__logo img {
+			height: 40px;
+		}
+
+		.header__nav {
+			display: flex;
+			align-items: center;
+			gap: 30px;
+		}
+
+		.header__nav nav ul {
+			display: flex;
+			list-style: none;
+			gap: 25px;
+		}
+
+		.header__nav nav ul li a {
+			text-decoration: none;
+			color: #333;
+			font-size: 14px;
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		.header__nav nav ul li a:hover {
+			color: #002c77;
+		}
+
+		.header__user-panel ul {
+			display: flex;
+			align-items: center;
+			list-style: none;
+			gap: 20px;
+		}
+
+		.header__user-panel .date-display {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			font-size: 12px;
+			color: #666;
+		}
+
+		.header__user-panel .date-display span:first-child {
+			font-weight: 600;
+			color: #333;
+		}
+
+		.header__user-panel .icon-btn {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			transition: background 0.2s;
+		}
+
+		.header__user-panel .icon-btn:hover {
+			background: #e8ecf1;
+		}
+
+		.header__user-panel .icon-btn img {
+			width: 20px;
+			height: 20px;
+		}
+
+		.header__user-panel .badge {
+			position: absolute;
+			top: -5px;
+			right: -5px;
+			background: #e53935;
+			color: #fff;
+			font-size: 11px;
+			font-weight: 600;
+			min-width: 18px;
+			height: 18px;
+			border-radius: 9px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.header__mobile {
+			display: none;
+			width: 40px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.header__mobile span,
+		.header__mobile span::before,
+		.header__mobile span::after {
+			display: block;
+			width: 24px;
+			height: 2px;
+			background: #333;
+			position: relative;
+			transition: all 0.3s;
+		}
+
+		.header__mobile span::before,
+		.header__mobile span::after {
+			content: '';
+			position: absolute;
+			left: 0;
+		}
+
+		.header__mobile span::before {
+			top: -7px;
+		}
+
+		.header__mobile span::after {
+			top: 7px;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Welcome Section */
+		.welcome-section {
+			margin-bottom: 30px;
+		}
+
+		.welcome-section h1 {
+			font-size: 28px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+
+		.welcome-section p {
+			color: #666;
+			font-size: 15px;
+		}
+
+		/* Stats Grid */
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		.stat-card {
+			background: #fff;
+			border-radius: 16px;
+			padding: 25px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			transition: transform 0.2s, box-shadow 0.2s;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.stat-card:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+		}
+
+		.stat-card .stat-icon {
+			width: 60px;
+			height: 60px;
+			border-radius: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.stat-card .stat-icon svg {
+			width: 28px;
+			height: 28px;
+		}
+
+		.stat-card.danger .stat-icon {
+			background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+		}
+
+		.stat-card.danger .stat-icon svg {
+			color: #e53935;
+		}
+
+		.stat-card.warning .stat-icon {
+			background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+		}
+
+		.stat-card.warning .stat-icon svg {
+			color: #ff9800;
+		}
+
+		.stat-card.primary .stat-icon {
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+		}
+
+		.stat-card.primary .stat-icon svg {
+			color: #1976d2;
+		}
+
+		.stat-card .stat-info {
+			flex: 1;
+		}
+
+		.stat-card .stat-number {
+			font-size: 32px;
+			font-weight: 700;
+			line-height: 1;
+			margin-bottom: 6px;
+		}
+
+		.stat-card.danger .stat-number {
+			color: #e53935;
+		}
+
+		.stat-card.warning .stat-number {
+			color: #ff9800;
+		}
+
+		.stat-card.primary .stat-number {
+			color: #1976d2;
+		}
+
+		.stat-card .stat-label {
+			font-size: 14px;
+			color: #666;
+			line-height: 1.3;
+		}
+
+		.stat-card .stat-arrow {
+			color: #ccc;
+			transition: color 0.2s, transform 0.2s;
+		}
+
+		.stat-card:hover .stat-arrow {
+			color: #999;
+			transform: translateX(3px);
+		}
+
+		/* Sales Section */
+		.sales-section {
+			background: #fff;
+			border-radius: 20px;
+			padding: 30px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.sales-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.sales-header h2 {
+			font-size: 20px;
+			color: #1a1a2e;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.sales-header h2 svg {
+			width: 24px;
+			height: 24px;
+			color: #4caf50;
+		}
+
+		.period-selector {
+			display: flex;
+			background: #f5f7fa;
+			border-radius: 10px;
+			padding: 4px;
+		}
+
+		.period-btn {
+			padding: 10px 18px;
+			border: none;
+			background: transparent;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-weight: 500;
+		}
+
+		.period-btn.active {
+			background: #fff;
+			color: #002c77;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		}
+
+		.period-btn:hover:not(.active) {
+			color: #333;
+		}
+
+		/* Products Grid */
+		.products-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+		}
+
+		.product-sale-card {
+			background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+			border: 1px solid #e8ecf1;
+			border-radius: 16px;
+			padding: 20px;
+			text-align: center;
+			transition: all 0.2s;
+			min-width: 0;
+			overflow: hidden;
+		}
+
+		.product-sale-card:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.1);
+		}
+
+		.product-sale-card .product-image {
+			width: 80px;
+			height: 100px;
+			margin: 0 auto 15px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.product-sale-card .product-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.product-sale-card .product-name {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 10px;
+			line-height: 1.4;
+			min-height: 36px;
+		}
+
+		.product-sale-card .product-count {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+			padding: 8px 12px;
+			border-radius: 20px;
+			font-size: 14px;
+			font-weight: 600;
+			max-width: 100%;
+		}
+
+		.product-sale-card .product-count svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		.product-sale-card .count-value {
+			display: inline-block;
+			min-width: 24px;
+			text-align: center;
+		}
+
+		.product-sale-card .product-count {
+			white-space: nowrap;
+		}
+
+		.product-sale-card.updating {
+			transform: scale(1.02);
+		}
+
+		.product-sale-card.updating .product-count {
+			animation: pulse 0.4s ease;
+		}
+
+		@keyframes pulse {
+			0% { transform: scale(1); }
+			50% { transform: scale(1.1); }
+			100% { transform: scale(1); }
+		}
+
+		/* Dashboard Row - Sales & Alerts Side by Side */
+		.dashboard-row {
+			display: grid;
+			grid-template-columns: 1fr 400px;
+			gap: 25px;
+			margin-bottom: 30px;
+		}
+
+		/* Limit Alerts Section */
+		.limit-alerts-section {
+			background: #fff;
+			border-radius: 20px;
+			padding: 25px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			display: flex;
+			flex-direction: column;
+			max-height: 500px;
+		}
+
+		.limit-alerts-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+			flex-shrink: 0;
+		}
+
+		.limit-alerts-header h2 {
+			font-size: 18px;
+			color: #1a1a2e;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.limit-alerts-header h2 svg {
+			width: 22px;
+			height: 22px;
+			color: #ff9800;
+		}
+
+		.limit-alerts-header .alert-count {
+			background: #fff3e0;
+			color: #e65100;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 4px 10px;
+			border-radius: 12px;
+		}
+
+		.limit-alerts-list {
+			flex: 1;
+			overflow-y: auto;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.limit-alert-item {
+			padding: 14px;
+			background: #fffbf5;
+			border: 1px solid #ffe0b2;
+			border-radius: 12px;
+			transition: all 0.2s;
+		}
+
+		.limit-alert-item:hover {
+			background: #fff8e1;
+			border-color: #ffcc80;
+		}
+
+		.limit-alert-item .customer-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 12px;
+			padding-bottom: 10px;
+			border-bottom: 1px dashed #ffe0b2;
+		}
+
+		.limit-alert-item .customer-avatar {
+			width: 38px;
+			height: 38px;
+			border-radius: 10px;
+			background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.limit-alert-item .customer-avatar svg {
+			width: 20px;
+			height: 20px;
+			color: #fff;
+		}
+
+		.limit-alert-item .customer-name {
+			flex: 1;
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.limit-alert-item .product-count-badge {
+			font-size: 11px;
+			background: #fff3e0;
+			color: #e65100;
+			padding: 3px 8px;
+			border-radius: 10px;
+			font-weight: 500;
+		}
+
+		.limit-alert-item .product-groups {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.limit-alert-item .product-row {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.limit-alert-item .product-name {
+			font-size: 11px;
+			color: #666;
+			min-width: 70px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.limit-alert-item .product-stats {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.limit-alert-item .stat-text {
+			font-size: 11px;
+			color: #888;
+			min-width: 55px;
+		}
+
+		.limit-alert-item .progress-bar {
+			flex: 1;
+			height: 6px;
+			background: #ffe0b2;
+			border-radius: 3px;
+			overflow: hidden;
+			min-width: 40px;
+		}
+
+		.limit-alert-item .progress-bar .progress {
+			height: 100%;
+			border-radius: 3px;
+			transition: width 0.3s;
+		}
+
+		.limit-alert-item .progress-bar .progress.low {
+			background: linear-gradient(90deg, #f44336 0%, #ff5722 100%);
+		}
+
+		.limit-alert-item .progress-bar .progress.medium {
+			background: linear-gradient(90deg, #ff9800 0%, #ffc107 100%);
+		}
+
+		.limit-alert-item .progress-bar .progress.good {
+			background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
+		}
+
+		.limit-alert-item .percent-badge {
+			font-size: 10px;
+			font-weight: 700;
+			padding: 2px 6px;
+			border-radius: 4px;
+			min-width: 36px;
+			text-align: center;
+		}
+
+		.limit-alert-item .percent-badge.low {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.limit-alert-item .percent-badge.medium {
+			background: #fff3e0;
+			color: #e65100;
+		}
+
+		.limit-alert-item .percent-badge.good {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.limit-alerts-footer {
+			margin-top: 15px;
+			padding-top: 15px;
+			border-top: 1px solid #eee;
+			flex-shrink: 0;
+		}
+
+		.limit-alerts-footer a {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			padding: 12px;
+			background: #fff3e0;
+			border-radius: 10px;
+			text-decoration: none;
+			color: #e65100;
+			font-size: 13px;
+			font-weight: 600;
+			transition: all 0.2s;
+		}
+
+		.limit-alerts-footer a:hover {
+			background: #ffe0b2;
+		}
+
+		.limit-alerts-footer a svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Quick Actions */
+		.quick-actions {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 15px;
+		}
+
+		.quick-action-btn {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			background: #fff;
+			border: 1px solid #e8ecf1;
+			border-radius: 16px;
+			padding: 25px 15px;
+			text-decoration: none;
+			transition: all 0.2s;
+		}
+
+		.quick-action-btn:hover {
+			border-color: #002c77;
+			background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.1);
+		}
+
+		.quick-action-btn .action-icon {
+			width: 50px;
+			height: 50px;
+			border-radius: 12px;
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.quick-action-btn .action-icon svg {
+			width: 24px;
+			height: 24px;
+			color: #1976d2;
+		}
+
+		.quick-action-btn span {
+			font-size: 13px;
+			color: #333;
+			font-weight: 500;
+			text-align: center;
+		}
+
+		/* Mobile Sidebar */
+		.mobile-sidebar {
+			position: fixed;
+			top: 0;
+			right: -300px;
+			width: 300px;
+			height: 100vh;
+			background: #fff;
+			z-index: 1001;
+			transition: right 0.3s ease;
+			display: flex;
+			flex-direction: column;
+			box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+		}
+
+		.mobile-sidebar.active {
+			right: 0;
+		}
+
+		.mobile-sidebar-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.mobile-sidebar-header .logo {
+			height: 35px;
+		}
+
+		.mobile-sidebar-close {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.mobile-sidebar-close:hover {
+			background: #eee;
+		}
+
+		.mobile-sidebar-close svg {
+			width: 20px;
+			height: 20px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu {
+			flex: 1;
+			overflow-y: auto;
+			padding: 15px 0;
+		}
+
+		.mobile-sidebar-menu ul {
+			list-style: none;
+		}
+
+		.mobile-sidebar-menu li a {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 14px 20px;
+			text-decoration: none;
+			color: #333;
+			font-size: 15px;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-menu li a:hover,
+		.mobile-sidebar-menu li.active a {
+			background: #f8f9fa;
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu li.active a {
+			border-right: 3px solid #002c77;
+			font-weight: 600;
+		}
+
+		.mobile-sidebar-menu .menu-icon {
+			width: 22px;
+			height: 22px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu li.active .menu-icon,
+		.mobile-sidebar-menu li a:hover .menu-icon {
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu .menu-divider {
+			height: 1px;
+			background: #eee;
+			margin: 10px 20px;
+		}
+
+		.mobile-sidebar-footer {
+			border-top: 1px solid #eee;
+			padding: 15px 20px;
+		}
+
+		.mobile-sidebar-footer-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.mobile-sidebar-footer .date-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.mobile-sidebar-footer .date-info svg {
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.mobile-sidebar-footer .footer-icons {
+			display: flex;
+			gap: 10px;
+		}
+
+		.mobile-sidebar-footer .footer-icons a {
+			position: relative;
+			width: 36px;
+			height: 36px;
+			border-radius: 8px;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .footer-icons img {
+			width: 18px;
+			height: 18px;
+		}
+
+		.mobile-sidebar-footer .cart-badge {
+			position: absolute;
+			top: -4px;
+			right: -4px;
+			background: #e53935;
+			color: #fff;
+			font-size: 10px;
+			min-width: 16px;
+			height: 16px;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .logout-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			width: 100%;
+			padding: 12px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 10px;
+			color: #666;
+			font-size: 14px;
+			text-decoration: none;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-footer .logout-btn:hover {
+			background: #fee;
+			color: #e53935;
+		}
+
+		.mobile-sidebar-footer .logout-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.menu-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s;
+		}
+
+		.menu-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Responsive */
+		@media (max-width: 1200px) {
+			.dashboard-row {
+				grid-template-columns: 1fr 350px;
+			}
+		}
+
+		@media (max-width: 1024px) {
+			.header__nav nav {
+				display: none;
+			}
+
+			.header__mobile {
+				display: flex;
+			}
+
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.dashboard-row {
+				grid-template-columns: 1fr;
+			}
+
+			.limit-alerts-section {
+				max-height: none;
+			}
+
+			.products-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			.quick-actions {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		@media (max-width: 768px) {
+			.header__user-panel .desktop-panel {
+				display: none;
+			}
+
+			.welcome-section h1 {
+				font-size: 22px;
+			}
+
+			.sales-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.period-selector {
+				width: 100%;
+				overflow-x: auto;
+			}
+
+			.products-grid {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 12px;
+			}
+
+			.product-sale-card {
+				padding: 15px;
+			}
+
+			.product-sale-card .product-image {
+				width: 60px;
+				height: 80px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.quick-actions {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 10px;
+			}
+
+			.quick-action-btn {
+				padding: 20px 10px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header class="header">
+		<div class="container">
+			<div class="header__wrapper">
+				<div class="header__logo">
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/">
+						<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
+					</a>
+				</div>
+
+				<div class="header__nav">
+					<nav>
+						<ul>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">Raporlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">Sipariş Ver</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">Dolum Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">Çalışanlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout">Çıkış</a></li>
+						</ul>
+					</nav>
+
+					<div class="header__user-panel">
+						<ul class="desktop-panel">
+							<li>
+								<div class="date-display">
+									<span>18 Aralık</span>
+									<span>Perşembe</span>
+								</div>
+							</li>
+							<li>
+								<a href="#" class="icon-btn">
+									<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+								</a>
+							</li>
+							<li>
+								<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart" class="icon-btn">
+									<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+									<span class="badge">3</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="header__mobile"><span></span></div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Welcome -->
+		<div class="welcome-section">
+			<h1>Hoş Geldiniz, Hibizz</h1>
+			<p>İşte bugünkü özet bilgileriniz</p>
+		</div>
+
+		<!-- Stats Cards -->
+		<div class="stats-grid">
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order/CREATED" class="stat-card danger">
+				<div class="stat-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+					</svg>
+				</div>
+				<div class="stat-info">
+					<div class="stat-number">11</div>
+					<div class="stat-label">Atama Bekleyen Sipariş</div>
+				</div>
+				<svg class="stat-arrow" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+				</svg>
+			</a>
+
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order/IN_PROGRESS" class="stat-card warning">
+				<div class="stat-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M18 18.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM19.5 9.5l1.5 4.5h-2l-1.5-4.5h2zM6 18.5c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5-1.5.67-1.5 1.5.67 1.5 1.5 1.5zM7.5 9H3v3h4.5V9zm4.5-4V3H1v9.5c0 .83.67 1.5 1.5 1.5H3c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h1.5c.83 0 1.5-.67 1.5-1.5V9l-3-5H12z"/>
+					</svg>
+				</div>
+				<div class="stat-info">
+					<div class="stat-number">2</div>
+					<div class="stat-label">Dağıtımdaki Sipariş</div>
+				</div>
+				<svg class="stat-arrow" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+				</svg>
+			</a>
+
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order" class="stat-card primary">
+				<div class="stat-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+					</svg>
+				</div>
+				<div class="stat-info">
+					<div class="stat-number">11</div>
+					<div class="stat-label">Bugünkü Toplam Sipariş</div>
+				</div>
+				<svg class="stat-arrow" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+				</svg>
+			</a>
+		</div>
+
+		<!-- Dashboard Row - Sales & Limit Alerts -->
+		<div class="dashboard-row">
+			<!-- Sales Section -->
+			<div class="sales-section">
+				<div class="sales-header">
+					<h2>
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/>
+						</svg>
+						Toplam Satışlarınız
+					</h2>
+					<div class="period-selector">
+						<button class="period-btn active" data-period="week">Bu Hafta</button>
+						<button class="period-btn" data-period="month">Bu Ay</button>
+						<button class="period-btn" data-period="lastmonth">Geçen Ay</button>
+						<button class="period-btn" data-period="year">Bu Yıl</button>
+					</div>
+				</div>
+
+				<div class="products-grid" id="products-grid">
+					<div class="product-sale-card" data-product="12kg-uzun">
+						<div class="product-image">
+							<img src="./İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png" alt="12 KG Uzun Tüp">
+						</div>
+						<div class="product-name">12 Kg – Uzun İşYerim Tüpü</div>
+						<div class="product-count">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
+							</svg>
+							<span class="count-value">5</span> adet
+						</div>
+					</div>
+
+					<div class="product-sale-card" data-product="45kg-sanayi">
+						<div class="product-image">
+							<img src="./İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png" alt="45 KG Sanayi Tüpü">
+						</div>
+						<div class="product-name">45 KG – Sanayi Tüpü</div>
+						<div class="product-count">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
+							</svg>
+							<span class="count-value">5</span> adet
+						</div>
+					</div>
+
+					<div class="product-sale-card" data-product="12kg-izopro">
+						<div class="product-image">
+							<img src="./İpragaz Bayi_files/IPR-BAYI-12kg-izo-pro.png" alt="12 KG İzopro">
+						</div>
+						<div class="product-name">12 KG – İzopro Tüpü</div>
+						<div class="product-count">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
+							</svg>
+							<span class="count-value">10</span> adet
+						</div>
+					</div>
+
+					<div class="product-sale-card" data-product="24kg-sanayi">
+						<div class="product-image">
+							<img src="./İpragaz Bayi_files/IPR-BAYI-24kg-sanayi.png" alt="24 KG Sanayi Tüpü">
+						</div>
+						<div class="product-name">24 KG – Sanayi Tüpü</div>
+						<div class="product-count">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/>
+							</svg>
+							<span class="count-value">1</span> adet
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Limit Alerts Section -->
+			<div class="limit-alerts-section">
+				<div class="limit-alerts-header">
+					<h2>
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+						</svg>
+						Limit Uyarıları
+					</h2>
+					<span class="alert-count">4 Müşteri</span>
+				</div>
+
+				<div class="limit-alerts-list">
+					<!-- Müşteri 1: 2 ürün grubu -->
+					<div class="limit-alert-item">
+						<div class="customer-header">
+							<div class="customer-avatar">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+								</svg>
+							</div>
+							<div class="customer-name">Ahmet Yılmaz</div>
+							<span class="product-count-badge">2 ürün</span>
+						</div>
+						<div class="product-groups">
+							<div class="product-row">
+								<span class="product-name">12 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">2/10 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 20%"></div>
+									</div>
+									<span class="percent-badge low">%20</span>
+								</div>
+							</div>
+							<div class="product-row">
+								<span class="product-name">45 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">1/5 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 20%"></div>
+									</div>
+									<span class="percent-badge low">%20</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Müşteri 2: 3 ürün grubu -->
+					<div class="limit-alert-item">
+						<div class="customer-header">
+							<div class="customer-avatar">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+								</svg>
+							</div>
+							<div class="customer-name">Mehmet Demir</div>
+							<span class="product-count-badge">3 ürün</span>
+						</div>
+						<div class="product-groups">
+							<div class="product-row">
+								<span class="product-name">12 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">3/20 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 15%"></div>
+									</div>
+									<span class="percent-badge low">%15</span>
+								</div>
+							</div>
+							<div class="product-row">
+								<span class="product-name">24 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">2/8 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 25%"></div>
+									</div>
+									<span class="percent-badge low">%25</span>
+								</div>
+							</div>
+							<div class="product-row">
+								<span class="product-name">45 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">4/10 adet</span>
+									<div class="progress-bar">
+										<div class="progress medium" style="width: 40%"></div>
+									</div>
+									<span class="percent-badge medium">%40</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Müşteri 3: 1 ürün grubu -->
+					<div class="limit-alert-item">
+						<div class="customer-header">
+							<div class="customer-avatar">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+								</svg>
+							</div>
+							<div class="customer-name">Fatma Kaya</div>
+							<span class="product-count-badge">1 ürün</span>
+						</div>
+						<div class="product-groups">
+							<div class="product-row">
+								<span class="product-name">12 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">4/25 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 16%"></div>
+									</div>
+									<span class="percent-badge low">%16</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Müşteri 4: 2 ürün grubu, biri iyi durumda -->
+					<div class="limit-alert-item">
+						<div class="customer-header">
+							<div class="customer-avatar">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+								</svg>
+							</div>
+							<div class="customer-name">Ali Öztürk</div>
+							<span class="product-count-badge">2 ürün</span>
+						</div>
+						<div class="product-groups">
+							<div class="product-row">
+								<span class="product-name">12 KG Tüp</span>
+								<div class="product-stats">
+									<span class="stat-text">3/15 adet</span>
+									<div class="progress-bar">
+										<div class="progress low" style="width: 20%"></div>
+									</div>
+									<span class="percent-badge low">%20</span>
+								</div>
+							</div>
+							<div class="product-row">
+								<span class="product-name">İzopro</span>
+								<div class="product-stats">
+									<span class="stat-text">6/10 adet</span>
+									<div class="progress-bar">
+										<div class="progress good" style="width: 60%"></div>
+									</div>
+									<span class="percent-badge good">%60</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="limit-alerts-footer">
+					<a href="bayi-musteri-listesi.html">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+						</svg>
+						Tüm Müşterileri Gör
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Quick Actions -->
+		<div class="quick-actions">
+			<a href="bayi-musteri-listesi.html" class="quick-action-btn">
+				<div class="action-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+					</svg>
+				</div>
+				<span>Müşteri Listesi</span>
+			</a>
+
+			<a href="bayi-baremli-fiyat-tanimla.html" class="quick-action-btn">
+				<div class="action-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+					</svg>
+				</div>
+				<span>Baremli Fiyatlar</span>
+			</a>
+
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/work-schedule" class="quick-action-btn">
+				<div class="action-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+					</svg>
+				</div>
+				<span>Çalışma Takvimi</span>
+			</a>
+
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/products" class="quick-action-btn">
+				<div class="action-icon">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+					</svg>
+				</div>
+				<span>Ürünler</span>
+			</a>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar -->
+	<div class="mobile-sidebar" id="mobile-sidebar">
+		<div class="mobile-sidebar-header">
+			<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz" class="logo">
+			<div class="mobile-sidebar-close" id="mobile-sidebar-close">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+			</div>
+		</div>
+		<div class="mobile-sidebar-menu">
+			<ul>
+				<li>
+					<a href="bayi-musteri-listesi.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Müşteri Listesi
+					</a>
+				</li>
+				<li>
+					<a href="bayi-musteri-ekle.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+						Müşteri Ekle
+					</a>
+				</li>
+				<li>
+					<a href="bayi-baremli-fiyat-tanimla.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+						Baremli Fiyatlar
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li class="active">
+					<a href="bayi-anasayfa.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+						Anasayfa
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 14h-2v-4h-2v4H9V9h2v2h2V9h2v8z"/></svg>
+						Raporlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+						Sipariş Ver
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+						Dolum Siparişlerim
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+						Siparişlerim
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Çalışanlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/work-schedule?siteName=ipragaz-b2c">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+						Çalışma Takvimi
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/products">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+						Ürünler
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="mobile-sidebar-footer">
+			<div class="mobile-sidebar-footer-top">
+				<div class="date-info">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z"/></svg>
+					<span>18 Aralık, Perşembe</span>
+				</div>
+				<div class="footer-icons">
+					<a href="#">
+						<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+					</a>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart">
+						<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+						<span class="cart-badge">3</span>
+					</a>
+				</div>
+			</div>
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout" class="logout-btn">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+				Çıkış Yap
+			</a>
+		</div>
+	</div>
+	<div class="menu-overlay" id="menu-overlay"></div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/customer-prices-service.js"></script>
+	<script>
+		$(document).ready(async function() {
+			var $sidebar = $('#mobile-sidebar');
+			var $overlay = $('#menu-overlay');
+			var $hamburger = $('.header__mobile');
+			var currentDealerId = null;
+			var salesData = {};
+			var productMap = {};
+
+			// Loading overlay
+			function showLoading() {
+				if (!$('#loading-overlay').length) {
+					$('body').append('<div id="loading-overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="width:40px;height:40px;border:3px solid #e0e0e0;border-top-color:#002c77;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 15px;"></div><div style="color:#333;font-size:14px;">Yükleniyor...</div></div></div>');
+					$('head').append('<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
+				}
+				$('#loading-overlay').show();
+			}
+
+			function hideLoading() {
+				$('#loading-overlay').hide();
+			}
+
+			// Dashboard verilerini yükle
+			async function loadDashboardData() {
+				showLoading();
+				try {
+					// Bayi ID'sini al
+					const { data: dealers } = await DealersService.getAll();
+					if (dealers && dealers.length > 0) {
+						currentDealerId = dealers[0].id;
+					}
+
+					// Paralel olarak tüm verileri çek
+					await Promise.all([
+						loadOrderStats(),
+						loadSalesData(),
+						loadLimitAlerts()
+					]);
+
+					hideLoading();
+				} catch (err) {
+					hideLoading();
+					console.error('Dashboard yükleme hatası:', err);
+				}
+			}
+
+			// Sipariş istatistiklerini yükle
+			async function loadOrderStats() {
+				try {
+					const [pendingResult, confirmedResult, totalResult] = await Promise.all([
+						OrdersService.getPendingCount(currentDealerId),
+						OrdersService.getConfirmedCount(currentDealerId),
+						OrdersService.getTotalCount(currentDealerId, getTodayStart())
+					]);
+
+					// Stat kartlarını güncelle
+					$('.stat-card.danger .stat-number').text(pendingResult.data || 0);
+					$('.stat-card.warning .stat-number').text(confirmedResult.data || 0);
+					$('.stat-card.primary .stat-number').text(totalResult.data || 0);
+				} catch (err) {
+					console.error('Sipariş istatistikleri hatası:', err);
+				}
+			}
+
+			// Satış verilerini yükle
+			async function loadSalesData() {
+				try {
+					// Tarih aralıklarını hesapla
+					var now = new Date();
+					var weekStart = new Date(now);
+					weekStart.setDate(now.getDate() - 7);
+
+					var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+					var lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+					var lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+					var yearStart = new Date(now.getFullYear(), 0, 1);
+
+					// Satış verilerini çek
+					const [weekData, monthData, lastMonthData, yearData] = await Promise.all([
+						OrdersService.getSalesStats(currentDealerId, weekStart.toISOString(), now.toISOString()),
+						OrdersService.getSalesStats(currentDealerId, monthStart.toISOString(), now.toISOString()),
+						OrdersService.getSalesStats(currentDealerId, lastMonthStart.toISOString(), lastMonthEnd.toISOString()),
+						OrdersService.getSalesStats(currentDealerId, yearStart.toISOString(), now.toISOString())
+					]);
+
+					// Satış verilerini işle ve sakla
+					salesData = {
+						week: processSalesStats(weekData.data || {}),
+						month: processSalesStats(monthData.data || {}),
+						lastmonth: processSalesStats(lastMonthData.data || {}),
+						year: processSalesStats(yearData.data || {})
+					};
+
+					// İlk yükleme - haftalık veriyi göster
+					updateSalesCards('week');
+				} catch (err) {
+					console.error('Satış verileri hatası:', err);
+				}
+			}
+
+			// Satış istatistiklerini işle
+			function processSalesStats(stats) {
+				var result = {
+					'12kg-uzun': 0,
+					'45kg-sanayi': 0,
+					'12kg-izopro': 0,
+					'24kg-sanayi': 0
+				};
+
+				// Ürün kodlarını product-key'lere eşle
+				Object.values(stats).forEach(function(item) {
+					var code = item.product.code;
+					if (code === 'IPR-12-UZUN') result['12kg-uzun'] = item.totalQuantity;
+					else if (code === 'IPR-45-SAN') result['45kg-sanayi'] = item.totalQuantity;
+					else if (code === 'IPR-12-IZO') result['12kg-izopro'] = item.totalQuantity;
+					else if (code === 'IPR-24-SAN') result['24kg-sanayi'] = item.totalQuantity;
+				});
+
+				return result;
+			}
+
+			// Satış kartlarını güncelle
+			function updateSalesCards(period) {
+				var data = salesData[period] || {};
+				$('.product-sale-card').each(function() {
+					var $card = $(this);
+					var productKey = $card.data('product');
+					var newValue = data[productKey] || 0;
+					$card.find('.count-value').text(newValue);
+				});
+			}
+
+			// Limit uyarılarını yükle
+			async function loadLimitAlerts() {
+				try {
+					const { data: customers } = await CustomersService.getAll(currentDealerId);
+					if (!customers) return;
+
+					// Uyarı veren müşterileri filtrele
+					var alertCustomers = [];
+					customers.forEach(function(customer) {
+						if (!customer.customer_prices || !customer.is_active) return;
+
+						var warnings = [];
+						customer.customer_prices.forEach(function(cp) {
+							if (cp.commitment_quantity > 0 && cp.this_month_quantity !== undefined) {
+								var percent = (cp.this_month_quantity / cp.commitment_quantity) * 100;
+								if (percent < 50) {
+									warnings.push({
+										product: cp.product,
+										current: cp.this_month_quantity,
+										commitment: cp.commitment_quantity,
+										percent: Math.round(percent)
+									});
+								}
+							}
+						});
+
+						if (warnings.length > 0) {
+							alertCustomers.push({ customer: customer, warnings: warnings });
+						}
+					});
+
+					// Limit alerts bölümünü render et
+					renderLimitAlerts(alertCustomers);
+				} catch (err) {
+					console.error('Limit uyarıları hatası:', err);
+				}
+			}
+
+			// Limit alerts render
+			function renderLimitAlerts(alertCustomers) {
+				var $list = $('.limit-alerts-list');
+				var $count = $('.alert-count');
+
+				$count.text(alertCustomers.length + ' Müşteri');
+				$list.empty();
+
+				if (alertCustomers.length === 0) {
+					$list.html('<div style="text-align:center;padding:40px;color:#666;"><p>Limit uyarısı bulunmuyor</p></div>');
+					return;
+				}
+
+				alertCustomers.forEach(function(item) {
+					var warningsHtml = item.warnings.map(function(w) {
+						var levelClass = w.percent < 25 ? 'low' : (w.percent < 50 ? 'medium' : 'good');
+						return '<div class="product-row">' +
+							'<span class="product-name">' + (w.product ? w.product.name.substring(0, 10) : 'Ürün') + '</span>' +
+							'<div class="product-stats">' +
+								'<span class="stat-text">' + w.current + '/' + w.commitment + ' adet</span>' +
+								'<div class="progress-bar"><div class="progress ' + levelClass + '" style="width: ' + w.percent + '%"></div></div>' +
+								'<span class="percent-badge ' + levelClass + '">%' + w.percent + '</span>' +
+							'</div>' +
+						'</div>';
+					}).join('');
+
+					var html = '<div class="limit-alert-item">' +
+						'<div class="customer-header">' +
+							'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
+							'<div class="customer-name">' + item.customer.name + '</div>' +
+							'<span class="product-count-badge">' + item.warnings.length + ' ürün</span>' +
+						'</div>' +
+						'<div class="product-groups">' + warningsHtml + '</div>' +
+					'</div>';
+
+					$list.append(html);
+				});
+			}
+
+			// Bugünün başlangıcını al
+			function getTodayStart() {
+				var today = new Date();
+				today.setHours(0, 0, 0, 0);
+				return today.toISOString();
+			}
+
+			// Open sidebar
+			$hamburger.on('click', function() {
+				$sidebar.addClass('active');
+				$overlay.addClass('active');
+				$('body').css('overflow', 'hidden');
+			});
+
+			// Close sidebar
+			$('#mobile-sidebar-close, #menu-overlay').on('click', function() {
+				$sidebar.removeClass('active');
+				$overlay.removeClass('active');
+				$('body').css('overflow', '');
+			});
+
+			// Period selector with data update
+			$('.period-btn').on('click', function() {
+				var $btn = $(this);
+				var period = $btn.data('period');
+
+				// Update active state
+				$('.period-btn').removeClass('active');
+				$btn.addClass('active');
+
+				// Update sales data with animation
+				var data = salesData[period];
+				if (data) {
+					$('.product-sale-card').each(function() {
+						var $card = $(this);
+						var productKey = $card.data('product');
+						var newValue = data[productKey] || 0;
+						var $countValue = $card.find('.count-value');
+						var currentValue = parseInt($countValue.text()) || 0;
+
+						// Animate the number change
+						$card.addClass('updating');
+
+						$({ count: currentValue }).animate({ count: newValue }, {
+							duration: 400,
+							easing: 'swing',
+							step: function() {
+								$countValue.text(Math.floor(this.count));
+							},
+							complete: function() {
+								$countValue.text(newValue);
+								$card.removeClass('updating');
+							}
+						});
+					});
+				}
+			});
+
+			// Dashboard verilerini yükle
+			loadDashboardData();
+		});
+	</script>
+</body>
+</html>

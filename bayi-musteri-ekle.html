@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Müşteri Fiyat Tanımlama - İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		.header .container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		.header__wrapper {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 70px;
+		}
+
+		.header__logo img {
+			height: 40px;
+		}
+
+		.header__nav {
+			display: flex;
+			align-items: center;
+			gap: 30px;
+		}
+
+		.header__nav nav ul {
+			display: flex;
+			list-style: none;
+			gap: 25px;
+		}
+
+		.header__nav nav ul li a {
+			text-decoration: none;
+			color: #333;
+			font-size: 14px;
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+
+		.header__nav nav ul li a:hover {
+			color: #002c77;
+		}
+
+		.header__user-panel ul {
+			display: flex;
+			align-items: center;
+			list-style: none;
+			gap: 20px;
+		}
+
+		.header__user-panel .date-display {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			font-size: 12px;
+			color: #666;
+		}
+
+		.header__user-panel .date-display span:first-child {
+			font-weight: 600;
+			color: #333;
+		}
+
+		.header__user-panel .icon-btn {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			transition: background 0.2s;
+		}
+
+		.header__user-panel .icon-btn:hover {
+			background: #e8ecf1;
+		}
+
+		.header__user-panel .icon-btn img {
+			width: 20px;
+			height: 20px;
+		}
+
+		.header__user-panel .badge {
+			position: absolute;
+			top: -5px;
+			right: -5px;
+			background: #e53935;
+			color: #fff;
+			font-size: 11px;
+			font-weight: 600;
+			min-width: 18px;
+			height: 18px;
+			border-radius: 9px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.header__mobile {
+			display: none;
+			width: 40px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.header__mobile span,
+		.header__mobile span::before,
+		.header__mobile span::after {
+			display: block;
+			width: 24px;
+			height: 2px;
+			background: #333;
+			position: relative;
+			transition: all 0.3s;
+		}
+
+		.header__mobile span::before,
+		.header__mobile span::after {
+			content: '';
+			position: absolute;
+			left: 0;
+		}
+
+		.header__mobile span::before {
+			top: -7px;
+		}
+
+		.header__mobile span::after {
+			top: 7px;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 25px;
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #fff;
+			border: 1px solid #e0e0e0;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+		}
+
+		.back-btn:hover {
+			background: #f5f7fa;
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.back-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.page-header-text h1 {
+			font-size: 24px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 4px;
+		}
+
+		.page-header-text p {
+			color: #666;
+			font-size: 14px;
+		}
+
+		/* Form Sections */
+		.form-section {
+			background: #fff;
+			border-radius: 16px;
+			padding: 25px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.section-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #1a1a2e;
+			margin-bottom: 20px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.section-title svg {
+			width: 22px;
+			height: 22px;
+			color: #002c77;
+		}
+
+		/* VKN Search */
+		.vkn-search-row {
+			display: flex;
+			gap: 15px;
+			margin-bottom: 20px;
+		}
+
+		.vkn-input-wrapper {
+			flex: 1;
+		}
+
+		.vkn-input-wrapper label {
+			display: block;
+			font-size: 13px;
+			font-weight: 500;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.vkn-input-wrapper input {
+			width: 100%;
+			padding: 14px 16px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 15px;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.vkn-input-wrapper input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.vkn-search-btn {
+			display: flex;
+			align-items: flex-end;
+		}
+
+		.vkn-search-btn button {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 14px 24px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+			border: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.vkn-search-btn button:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+		}
+
+		.vkn-search-btn button svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Customer Info Box */
+		.customer-info-box {
+			background: #f8fafe;
+			border: 1px solid #e3f2fd;
+			border-radius: 12px;
+			padding: 18px;
+			display: none;
+		}
+
+		.customer-info-box.visible {
+			display: block;
+		}
+
+		.customer-info-box .info-label {
+			font-size: 12px;
+			color: #666;
+			margin-bottom: 6px;
+		}
+
+		.customer-info-box .info-value {
+			font-size: 16px;
+			font-weight: 600;
+			color: #002c77;
+		}
+
+		.customer-info-box.error {
+			background: #fff5f5;
+			border-color: #ffcdd2;
+		}
+
+		.customer-info-box.error .info-value {
+			color: #c62828;
+		}
+
+		/* Products Section */
+		.products-form {
+			display: none;
+		}
+
+		.products-form.visible {
+			display: block;
+		}
+
+		.product-row {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			gap: 15px;
+			padding: 18px;
+			background: #f8f9fa;
+			border-radius: 12px;
+			margin-bottom: 12px;
+			transition: all 0.2s;
+		}
+
+		.product-row:hover {
+			background: #f0f4f8;
+		}
+
+		.product-row:last-child {
+			margin-bottom: 0;
+		}
+
+		/* Product Stats Section */
+		.product-stats {
+			width: 100%;
+			display: none;
+			gap: 20px;
+			padding-top: 15px;
+			margin-top: 15px;
+			border-top: 1px dashed #e0e0e0;
+		}
+
+		.product-stats.visible {
+			display: flex;
+		}
+
+		.stat-box {
+			flex: 1;
+			background: #fff;
+			border-radius: 8px;
+			padding: 10px 12px;
+			border: 1px solid #e8ecf1;
+		}
+
+		.stat-box-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 4px;
+		}
+
+		.stat-box-title {
+			font-size: 11px;
+			font-weight: 600;
+			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+
+		.stat-box-value {
+			font-size: 15px;
+			font-weight: 700;
+			color: #1a1a2e;
+		}
+
+		.stat-progress {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-top: 4px;
+		}
+
+		.stat-progress-percent {
+			font-size: 11px;
+			font-weight: 600;
+			white-space: nowrap;
+		}
+
+		.stat-progress-percent.low {
+			color: #e53935;
+		}
+
+		.stat-progress-percent.medium {
+			color: #ff9800;
+		}
+
+		.stat-progress-percent.good {
+			color: #4caf50;
+		}
+
+		.stat-progress-bar {
+			flex: 1;
+			height: 5px;
+			background: #e8ecf1;
+			border-radius: 3px;
+			overflow: hidden;
+		}
+
+		.stat-progress-bar-fill {
+			height: 100%;
+			border-radius: 3px;
+			transition: width 0.3s ease;
+		}
+
+		.stat-progress-bar-fill.low {
+			background: linear-gradient(90deg, #e53935 0%, #ef5350 100%);
+		}
+
+		.stat-progress-bar-fill.medium {
+			background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);
+		}
+
+		.stat-progress-bar-fill.good {
+			background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+		}
+
+		@media (max-width: 768px) {
+			.product-stats {
+				flex-direction: column;
+				gap: 12px;
+			}
+		}
+
+		.product-image {
+			width: 60px;
+			height: 75px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.product-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.product-info {
+			flex: 1;
+			min-width: 120px;
+		}
+
+		.product-name {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+		}
+
+		.product-code {
+			font-size: 11px;
+			color: #888;
+		}
+
+		.product-inputs {
+			display: flex;
+			gap: 15px;
+			flex: 2;
+		}
+
+		.input-group {
+			flex: 1;
+			min-width: 100px;
+		}
+
+		.input-group label {
+			display: block;
+			font-size: 11px;
+			font-weight: 500;
+			color: #666;
+			margin-bottom: 6px;
+		}
+
+		.input-group input {
+			width: 100%;
+			padding: 12px 14px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			text-align: right;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.input-group input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.input-group .input-suffix {
+			position: relative;
+		}
+
+		.input-group .input-suffix input {
+			padding-right: 45px;
+		}
+
+		.input-group .input-suffix span {
+			position: absolute;
+			right: 14px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 12px;
+			color: #888;
+		}
+
+		/* Form Actions */
+		.form-actions {
+			display: flex;
+			gap: 15px;
+			justify-content: flex-end;
+			margin-top: 25px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 14px 28px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+
+		.btn-secondary {
+			background: #f5f7fa;
+			border: 1px solid #e0e0e0;
+			color: #666;
+		}
+
+		.btn-secondary:hover {
+			background: #e8ecf1;
+			border-color: #ccc;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			border: none;
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			background: linear-gradient(135deg, #001a4d 0%, #003d80 100%);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+			color: #fff;
+		}
+
+		.btn-primary:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+			transform: none;
+			box-shadow: none;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Delete Customer Button */
+		.btn-danger {
+			background: #fff;
+			border: 1px solid #ffcdd2;
+			color: #e53935;
+		}
+
+		.btn-danger:hover {
+			background: #ffebee;
+			border-color: #e53935;
+		}
+
+		/* Warning Button */
+		.btn-warning {
+			background: #fff;
+			border: 1px solid #ffe0b2;
+			color: #f57c00;
+		}
+
+		.btn-warning:hover {
+			background: #fff3e0;
+			border-color: #ff9800;
+		}
+
+		/* Input Error Styles */
+		.input-group.error input {
+			border-color: #e53935 !important;
+			background: #fff5f5 !important;
+		}
+
+		.input-group .error-message {
+			color: #e53935;
+			font-size: 11px;
+			margin-top: 4px;
+			display: none;
+		}
+
+		.input-group.error .error-message {
+			display: block;
+		}
+
+		/* Modal Message Styles */
+		.modal-message {
+			text-align: center;
+			margin-bottom: 25px;
+		}
+
+		.modal-message p {
+			color: #666;
+			font-size: 14px;
+			line-height: 1.6;
+			margin-bottom: 12px;
+		}
+
+		.modal-message p:last-child {
+			margin-bottom: 0;
+		}
+
+		/* Passive Status Banner */
+		.passive-status-banner {
+			display: none;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 18px;
+			background: #ffebee;
+			border: 2px solid #e53935;
+			border-radius: 12px;
+			margin-bottom: 20px;
+		}
+
+		.passive-status-banner.visible {
+			display: flex;
+		}
+
+		.passive-status-banner svg {
+			width: 24px;
+			height: 24px;
+			color: #e53935;
+			flex-shrink: 0;
+		}
+
+		.passive-status-banner span {
+			font-size: 14px;
+			font-weight: 600;
+			color: #c62828;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		/* Success Button */
+		.btn-success {
+			background: #fff;
+			border: 1px solid #c8e6c9;
+			color: #43a047;
+		}
+
+		.btn-success:hover {
+			background: #e8f5e9;
+			border-color: #4caf50;
+		}
+
+		/* Modal */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s;
+		}
+
+		.modal-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		.modal {
+			background: #fff;
+			border-radius: 20px;
+			padding: 30px;
+			max-width: 450px;
+			width: 90%;
+			transform: translateY(20px);
+			transition: transform 0.3s;
+		}
+
+		.modal-overlay.active .modal {
+			transform: translateY(0);
+		}
+
+		.modal-icon {
+			width: 60px;
+			height: 60px;
+			border-radius: 50%;
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.modal-icon svg {
+			width: 30px;
+			height: 30px;
+			color: #4caf50;
+		}
+
+		.modal-icon.warning {
+			background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+		}
+
+		.modal-icon.warning svg {
+			color: #ff9800;
+		}
+
+		.modal h3 {
+			text-align: center;
+			font-size: 20px;
+			color: #1a1a2e;
+			margin-bottom: 10px;
+		}
+
+		.modal p {
+			text-align: center;
+			color: #666;
+			font-size: 14px;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		.modal-actions {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.modal-actions .btn {
+			min-width: 120px;
+			justify-content: center;
+		}
+
+		/* Success Message */
+		.success-message {
+			position: fixed;
+			top: 100px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-20px);
+			background: #4caf50;
+			color: #fff;
+			padding: 16px 30px;
+			border-radius: 12px;
+			font-size: 14px;
+			font-weight: 500;
+			box-shadow: 0 4px 20px rgba(76,175,80,0.4);
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s;
+			z-index: 1001;
+		}
+
+		.success-message.active {
+			opacity: 1;
+			visibility: visible;
+			transform: translateX(-50%) translateY(0);
+		}
+
+		.success-message svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Mobile Sidebar */
+		.mobile-sidebar {
+			position: fixed;
+			top: 0;
+			right: -300px;
+			width: 300px;
+			height: 100vh;
+			background: #fff;
+			z-index: 1001;
+			transition: right 0.3s ease;
+			display: flex;
+			flex-direction: column;
+			box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+		}
+
+		.mobile-sidebar.active {
+			right: 0;
+		}
+
+		.mobile-sidebar-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.mobile-sidebar-header .logo {
+			height: 35px;
+		}
+
+		.mobile-sidebar-close {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.mobile-sidebar-close:hover {
+			background: #eee;
+		}
+
+		.mobile-sidebar-close svg {
+			width: 20px;
+			height: 20px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu {
+			flex: 1;
+			overflow-y: auto;
+			padding: 15px 0;
+		}
+
+		.mobile-sidebar-menu ul {
+			list-style: none;
+		}
+
+		.mobile-sidebar-menu li a {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 14px 20px;
+			text-decoration: none;
+			color: #333;
+			font-size: 15px;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-menu li a:hover,
+		.mobile-sidebar-menu li.active a {
+			background: #f8f9fa;
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu li.active a {
+			border-right: 3px solid #002c77;
+			font-weight: 600;
+		}
+
+		.mobile-sidebar-menu .menu-icon {
+			width: 22px;
+			height: 22px;
+			color: #666;
+		}
+
+		.mobile-sidebar-menu li.active .menu-icon,
+		.mobile-sidebar-menu li a:hover .menu-icon {
+			color: #002c77;
+		}
+
+		.mobile-sidebar-menu .menu-divider {
+			height: 1px;
+			background: #eee;
+			margin: 10px 20px;
+		}
+
+		.mobile-sidebar-footer {
+			border-top: 1px solid #eee;
+			padding: 15px 20px;
+		}
+
+		.mobile-sidebar-footer-top {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 15px;
+		}
+
+		.mobile-sidebar-footer .date-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.mobile-sidebar-footer .date-info svg {
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.mobile-sidebar-footer .footer-icons {
+			display: flex;
+			gap: 10px;
+		}
+
+		.mobile-sidebar-footer .footer-icons a {
+			position: relative;
+			width: 36px;
+			height: 36px;
+			border-radius: 8px;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .footer-icons img {
+			width: 18px;
+			height: 18px;
+		}
+
+		.mobile-sidebar-footer .cart-badge {
+			position: absolute;
+			top: -4px;
+			right: -4px;
+			background: #e53935;
+			color: #fff;
+			font-size: 10px;
+			min-width: 16px;
+			height: 16px;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-sidebar-footer .logout-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			width: 100%;
+			padding: 12px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 10px;
+			color: #666;
+			font-size: 14px;
+			text-decoration: none;
+			transition: all 0.2s;
+		}
+
+		.mobile-sidebar-footer .logout-btn:hover {
+			background: #fee;
+			color: #e53935;
+		}
+
+		.mobile-sidebar-footer .logout-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.menu-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			opacity: 0;
+			visibility: hidden;
+			transition: all 0.3s;
+		}
+
+		.menu-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Existing Customer Notice */
+		.existing-customer-notice {
+			display: none;
+			align-items: center;
+			gap: 12px;
+			padding: 14px 18px;
+			background: #fff3e0;
+			border: 1px solid #ffe0b2;
+			border-radius: 10px;
+			margin-bottom: 20px;
+		}
+
+		.existing-customer-notice.visible {
+			display: flex;
+		}
+
+		.existing-customer-notice svg {
+			width: 22px;
+			height: 22px;
+			color: #ff9800;
+			flex-shrink: 0;
+		}
+
+		.existing-customer-notice span {
+			font-size: 13px;
+			color: #e65100;
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.header__nav nav {
+				display: none;
+			}
+
+			.header__mobile {
+				display: flex;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.header__user-panel .desktop-panel {
+				display: none;
+			}
+
+			.page-header-text h1 {
+				font-size: 20px;
+			}
+
+			.vkn-search-row {
+				flex-direction: column;
+			}
+
+			.vkn-search-btn {
+				align-items: stretch;
+			}
+
+			.vkn-search-btn button {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.product-row {
+				flex-wrap: wrap;
+				gap: 12px;
+			}
+
+			.product-image {
+				width: 50px;
+				height: 60px;
+			}
+
+			.product-info {
+				flex: 1;
+				min-width: calc(100% - 110px);
+			}
+
+			.product-inputs {
+				width: 100%;
+				order: 3;
+			}
+
+			.product-remove {
+				order: 2;
+			}
+
+			.form-actions {
+				flex-direction: column;
+			}
+
+			.form-actions .btn {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.modal-actions {
+				flex-direction: column;
+			}
+
+			.modal-actions .btn {
+				width: 100%;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.main-content {
+				padding: 20px 15px;
+			}
+
+			.form-section {
+				padding: 20px 15px;
+			}
+
+			.product-inputs {
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.input-group {
+				min-width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header -->
+	<header class="header">
+		<div class="container">
+			<div class="header__wrapper">
+				<div class="header__logo">
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/">
+						<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
+					</a>
+				</div>
+
+				<div class="header__nav">
+					<nav>
+						<ul>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">Raporlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">Sipariş Ver</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">Dolum Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">Siparişlerim</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">Çalışanlar</a></li>
+							<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout">Çıkış</a></li>
+						</ul>
+					</nav>
+
+					<div class="header__user-panel">
+						<ul class="desktop-panel">
+							<li>
+								<div class="date-display">
+									<span>21 Aralık</span>
+									<span>Cumartesi</span>
+								</div>
+							</li>
+							<li>
+								<a href="#" class="icon-btn">
+									<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+								</a>
+							</li>
+							<li>
+								<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart" class="icon-btn">
+									<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+									<span class="badge">3</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="header__mobile"><span></span></div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<a href="bayi-musteri-listesi.html" class="back-btn">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+				</svg>
+			</a>
+			<div class="page-header-text">
+				<h1 id="page-title">Yeni Müşteri Fiyat Tanımlama</h1>
+				<p id="page-subtitle">Müşteri için özel fiyat ve taahhüt tanımlayın</p>
+			</div>
+		</div>
+
+		<!-- Existing Customer Notice -->
+		<div class="existing-customer-notice" id="existing-notice">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+			</svg>
+			<span id="existing-notice-text">Bu müşteriniz için henüz fiyat tanımlamadınız.</span>
+		</div>
+
+		<!-- Passive Status Banner -->
+		<div class="passive-status-banner" id="passive-status-banner">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
+			</svg>
+			<span>MÜŞTERİ FİYATLARI PASİF DURUMDA</span>
+		</div>
+
+		<!-- VKN Search Section -->
+		<div class="form-section">
+			<div class="section-title">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+				</svg>
+				Müşteri Bilgileri
+			</div>
+
+			<div class="vkn-search-row">
+				<div class="vkn-input-wrapper">
+					<label for="vkn-input">Vergi Kimlik Numarası (VKN)</label>
+					<input type="text" id="vkn-input" placeholder="10 haneli VKN giriniz" maxlength="10">
+				</div>
+				<div class="vkn-search-btn">
+					<button type="button" id="vkn-search-btn">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+						</svg>
+						Sorgula
+					</button>
+				</div>
+			</div>
+
+			<div class="customer-info-box" id="customer-info-box">
+				<div class="info-label">Resmi Ünvan</div>
+				<div class="info-value" id="customer-name"></div>
+			</div>
+		</div>
+
+		<!-- Products Form Section -->
+		<div class="form-section products-form" id="products-form">
+			<div class="section-title">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+				</svg>
+				Ürün Fiyatları ve Taahhütler
+			</div>
+
+			<div id="product-rows">
+				<!-- Product rows will be added here dynamically -->
+			</div>
+
+		</div>
+
+		<!-- Form Actions -->
+		<div class="form-actions" id="form-actions" style="display: none;">
+			<button type="button" class="btn btn-warning" id="passive-customer-btn" style="display: none;">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
+				</svg>
+				Pasife Çek
+			</button>
+			<button type="button" class="btn btn-success" id="activate-customer-btn" style="display: none;">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+				</svg>
+				Aktif Et
+			</button>
+			<button type="button" class="btn btn-danger" id="delete-prices-btn" style="display: none;">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+				</svg>
+				Fiyatları Sil
+			</button>
+			<a href="bayi-musteri-listesi.html" class="btn btn-secondary">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+				</svg>
+				İptal
+			</a>
+			<button type="button" class="btn btn-primary" id="save-btn">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+				</svg>
+				Kaydet
+			</button>
+		</div>
+	</main>
+
+	<!-- Confirm Save Modal -->
+	<div class="modal-overlay" id="save-modal">
+		<div class="modal">
+			<div class="modal-icon">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+				</svg>
+			</div>
+			<h3>Fiyatları Kaydet</h3>
+			<p>Bu müşteri için tanımlanan fiyatları kaydetmek istediğinize emin misiniz?</p>
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="modal-cancel">İptal</button>
+				<button type="button" class="btn btn-primary" id="modal-confirm">Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Pasife Çek Modal -->
+	<div class="modal-overlay" id="passive-modal">
+		<div class="modal">
+			<div class="modal-icon warning">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+				</svg>
+			</div>
+			<h3>Müşteri Fiyatlarını Pasife Çek</h3>
+			<div class="modal-message">
+				<p>Müşterinizi pasife çekmek üzeresiniz.</p>
+				<p>Eğer bu işlemi tamamlarsanız müşteriniz için verdiğiniz fiyatlar silinecektir.</p>
+				<p>Müşteri sipariş vermek istediğinde baremli fiyatlar üzerinden alım yapacaktır.</p>
+			</div>
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="passive-modal-cancel">İptal</button>
+				<button type="button" class="btn btn-warning" id="passive-modal-confirm">Pasife Çek</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Fiyatları Sil Modal -->
+	<div class="modal-overlay" id="delete-prices-modal">
+		<div class="modal">
+			<div class="modal-icon warning">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+				</svg>
+			</div>
+			<h3>Müşteri Fiyatlarını Sil</h3>
+			<div class="modal-message">
+				<p>Müşterinizin tüm ürün fiyatlarını silmek üzeresiniz.</p>
+				<p>Bu işlem geri alınamaz.</p>
+				<p>Silme işleminden sonra müşteri baremli fiyatlar üzerinden alım yapabilecektir.</p>
+			</div>
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="delete-prices-cancel">İptal</button>
+				<button type="button" class="btn btn-danger" id="delete-prices-confirm">Fiyatları Sil</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Aktif Et Modal -->
+	<div class="modal-overlay" id="activate-modal">
+		<div class="modal">
+			<div class="modal-icon" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);">
+				<svg viewBox="0 0 24 24" fill="currentColor" style="color: #4caf50;">
+					<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+				</svg>
+			</div>
+			<h3>Müşteri Fiyatlarını Aktif Et</h3>
+			<div class="modal-message">
+				<p>Müşterinizin fiyatlarını aktif etmek üzeresiniz.</p>
+				<p>Aktif edildikten sonra müşteri tanımlı fiyatlar üzerinden alım yapabilecektir.</p>
+			</div>
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="activate-modal-cancel">İptal</button>
+				<button type="button" class="btn btn-success" id="activate-modal-confirm">Aktif Et</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Success Message -->
+	<div class="success-message" id="success-message">
+		<svg viewBox="0 0 24 24" fill="currentColor">
+			<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+		</svg>
+		<span>Fiyatlar başarıyla kaydedildi!</span>
+	</div>
+
+	<!-- Mobile Sidebar -->
+	<div class="mobile-sidebar" id="mobile-sidebar">
+		<div class="mobile-sidebar-header">
+			<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz" class="logo">
+			<div class="mobile-sidebar-close" id="mobile-sidebar-close">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+			</div>
+		</div>
+		<div class="mobile-sidebar-menu">
+			<ul>
+				<li>
+					<a href="bayi-musteri-listesi.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Müşteri Listesi
+					</a>
+				</li>
+				<li class="active">
+					<a href="bayi-musteri-ekle.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+						Müşteri Ekle
+					</a>
+				</li>
+				<li>
+					<a href="bayi-baremli-fiyat-tanimla.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+						Baremli Fiyatlar
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li>
+					<a href="bayi-anasayfa.html">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+						Anasayfa
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4 14h-2v-4h-2v4H9V9h2v2h2V9h2v8z"/></svg>
+						Raporlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+						Sipariş Ver
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+						Dolum Siparişlerim
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+						Siparişlerim
+					</a>
+				</li>
+				<div class="menu-divider"></div>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+						Çalışanlar
+					</a>
+				</li>
+				<li>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/work-schedule?siteName=ipragaz-b2c">
+						<svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+						Çalışma Takvimi
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="mobile-sidebar-footer">
+			<div class="mobile-sidebar-footer-top">
+				<div class="date-info">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM7 11h5v5H7z"/></svg>
+					<span>21 Aralık, Cumartesi</span>
+				</div>
+				<div class="footer-icons">
+					<a href="#">
+						<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+					</a>
+					<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart">
+						<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+						<span class="cart-badge">3</span>
+					</a>
+				</div>
+			</div>
+			<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout" class="logout-btn">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+				Çıkış Yap
+			</a>
+		</div>
+	</div>
+	<div class="menu-overlay" id="menu-overlay"></div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-prices-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script>
+		$(document).ready(async function() {
+			// Ürünler Supabase'den yüklenecek
+			var products = [];
+			var currentCustomer = null;
+			var currentDealerId = null;
+			var isEditMode = false;
+			var currentVkn = '';
+			var isLoading = false;
+
+			// Loading overlay
+			function showLoading(text) {
+				isLoading = true;
+				if (!$('#loading-overlay').length) {
+					$('body').append('<div id="loading-overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="width:40px;height:40px;border:3px solid #e0e0e0;border-top-color:#002c77;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 15px;"></div><div style="color:#333;font-size:14px;">' + (text || 'Yükleniyor...') + '</div></div></div>');
+					$('head').append('<style>@keyframes spin{to{transform:rotate(360deg)}}</style>');
+				} else {
+					$('#loading-overlay').find('div:last').text(text || 'Yükleniyor...');
+					$('#loading-overlay').show();
+				}
+			}
+
+			function hideLoading() {
+				isLoading = false;
+				$('#loading-overlay').hide();
+			}
+
+			// Error toast
+			function showError(message) {
+				if (!$('#error-toast').length) {
+					$('body').append('<div id="error-toast" style="position:fixed;top:100px;left:50%;transform:translateX(-50%);background:#e53935;color:#fff;padding:16px 30px;border-radius:12px;font-size:14px;box-shadow:0 4px 20px rgba(229,57,53,0.4);z-index:1002;display:none;"><svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;display:inline-block;vertical-align:middle;margin-right:10px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><span></span></div>');
+				}
+				$('#error-toast span').text(message);
+				$('#error-toast').fadeIn(300);
+				setTimeout(function() { $('#error-toast').fadeOut(300); }, 4000);
+			}
+
+			// Sayfa yüklendiğinde ürünleri ve bayi bilgisini al
+			async function initPage() {
+				showLoading('Ürünler yükleniyor...');
+				try {
+					// Ürünleri Supabase'den al
+					const { data: productsData, error: productsError } = await ProductsService.getAll();
+					if (productsError) throw new Error(productsError);
+
+					products = productsData.map(p => ({
+						id: p.id,
+						code: p.code,
+						name: p.name,
+						image: p.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png',
+						base_price: p.base_price
+					}));
+
+					// İlk bayi ID'sini al (gerçek uygulamada session'dan gelir)
+					const { data: dealers } = await DealersService.getAll();
+					if (dealers && dealers.length > 0) {
+						currentDealerId = dealers[0].id;
+					}
+
+					hideLoading();
+
+					// URL'de VKN varsa otomatik sorgula
+					var urlParams = new URLSearchParams(window.location.search);
+					var vknParam = urlParams.get('vkn');
+					if (vknParam) {
+						$('#vkn-input').val(vknParam);
+						await searchVkn(vknParam);
+					}
+				} catch (error) {
+					hideLoading();
+					showError('Sayfa yüklenirken hata oluştu: ' + error.message);
+					console.error(error);
+				}
+			}
+
+			// Sayfayı başlat
+			initPage();
+
+			// Mobile sidebar
+			var $sidebar = $('#mobile-sidebar');
+			var $overlay = $('#menu-overlay');
+			var $hamburger = $('.header__mobile');
+
+			$hamburger.on('click', function() {
+				$sidebar.addClass('active');
+				$overlay.addClass('active');
+				$('body').css('overflow', 'hidden');
+			});
+
+			$('#mobile-sidebar-close, #menu-overlay').on('click', function() {
+				$sidebar.removeClass('active');
+				$overlay.removeClass('active');
+				$('body').css('overflow', '');
+			});
+
+			// VKN search
+			$('#vkn-search-btn').on('click', async function() {
+				var vkn = $('#vkn-input').val().trim();
+				if (vkn.length === 10) {
+					await searchVkn(vkn);
+				} else {
+					$('#customer-info-box').addClass('visible error');
+					$('#customer-name').text('Lütfen 10 haneli geçerli bir VKN giriniz.');
+				}
+			});
+
+			$('#vkn-input').on('keypress', async function(e) {
+				if (e.which === 13) {
+					$('#vkn-search-btn').click();
+				}
+			});
+
+			// Supabase ile VKN sorgulama
+			async function searchVkn(vkn) {
+				currentVkn = vkn;
+				showLoading('Müşteri sorgulanıyor...');
+
+				try {
+					// Supabase'den müşteriyi sorgula
+					const { data: customer, error } = await CustomersService.getByVkn(vkn);
+
+					if (error) {
+						hideLoading();
+						showError('Müşteri sorgulanırken hata oluştu');
+						return;
+					}
+
+					hideLoading();
+
+					if (customer) {
+						// Mevcut müşteri bulundu
+						currentCustomer = customer;
+						isEditMode = true;
+
+						$('#customer-info-box').removeClass('error').addClass('visible');
+						$('#customer-name').text(customer.name + (customer.company_name ? ' - ' + customer.company_name : ''));
+						$('#page-title').text('Müşteri Fiyat Düzenleme');
+						$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
+
+						// Fiyat tanımlanmış mı kontrolü
+						var customerPrices = customer.customer_prices || [];
+						var hasPrices = customerPrices.some(function(p) { return p.unit_price !== undefined; });
+
+						if (!hasPrices) {
+							$('#existing-notice').addClass('visible');
+							$('#existing-notice-text').text('Bu müşteriniz için henüz fiyat tanımlamadınız.');
+							$('#passive-status-banner').removeClass('visible');
+							$('#passive-customer-btn').hide();
+							$('#activate-customer-btn').hide();
+							$('#delete-prices-btn').hide();
+						} else {
+							$('#existing-notice').removeClass('visible');
+
+							// Pasif durum kontrolü
+							if (!customer.is_active) {
+								$('#passive-status-banner').addClass('visible');
+								$('#passive-customer-btn').hide();
+								$('#activate-customer-btn').show();
+							} else {
+								$('#passive-status-banner').removeClass('visible');
+								$('#passive-customer-btn').show();
+								$('#activate-customer-btn').hide();
+							}
+							$('#delete-prices-btn').show();
+						}
+
+						// Tüm ürünleri göster, varsa fiyatları doldur
+						$('#product-rows').empty();
+
+						products.forEach(function(product) {
+							var existingPrice = customerPrices.find(function(cp) {
+								return cp.product && cp.product.id === product.id;
+							});
+
+							var qty = existingPrice ? existingPrice.commitment_quantity : '';
+							var price = existingPrice ? existingPrice.unit_price : '';
+							var thisMonth = existingPrice ? existingPrice.this_month_quantity : undefined;
+							var lastMonth = existingPrice ? existingPrice.last_month_quantity : undefined;
+							addProductRow(product, qty, price, thisMonth, lastMonth);
+						});
+
+						$('#products-form').addClass('visible');
+						$('#form-actions').show();
+					} else {
+						// Yeni müşteri
+						currentCustomer = null;
+						isEditMode = false;
+
+						$('#customer-info-box').removeClass('error').addClass('visible');
+						$('#customer-name').text('YENİ MÜŞTERİ - Şirket Ünvanı (VKN: ' + vkn + ')');
+
+						$('#page-title').text('Yeni Müşteri Fiyat Tanımlama');
+						$('#page-subtitle').text('Müşteri için özel fiyat ve taahhüt tanımlayın');
+						$('#existing-notice').addClass('visible');
+						$('#existing-notice-text').text('Bu VKN ile kayıtlı müşteri bulunamadı. Yeni müşteri olarak eklenecektir.');
+						$('#passive-status-banner').removeClass('visible');
+						$('#passive-customer-btn').hide();
+						$('#activate-customer-btn').hide();
+						$('#delete-prices-btn').hide();
+
+						// Tüm ürünleri boş fiyatlarla göster
+						$('#product-rows').empty();
+
+						products.forEach(function(product) {
+							addProductRow(product, '', '');
+						});
+
+						$('#products-form').addClass('visible');
+						$('#form-actions').show();
+					}
+				} catch (err) {
+					hideLoading();
+					showError('Bir hata oluştu: ' + err.message);
+					console.error(err);
+				}
+			}
+
+			function addProductRow(product, quantity, price, thisMonth, lastMonth) {
+
+				// Calculate percentages
+				var target = quantity || 0;
+				var hasCommitment = target > 0;
+
+				// Tüketim değerleri
+				var thisMonthVal = thisMonth || 0;
+				var lastMonthVal = lastMonth || 0;
+
+				// Yüzde ve değer hesaplama
+				var thisMonthPercent, lastMonthPercent;
+				var thisMonthValueText, lastMonthValueText;
+
+				if (hasCommitment) {
+					// Taahhüt var: X/Y formatı ve yüzde hesapla
+					thisMonthPercent = Math.round((thisMonthVal / target) * 100);
+					lastMonthPercent = Math.round((lastMonthVal / target) * 100);
+					thisMonthValueText = thisMonthVal + '/' + target;
+					lastMonthValueText = lastMonthVal + '/' + target;
+				} else {
+					// Taahhüt yok: Sadece tüketim sayısı, %100, tam dolu barem
+					thisMonthPercent = 100;
+					lastMonthPercent = 100;
+					thisMonthValueText = thisMonthVal;
+					lastMonthValueText = lastMonthVal;
+				}
+
+				// Determine color class based on percentage
+				function getColorClass(percent, hasCommitment) {
+					if (!hasCommitment) return 'good'; // Taahhüt yoksa her zaman yeşil
+					if (percent >= 80) return 'good';
+					if (percent >= 50) return 'medium';
+					return 'low';
+				}
+
+				var thisMonthClass = getColorClass(thisMonthPercent, hasCommitment);
+				var lastMonthClass = getColorClass(lastMonthPercent, hasCommitment);
+
+				// Tüketim verisi varsa stats göster (0 da olabilir)
+				var hasStats = thisMonth !== undefined || lastMonth !== undefined;
+				var statsVisible = hasStats ? ' visible' : '';
+
+				var rowHtml = '<div class="product-row" data-product-id="' + product.id + '">' +
+					'<div class="product-image">' +
+						'<img src="' + product.image + '" alt="' + product.name + '">' +
+					'</div>' +
+					'<div class="product-info">' +
+						'<div class="product-name">' + product.name + '</div>' +
+						'<div class="product-code">' + product.code + '</div>' +
+					'</div>' +
+					'<div class="product-inputs">' +
+						'<div class="input-group">' +
+							'<label>Taahhüt Adedi</label>' +
+							'<div class="input-suffix">' +
+								'<input type="number" class="quantity-input" placeholder="0" value="' + (quantity || '') + '" min="0">' +
+								'<span>adet</span>' +
+							'</div>' +
+						'</div>' +
+						'<div class="input-group">' +
+							'<label>Birim Fiyat <span style="color:#e53935;">*</span></label>' +
+							'<div class="input-suffix">' +
+								'<input type="number" class="price-input" placeholder="0" value="' + (price || '') + '" min="0" step="0.01" required>' +
+								'<span>TL</span>' +
+							'</div>' +
+							'<div class="error-message">Fiyat girilmesi zorunludur</div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="product-stats' + statsVisible + '">' +
+						'<div class="stat-box">' +
+							'<div class="stat-box-header">' +
+								'<div class="stat-box-title">Bu Ay</div>' +
+							'</div>' +
+							'<div class="stat-box-value">' + thisMonthValueText + '</div>' +
+							'<div class="stat-progress">' +
+								'<div class="stat-progress-bar">' +
+									'<div class="stat-progress-bar-fill ' + thisMonthClass + '" style="width: ' + Math.min(thisMonthPercent, 100) + '%"></div>' +
+								'</div>' +
+								'<span class="stat-progress-percent ' + thisMonthClass + '">%' + thisMonthPercent + '</span>' +
+							'</div>' +
+						'</div>' +
+						'<div class="stat-box">' +
+							'<div class="stat-box-header">' +
+								'<div class="stat-box-title">Geçen Ay</div>' +
+							'</div>' +
+							'<div class="stat-box-value">' + lastMonthValueText + '</div>' +
+							'<div class="stat-progress">' +
+								'<div class="stat-progress-bar">' +
+									'<div class="stat-progress-bar-fill ' + lastMonthClass + '" style="width: ' + Math.min(lastMonthPercent, 100) + '%"></div>' +
+								'</div>' +
+								'<span class="stat-progress-percent ' + lastMonthClass + '">%' + lastMonthPercent + '</span>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+				'</div>';
+
+				$('#product-rows').append(rowHtml);
+			}
+
+			// Clear error on input
+			$(document).on('input', '.price-input', function() {
+				var $inputGroup = $(this).closest('.input-group');
+				if ($(this).val() && parseFloat($(this).val()) > 0) {
+					$inputGroup.removeClass('error');
+				}
+			});
+
+			// Save button
+			$('#save-btn').on('click', function() {
+				// Validate all price inputs
+				var hasError = false;
+
+				$('.product-row').each(function() {
+					var $row = $(this);
+					var $priceInput = $row.find('.price-input');
+					var $inputGroup = $priceInput.closest('.input-group');
+					var priceVal = $priceInput.val();
+
+					if (!priceVal || parseFloat(priceVal) <= 0) {
+						$inputGroup.addClass('error');
+						hasError = true;
+					} else {
+						$inputGroup.removeClass('error');
+					}
+				});
+
+				if (hasError) {
+					// Scroll to first error
+					$('html, body').animate({
+						scrollTop: $('.input-group.error').first().offset().top - 100
+					}, 300);
+					return;
+				}
+
+				$('#save-modal').addClass('active');
+			});
+
+			$('#modal-cancel').on('click', function() {
+				$('#save-modal').removeClass('active');
+			});
+
+			$('#modal-confirm').on('click', async function() {
+				$('#save-modal').removeClass('active');
+				showLoading('Kaydediliyor...');
+
+				try {
+					var customerId;
+
+					// Yeni müşteri mi yoksa mevcut mu?
+					if (!isEditMode || !currentCustomer) {
+						// Yeni müşteri oluştur
+						var customerData = {
+							vkn: currentVkn,
+							name: 'Müşteri ' + currentVkn, // Gerçek uygulamada form'dan alınır
+							company_name: $('#customer-name').text().replace('YENİ MÜŞTERİ - ', '').split(' (VKN')[0],
+							dealer_id: currentDealerId,
+							is_active: true
+						};
+
+						const { data: newCustomer, error: customerError } = await CustomersService.create(customerData);
+						if (customerError) throw new Error(customerError);
+						customerId = newCustomer.id;
+					} else {
+						customerId = currentCustomer.id;
+					}
+
+					// Fiyatları topla
+					var pricesArray = [];
+					$('.product-row').each(function() {
+						var $row = $(this);
+						var productId = $row.data('product-id');
+						var price = parseFloat($row.find('.price-input').val()) || 0;
+						var quantity = parseInt($row.find('.quantity-input').val()) || 0;
+
+						if (price > 0) {
+							pricesArray.push({
+								customer_id: customerId,
+								product_id: productId,
+								dealer_id: currentDealerId,
+								unit_price: price,
+								commitment_quantity: quantity,
+								is_active: true
+							});
+						}
+					});
+
+					// Fiyatları kaydet (upsert)
+					if (pricesArray.length > 0) {
+						const { error: pricesError } = await CustomerPricesService.bulkUpsert(pricesArray);
+						if (pricesError) throw new Error(pricesError);
+					}
+
+					hideLoading();
+					$('#success-message').addClass('active');
+
+					setTimeout(function() {
+						$('#success-message').removeClass('active');
+						window.location.href = 'bayi-musteri-listesi.html';
+					}, 2000);
+
+				} catch (err) {
+					hideLoading();
+					showError('Kayıt sırasında hata oluştu: ' + err.message);
+					console.error(err);
+				}
+			});
+
+			// Pasife Çek handlers
+			$('#passive-customer-btn').on('click', function() {
+				$('#passive-modal').addClass('active');
+			});
+
+			$('#passive-modal-cancel').on('click', function() {
+				$('#passive-modal').removeClass('active');
+			});
+
+			$('#passive-modal-confirm').on('click', async function() {
+				$('#passive-modal').removeClass('active');
+				showLoading('İşlem yapılıyor...');
+
+				try {
+					if (currentCustomer) {
+						// Müşteriyi pasife al
+						const { error } = await CustomersService.deactivate(currentCustomer.id);
+						if (error) throw new Error(error);
+					}
+
+					hideLoading();
+
+					// Update UI - show passive banner, swap buttons
+					$('#passive-status-banner').addClass('visible');
+					$('#passive-customer-btn').hide();
+					$('#activate-customer-btn').show();
+
+					// Show success message
+					$('#success-message').find('span').text('Müşteri fiyatları pasife çekildi!');
+					$('#success-message').addClass('active');
+
+					setTimeout(function() {
+						$('#success-message').removeClass('active');
+					}, 2000);
+				} catch (err) {
+					hideLoading();
+					showError('İşlem sırasında hata oluştu: ' + err.message);
+				}
+			});
+
+			// Aktif Et handlers
+			$('#activate-customer-btn').on('click', function() {
+				$('#activate-modal').addClass('active');
+			});
+
+			$('#activate-modal-cancel').on('click', function() {
+				$('#activate-modal').removeClass('active');
+			});
+
+			$('#activate-modal-confirm').on('click', async function() {
+				$('#activate-modal').removeClass('active');
+				showLoading('İşlem yapılıyor...');
+
+				try {
+					if (currentCustomer) {
+						// Müşteriyi aktif et
+						const { error } = await CustomersService.activate(currentCustomer.id);
+						if (error) throw new Error(error);
+					}
+
+					hideLoading();
+
+					// Update UI - hide passive banner, swap buttons
+					$('#passive-status-banner').removeClass('visible');
+					$('#passive-customer-btn').show();
+					$('#activate-customer-btn').hide();
+
+					// Show success message
+					$('#success-message').find('span').text('Müşteri fiyatları aktif edildi!');
+					$('#success-message').addClass('active');
+
+					setTimeout(function() {
+						$('#success-message').removeClass('active');
+					}, 2000);
+				} catch (err) {
+					hideLoading();
+					showError('İşlem sırasında hata oluştu: ' + err.message);
+				}
+			});
+
+			// Fiyatları Sil handlers
+			$('#delete-prices-btn').on('click', function() {
+				$('#delete-prices-modal').addClass('active');
+			});
+
+			$('#delete-prices-cancel').on('click', function() {
+				$('#delete-prices-modal').removeClass('active');
+			});
+
+			$('#delete-prices-confirm').on('click', async function() {
+				$('#delete-prices-modal').removeClass('active');
+				showLoading('Fiyatlar siliniyor...');
+
+				try {
+					if (currentCustomer) {
+						// Supabase'de fiyatları pasife al
+						const { error } = await CustomerPricesService.deactivateAllForCustomer(currentCustomer.id);
+						if (error) throw new Error(error);
+					}
+
+					hideLoading();
+
+					// Clear all price and quantity inputs
+					$('.product-row').each(function() {
+						$(this).find('.price-input').val('');
+						$(this).find('.quantity-input').val('');
+						$(this).find('.input-group').removeClass('error');
+					});
+
+					// Show success message
+					$('#success-message').find('span').text('Müşteri fiyatları başarıyla silindi!');
+					$('#success-message').addClass('active');
+
+					setTimeout(function() {
+						$('#success-message').removeClass('active');
+					}, 2000);
+				} catch (err) {
+					hideLoading();
+					showError('İşlem sırasında hata oluştu: ' + err.message);
+				}
+			});
+
+			// Close modals on overlay click
+			$('.modal-overlay').on('click', function(e) {
+				if ($(e.target).hasClass('modal-overlay')) {
+					$(this).removeClass('active');
+				}
+			});
+		});
+	</script>
+</body>
+</html>

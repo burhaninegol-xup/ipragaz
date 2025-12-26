@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sipariş Detayı - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #fff;
+			color: #333;
+			min-height: 100vh;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			padding: 20px 40px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #eee;
+		}
+
+		.header-logo svg {
+			height: 40px;
+			width: auto;
+		}
+
+		/* Stepper */
+		.stepper {
+			display: flex;
+			align-items: center;
+			gap: 0;
+		}
+
+		.step {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.step-number {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		.step-number.active {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.step-number.inactive {
+			border: 1px solid #ccc;
+			color: #999;
+			background: #fff;
+		}
+
+		.step-label {
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		.step-label.active {
+			color: #333;
+		}
+
+		.step-label.inactive {
+			color: #999;
+		}
+
+		.step-line {
+			width: 50px;
+			height: 1px;
+			background: #ddd;
+			margin: 0 15px;
+		}
+
+		/* Main Layout */
+		.main-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 40px;
+			display: flex;
+			gap: 60px;
+		}
+
+		/* Content Area */
+		.content {
+			flex: 1;
+		}
+
+		.content-header {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 20px;
+		}
+
+		.back-arrow {
+			color: #333;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.back-arrow svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.content-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.content-divider {
+			height: 1px;
+			background: #eee;
+			margin-bottom: 10px;
+		}
+
+		/* Questions */
+		.question-item {
+			padding: 25px 0;
+		}
+
+		.question-text {
+			color: #666;
+			font-size: 14px;
+			line-height: 1.7;
+			margin-bottom: 18px;
+		}
+
+		.radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.radio-option {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			cursor: pointer;
+		}
+
+		.radio-option input[type="radio"] {
+			width: 18px;
+			height: 18px;
+			accent-color: #e31e24;
+			cursor: pointer;
+		}
+
+		.radio-option label {
+			font-size: 14px;
+			color: #333;
+			cursor: pointer;
+		}
+
+		/* Sidebar */
+		.sidebar {
+			width: 280px;
+			flex-shrink: 0;
+		}
+
+		.sidebar-content {
+			position: sticky;
+			top: 40px;
+		}
+
+		.btn-proceed {
+			width: 100%;
+			padding: 16px 30px;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			transition: background 0.2s, transform 0.2s;
+		}
+
+		.btn-proceed:hover {
+			background: #c41a1f;
+			transform: translateY(-1px);
+		}
+
+		.btn-proceed:active {
+			transform: translateY(0);
+		}
+
+		.btn-proceed svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.checkbox-container {
+			margin-top: 25px;
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
+		.checkbox-container input[type="checkbox"] {
+			width: 18px;
+			height: 18px;
+			accent-color: #e31e24;
+			cursor: pointer;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+
+		.checkbox-container label {
+			font-size: 13px;
+			color: #333;
+			line-height: 1.5;
+			cursor: pointer;
+		}
+
+		/* Responsive */
+		@media (max-width: 900px) {
+			.header {
+				padding: 15px 20px;
+				flex-direction: column;
+				gap: 20px;
+			}
+
+			.stepper {
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.step-line {
+				width: 30px;
+				margin: 0 10px;
+			}
+
+			.main-container {
+				flex-direction: column;
+				padding: 20px;
+				gap: 30px;
+			}
+
+			.sidebar {
+				width: 100%;
+				order: -1;
+			}
+
+			.sidebar-content {
+				position: static;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.step-label {
+				display: none;
+			}
+
+			.step-line {
+				width: 20px;
+			}
+
+			.question-text {
+				font-size: 13px;
+			}
+		}
+
+		/* Error Overlay */
+		.error-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.6);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.error-overlay.active {
+			display: flex;
+		}
+
+		.error-modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 40px;
+			max-width: 400px;
+			width: 90%;
+			text-align: center;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		}
+
+		.error-icon {
+			width: 60px;
+			height: 60px;
+			background: #fff5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.error-icon svg {
+			width: 32px;
+			height: 32px;
+			color: #e31e24;
+		}
+
+		.error-message {
+			font-size: 15px;
+			color: #333;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		.error-phone {
+			font-weight: 700;
+			color: #e31e24;
+		}
+
+		.btn-close-overlay {
+			padding: 12px 40px;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 25px;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-close-overlay:hover {
+			background: #c41a1f;
+		}
+	</style>
+</head>
+<body>
+	<!-- Header -->
+	<header class="header">
+		<!-- Logo -->
+		<a href="isyerim-musteri-anasayfa.html" class="header-logo">
+			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+				<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+				<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+			</svg>
+		</a>
+
+		<!-- Stepper -->
+		<div class="stepper">
+			<div class="step">
+				<span class="step-number active">1</span>
+				<span class="step-label active">Sipariş Detayı</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number inactive">2</span>
+				<span class="step-label inactive">Sepet</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number inactive">3</span>
+				<span class="step-label inactive">Teslimat ve Ödeme</span>
+			</div>
+		</div>
+
+		<!-- Spacer for alignment -->
+		<div style="width: 150px;"></div>
+	</header>
+
+	<!-- Main Container -->
+	<div class="main-container">
+		<!-- Content -->
+		<div class="content">
+			<!-- Header -->
+			<div class="content-header">
+				<a href="isyerim-musteri-anasayfa.html" class="back-arrow">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M19 12H5M12 19l-7-7 7-7"/>
+					</svg>
+				</a>
+				<h1 class="content-title">Sipariş Detayı</h1>
+			</div>
+			<div class="content-divider"></div>
+
+			<!-- Questions -->
+			<div class="questions">
+				<!-- Question 1 -->
+				<div class="question-item">
+					<p class="question-text">1-Kullanılan ve depolanan LPG tüpleri farklı alanlardadır. Depolama ve kullanım alanları zemin seviyesi altında (bodrum v.s.) değildir. Bu ortamlarda havalandırma menfezi vardır.</p>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input type="radio" id="q1-yes" name="question1" value="yes">
+							<label for="q1-yes">Evet</label>
+						</div>
+						<div class="radio-option">
+							<input type="radio" id="q1-no" name="question1" value="no">
+							<label for="q1-no">Hayır</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Question 2 -->
+				<div class="question-item">
+					<p class="question-text">2-Kullandığımız LPG Dedantörü, LPG hortumu, LPG boru tesisatı ve diğer ekipmanlar yasal standartlara uygundur ve LPG hortum uzunluğu 150 cm'den kısadır.</p>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input type="radio" id="q2-yes" name="question2" value="yes">
+							<label for="q2-yes">Evet</label>
+						</div>
+						<div class="radio-option">
+							<input type="radio" id="q2-no" name="question2" value="no">
+							<label for="q2-no">Hayır</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Question 3 -->
+				<div class="question-item">
+					<p class="question-text">3-LPG tüplerinin depolanacağı ve kullanılacağı alanlara 1 m den daha az mesafede gaz kaçaklarının toplanarak tehlikeli olabileceği yerler (kuyu, rögar, bodrum penceresi, kömürlük girişi, havalandırma kanalı vb.) bulunmamaktadır.</p>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input type="radio" id="q3-yes" name="question3" value="yes">
+							<label for="q3-yes">Evet</label>
+						</div>
+						<div class="radio-option">
+							<input type="radio" id="q3-no" name="question3" value="no">
+							<label for="q3-no">Hayır</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Question 4 -->
+				<div class="question-item">
+					<p class="question-text">4-LPG Tüplerinin depolanacağı veya kullanılacağı alanlara 3 m den daha az mesafede elektrikli cihaz (klima motoru/fan Motoru/Jeneratör vb.), yanıcı ve/veya kolay tutuşabilen madde (ot, talaş; yonga, paçavra, üstüpü, benzin, mazot vb.) bulunmamaktadır.</p>
+					<div class="radio-group">
+						<div class="radio-option">
+							<input type="radio" id="q4-yes" name="question4" value="yes">
+							<label for="q4-yes">Evet</label>
+						</div>
+						<div class="radio-option">
+							<input type="radio" id="q4-no" name="question4" value="no">
+							<label for="q4-no">Hayır</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<aside class="sidebar">
+			<div class="sidebar-content">
+				<button class="btn-proceed" id="proceed-btn">
+					Sepete İlerle
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M5 12h14M12 5l7 7-7 7"/>
+					</svg>
+				</button>
+
+				<div class="checkbox-container">
+					<input type="checkbox" id="accept-terms">
+					<label for="accept-terms">Beyanlarımın doğruluğunu kabul ederim.</label>
+				</div>
+			</div>
+		</aside>
+	</div>
+
+	<!-- Error Overlay -->
+	<div class="error-overlay" id="errorOverlay">
+		<div class="error-modal">
+			<div class="error-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="8" x2="12" y2="12"/>
+					<line x1="12" y1="16" x2="12.01" y2="16"/>
+				</svg>
+			</div>
+			<p class="error-message">Siparişinize devam edemezsiniz. <span class="error-phone">444 47 72</span> numaralı çağrı merkezini arayabilirsiniz.</p>
+			<button class="btn-close-overlay" id="closeOverlay">Tamam</button>
+		</div>
+	</div>
+
+	<script>
+		// Form validation
+		document.getElementById('proceed-btn').addEventListener('click', function() {
+			var checkbox = document.getElementById('accept-terms');
+			var allAnswered = true;
+			var hasNoAnswer = false;
+			var questions = ['question1', 'question2', 'question3', 'question4'];
+
+			// Check if all questions are answered and if any is "no"
+			questions.forEach(function(q) {
+				var selected = document.querySelector('input[name="' + q + '"]:checked');
+				if (!selected) {
+					allAnswered = false;
+				} else if (selected.value === 'no') {
+					hasNoAnswer = true;
+				}
+			});
+
+			// 1. Önce tüm soruların işaretli olup olmadığını kontrol et
+			if (!allAnswered) {
+				alert('Lütfen tüm soruları cevaplayınız.');
+				return;
+			}
+
+			// 2. Beyanların doğruluğu checkbox kontrolü
+			if (!checkbox.checked) {
+				alert('Lütfen beyanlarınızın doğruluğunu kabul ediniz.');
+				return;
+			}
+
+			// 3. Tüm cevapların EVET olduğunu kontrol et
+			if (hasNoAnswer) {
+				document.getElementById('errorOverlay').classList.add('active');
+				return;
+			}
+
+			// Session'a sorular dolduruldu bilgisini kaydet
+			sessionStorage.setItem('isyerim_questions_completed', 'true');
+
+			// Proceed to cart page
+			window.location.href = 'isyerim-musteri-sepet.html';
+		});
+
+		// Close overlay
+		document.getElementById('closeOverlay').addEventListener('click', function() {
+			document.getElementById('errorOverlay').classList.remove('active');
+		});
+
+		// Close overlay when clicking outside modal
+		document.getElementById('errorOverlay').addEventListener('click', function(e) {
+			if (e.target === this) {
+				this.classList.remove('active');
+			}
+		});
+	</script>
+</body>
+</html>

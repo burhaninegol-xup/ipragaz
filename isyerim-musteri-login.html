@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İşyerim Giriş - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh;
+			background-color: #e31e24;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			overflow: hidden;
+		}
+
+		/* B Pattern Background */
+		.bg-pattern {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			pointer-events: none;
+		}
+
+		.bg-pattern::before {
+			content: 'B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B';
+			position: absolute;
+			top: -50px;
+			left: -50px;
+			width: calc(100% + 100px);
+			height: calc(100% + 100px);
+			font-size: 80px;
+			font-weight: 700;
+			color: rgba(255, 255, 255, 0.08);
+			word-spacing: 30px;
+			line-height: 1.2;
+			letter-spacing: 20px;
+			word-break: break-all;
+		}
+
+		/* Login Card */
+		.login-container {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			max-width: 420px;
+			padding: 20px;
+		}
+
+		.login-card {
+			background: #fff;
+			border-radius: 12px;
+			padding: 40px 35px;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Logo */
+		.logo {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.logo svg {
+			width: 140px;
+			height: auto;
+		}
+
+		/* Back Link / Title */
+		.back-link {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			color: #333;
+			font-size: 18px;
+			font-weight: 600;
+			margin-bottom: 20px;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.back-link:hover {
+			color: #e31e24;
+		}
+
+		.back-link svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Description */
+		.description {
+			color: #666;
+			font-size: 14px;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		/* Form */
+		.form-group {
+			margin-bottom: 25px;
+		}
+
+		.form-group label {
+			display: block;
+			color: #888;
+			font-size: 12px;
+			margin-bottom: 8px;
+		}
+
+		.form-group input {
+			width: 100%;
+			padding: 14px 16px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 15px;
+			font-family: inherit;
+			color: #333;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.form-group input:focus {
+			outline: none;
+			border-color: #e31e24;
+			box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+		}
+
+		.form-group input::placeholder {
+			color: #bbb;
+		}
+
+		/* Submit Button */
+		.btn-submit {
+			width: 100%;
+			padding: 14px 20px;
+			background: #c41e24;
+			border: none;
+			border-radius: 25px;
+			color: #fff;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s;
+		}
+
+		.btn-submit:hover {
+			background: #a81a1f;
+			transform: translateY(-1px);
+		}
+
+		.btn-submit:active {
+			transform: translateY(0);
+		}
+
+		/* Responsive */
+		@media (max-width: 480px) {
+			.login-card {
+				padding: 30px 25px;
+			}
+
+			.logo svg {
+				width: 120px;
+			}
+
+			.back-link {
+				font-size: 16px;
+			}
+
+			.bg-pattern::before {
+				font-size: 50px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Background Pattern -->
+	<div class="bg-pattern"></div>
+
+	<!-- Login Container -->
+	<div class="login-container">
+		<div class="login-card">
+			<!-- Logo -->
+			<div class="logo">
+				<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+					<!-- Power icon -->
+					<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+					<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+					<!-- iPRAGAZ text -->
+					<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+				</svg>
+			</div>
+
+			<!-- Back Link / Title -->
+			<a href="#" class="back-link">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M19 12H5M12 19l-7-7 7-7"/>
+				</svg>
+				Giriş Yap
+			</a>
+
+			<!-- Description -->
+			<p class="description">
+				Sipariş verebilmeniz ve size özel kampanyalardan yararlanabilmeniz için telefon numaranızı girmelisiniz.
+			</p>
+
+			<!-- Phone Input -->
+			<div class="form-group">
+				<label>Telefon Numarası</label>
+				<input type="tel" id="phone" placeholder="5xx xxx xxxx" maxlength="12">
+			</div>
+
+			<!-- Submit Button -->
+			<button class="btn-submit" id="submit-btn">Devam</button>
+		</div>
+	</div>
+
+	<script>
+		// Yeni giriş için tüm session değerlerini temizle
+		sessionStorage.removeItem('isyerim_cart');
+		sessionStorage.removeItem('tekliften_cekildi');
+		sessionStorage.removeItem('selected_bayi');
+		sessionStorage.removeItem('isNewUser');
+
+		// Phone number formatting
+		document.getElementById('phone').addEventListener('input', function(e) {
+			let value = e.target.value.replace(/\D/g, '');
+
+			// Format: 5xx xxx xxxx
+			if (value.length > 0) {
+				if (value.length <= 3) {
+					value = value;
+				} else if (value.length <= 6) {
+					value = value.slice(0, 3) + ' ' + value.slice(3);
+				} else {
+					value = value.slice(0, 3) + ' ' + value.slice(3, 6) + ' ' + value.slice(6, 10);
+				}
+			}
+
+			e.target.value = value;
+		});
+
+		// Submit button click
+		document.getElementById('submit-btn').addEventListener('click', function() {
+			var phone = document.getElementById('phone').value.replace(/\s/g, '');
+
+			if (phone.length < 10) {
+				alert('Lütfen geçerli bir telefon numarası giriniz.');
+				return;
+			}
+
+			// Yeni üye kontrolü (1111111111 = yeni üye)
+			var isNewUser = (phone === '1111111111');
+
+			// Redirect to OTP page
+			window.location.href = 'isyerim-musteri-otp.html?phone=' + phone + '&isNewUser=' + isNewUser;
+		});
+	</script>
+</body>
+</html>

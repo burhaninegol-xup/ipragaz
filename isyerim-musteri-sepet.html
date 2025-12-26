@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sepet - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #fff;
+			color: #333;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			padding: 20px 60px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid #eee;
+		}
+
+		.header-logo svg {
+			height: 40px;
+			width: auto;
+		}
+
+		/* Stepper */
+		.stepper {
+			display: flex;
+			align-items: center;
+			gap: 0;
+		}
+
+		.step {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.step-number {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		.step-number.active {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.step-number.completed {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.step-number.inactive {
+			border: 1px solid #ccc;
+			color: #999;
+			background: #fff;
+		}
+
+		.step-label {
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		.step-label.active {
+			color: #333;
+		}
+
+		.step-label.inactive {
+			color: #999;
+		}
+
+		.step-line {
+			width: 80px;
+			height: 1px;
+			background: #ddd;
+			margin: 0 15px;
+		}
+
+		/* Main Layout */
+		.main-container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 40px 60px;
+			display: flex;
+			gap: 80px;
+			flex: 1;
+			width: 100%;
+		}
+
+		/* Cart Content */
+		.cart-content {
+			flex: 2;
+		}
+
+		.cart-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+		}
+
+		.cart-title-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.back-arrow {
+			color: #333;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.back-arrow svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.cart-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.cart-clear {
+			color: #e31e24;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+		}
+
+		.cart-clear svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Cart Item */
+		.cart-item {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			padding: 20px 0;
+			border-top: 1px solid #eee;
+			border-bottom: 1px solid #eee;
+		}
+
+		.cart-item-image {
+			width: 100px;
+			height: 120px;
+			border: 1px solid #eee;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 10px;
+		}
+
+		.cart-item-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.cart-item-details {
+			flex: 1;
+		}
+
+		.cart-item-name {
+			font-size: 15px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 30px;
+		}
+
+		.quantity-control {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.quantity-btn {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.quantity-btn.delete {
+			background: transparent;
+			color: #999;
+		}
+
+		.quantity-btn.delete:hover {
+			color: #e31e24;
+		}
+
+		.quantity-btn.delete svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.quantity-btn.add {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.quantity-btn.add:hover {
+			background: #c41a1f;
+		}
+
+		.quantity-btn.add svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		.quantity-value {
+			font-size: 14px;
+			color: #333;
+		}
+
+		/* Sidebar - Order Summary */
+		.sidebar {
+			width: 380px;
+			flex-shrink: 0;
+		}
+
+		.order-summary {
+			background: #fff;
+		}
+
+		.order-summary-title {
+			font-size: 20px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 5px;
+		}
+
+		.order-summary-count {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 20px;
+		}
+
+		.order-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 10px;
+		}
+
+		.order-row-label {
+			font-size: 14px;
+			color: #333;
+		}
+
+		.order-row-value {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.order-row-value span {
+			font-weight: 400;
+			margin-left: 5px;
+		}
+
+		/* Campaign Section */
+		.campaign-section {
+			margin-top: 25px;
+			border: 1px solid #eee;
+			border-radius: 8px;
+			overflow: hidden;
+		}
+
+		.campaign-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 15px;
+			background: #f9f9f9;
+			cursor: pointer;
+		}
+
+		.campaign-header-title {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		.campaign-header svg {
+			width: 18px;
+			height: 18px;
+			color: #666;
+			transition: transform 0.3s;
+		}
+
+		.campaign-header.open svg {
+			transform: rotate(180deg);
+		}
+
+		.campaign-content {
+			padding: 15px;
+			display: none;
+		}
+
+		.campaign-content.open {
+			display: block;
+		}
+
+		.campaign-label {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 12px;
+		}
+
+		.campaign-option {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 12px;
+			border: 1px solid #eee;
+			border-radius: 8px;
+		}
+
+		.campaign-option input[type="radio"] {
+			width: 18px;
+			height: 18px;
+			accent-color: #e31e24;
+			cursor: pointer;
+		}
+
+		.campaign-option-icon {
+			width: 40px;
+			height: 40px;
+			background: #fff5f5;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.campaign-option-icon svg {
+			width: 24px;
+			height: 24px;
+			color: #e31e24;
+		}
+
+		.campaign-option-details {
+			flex: 1;
+		}
+
+		.campaign-option-name {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		.campaign-option-desc {
+			font-size: 12px;
+			color: #888;
+		}
+
+		.campaign-option-link {
+			font-size: 13px;
+			color: #e31e24;
+			font-weight: 500;
+		}
+
+		.campaign-option-link:hover {
+			text-decoration: underline;
+		}
+
+		/* Proceed Button */
+		.btn-proceed {
+			width: 100%;
+			padding: 16px 30px;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			margin-top: 25px;
+			transition: background 0.2s, transform 0.2s;
+		}
+
+		.btn-proceed:hover {
+			background: #c41a1f;
+			transform: translateY(-1px);
+		}
+
+		.btn-proceed:active {
+			transform: translateY(0);
+		}
+
+		.btn-proceed svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Footer */
+		.footer {
+			background: #333;
+			color: #fff;
+			padding: 40px;
+			margin-top: auto;
+		}
+
+		.footer-container {
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 0 60px;
+			display: flex;
+			justify-content: space-between;
+			gap: 40px;
+		}
+
+		.footer-about {
+			flex: 1;
+			max-width: 350px;
+		}
+
+		.footer-about p {
+			font-size: 13px;
+			line-height: 1.7;
+			color: #ccc;
+		}
+
+		.footer-links {
+			flex: 1;
+		}
+
+		.footer-title {
+			font-size: 14px;
+			font-weight: 600;
+			margin-bottom: 15px;
+		}
+
+		.footer-links ul {
+			list-style: none;
+		}
+
+		.footer-links ul li {
+			margin-bottom: 8px;
+		}
+
+		.footer-links ul li a {
+			font-size: 13px;
+			color: #ccc;
+			transition: color 0.2s;
+		}
+
+		.footer-links ul li a:hover {
+			color: #fff;
+		}
+
+		.footer-social {
+			text-align: right;
+		}
+
+		.footer-social-icons {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+		}
+
+		.footer-social-icons a {
+			width: 36px;
+			height: 36px;
+			background: #444;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			transition: background 0.2s;
+		}
+
+		.footer-social-icons a:hover {
+			background: #e31e24;
+		}
+
+		.footer-social-icons svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Responsive */
+		@media (max-width: 900px) {
+			.header {
+				padding: 15px 20px;
+				flex-direction: column;
+				gap: 20px;
+			}
+
+			.stepper {
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+
+			.step-line {
+				width: 30px;
+				margin: 0 10px;
+			}
+
+			.main-container {
+				flex-direction: column;
+				padding: 20px;
+				gap: 30px;
+			}
+
+			.sidebar {
+				width: 100%;
+			}
+
+			.footer-container {
+				flex-direction: column;
+				gap: 30px;
+			}
+
+			.footer-social {
+				text-align: left;
+			}
+
+			.footer-social-icons {
+				justify-content: flex-start;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.step-label {
+				display: none;
+			}
+
+			.step-line {
+				width: 20px;
+			}
+
+			.cart-item {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.cart-item-image {
+				width: 80px;
+				height: 100px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Header -->
+	<header class="header">
+		<!-- Logo -->
+		<a href="isyerim-musteri-anasayfa.html" class="header-logo">
+			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+				<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+				<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+			</svg>
+		</a>
+
+		<!-- Stepper -->
+		<div class="stepper">
+			<div class="step">
+				<span class="step-number completed">1</span>
+				<span class="step-label active">Sipariş Detayı</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number active">2</span>
+				<span class="step-label active">Sepet</span>
+			</div>
+			<div class="step-line"></div>
+			<div class="step">
+				<span class="step-number inactive">3</span>
+				<span class="step-label inactive">Teslimat ve Ödeme</span>
+			</div>
+		</div>
+
+		<!-- Spacer for alignment -->
+		<div style="width: 150px;"></div>
+	</header>
+
+	<!-- Main Container -->
+	<div class="main-container">
+		<!-- Cart Content -->
+		<div class="cart-content">
+			<!-- Header -->
+			<div class="cart-header">
+				<div class="cart-title-wrapper">
+					<a href="isyerim-musteri-sorular.html" class="back-arrow">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M19 12H5M12 19l-7-7 7-7"/>
+						</svg>
+					</a>
+					<h1 class="cart-title">Sepetim <span id="cartCount">(1 Ürün)</span></h1>
+				</div>
+				<button class="cart-clear" id="clearCart">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="3 6 5 6 21 6"/>
+						<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Cart Items -->
+			<div class="cart-items" id="cartItems">
+				<!-- Dinamik olarak doldurulacak -->
+			</div>
+
+			<!-- Boş Sepet Mesajı -->
+			<div class="empty-cart" id="emptyCart" style="display: none; text-align: center; padding: 60px 20px;">
+				<svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" style="width: 80px; height: 80px; margin-bottom: 20px;">
+					<circle cx="9" cy="21" r="1"/>
+					<circle cx="20" cy="21" r="1"/>
+					<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+				</svg>
+				<h3 style="color: #666; font-size: 18px; margin-bottom: 10px;">Sepetiniz Boş</h3>
+				<p style="color: #999; font-size: 14px; margin-bottom: 20px;">Ürün eklemek için anasayfaya gidin.</p>
+				<a href="isyerim-musteri-anasayfa.html" style="display: inline-block; padding: 12px 30px; background: #e31e24; color: #fff; border-radius: 25px; font-weight: 500; text-decoration: none;">Alışverişe Başla</a>
+			</div>
+		</div>
+
+		<!-- Sidebar - Order Summary -->
+		<aside class="sidebar">
+			<div class="order-summary">
+				<h2 class="order-summary-title">Sipariş Özeti</h2>
+				<div class="order-summary-count" id="orderCount">(1 Ürün)</div>
+
+				<div class="order-row">
+					<span class="order-row-label">Ürünler Toplamı</span>
+					<span class="order-row-value" id="totalPoints">12<span>Puan</span></span>
+				</div>
+				<div class="order-row">
+					<span class="order-row-label">Sipariş Tutarı</span>
+					<span class="order-row-value" id="orderTotal">12<span>Puan</span></span>
+				</div>
+
+				<!-- Campaign Section -->
+				<div class="campaign-section">
+					<div class="campaign-header open" id="campaignHeader">
+						<span class="campaign-header-title">Sepete Uygulanan Kampanya</span>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="6 9 12 15 18 9"/>
+						</svg>
+					</div>
+					<div class="campaign-content open" id="campaignContent">
+						<div class="campaign-label">Kampanyalar</div>
+						<div class="campaign-option">
+							<input type="radio" name="campaign" id="campaign1" checked>
+							<div class="campaign-option-icon">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+								</svg>
+							</div>
+							<div class="campaign-option-details">
+								<div class="campaign-option-name">Kilo Kilo Puan Kampanyası</div>
+								<div class="campaign-option-desc">Kilo Kilo Puan Kampanyası</div>
+							</div>
+							<a href="#" class="campaign-option-link">Detaylar</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Proceed Button -->
+				<button class="btn-proceed" id="proceedBtn">
+					Siparişe Devam Et
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M5 12h14M12 5l7 7-7 7"/>
+					</svg>
+				</button>
+			</div>
+		</aside>
+	</div>
+
+	<!-- Footer -->
+	<footer class="footer">
+		<div class="footer-container">
+			<div class="footer-about">
+				<p>Adı "kalite" ve "güven" ile özdeşleşen İpragaz; Türkiye enerji sektörüne öncülük etmesinin yanı sıra gerek şirket hacmi,</p>
+			</div>
+			<div class="footer-links">
+				<h4 class="footer-title">Bilgi Toplumu Hizmetleri</h4>
+				<ul>
+					<li><a href="#">Kurumsal</a></li>
+				</ul>
+			</div>
+			<div class="footer-social">
+				<h4 class="footer-title">Bizi takip et</h4>
+				<div class="footer-social-icons">
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+							<polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+							<rect x="2" y="9" width="4" height="12"/>
+							<circle cx="4" cy="4" r="2"/>
+						</svg>
+					</a>
+					<a href="#">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+							<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+							<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+						</svg>
+					</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script>
+		// Campaign toggle
+		document.getElementById('campaignHeader').addEventListener('click', function() {
+			this.classList.toggle('open');
+			document.getElementById('campaignContent').classList.toggle('open');
+		});
+
+		// Ürün resmi getir
+		function getProductImage(item) {
+			if (item.image_url) return item.image_url;
+			// Fallback resimler
+			var defaultImage = './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+			if (item.code) {
+				if (item.code.includes('24')) return './İpragaz Bayi_files/IPR-BAYI-24kg-sanayi.png';
+				if (item.code.includes('45')) return './İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png';
+			}
+			return defaultImage;
+		}
+
+		// Sepeti render et
+		function renderCart() {
+			var summary = CartService.getSummary();
+			var cartItemsEl = document.getElementById('cartItems');
+			var emptyCartEl = document.getElementById('emptyCart');
+			var cartCountEl = document.getElementById('cartCount');
+			var orderCountEl = document.getElementById('orderCount');
+			var totalPointsEl = document.getElementById('totalPoints');
+			var orderTotalEl = document.getElementById('orderTotal');
+
+			if (summary.isEmpty) {
+				cartItemsEl.style.display = 'none';
+				emptyCartEl.style.display = 'block';
+				cartCountEl.textContent = '(0 Ürün)';
+				orderCountEl.textContent = '(0 Ürün)';
+				totalPointsEl.innerHTML = '0<span>Puan</span>';
+				orderTotalEl.innerHTML = '0<span>Puan</span>';
+				return;
+			}
+
+			cartItemsEl.style.display = 'block';
+			emptyCartEl.style.display = 'none';
+
+			cartCountEl.textContent = '(' + summary.itemCount + ' Ürün)';
+			orderCountEl.textContent = '(' + summary.itemCount + ' Ürün)';
+			totalPointsEl.innerHTML = summary.totalPoints + '<span>Puan</span>';
+			orderTotalEl.innerHTML = summary.totalPoints + '<span>Puan</span>';
+
+			// Ürünleri render et
+			cartItemsEl.innerHTML = summary.items.map(function(item) {
+				return '<div class="cart-item" data-product-id="' + item.id + '">' +
+					'<div class="cart-item-image">' +
+						'<img src="' + getProductImage(item) + '" alt="' + item.name + '">' +
+					'</div>' +
+					'<div class="cart-item-details">' +
+						'<div class="cart-item-name">' + item.name + '</div>' +
+						'<div class="quantity-control">' +
+							'<button class="quantity-btn delete" onclick="decreaseQuantity(\'' + item.id + '\')">' +
+								'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+									'<line x1="5" y1="12" x2="19" y2="12"/>' +
+								'</svg>' +
+							'</button>' +
+							'<span class="quantity-value">' + item.quantity + ' Adet</span>' +
+							'<button class="quantity-btn add" onclick="increaseQuantity(\'' + item.id + '\')">' +
+								'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+									'<line x1="12" y1="5" x2="12" y2="19"/>' +
+									'<line x1="5" y1="12" x2="19" y2="12"/>' +
+								'</svg>' +
+							'</button>' +
+							'<button class="quantity-btn delete" onclick="removeItem(\'' + item.id + '\')" style="margin-left: 15px;">' +
+								'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+									'<polyline points="3 6 5 6 21 6"/>' +
+									'<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>' +
+								'</svg>' +
+							'</button>' +
+						'</div>' +
+					'</div>' +
+				'</div>';
+			}).join('');
+		}
+
+		function increaseQuantity(productId) {
+			CartService.incrementQuantity(productId);
+			renderCart();
+		}
+
+		function decreaseQuantity(productId) {
+			CartService.decrementQuantity(productId);
+			renderCart();
+		}
+
+		function removeItem(productId) {
+			if (confirm('Ürünü sepetten kaldırmak istediğinize emin misiniz?')) {
+				CartService.removeItem(productId);
+				renderCart();
+			}
+		}
+
+		function clearCart() {
+			if (confirm('Sepeti temizlemek istediğinize emin misiniz?')) {
+				CartService.clearCart();
+				renderCart();
+			}
+		}
+
+		// Sayfa yüklendiğinde sepeti render et
+		renderCart();
+
+		// Sepet güncellendiğinde yeniden render et
+		window.addEventListener('cartUpdated', function() {
+			renderCart();
+		});
+
+		// Sepeti temizle butonu
+		document.getElementById('clearCart').addEventListener('click', clearCart);
+
+		// Siparişe devam et
+		document.getElementById('proceedBtn').addEventListener('click', async function() {
+			if (CartService.isEmpty()) {
+				alert('Sepetiniz boş. Lütfen ürün ekleyin.');
+				return;
+			}
+
+			// Teslimat sayfasına yönlendir veya direkt sipariş oluştur
+			// Şimdilik teslimat sayfası yoksa direkt sipariş oluşturalım
+			var customerId = sessionStorage.getItem('customer_id');
+			var dealerId = sessionStorage.getItem('dealer_id');
+
+			if (!customerId || !dealerId) {
+				// Bayi ID'sini otomatik al
+				try {
+					const { data: dealers } = await DealersService.getAll();
+					if (dealers && dealers.length > 0) {
+						dealerId = dealers[0].id;
+						sessionStorage.setItem('dealer_id', dealerId);
+					}
+				} catch (e) {
+					console.error('Bayi bilgisi alınamadı:', e);
+				}
+
+				// Demo müşteri ID kullan veya teslimat sayfasına yönlendir
+				if (!customerId) {
+					// Teslimat sayfasına yönlendir (orada müşteri bilgisi girilecek)
+					window.location.href = 'isyerim-musteri-teslimat.html';
+					return;
+				}
+			}
+
+			// Sipariş oluştur
+			this.disabled = true;
+			this.innerHTML = 'Sipariş oluşturuluyor...';
+
+			try {
+				const result = await CartService.checkout(customerId, dealerId, {
+					paymentMethod: 'cash',
+					notes: 'Web sipariş'
+				});
+
+				if (result.error) {
+					alert('Sipariş oluşturulamadı: ' + result.error);
+					this.disabled = false;
+					this.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+				} else {
+					alert('Siparişiniz başarıyla oluşturuldu! Sipariş No: ' + (result.data.order_number || result.data.id));
+					window.location.href = 'isyerim-musteri-anasayfa.html';
+				}
+			} catch (err) {
+				console.error('Sipariş hatası:', err);
+				alert('Sipariş oluşturulurken bir hata oluştu.');
+				this.disabled = false;
+				this.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+			}
+		});
+	</script>
+</body>
+</html>

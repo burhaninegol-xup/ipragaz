@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Üye Ol - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: #e31e24;
+			background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+			padding: 20px;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		/* Card Container */
+		.card {
+			background: #fff;
+			border-radius: 16px;
+			width: 100%;
+			max-width: 480px;
+			padding: 40px;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		}
+
+		/* Logo */
+		.logo {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+
+		.logo svg {
+			height: 40px;
+			width: auto;
+		}
+
+		/* Back Link */
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 25px;
+			cursor: pointer;
+			transition: color 0.2s;
+		}
+
+		.back-link:hover {
+			color: #e31e24;
+		}
+
+		.back-link svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Section Title */
+		.section-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		/* Form */
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-label {
+			display: block;
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.form-label.required::after {
+			content: '*';
+			color: #e31e24;
+			margin-left: 2px;
+		}
+
+		.form-input,
+		.form-select {
+			width: 100%;
+			padding: 14px 16px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			font-size: 14px;
+			font-family: inherit;
+			color: #333;
+			background: #fff;
+			transition: border-color 0.2s;
+		}
+
+		.form-input:focus,
+		.form-select:focus {
+			outline: none;
+			border-color: #e31e24;
+		}
+
+		.form-select {
+			cursor: pointer;
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: right 16px center;
+		}
+
+		/* Input with icon */
+		.input-with-icon {
+			position: relative;
+		}
+
+		.input-with-icon .form-label {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.input-with-icon .info-icon {
+			width: 16px;
+			height: 16px;
+			color: #e31e24;
+			cursor: help;
+		}
+
+		/* Info Text */
+		.info-text {
+			font-size: 13px;
+			color: #666;
+			line-height: 1.6;
+			margin-bottom: 20px;
+		}
+
+		.info-text a {
+			color: #e31e24;
+			font-weight: 500;
+		}
+
+		.info-text a:hover {
+			text-decoration: underline;
+		}
+
+		/* Checkbox */
+		.checkbox-group {
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+			margin-bottom: 25px;
+		}
+
+		.checkbox-group input[type="checkbox"] {
+			width: 18px;
+			height: 18px;
+			margin-top: 2px;
+			accent-color: #e31e24;
+			cursor: pointer;
+			flex-shrink: 0;
+		}
+
+		.checkbox-group label {
+			font-size: 13px;
+			color: #333;
+			line-height: 1.5;
+			cursor: pointer;
+		}
+
+		.checkbox-group label a {
+			color: #e31e24;
+			font-weight: 500;
+		}
+
+		.checkbox-group label a:hover {
+			text-decoration: underline;
+		}
+
+		/* Submit Button */
+		.btn-submit {
+			width: 100%;
+			padding: 16px 30px;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s, transform 0.2s;
+		}
+
+		.btn-submit:hover {
+			background: #c41a1f;
+			transform: translateY(-1px);
+		}
+
+		.btn-submit:active {
+			transform: translateY(0);
+		}
+
+		/* Slide Panel Overlay */
+		.panel-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity 0.3s, visibility 0.3s;
+			z-index: 1000;
+		}
+
+		.panel-overlay.active {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* Slide Panel */
+		.slide-panel {
+			position: fixed;
+			top: 0;
+			right: 0;
+			width: 100%;
+			max-width: 500px;
+			height: 100%;
+			background: #fff;
+			transform: translateX(100%);
+			transition: transform 0.3s ease;
+			z-index: 1001;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.panel-overlay.active .slide-panel {
+			transform: translateX(0);
+		}
+
+		.panel-header {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			padding: 20px 24px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.panel-close {
+			width: 36px;
+			height: 36px;
+			border: none;
+			background: #f5f5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.panel-close:hover {
+			background: #eee;
+		}
+
+		.panel-close svg {
+			width: 18px;
+			height: 18px;
+			color: #666;
+		}
+
+		.panel-content {
+			flex: 1;
+			overflow-y: auto;
+			padding: 24px;
+		}
+
+		.panel-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		.panel-text {
+			font-size: 14px;
+			color: #555;
+			line-height: 1.8;
+		}
+
+		.panel-text p {
+			margin-bottom: 15px;
+		}
+
+		.panel-text h3 {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-top: 25px;
+			margin-bottom: 10px;
+		}
+
+		/* Responsive */
+		@media (max-width: 520px) {
+			.card {
+				padding: 30px 20px;
+			}
+
+			.slide-panel {
+				max-width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="card">
+		<!-- Logo -->
+		<div class="logo">
+			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+				<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+				<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+			</svg>
+		</div>
+
+		<!-- Back Link -->
+		<a href="isyerim-musteri-login.html" class="back-link">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M19 12H5M12 19l-7-7 7-7"/>
+			</svg>
+			Üye Ol
+		</a>
+
+		<!-- Section Title -->
+		<h2 class="section-title">Müşteri Bilgileri</h2>
+
+		<!-- Form -->
+		<form id="registerForm">
+			<div class="form-group">
+				<label class="form-label required">Sektör</label>
+				<select class="form-select" id="sektor" required>
+					<option value="">Seçiniz</option>
+					<option value="yeme-icme">Yeme-İçme</option>
+					<option value="perakende">Perakende</option>
+					<option value="uretim">Üretim</option>
+					<option value="hizmet">Hizmet</option>
+					<option value="diger">Diğer</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Vergi / TC Kimlik Numarası</label>
+				<input type="text" class="form-input" id="vergiNo" placeholder="" maxlength="11">
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Şirket Ünvanı</label>
+				<input type="text" class="form-input" id="sirketUnvani" placeholder="">
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Ad</label>
+				<input type="text" class="form-input" id="ad" placeholder="">
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Soyad</label>
+				<input type="text" class="form-input" id="soyad" placeholder="">
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">E-posta Adresi</label>
+				<input type="email" class="form-input" id="email" placeholder="">
+			</div>
+
+			<div class="form-group input-with-icon">
+				<label class="form-label">
+					<svg class="info-icon" viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+					</svg>
+					Tabela Unvanı
+				</label>
+				<input type="text" class="form-input" id="tabelaUnvani" placeholder="">
+			</div>
+
+			<!-- Info Text -->
+			<p class="info-text">
+				Kişisel verilerin işlenmesine ilişkin <a href="#" id="aydinlatmaLink">Aydınlatma Metni</a>'ne buradan ulaşabilirsiniz.
+			</p>
+
+			<!-- Checkbox -->
+			<div class="checkbox-group">
+				<input type="checkbox" id="sozlesmeKabul" required>
+				<label for="sozlesmeKabul">
+					<a href="#" id="uyeligSozlesmesiLink">Üyelik Sözleşmesi</a>'ni ve <a href="#" id="kullanimKosullariLink">Kullanım Koşulları</a>'nı okudum, kabul ediyorum
+				</label>
+			</div>
+
+			<!-- Submit Button -->
+			<button type="submit" class="btn-submit">Devam</button>
+		</form>
+	</div>
+
+	<!-- Üyelik Sözleşmesi Panel -->
+	<div class="panel-overlay" id="sozlesmePanel">
+		<div class="slide-panel">
+			<div class="panel-header">
+				<button class="panel-close" id="panelClose">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			<div class="panel-content">
+				<h2 class="panel-title">İpragaz İşYerim Üyelik Sözleşmesi</h2>
+				<div class="panel-text">
+					<p>
+						Aşağıda belirtilen şartlar, kurallar ve yasal sorumlulukları içeren işbu Üyelik Sözleşmesi'nin ("Sözleşme") İpragaz İşYerim uygulamasının ("İpragaz İşYerim"/"Platform") kullanılmasından önce okunması tavsiye edilir. Belirtilen şartların sizin için uygun olmaması halinde lütfen uygulamayı kullanmayınız. İpragaz İşYerim uygulamasını kullanarak ve bilgilerinizin yer alacağı formu doldurarak bu sayfalarda yazılı şartları kabul etmiş sayılmaktasınız. İpragaz A.Ş. ("İpragaz") dilediği zaman bu yasal uyarı sayfasının içeriğini güncelleme yetkisini saklı tutmaktadır ve kullanıcılarına platforma her girişte yasal uyarı sayfasını ziyaret etmelerini tavsiye etmektedir.
+					</p>
+
+					<h3>1. Taraflar</h3>
+					<p>Bu Sözleşmenin tarafları;</p>
+					<p>
+						<strong>1.1.</strong> İpragaz İşYerim uygulamasının sahibi olan "Atatürk Mah. Ertuğrul Gazi Sok. Metropol İstanbul Sitesi C2 Blok No:2 A/25 (Kat: 22-24) 34758 Ataşehir / İSTANBUL" adresinde mukim İPRAGAZ A.Ş. ("İpragaz")
+					</p>
+					<p>ile</p>
+					<p>
+						<strong>1.2.</strong> İpragaz İşYerim uygulamasına üye olan işyeri müşterisi ("Üye")'dir.
+					</p>
+					<p>
+						Bu Sözleşmede Taraflar tek başına "Taraf", birlikte "Taraflar" olarak anılacaktır.
+					</p>
+
+					<h3>2. Sözleşmenin Konusu</h3>
+					<p>
+						İşbu Sözleşme, İpragaz İşYerim uygulaması üzerinden Üye'nin LPG siparişi vermesine, sipariş takibi yapmasına, fatura görüntülemesine ve diğer hizmetlerden yararlanmasına ilişkin koşulları düzenlemektedir.
+					</p>
+
+					<h3>3. Üyelik Koşulları</h3>
+					<p>
+						<strong>3.1.</strong> Üye olmak için 18 yaşını doldurmuş olmak ve Türkiye Cumhuriyeti vatandaşı olmak veya Türkiye'de yasal olarak faaliyet gösteren bir işletmeye sahip olmak gerekmektedir.
+					</p>
+					<p>
+						<strong>3.2.</strong> Üyelik başvurusu sırasında verilen bilgilerin doğru ve güncel olması gerekmektedir. Yanlış veya eksik bilgi verilmesi durumunda İpragaz üyeliği askıya alma veya iptal etme hakkını saklı tutar.
+					</p>
+
+					<h3>4. Gizlilik</h3>
+					<p>
+						Üye'nin kişisel verileri, İpragaz'ın Kişisel Verilerin Korunması Politikası çerçevesinde işlenmekte ve korunmaktadır. Detaylı bilgi için Aydınlatma Metni'ni inceleyebilirsiniz.
+					</p>
+
+					<h3>5. Sorumluluklar</h3>
+					<p>
+						<strong>5.1.</strong> Üye, hesap bilgilerinin gizliliğini korumakla yükümlüdür.
+					</p>
+					<p>
+						<strong>5.2.</strong> Üye, uygulama üzerinden gerçekleştirdiği tüm işlemlerden sorumludur.
+					</p>
+					<p>
+						<strong>5.3.</strong> İpragaz, uygulamanın kesintisiz çalışacağını garanti etmez ve teknik bakım nedeniyle hizmeti geçici olarak durdurabilir.
+					</p>
+
+					<h3>6. Sözleşmenin Feshi</h3>
+					<p>
+						Taraflardan her biri, herhangi bir neden göstermeksizin işbu Sözleşme'yi feshedebilir. Üye, üyeliğini uygulama üzerinden veya İpragaz müşteri hizmetleri aracılığıyla sonlandırabilir.
+					</p>
+
+					<h3>7. Uyuşmazlıkların Çözümü</h3>
+					<p>
+						İşbu Sözleşme'den doğabilecek uyuşmazlıklarda İstanbul Mahkemeleri ve İcra Daireleri yetkilidir.
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Panel elements
+		var sozlesmePanel = document.getElementById('sozlesmePanel');
+		var panelClose = document.getElementById('panelClose');
+		var uyeligSozlesmesiLink = document.getElementById('uyeligSozlesmesiLink');
+		var kullanimKosullariLink = document.getElementById('kullanimKosullariLink');
+
+		// Open panel
+		uyeligSozlesmesiLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			sozlesmePanel.classList.add('active');
+			document.body.style.overflow = 'hidden';
+		});
+
+		kullanimKosullariLink.addEventListener('click', function(e) {
+			e.preventDefault();
+			sozlesmePanel.classList.add('active');
+			document.body.style.overflow = 'hidden';
+		});
+
+		// Close panel - X button
+		panelClose.addEventListener('click', function() {
+			sozlesmePanel.classList.remove('active');
+			document.body.style.overflow = '';
+		});
+
+		// Close panel - click outside
+		sozlesmePanel.addEventListener('click', function(e) {
+			if (e.target === this) {
+				this.classList.remove('active');
+				document.body.style.overflow = '';
+			}
+		});
+
+		// Form submission
+		document.getElementById('registerForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			var sektor = document.getElementById('sektor').value;
+			var sozlesmeKabul = document.getElementById('sozlesmeKabul').checked;
+
+			if (!sektor) {
+				alert('Lütfen sektör seçiniz.');
+				return;
+			}
+
+			if (!sozlesmeKabul) {
+				alert('Devam etmek için üyelik sözleşmesini kabul etmelisiniz.');
+				return;
+			}
+
+			// Form is valid - redirect to anasayfa
+			window.location.href = 'isyerim-musteri-anasayfa.html';
+		});
+	</script>
+</body>
+</html>

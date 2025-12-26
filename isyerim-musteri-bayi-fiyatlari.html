@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bayi Fiyatları - İpragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh;
+			background-color: #f5f5f5;
+		}
+
+		/* Header */
+		.header {
+			background: #fff;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+			position: sticky;
+			top: 0;
+			z-index: 100;
+		}
+
+		.header-container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 0 20px;
+			display: flex;
+			align-items: center;
+			height: 70px;
+			gap: 20px;
+		}
+
+		.back-btn {
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			color: #666;
+			text-decoration: none;
+			transition: background 0.2s, color 0.2s;
+		}
+
+		.back-btn:hover {
+			background: #f5f5f5;
+			color: #e31e24;
+		}
+
+		.back-btn svg {
+			width: 22px;
+			height: 22px;
+		}
+
+		.header-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.header-logo {
+			margin-left: auto;
+		}
+
+		.header-logo svg {
+			height: 32px;
+			width: auto;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Info Banner */
+		.info-banner {
+			background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+			color: #fff;
+			padding: 20px;
+			border-radius: 12px;
+			margin-bottom: 25px;
+		}
+
+		.info-banner-title {
+			font-size: 16px;
+			font-weight: 600;
+			margin-bottom: 8px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.info-banner-title svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.info-banner-text {
+			font-size: 13px;
+			opacity: 0.9;
+			line-height: 1.5;
+		}
+
+		/* Price Cards */
+		.price-list {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.price-card {
+			background: #fff;
+			border-radius: 12px;
+			padding: 20px;
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			border: 1px solid #eee;
+		}
+
+		.price-card-image {
+			width: 80px;
+			height: 80px;
+			flex-shrink: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.price-card-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.price-card-info {
+			flex: 1;
+		}
+
+		.price-card-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.price-card-commitment {
+			font-size: 12px;
+			color: #888;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.price-card-commitment svg {
+			width: 14px;
+			height: 14px;
+			color: #e31e24;
+		}
+
+		.price-card-price {
+			text-align: right;
+			flex-shrink: 0;
+		}
+
+		.price-label {
+			font-size: 11px;
+			color: #888;
+			margin-bottom: 4px;
+		}
+
+		.price-value {
+			font-size: 20px;
+			font-weight: 700;
+			color: #e31e24;
+		}
+
+		.price-unit {
+			font-size: 13px;
+			font-weight: 500;
+			color: #888;
+		}
+
+		/* Footer Note */
+		.footer-note {
+			margin-top: 30px;
+			padding: 15px 20px;
+			background: #fff5f5;
+			border-radius: 8px;
+			border-left: 4px solid #e31e24;
+		}
+
+		.footer-note-text {
+			font-size: 13px;
+			color: #666;
+			line-height: 1.5;
+		}
+
+		.footer-note-text strong {
+			color: #333;
+		}
+
+		/* Withdraw Button */
+		.btn-withdraw {
+			width: 100%;
+			padding: 14px 20px;
+			background: #fff;
+			border: 2px solid #e31e24;
+			border-radius: 25px;
+			color: #e31e24;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			margin-top: 30px;
+			transition: all 0.2s;
+		}
+
+		.btn-withdraw:hover {
+			background: #fff5f5;
+		}
+
+		/* Warning Overlay */
+		.warning-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.warning-overlay.active {
+			display: flex;
+		}
+
+		.warning-modal {
+			background: #fff;
+			border-radius: 16px;
+			width: 90%;
+			max-width: 420px;
+			padding: 30px;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+			text-align: center;
+		}
+
+		.warning-icon {
+			width: 60px;
+			height: 60px;
+			background: #fff5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.warning-icon svg {
+			width: 32px;
+			height: 32px;
+			color: #e31e24;
+		}
+
+		.warning-title {
+			font-size: 20px;
+			font-weight: 700;
+			color: #333;
+			margin-bottom: 15px;
+		}
+
+		.warning-text {
+			font-size: 14px;
+			color: #666;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		.warning-buttons {
+			display: flex;
+			gap: 12px;
+		}
+
+		.btn-cancel {
+			flex: 1;
+			padding: 12px 20px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 25px;
+			color: #666;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-cancel:hover {
+			background: #eee;
+		}
+
+		.btn-confirm {
+			flex: 1;
+			padding: 12px 20px;
+			background: #e31e24;
+			border: none;
+			border-radius: 25px;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-confirm:hover {
+			background: #c41a1f;
+		}
+
+		/* No Offer State */
+		.no-offer-state {
+			display: none;
+		}
+
+		.no-offer-state.active {
+			display: block;
+		}
+
+		.no-offer-box {
+			background: #fff;
+			border-radius: 12px;
+			padding: 40px 30px;
+			text-align: center;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			border: 1px solid #eee;
+		}
+
+		.no-offer-icon {
+			width: 80px;
+			height: 80px;
+			background: #fff8e6;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.no-offer-icon svg {
+			width: 40px;
+			height: 40px;
+			color: #ffc107;
+		}
+
+		.no-offer-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.no-offer-text {
+			font-size: 14px;
+			color: #666;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		.btn-select-bayi {
+			display: inline-block;
+			padding: 14px 30px;
+			background: #e31e24;
+			border: none;
+			border-radius: 25px;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-select-bayi:hover {
+			background: #c41a1f;
+		}
+
+		/* Selected Bayi Display */
+		.selected-bayi-box {
+			background: #f0fff4;
+			border: 1px solid #28a745;
+			border-radius: 12px;
+			padding: 20px;
+			margin-top: 20px;
+			display: none;
+		}
+
+		.selected-bayi-box.active {
+			display: block;
+		}
+
+		.selected-bayi-label {
+			font-size: 12px;
+			color: #28a745;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+
+		.selected-bayi-name {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		/* Bayi Modal */
+		.bayi-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.bayi-overlay.active {
+			display: flex;
+		}
+
+		.bayi-modal {
+			background: #fff;
+			border-radius: 16px;
+			width: 90%;
+			max-width: 500px;
+			max-height: 80vh;
+			overflow: hidden;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		}
+
+		.bayi-modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 24px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.bayi-modal-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.bayi-modal-close {
+			width: 32px;
+			height: 32px;
+			border: none;
+			background: #f5f5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.bayi-modal-close:hover {
+			background: #eee;
+		}
+
+		.bayi-modal-close svg {
+			width: 16px;
+			height: 16px;
+			color: #666;
+		}
+
+		.bayi-list {
+			padding: 12px 0;
+			max-height: 400px;
+			overflow-y: auto;
+		}
+
+		.bayi-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 16px 24px;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.bayi-item:hover {
+			background: #f9f9f9;
+		}
+
+		.bayi-item-info {
+			flex: 1;
+		}
+
+		.bayi-item-name {
+			font-size: 15px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 4px;
+		}
+
+		.bayi-item-address {
+			font-size: 13px;
+			color: #888;
+		}
+
+		.bayi-item-distance {
+			font-size: 14px;
+			font-weight: 600;
+			color: #e31e24;
+			margin-left: 20px;
+		}
+
+		/* Hide elements */
+		.hidden {
+			display: none !important;
+		}
+
+		/* Responsive */
+		@media (max-width: 576px) {
+			.price-card {
+				flex-direction: column;
+				text-align: center;
+			}
+
+			.price-card-info {
+				text-align: center;
+			}
+
+			.price-card-commitment {
+				justify-content: center;
+			}
+
+			.price-card-price {
+				text-align: center;
+			}
+
+			.warning-buttons {
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Header -->
+	<header class="header">
+		<div class="header-container">
+			<a href="isyerim-musteri-anasayfa.html" class="back-btn">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M19 12H5M12 19l-7-7 7-7"/>
+				</svg>
+			</a>
+			<h1 class="header-title">Bayi Fiyatları</h1>
+			<div class="header-logo">
+				<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
+					<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
+					<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
+				</svg>
+			</div>
+		</div>
+	</header>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Info Banner -->
+		<div class="info-banner">
+			<div class="info-banner-title">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="16" x2="12" y2="12"/>
+					<line x1="12" y1="8" x2="12.01" y2="8"/>
+				</svg>
+				Size Özel Fiyatlar
+			</div>
+			<p class="info-banner-text">
+				Aşağıdaki fiyatlar bayiniz tarafından işletmenize özel olarak tanımlanmıştır. Sipariş verirken bu fiyatlar uygulanacaktır.
+			</p>
+		</div>
+
+		<!-- Price List -->
+		<div class="price-list" id="priceList">
+			<!-- Fiyatlar Supabase'den dinamik olarak yüklenir -->
+			<div class="loading-placeholder" style="text-align: center; padding: 40px; color: #666;">
+				<p>Fiyatlar yükleniyor...</p>
+			</div>
+		</div>
+
+		<!-- Footer Note -->
+		<div class="footer-note" id="footerNote">
+			<p class="footer-note-text">
+				<strong>Not:</strong> Bu fiyatlar bayiniz tarafından size özel tanımlanmıştır. Fiyat değişikliği talepleri için lütfen bayinizle iletişime geçiniz.
+			</p>
+		</div>
+
+		<!-- Withdraw Button -->
+		<button class="btn-withdraw" id="btnWithdraw">Tekliften Çekil</button>
+
+		<!-- No Offer State (Hidden by default) -->
+		<div class="no-offer-state" id="noOfferState">
+			<div class="no-offer-box">
+				<div class="no-offer-icon">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10"/>
+						<line x1="12" y1="8" x2="12" y2="12"/>
+						<line x1="12" y1="16" x2="12.01" y2="16"/>
+					</svg>
+				</div>
+				<h2 class="no-offer-title">Özel Teklif Bulunmuyor</h2>
+				<p class="no-offer-text">
+					Bayiden sizin için verilen özel teklif bulunmuyor.<br>
+					Yeni bir bayi seçerek fiyat teklifi alabilirsiniz.
+				</p>
+				<button class="btn-select-bayi" id="btnSelectBayi">Bayi Seç</button>
+			</div>
+
+			<!-- Selected Bayi Display -->
+			<div class="selected-bayi-box" id="selectedBayiBox">
+				<div class="selected-bayi-label">Seçilen Bayi</div>
+				<div class="selected-bayi-name" id="selectedBayiName"></div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Warning Overlay -->
+	<div class="warning-overlay" id="warningOverlay">
+		<div class="warning-modal">
+			<div class="warning-icon">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+				</svg>
+			</div>
+			<h3 class="warning-title">Dikkat!</h3>
+			<p class="warning-text">
+				Bu işleme devam ederseniz bayi tarafından size verilen tüm fiyatlar kaybolacaktır. Bir sonraki siparişiniz önce bayiniz ile yeni fiyatlar üzerinden anlaşmanız gerekecektir.
+			</p>
+			<div class="warning-buttons">
+				<button class="btn-cancel" id="btnCancel">İptal</button>
+				<button class="btn-confirm" id="btnConfirm">Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bayi Selection Overlay -->
+	<div class="bayi-overlay" id="bayiOverlay">
+		<div class="bayi-modal">
+			<div class="bayi-modal-header">
+				<h3 class="bayi-modal-title">Bayi Seçiniz</h3>
+				<button class="bayi-modal-close" id="bayiModalClose">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			<div class="bayi-list" id="bayiList">
+				<!-- Bayiler Supabase'den dinamik olarak yüklenir -->
+				<div style="text-align: center; padding: 20px; color: #666;">Bayiler yükleniyor...</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customer-prices-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script>
+		// DOM elementleri
+		var infoBanner = document.querySelector('.info-banner');
+		var priceListEl = document.getElementById('priceList');
+		var footerNote = document.getElementById('footerNote');
+		var btnWithdraw = document.getElementById('btnWithdraw');
+		var noOfferState = document.getElementById('noOfferState');
+		var warningOverlay = document.getElementById('warningOverlay');
+		var btnCancel = document.getElementById('btnCancel');
+		var btnConfirm = document.getElementById('btnConfirm');
+		var btnSelectBayi = document.getElementById('btnSelectBayi');
+		var bayiOverlay = document.getElementById('bayiOverlay');
+		var bayiModalClose = document.getElementById('bayiModalClose');
+		var bayiListEl = document.getElementById('bayiList');
+		var selectedBayiBox = document.getElementById('selectedBayiBox');
+		var selectedBayiName = document.getElementById('selectedBayiName');
+
+		var currentCustomerId = null;
+		var currentDealerId = null;
+
+		// Fiyatları Supabase'den yükle
+		async function loadPrices() {
+			var customerId = sessionStorage.getItem('customer_id');
+			if (!customerId) {
+				showWithdrawnState();
+				return;
+			}
+
+			currentCustomerId = customerId;
+
+			try {
+				const { data: prices, error } = await CustomerPricesService.getByCustomerId(customerId);
+
+				if (error) throw new Error(error);
+
+				// Aktif fiyat var mı kontrol et
+				var activePrices = prices ? prices.filter(p => p.is_active) : [];
+
+				if (activePrices.length === 0) {
+					showWithdrawnState();
+					return;
+				}
+
+				// Dealer ID'yi sakla
+				if (activePrices[0].dealer_id) {
+					currentDealerId = activePrices[0].dealer_id;
+					sessionStorage.setItem('dealer_id', currentDealerId);
+				}
+
+				// Fiyatları render et
+				renderPrices(activePrices);
+			} catch (err) {
+				console.error('Fiyat yükleme hatası:', err);
+				priceListEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #e31e24;"><p>Fiyatlar yüklenirken hata oluştu</p></div>';
+			}
+		}
+
+		// Ürün resmi getir
+		function getProductImage(product) {
+			if (product.image_url) return product.image_url;
+			// Fallback
+			if (product.code && product.code.includes('24')) return './İpragaz Bayi_files/IPR-BAYI-24kg-sanayi.png';
+			if (product.code && product.code.includes('45')) return './İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png';
+			return './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+		}
+
+		// Fiyat kartı oluştur
+		function createPriceCard(priceData) {
+			var product = priceData.product || {};
+			var formattedPrice = parseFloat(priceData.unit_price).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+
+			return '<div class="price-card">' +
+				'<div class="price-card-image">' +
+					'<img src="' + getProductImage(product) + '" alt="' + product.name + '">' +
+				'</div>' +
+				'<div class="price-card-info">' +
+					'<div class="price-card-name">' + product.name + '</div>' +
+					'<div class="price-card-commitment">' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+							'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>' +
+						'</svg>' +
+						'Taahhüt: ' + (priceData.commitment_quantity || 0) + ' Adet / Ay' +
+					'</div>' +
+				'</div>' +
+				'<div class="price-card-price">' +
+					'<div class="price-label">Birim Fiyat</div>' +
+					'<div class="price-value">' + formattedPrice + ' <span class="price-unit">TL</span></div>' +
+				'</div>' +
+			'</div>';
+		}
+
+		// Fiyatları render et
+		function renderPrices(prices) {
+			priceListEl.innerHTML = '';
+
+			if (prices.length === 0) {
+				priceListEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;"><p>Fiyat bulunamadı</p></div>';
+				return;
+			}
+
+			prices.forEach(function(price) {
+				priceListEl.innerHTML += createPriceCard(price);
+			});
+		}
+
+		// Bayileri Supabase'den yükle
+		async function loadDealers() {
+			try {
+				const { data: dealers, error } = await DealersService.getAll();
+
+				if (error) throw new Error(error);
+
+				renderDealers(dealers || []);
+			} catch (err) {
+				console.error('Bayi yükleme hatası:', err);
+				bayiListEl.innerHTML = '<div style="text-align: center; padding: 20px; color: #e31e24;">Bayiler yüklenirken hata oluştu</div>';
+			}
+		}
+
+		// Bayi kartı oluştur
+		function createDealerItem(dealer) {
+			var address = [dealer.district, dealer.city].filter(Boolean).join(', ');
+
+			return '<div class="bayi-item" data-id="' + dealer.id + '" data-name="' + dealer.name + '">' +
+				'<div class="bayi-item-info">' +
+					'<div class="bayi-item-name">' + dealer.name + '</div>' +
+					'<div class="bayi-item-address">' + address + '</div>' +
+				'</div>' +
+				'<div class="bayi-item-distance">' + (dealer.distance ? dealer.distance.toFixed(1) + ' km' : '') + '</div>' +
+			'</div>';
+		}
+
+		// Bayileri render et
+		function renderDealers(dealers) {
+			bayiListEl.innerHTML = '';
+
+			if (dealers.length === 0) {
+				bayiListEl.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Bayi bulunamadı</div>';
+				return;
+			}
+
+			dealers.forEach(function(dealer) {
+				bayiListEl.innerHTML += createDealerItem(dealer);
+			});
+
+			// Event listener'ları bağla
+			bindDealerEvents();
+		}
+
+		// Bayi event'lerini bağla
+		function bindDealerEvents() {
+			document.querySelectorAll('.bayi-item').forEach(function(item) {
+				item.addEventListener('click', function() {
+					var dealerId = this.getAttribute('data-id');
+					var dealerName = this.getAttribute('data-name');
+					sessionStorage.setItem('selected_bayi', dealerName);
+					sessionStorage.setItem('dealer_id', dealerId);
+					selectedBayiName.textContent = dealerName;
+					selectedBayiBox.classList.add('active');
+					bayiOverlay.classList.remove('active');
+				});
+			});
+		}
+
+		// Sayfa yüklendiğinde durum kontrolü
+		function checkWithdrawnState() {
+			var isNewUser = sessionStorage.getItem('isNewUser') === 'true';
+			var tekliftenCekildi = sessionStorage.getItem('tekliften_cekildi') === 'true';
+
+			// Yeni üye ise veya tekliften çekildiyse "teklif yok" göster
+			if (isNewUser || tekliftenCekildi) {
+				showWithdrawnState();
+				return true;
+			}
+			return false;
+		}
+
+		// Çekilmiş durumu göster
+		function showWithdrawnState() {
+			infoBanner.classList.add('hidden');
+			priceListEl.classList.add('hidden');
+			footerNote.classList.add('hidden');
+			btnWithdraw.classList.add('hidden');
+			noOfferState.classList.add('active');
+
+			// Seçilmiş bayi varsa göster
+			var savedBayi = sessionStorage.getItem('selected_bayi');
+			if (savedBayi) {
+				selectedBayiName.textContent = savedBayi;
+				selectedBayiBox.classList.add('active');
+			}
+		}
+
+		// Normal duruma dön (fiyatları göster)
+		function showNormalState() {
+			infoBanner.classList.remove('hidden');
+			priceListEl.classList.remove('hidden');
+			footerNote.classList.remove('hidden');
+			btnWithdraw.classList.remove('hidden');
+			noOfferState.classList.remove('active');
+		}
+
+		// Tekliften çekil butonu
+		btnWithdraw.addEventListener('click', function() {
+			warningOverlay.classList.add('active');
+		});
+
+		// İptal butonu
+		btnCancel.addEventListener('click', function() {
+			warningOverlay.classList.remove('active');
+		});
+
+		// Overlay dışına tıklanınca kapat
+		warningOverlay.addEventListener('click', function(e) {
+			if (e.target === this) {
+				this.classList.remove('active');
+			}
+		});
+
+		// Onayla butonu (Tekliften çekil)
+		btnConfirm.addEventListener('click', async function() {
+			this.disabled = true;
+			this.textContent = 'İşleniyor...';
+
+			try {
+				// Supabase'de fiyatları deaktif et
+				if (currentCustomerId) {
+					const { error } = await CustomerPricesService.deactivateAllForCustomer(currentCustomerId);
+					if (error) {
+						console.error('Fiyat deaktif hatası:', error);
+					}
+				}
+
+				sessionStorage.setItem('tekliften_cekildi', 'true');
+				warningOverlay.classList.remove('active');
+				showWithdrawnState();
+			} catch (err) {
+				console.error('Tekliften çekilme hatası:', err);
+				alert('İşlem sırasında bir hata oluştu.');
+			} finally {
+				this.disabled = false;
+				this.textContent = 'Onayla';
+			}
+		});
+
+		// Bayi seç butonu
+		btnSelectBayi.addEventListener('click', function() {
+			loadDealers();
+			bayiOverlay.classList.add('active');
+		});
+
+		// Bayi modal kapat
+		bayiModalClose.addEventListener('click', function() {
+			bayiOverlay.classList.remove('active');
+		});
+
+		// Bayi overlay dışına tıklanınca kapat
+		bayiOverlay.addEventListener('click', function(e) {
+			if (e.target === this) {
+				this.classList.remove('active');
+			}
+		});
+
+		// Sayfa yüklendiğinde
+		document.addEventListener('DOMContentLoaded', function() {
+			// Durumu kontrol et
+			var isWithdrawn = checkWithdrawnState();
+
+			// Çekilmemiş ise fiyatları yükle
+			if (!isWithdrawn) {
+				loadPrices();
+			}
+		});
+	</script>
+</body>
+</html>
