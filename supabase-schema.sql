@@ -1,5 +1,5 @@
 -- =============================================
--- İPRAGAZ BAYİ - SUPABASE SCHEMA
+-- İPRAGAZ BAYİ - SUPABASE SCHEMA...
 -- =============================================
 -- Bu SQL dosyasını Supabase Console > SQL Editor'de çalıştırın
 
