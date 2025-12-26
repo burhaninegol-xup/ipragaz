@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(node --check:*)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(grep:*)"
     ]
   }
 }
