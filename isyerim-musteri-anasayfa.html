@@ -1316,7 +1316,7 @@
 			// Ürün resim URL'i
 			var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
 
-			return '<div class="product-card" data-product-id="' + product.id + '">' +
+			return '<div class="product-card" data-product-id="' + product.id + '" style="cursor: pointer;">' +
 				'<button class="product-favorite">' +
 					'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 				'</button>' +
@@ -1349,10 +1349,19 @@
 
 		// Ürün event'lerini bağla
 		function bindProductEvents() {
+			// Ürün kartına tıklama - detay sayfasına git
+			document.querySelectorAll('.product-card').forEach(function(card) {
+				card.addEventListener('click', function(e) {
+					var productId = this.getAttribute('data-product-id');
+					window.location.href = 'isyerim-musteri-urun-detay.html?id=' + productId;
+				});
+			});
+
 			// Favorite Toggle
 			document.querySelectorAll('.product-favorite').forEach(function(btn) {
 				btn.addEventListener('click', function(e) {
 					e.preventDefault();
+					e.stopPropagation(); // Kartın tıklanmasını engelle
 					this.classList.toggle('active');
 				});
 			});
@@ -1361,6 +1370,7 @@
 			document.querySelectorAll('.btn-add-cart').forEach(function(btn) {
 				btn.addEventListener('click', async function(e) {
 					e.preventDefault();
+					e.stopPropagation(); // Kartın tıklanmasını engelle
 
 					var productCard = this.closest('.product-card');
 					var productId = productCard.getAttribute('data-product-id');

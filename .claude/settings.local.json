@@ -3,7 +3,9 @@
     "allow": [
       "Bash(node --check:*)",
       "Bash(npx supabase:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)"
     ]
   }
 }
