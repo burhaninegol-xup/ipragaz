@@ -1335,7 +1335,7 @@
 	<script src="./js/services/products-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/customer-prices-service.js"></script>
-	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/cart-service.js?v=4"></script>
 	<script>
 		// Hero Slider
 		(function() {
@@ -1483,7 +1483,7 @@
 
 			// Sepete Ekle
 			document.querySelectorAll('.btn-add-cart').forEach(function(btn) {
-				btn.addEventListener('click', function(e) {
+				btn.addEventListener('click', async function(e) {
 					e.preventDefault();
 
 					var productCard = this.closest('.product-card');
@@ -1496,8 +1496,8 @@
 					// Fiyatı belirle
 					var price = customerPrices[product.id] || product.base_price;
 
-					// Ürünü sepete ekle
-					CartService.addItem({
+					// Ürünü sepete ekle (async)
+					await CartService.addItem({
 						id: product.id,
 						code: product.code,
 						name: product.name,
@@ -1540,7 +1540,16 @@
 		}
 
 		// Sayfa yüklendiğinde
-		document.addEventListener('DOMContentLoaded', function() {
+		document.addEventListener('DOMContentLoaded', async function() {
+			// Müşteri ID'sini al
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+
+			// Veritabanından sepeti yükle (login olmuşsa)
+			if (customerId) {
+				console.log('Sepet veritabanından yükleniyor...');
+				await CartService.loadFromDatabase(customerId);
+			}
+
 			// Ürünleri yükle
 			loadProducts();
 

@@ -765,7 +765,7 @@
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
-	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/cart-service.js?v=4"></script>
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script>
@@ -848,26 +848,26 @@
 			}).join('');
 		}
 
-		function increaseQuantity(productId) {
-			CartService.incrementQuantity(productId);
+		async function increaseQuantity(productId) {
+			await CartService.incrementQuantity(productId);
 			renderCart();
 		}
 
-		function decreaseQuantity(productId) {
-			CartService.decrementQuantity(productId);
+		async function decreaseQuantity(productId) {
+			await CartService.decrementQuantity(productId);
 			renderCart();
 		}
 
-		function removeItem(productId) {
+		async function removeItem(productId) {
 			if (confirm('Ürünü sepetten kaldırmak istediğinize emin misiniz?')) {
-				CartService.removeItem(productId);
+				await CartService.removeItem(productId);
 				renderCart();
 			}
 		}
 
-		function clearCart() {
+		async function clearCart() {
 			if (confirm('Sepeti temizlemek istediğinize emin misiniz?')) {
-				CartService.clearCart();
+				await CartService.clearCart();
 				renderCart();
 			}
 		}
