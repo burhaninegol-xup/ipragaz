@@ -124,6 +124,34 @@
 	.profile-dropdown-item.logout svg {
 		color: #e31e24;
 	}
+	.profile-dropdown-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 16px 18px;
+		background: #f9f9f9;
+		border-bottom: 1px solid #eee;
+	}
+	.profile-avatar {
+		width: 40px;
+		height: 40px;
+		background: #e31e24;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+	.profile-avatar svg {
+		width: 20px;
+		height: 20px;
+		color: #fff;
+	}
+	.profile-name {
+		font-size: 14px;
+		font-weight: 600;
+		color: #333;
+	}
 	@media (max-width: 768px) {
 		.header .container {
 			padding: 0 15px;
@@ -176,6 +204,16 @@
 				</a>
 				<!-- Profile Dropdown Menu -->
 				<div class="profile-dropdown" id="profileDropdown">
+					<!-- Kullanıcı Adı Bölümü -->
+					<div class="profile-dropdown-header">
+						<div class="profile-avatar">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+								<circle cx="12" cy="7" r="4"/>
+							</svg>
+						</div>
+						<span class="profile-name" id="profileUserName">Kullanici</span>
+					</div>
 					<a href="isyerim-musteri-bayi-fiyatlari.html" class="profile-dropdown-item">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<line x1="12" y1="1" x2="12" y2="23"/>

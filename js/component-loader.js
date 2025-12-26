@@ -72,10 +72,32 @@ const ComponentLoader = {
         // Sepet badge guncelle
         this.updateCartBadge();
 
+        // Kullanici adini yukle
+        this.loadUserName();
+
         // cartUpdated event'ini dinle
         window.addEventListener('cartUpdated', () => {
             this.updateCartBadge();
         });
+    },
+
+    /**
+     * Kullanici adini sessionStorage'dan yukle ve goster
+     */
+    loadUserName() {
+        var customerName = sessionStorage.getItem('isyerim_customer_name');
+
+        // Profile dropdown'daki ismi guncelle
+        var profileNameEl = document.getElementById('profileUserName');
+        if (profileNameEl && customerName) {
+            profileNameEl.textContent = customerName;
+        }
+
+        // Header'daki kullanici adini da guncelle
+        var headerUserNameEl = document.getElementById('headerUserName');
+        if (headerUserNameEl && customerName) {
+            headerUserNameEl.textContent = customerName;
+        }
     },
 
     /**

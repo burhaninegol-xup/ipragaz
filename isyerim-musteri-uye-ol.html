@@ -608,8 +608,9 @@
 					return;
 				}
 
-				// Başarılı - customer_id'yi kaydet
+				// Başarılı - customer_id ve adını kaydet
 				sessionStorage.setItem('isyerim_customer_id', result.data.id);
+				sessionStorage.setItem('isyerim_customer_name', result.data.name || customerData.name);
 				sessionStorage.setItem('isNewUser', 'false');
 
 				// Anasayfaya yönlendir

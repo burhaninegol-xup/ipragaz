@@ -426,8 +426,9 @@
 				var result = await CustomersService.getByPhone(phone);
 
 				if (result.data) {
-					// Kullanıcı mevcut - customer_id'yi kaydet ve anasayfaya yönlendir
+					// Kullanıcı mevcut - customer_id ve adını kaydet, anasayfaya yönlendir
 					sessionStorage.setItem('isyerim_customer_id', result.data.id);
+					sessionStorage.setItem('isyerim_customer_name', result.data.name || 'Müşteri');
 					sessionStorage.setItem('isNewUser', 'false');
 					window.location.href = 'isyerim-musteri-anasayfa.html';
 				} else {
