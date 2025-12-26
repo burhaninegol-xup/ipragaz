@@ -16,12 +16,7 @@
 		body {
 			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			min-height: 100vh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: #e31e24;
-			background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-			padding: 20px;
+			background-color: #f5f5f5;
 		}
 
 		a {
@@ -331,7 +326,13 @@
 	</style>
 </head>
 <body>
-	<div class="card">
+	<!-- Top Bar (Component) -->
+	<div id="isyerim-top-bar"></div>
+
+	<!-- Header (Component) -->
+	<div id="isyerim-header"></div>
+
+	<div class="card" style="margin: 30px auto;">
 		<!-- Logo -->
 		<div class="logo">
 			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
@@ -419,6 +420,9 @@
 		</form>
 	</div>
 
+	<!-- Footer (Component) -->
+	<div id="isyerim-footer"></div>
+
 	<!-- Üyelik Sözleşmesi Panel -->
 	<div class="panel-overlay" id="sozlesmePanel">
 		<div class="slide-panel">
@@ -492,6 +496,9 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Component Loader -->
+	<script src="./js/component-loader.js"></script>
 
 	<!-- Supabase CDN -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

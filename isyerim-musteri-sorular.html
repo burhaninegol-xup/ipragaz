@@ -25,21 +25,6 @@
 			color: inherit;
 		}
 
-		/* Header */
-		.header {
-			background: #fff;
-			padding: 20px 40px;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			border-bottom: 1px solid #eee;
-		}
-
-		.header-logo svg {
-			height: 40px;
-			width: auto;
-		}
-
 		/* Stepper */
 		.stepper {
 			display: flex;
@@ -246,10 +231,8 @@
 
 		/* Responsive */
 		@media (max-width: 900px) {
-			.header {
-				padding: 15px 20px;
-				flex-direction: column;
-				gap: 20px;
+			.stepper-container {
+				padding: 15px 20px !important;
 			}
 
 			.stepper {
@@ -368,22 +351,18 @@
 	</style>
 </head>
 <body>
-	<!-- Header -->
-	<header class="header">
-		<!-- Logo -->
-		<a href="isyerim-musteri-anasayfa.html" class="header-logo">
-			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
-				<circle cx="25" cy="25" r="20" fill="none" stroke="#e31e24" stroke-width="3"/>
-				<path d="M25 10 L25 25" stroke="#e31e24" stroke-width="3" stroke-linecap="round"/>
-				<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#e31e24">iPRAGAZ</text>
-			</svg>
-		</a>
+	<!-- Top Bar (Component) -->
+	<div id="isyerim-top-bar"></div>
 
-		<!-- Stepper -->
+	<!-- Header (Component) -->
+	<div id="isyerim-header"></div>
+
+	<!-- Stepper -->
+	<div class="stepper-container" style="background: #fff; padding: 20px 60px; border-bottom: 1px solid #eee; display: flex; justify-content: center;">
 		<div class="stepper">
 			<div class="step">
 				<span class="step-number active">1</span>
-				<span class="step-label active">Sipariş Detayı</span>
+				<span class="step-label active">Siparis Detayi</span>
 			</div>
 			<div class="step-line"></div>
 			<div class="step">
@@ -393,13 +372,10 @@
 			<div class="step-line"></div>
 			<div class="step">
 				<span class="step-number inactive">3</span>
-				<span class="step-label inactive">Teslimat ve Ödeme</span>
+				<span class="step-label inactive">Teslimat ve Odeme</span>
 			</div>
 		</div>
-
-		<!-- Spacer for alignment -->
-		<div style="width: 150px;"></div>
-	</header>
+	</div>
 
 	<!-- Main Container -->
 	<div class="main-container">
@@ -498,6 +474,9 @@
 		</aside>
 	</div>
 
+	<!-- Footer (Component) -->
+	<div id="isyerim-footer"></div>
+
 	<!-- Error Overlay -->
 	<div class="error-overlay" id="errorOverlay">
 		<div class="error-modal">
@@ -512,6 +491,9 @@
 			<button class="btn-close-overlay" id="closeOverlay">Tamam</button>
 		</div>
 	</div>
+
+	<!-- Component Loader -->
+	<script src="./js/component-loader.js"></script>
 
 	<script>
 		// Form validation
