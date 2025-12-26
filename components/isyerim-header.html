@@ -124,6 +124,136 @@
 	.profile-dropdown-item.logout svg {
 		color: #e31e24;
 	}
+	/* Address Selection Modal */
+	.address-modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0,0,0,0.5);
+		z-index: 1000;
+		display: none;
+		align-items: center;
+		justify-content: center;
+	}
+	.address-modal-overlay.active {
+		display: flex;
+	}
+	.address-modal {
+		background: #fff;
+		border-radius: 12px;
+		padding: 30px;
+		width: 450px;
+		max-width: 90%;
+		max-height: 80vh;
+		overflow-y: auto;
+	}
+	.address-modal-title {
+		font-size: 18px;
+		font-weight: 600;
+		color: #333;
+		text-align: center;
+		margin-bottom: 25px;
+	}
+	.address-modal-list {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+		margin-bottom: 25px;
+	}
+	.address-modal-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 15px;
+		padding: 15px;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: border-color 0.2s;
+	}
+	.address-modal-item:hover {
+		border-color: #e31e24;
+	}
+	.address-modal-item.selected {
+		border-color: #e31e24;
+		background: #fff5f5;
+	}
+	.address-radio {
+		width: 20px;
+		height: 20px;
+		border: 2px solid #ccc;
+		border-radius: 50%;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 2px;
+	}
+	.address-modal-item.selected .address-radio {
+		border-color: #e31e24;
+	}
+	.address-radio-inner {
+		width: 10px;
+		height: 10px;
+		background: #e31e24;
+		border-radius: 50%;
+		display: none;
+	}
+	.address-modal-item.selected .address-radio-inner {
+		display: block;
+	}
+	.address-modal-info {
+		flex: 1;
+	}
+	.address-modal-name {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333;
+		margin-bottom: 5px;
+	}
+	.address-modal-full {
+		font-size: 13px;
+		color: #666;
+		line-height: 1.4;
+	}
+	.address-continue-btn {
+		width: 100%;
+		background: #e31e24;
+		color: #fff;
+		border: none;
+		border-radius: 8px;
+		padding: 15px;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		font-family: inherit;
+		transition: background 0.3s;
+	}
+	.address-continue-btn:hover {
+		background: #c91a1f;
+	}
+	.address-continue-btn:disabled {
+		background: #ccc;
+		cursor: not-allowed;
+	}
+	.address-continue-btn svg {
+		width: 18px;
+		height: 18px;
+	}
+	.address-empty {
+		text-align: center;
+		padding: 30px;
+		color: #666;
+	}
+	.address-empty a {
+		color: #e31e24;
+		text-decoration: underline;
+	}
 	.profile-dropdown-header {
 		display: flex;
 		align-items: center;
@@ -179,10 +309,10 @@
 		<!-- Right Section -->
 		<div class="header-actions">
 			<!-- User + Location Pill -->
-			<div class="header-user-location">
+			<div class="header-user-location" onclick="openAddressModal()">
 				<span class="user-name" id="headerUserName">Kullanici</span>
 				<span>:</span>
-				<span id="headerUserLocation">Istanbul</span>
+				<span id="headerUserLocation">Adres Seciniz</span>
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
 				</svg>
@@ -241,3 +371,129 @@
 		</div>
 	</div>
 </header>
+
+<!-- Address Selection Modal -->
+<div class="address-modal-overlay" id="addressModalOverlay" onclick="closeAddressModal(event)">
+	<div class="address-modal" onclick="event.stopPropagation()">
+		<h3 class="address-modal-title">Adreslerim</h3>
+		<div class="address-modal-list" id="addressModalList">
+			<div class="address-empty">Yukleniyor...</div>
+		</div>
+		<button class="address-continue-btn" id="addressContinueBtn" onclick="confirmAddressSelection()" disabled>
+			Devam Et
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M5 12h14"/>
+				<path d="M12 5l7 7-7 7"/>
+			</svg>
+		</button>
+	</div>
+</div>
+
+<script>
+var selectedAddressId = null;
+var selectedAddressName = null;
+
+// Sayfa yuklendiginde secili adresi kontrol et
+document.addEventListener('DOMContentLoaded', function() {
+	loadSelectedAddress();
+});
+
+function loadSelectedAddress() {
+	var savedId = sessionStorage.getItem('selected_address_id');
+	var savedName = sessionStorage.getItem('selected_address_name');
+	if (savedId && savedName) {
+		selectedAddressId = savedId;
+		selectedAddressName = savedName;
+		var locationSpan = document.getElementById('headerUserLocation');
+		if (locationSpan) {
+			locationSpan.textContent = savedName;
+		}
+	}
+}
+
+async function openAddressModal() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	if (!customerId) {
+		window.location.href = 'isyerim-musteri-login.html';
+		return;
+	}
+
+	document.getElementById('addressModalOverlay').classList.add('active');
+	document.body.style.overflow = 'hidden';
+
+	var listContainer = document.getElementById('addressModalList');
+	listContainer.innerHTML = '<div class="address-empty">Yukleniyor...</div>';
+
+	// AddressesService kontrolu
+	if (typeof AddressesService === 'undefined') {
+		listContainer.innerHTML = '<div class="address-empty">Adres servisi yuklenemedi</div>';
+		return;
+	}
+
+	var result = await AddressesService.getByCustomerId(customerId);
+
+	if (result.error) {
+		listContainer.innerHTML = '<div class="address-empty">Adresler yuklenemedi</div>';
+		return;
+	}
+
+	var addresses = result.data || [];
+
+	if (addresses.length === 0) {
+		listContainer.innerHTML = '<div class="address-empty">Henuz kayitli adresiniz yok.<br><a href="isyerim-musteri-adreslerim.html">Adres eklemek icin tiklayin</a></div>';
+		return;
+	}
+
+	var html = '';
+	addresses.forEach(function(addr) {
+		var isSelected = addr.id === selectedAddressId || (addr.is_default && !selectedAddressId);
+		html += '<div class="address-modal-item' + (isSelected ? ' selected' : '') + '" onclick="selectModalAddress(\'' + addr.id + '\', \'' + addr.address_name.replace(/'/g, "\\'") + '\')">';
+		html += '<div class="address-radio"><div class="address-radio-inner"></div></div>';
+		html += '<div class="address-modal-info">';
+		html += '<div class="address-modal-name">' + addr.address_name + '</div>';
+		html += '<div class="address-modal-full">' + (addr.full_address || addr.district + ', ' + addr.city) + '</div>';
+		html += '</div></div>';
+
+		if (isSelected) {
+			selectedAddressId = addr.id;
+			selectedAddressName = addr.address_name;
+		}
+	});
+
+	listContainer.innerHTML = html;
+	document.getElementById('addressContinueBtn').disabled = !selectedAddressId;
+}
+
+function closeAddressModal(event) {
+	if (event && event.target !== event.currentTarget) return;
+	document.getElementById('addressModalOverlay').classList.remove('active');
+	document.body.style.overflow = '';
+}
+
+function selectModalAddress(addressId, addressName) {
+	selectedAddressId = addressId;
+	selectedAddressName = addressName;
+
+	var items = document.querySelectorAll('.address-modal-item');
+	items.forEach(function(item) {
+		item.classList.remove('selected');
+	});
+
+	event.currentTarget.classList.add('selected');
+	document.getElementById('addressContinueBtn').disabled = false;
+}
+
+function confirmAddressSelection() {
+	if (!selectedAddressId || !selectedAddressName) return;
+
+	sessionStorage.setItem('selected_address_id', selectedAddressId);
+	sessionStorage.setItem('selected_address_name', selectedAddressName);
+
+	var locationSpan = document.getElementById('headerUserLocation');
+	if (locationSpan) {
+		locationSpan.textContent = selectedAddressName;
+	}
+
+	closeAddressModal();
+}
+</script>
