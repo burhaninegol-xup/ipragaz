@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Puanlarim - Ipragaz IsYerim</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body { font-family: 'Poppins', sans-serif; background: #f5f5f5; color: #333; }
+		a { text-decoration: none; color: inherit; }
+		.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
+		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
+		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+		.placeholder-content { text-align: center; padding: 60px 20px; }
+		.placeholder-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #e31e24; }
+		.placeholder-text { font-size: 16px; color: #666; margin-bottom: 10px; }
+		.placeholder-subtext { font-size: 14px; color: #999; }
+		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+	</style>
+</head>
+<body>
+	<div id="isyerim-top-bar"></div>
+	<div id="isyerim-header"></div>
+	<div class="container">
+		<div class="settings-layout">
+			<div id="isyerim-settings-sidebar"></div>
+			<div class="settings-content">
+				<h1 class="content-title">Puanlarim</h1>
+				<div class="placeholder-content">
+					<svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10"/>
+						<path d="M12 6v6l4 2"/>
+					</svg>
+					<p class="placeholder-text">Bu sayfa yakim zamanda aktif olacak</p>
+					<p class="placeholder-subtext">Puanlarinizi buradan takip edebileceksiniz</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="isyerim-footer"></div>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', async function() {
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+			try {
+				var response = await fetch('./components/isyerim-settings-sidebar.html');
+				var html = await response.text();
+				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('puanlarim'); }, 100);
+			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+		});
+	</script>
+</body>
+</html>
