@@ -554,6 +554,258 @@
 			color: #888;
 		}
 
+		/* Pricing Type Selection */
+		.pricing-section {
+			width: 100%;
+			margin-top: 15px;
+			padding-top: 15px;
+			border-top: 1px dashed #e0e0e0;
+		}
+
+		.base-price-display {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 12px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.base-price-display strong {
+			color: #002c77;
+			font-weight: 600;
+		}
+
+		.pricing-options {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.pricing-option {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 12px 14px;
+			background: #f8f9fa;
+			border-radius: 10px;
+			border: 2px solid transparent;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pricing-option:hover {
+			background: #f0f4f8;
+		}
+
+		.pricing-option.selected {
+			background: #e3f2fd;
+			border-color: #002c77;
+		}
+
+		.pricing-option.error {
+			background: #fff5f5;
+			border-color: #e53935;
+		}
+
+		.pricing-option input[type="radio"] {
+			display: none;
+		}
+
+		.pricing-radio {
+			width: 20px;
+			height: 20px;
+			border: 2px solid #ccc;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			transition: all 0.2s;
+		}
+
+		.pricing-option.selected .pricing-radio {
+			border-color: #002c77;
+		}
+
+		.pricing-radio-inner {
+			width: 10px;
+			height: 10px;
+			background: #002c77;
+			border-radius: 50%;
+			transform: scale(0);
+			transition: transform 0.2s;
+		}
+
+		.pricing-option.selected .pricing-radio-inner {
+			transform: scale(1);
+		}
+
+		.pricing-label {
+			flex: 1;
+			font-size: 13px;
+			font-weight: 500;
+			color: #333;
+			min-width: 140px;
+		}
+
+		.pricing-input-wrapper {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.pricing-input-wrapper input {
+			width: 80px;
+			padding: 8px 10px;
+			border: 1px solid #e0e0e0;
+			border-radius: 6px;
+			font-size: 13px;
+			text-align: right;
+			transition: all 0.2s;
+		}
+
+		.pricing-input-wrapper input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 2px rgba(0,44,119,0.1);
+		}
+
+		.pricing-input-wrapper input:disabled {
+			background: #f5f5f5;
+			color: #999;
+			cursor: not-allowed;
+		}
+
+		.pricing-input-wrapper .input-unit {
+			font-size: 12px;
+			color: #666;
+			min-width: 20px;
+		}
+
+		.pricing-input-wrapper .retail-price-display {
+			font-size: 14px;
+			font-weight: 600;
+			color: #002c77;
+			padding: 8px 12px;
+			background: #e3f2fd;
+			border-radius: 6px;
+		}
+
+		.final-price-display {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 8px;
+			margin-top: 12px;
+			padding: 12px 14px;
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			border-radius: 10px;
+		}
+
+		.final-price-label {
+			font-size: 13px;
+			color: #2e7d32;
+			font-weight: 500;
+		}
+
+		.final-price-value {
+			font-size: 18px;
+			font-weight: 700;
+			color: #1b5e20;
+		}
+
+		/* Aylik Ortalama Tuketim input wrapper */
+		.consumption-input-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			min-width: 120px;
+			background: #e3f2fd;
+			padding: 12px 14px;
+			border-radius: 10px;
+			border: 2px solid #002c77;
+		}
+
+		.consumption-input-wrapper label {
+			font-size: 11px;
+			font-weight: 600;
+			color: #002c77;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+
+		.consumption-input-wrapper .input-suffix {
+			position: relative;
+		}
+
+		.consumption-input-wrapper .input-suffix input {
+			width: 100%;
+			padding: 10px 40px 10px 12px;
+			border: 1px solid #90caf9;
+			border-radius: 6px;
+			font-size: 15px;
+			font-weight: 600;
+			text-align: center;
+			background: #fff;
+		}
+
+		.consumption-input-wrapper .input-suffix input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 2px rgba(0,44,119,0.2);
+		}
+
+		.consumption-input-wrapper.error {
+			background: #ffebee;
+			border-color: #e53935;
+		}
+
+		.consumption-input-wrapper.error label {
+			color: #e53935;
+		}
+
+		.consumption-input-wrapper.error .input-suffix input {
+			border-color: #e53935;
+		}
+
+		.consumption-input-wrapper .input-suffix span {
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 12px;
+			color: #666;
+		}
+
+		@media (max-width: 768px) {
+			.consumption-input-wrapper {
+				width: 100%;
+				order: 2;
+			}
+
+			.pricing-option {
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+
+			.pricing-label {
+				width: 100%;
+				order: 1;
+				margin-left: 32px;
+			}
+
+			.pricing-radio {
+				order: 0;
+			}
+
+			.pricing-input-wrapper {
+				order: 2;
+				width: 100%;
+				margin-left: 32px;
+			}
+		}
+
 		/* Form Actions */
 		.form-actions {
 			display: flex;
@@ -1582,7 +1834,9 @@
 							var price = existingPrice ? existingPrice.unit_price : '';
 							var thisMonth = existingPrice ? existingPrice.this_month_quantity : undefined;
 							var lastMonth = existingPrice ? existingPrice.last_month_quantity : undefined;
-							addProductRow(product, qty, price, thisMonth, lastMonth);
+							var pricingType = existingPrice ? existingPrice.pricing_type : 'fixed_price';
+							var discountValue = existingPrice ? existingPrice.discount_value : 0;
+							addProductRow(product, qty, price, thisMonth, lastMonth, pricingType, discountValue);
 						});
 
 						$('#products-form').addClass('visible');
@@ -1604,11 +1858,11 @@
 						$('#activate-customer-btn').hide();
 						$('#delete-prices-btn').hide();
 
-						// Tüm ürünleri boş fiyatlarla göster
+						// Tüm ürünleri varsayılan perakende fiyatla göster
 						$('#product-rows').empty();
 
 						products.forEach(function(product) {
-							addProductRow(product, '', '');
+							addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
 						});
 
 						$('#products-form').addClass('visible');
@@ -1621,9 +1875,9 @@
 				}
 			}
 
-			function addProductRow(product, quantity, price, thisMonth, lastMonth) {
+			function addProductRow(product, quantity, price, thisMonth, lastMonth, pricingType, discountValue) {
 
-				// Calculate percentages
+				// Calculate percentages for stats
 				var target = quantity || 0;
 				var hasCommitment = target > 0;
 
@@ -1636,22 +1890,19 @@
 				var thisMonthValueText, lastMonthValueText;
 
 				if (hasCommitment) {
-					// Taahhüt var: X/Y formatı ve yüzde hesapla
 					thisMonthPercent = Math.round((thisMonthVal / target) * 100);
 					lastMonthPercent = Math.round((lastMonthVal / target) * 100);
 					thisMonthValueText = thisMonthVal + '/' + target;
 					lastMonthValueText = lastMonthVal + '/' + target;
 				} else {
-					// Taahhüt yok: Sadece tüketim sayısı, %100, tam dolu barem
 					thisMonthPercent = 100;
 					lastMonthPercent = 100;
 					thisMonthValueText = thisMonthVal;
 					lastMonthValueText = lastMonthVal;
 				}
 
-				// Determine color class based on percentage
 				function getColorClass(percent, hasCommitment) {
-					if (!hasCommitment) return 'good'; // Taahhüt yoksa her zaman yeşil
+					if (!hasCommitment) return 'good';
 					if (percent >= 80) return 'good';
 					if (percent >= 50) return 'medium';
 					return 'low';
@@ -1660,11 +1911,22 @@
 				var thisMonthClass = getColorClass(thisMonthPercent, hasCommitment);
 				var lastMonthClass = getColorClass(lastMonthPercent, hasCommitment);
 
-				// Tüketim verisi varsa stats göster (0 da olabilir)
 				var hasStats = thisMonth !== undefined || lastMonth !== undefined;
 				var statsVisible = hasStats ? ' visible' : '';
 
-				var rowHtml = '<div class="product-row" data-product-id="' + product.id + '">' +
+				// Pricing type defaults - varsayılan perakende fiyat
+				var selectedType = pricingType || 'retail_price';
+				var basePrice = product.base_price || 0;
+
+				// Hesaplanan degerler
+				var fixedDiscountValue = selectedType === 'fixed_discount' ? (discountValue || '') : '';
+				var fixedPriceValue = selectedType === 'fixed_price' ? (price || '') : '';
+				var percentageValue = selectedType === 'percentage_discount' ? (discountValue || '') : '';
+
+				// Son fiyat hesapla
+				var finalPrice = calculateFinalPrice(basePrice, selectedType, discountValue || 0, price || 0);
+
+				var rowHtml = '<div class="product-row" data-product-id="' + product.id + '" data-base-price="' + basePrice + '">' +
 					'<div class="product-image">' +
 						'<img src="' + product.image + '" alt="' + product.name + '">' +
 					'</div>' +
@@ -1672,23 +1934,69 @@
 						'<div class="product-name">' + product.name + '</div>' +
 						'<div class="product-code">' + product.code + '</div>' +
 					'</div>' +
-					'<div class="product-inputs">' +
-						'<div class="input-group">' +
-							'<label>Taahhüt Adedi</label>' +
-							'<div class="input-suffix">' +
-								'<input type="number" class="quantity-input" placeholder="0" value="' + (quantity || '') + '" min="0">' +
-								'<span>adet</span>' +
-							'</div>' +
-						'</div>' +
-						'<div class="input-group">' +
-							'<label>Birim Fiyat <span style="color:#e53935;">*</span></label>' +
-							'<div class="input-suffix">' +
-								'<input type="number" class="price-input" placeholder="0" value="' + (price || '') + '" min="0" step="0.01" required>' +
-								'<span>TL</span>' +
-							'</div>' +
-							'<div class="error-message">Fiyat girilmesi zorunludur</div>' +
+
+					// Aylık Ortalama Tüketim - üst kısımda görünür şekilde
+					'<div class="consumption-input-wrapper">' +
+						'<label>Aylık Ort. Tüketim</label>' +
+						'<div class="input-suffix">' +
+							'<input type="number" class="quantity-input" placeholder="0" value="' + (quantity || '') + '" min="0">' +
+							'<span>adet</span>' +
 						'</div>' +
 					'</div>' +
+
+					// Pricing Section
+					'<div class="pricing-section">' +
+						'<div class="base-price-display">' +
+							'Perakende Fiyat: <strong>' + formatPrice(basePrice) + ' TL</strong>' +
+						'</div>' +
+						'<div class="pricing-options">' +
+							// 1. Perakende Fiyatı Uygula
+							'<div class="pricing-option' + (selectedType === 'retail_price' ? ' selected' : '') + '" data-type="retail_price">' +
+								'<input type="radio" name="pricing_' + product.id + '" value="retail_price"' + (selectedType === 'retail_price' ? ' checked' : '') + '>' +
+								'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
+								'<div class="pricing-label">Perakende Fiyatı Uygula</div>' +
+								'<div class="pricing-input-wrapper">' +
+									'<span class="retail-price-display">' + formatPrice(basePrice) + ' TL</span>' +
+								'</div>' +
+							'</div>' +
+							// 2. Sabit Fiyat
+							'<div class="pricing-option' + (selectedType === 'fixed_price' ? ' selected' : '') + '" data-type="fixed_price">' +
+								'<input type="radio" name="pricing_' + product.id + '" value="fixed_price"' + (selectedType === 'fixed_price' ? ' checked' : '') + '>' +
+								'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
+								'<div class="pricing-label">Sabit Fiyat</div>' +
+								'<div class="pricing-input-wrapper">' +
+									'<input type="number" class="discount-input fixed-price-input" placeholder="0" value="' + fixedPriceValue + '" min="0" step="0.01"' + (selectedType !== 'fixed_price' ? ' disabled' : '') + '>' +
+									'<span class="input-unit">TL</span>' +
+								'</div>' +
+							'</div>' +
+							// 3. Sabit Fiyat İndirimi
+							'<div class="pricing-option' + (selectedType === 'fixed_discount' ? ' selected' : '') + '" data-type="fixed_discount">' +
+								'<input type="radio" name="pricing_' + product.id + '" value="fixed_discount"' + (selectedType === 'fixed_discount' ? ' checked' : '') + '>' +
+								'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
+								'<div class="pricing-label">Sabit Fiyat İndirimi</div>' +
+								'<div class="pricing-input-wrapper">' +
+									'<input type="number" class="discount-input fixed-discount-input" placeholder="0" value="' + fixedDiscountValue + '" min="0" step="0.01"' + (selectedType !== 'fixed_discount' ? ' disabled' : '') + '>' +
+									'<span class="input-unit">TL indirim</span>' +
+								'</div>' +
+							'</div>' +
+							// 4. Yüzdesel İndirim
+							'<div class="pricing-option' + (selectedType === 'percentage_discount' ? ' selected' : '') + '" data-type="percentage_discount">' +
+								'<input type="radio" name="pricing_' + product.id + '" value="percentage_discount"' + (selectedType === 'percentage_discount' ? ' checked' : '') + '>' +
+								'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
+								'<div class="pricing-label">Yüzdesel İndirim</div>' +
+								'<div class="pricing-input-wrapper">' +
+									'<input type="number" class="discount-input percentage-input" placeholder="0" value="' + percentageValue + '" min="0" max="100" step="0.1"' + (selectedType !== 'percentage_discount' ? ' disabled' : '') + '>' +
+									'<span class="input-unit">%</span>' +
+								'</div>' +
+							'</div>' +
+						'</div>' +
+						'<div class="final-price-display">' +
+							'<span class="final-price-label">Musteriye Uygulanan Fiyat:</span>' +
+							'<span class="final-price-value">' + formatPrice(finalPrice) + ' TL</span>' +
+						'</div>' +
+					'</div>' +
+
+					// Stats Section
 					'<div class="product-stats' + statsVisible + '">' +
 						'<div class="stat-box">' +
 							'<div class="stat-box-header">' +
@@ -1704,7 +2012,7 @@
 						'</div>' +
 						'<div class="stat-box">' +
 							'<div class="stat-box-header">' +
-								'<div class="stat-box-title">Geçen Ay</div>' +
+								'<div class="stat-box-title">Gecen Ay</div>' +
 							'</div>' +
 							'<div class="stat-box-value">' + lastMonthValueText + '</div>' +
 							'<div class="stat-progress">' +
@@ -1720,38 +2028,158 @@
 				$('#product-rows').append(rowHtml);
 			}
 
-			// Clear error on input
-			$(document).on('input', '.price-input', function() {
-				var $inputGroup = $(this).closest('.input-group');
-				if ($(this).val() && parseFloat($(this).val()) > 0) {
-					$inputGroup.removeClass('error');
+			// Fiyat formatlama
+			function formatPrice(price) {
+				return parseFloat(price || 0).toFixed(2);
+			}
+
+			// Son fiyat hesaplama
+			function calculateFinalPrice(basePrice, pricingType, discountValue, fixedPrice) {
+				switch(pricingType) {
+					case 'retail_price':
+						return basePrice;
+					case 'fixed_discount':
+						return Math.max(0, basePrice - (discountValue || 0));
+					case 'fixed_price':
+						return fixedPrice || 0;
+					case 'percentage_discount':
+						return basePrice * (1 - (discountValue || 0) / 100);
+					default:
+						return basePrice;
 				}
+			}
+
+			// Pricing option click - select pricing type
+			$(document).on('click', '.pricing-option', function(e) {
+				// Input'a tıklandığında seçim değişmesin
+				if ($(e.target).is('input.discount-input')) {
+					return;
+				}
+
+				var $row = $(this).closest('.product-row');
+				var $option = $(this);
+				var selectedType = $option.data('type');
+
+				// Zaten seçili ise bir şey yapma
+				if ($option.hasClass('selected')) {
+					return;
+				}
+
+				var basePrice = parseFloat($row.data('base-price')) || 0;
+
+				// Deselect all options in this row
+				$row.find('.pricing-option').removeClass('selected').removeClass('error');
+				$row.find('.pricing-option input[type="radio"]').prop('checked', false);
+				$row.find('.pricing-option .discount-input').prop('disabled', true).css('border-color', '#e0e0e0');
+
+				// Select this option
+				$option.addClass('selected');
+				$option.find('input[type="radio"]').prop('checked', true);
+				var $discountInput = $option.find('.discount-input');
+				if ($discountInput.length) {
+					$discountInput.prop('disabled', false).focus();
+				}
+
+				// Perakende fiyat seçildiğinde tüketim zorunluluğu kalkar
+				if (selectedType === 'retail_price') {
+					$row.find('.consumption-input-wrapper').removeClass('error');
+				}
+
+				// Update final price display
+				updateFinalPrice($row);
 			});
+
+			// Discount input change - update price calculation and clear errors
+			$(document).on('input', '.discount-input', function() {
+				var $row = $(this).closest('.product-row');
+				var $option = $(this).closest('.pricing-option');
+
+				// Clear error state
+				$option.removeClass('error');
+				$(this).css('border-color', '#002c77');
+
+				updateFinalPrice($row);
+			});
+
+			// Quantity input change - clear error
+			$(document).on('input', '.quantity-input', function() {
+				var $row = $(this).closest('.product-row');
+				$row.find('.consumption-input-wrapper').removeClass('error');
+			});
+
+			// Update final price for a row
+			function updateFinalPrice($row) {
+				var basePrice = parseFloat($row.data('base-price')) || 0;
+				var $selectedOption = $row.find('.pricing-option.selected');
+				var selectedType = $selectedOption.data('type');
+				var inputValue = parseFloat($selectedOption.find('.discount-input').val()) || 0;
+
+				var finalPrice = 0;
+				if (selectedType === 'retail_price') {
+					finalPrice = basePrice;
+				} else if (selectedType === 'fixed_discount') {
+					finalPrice = Math.max(0, basePrice - inputValue);
+				} else if (selectedType === 'fixed_price') {
+					finalPrice = inputValue;
+				} else if (selectedType === 'percentage_discount') {
+					finalPrice = basePrice * (1 - inputValue / 100);
+				}
+
+				// Update the final price display
+				$row.find('.final-price-value').text(formatPrice(finalPrice) + ' TL');
+			}
 
 			// Save button
 			$('#save-btn').on('click', function() {
-				// Validate all price inputs
 				var hasError = false;
+				var $firstError = null;
+				var errorMessage = '';
 
 				$('.product-row').each(function() {
 					var $row = $(this);
-					var $priceInput = $row.find('.price-input');
-					var $inputGroup = $priceInput.closest('.input-group');
-					var priceVal = $priceInput.val();
+					var $selectedOption = $row.find('.pricing-option.selected');
+					var selectedType = $selectedOption.data('type');
+					var $input = $selectedOption.find('.discount-input');
+					var inputVal = parseFloat($input.val()) || 0;
+					var quantity = parseInt($row.find('.quantity-input').val()) || 0;
 
-					if (!priceVal || parseFloat(priceVal) <= 0) {
-						$inputGroup.addClass('error');
-						hasError = true;
-					} else {
-						$inputGroup.removeClass('error');
+					// Hata durumlarini temizle
+					$selectedOption.removeClass('error');
+					$input.css('border-color', '#e0e0e0');
+					$row.find('.consumption-input-wrapper').removeClass('error');
+
+					// Perakende fiyat seciliyse input kontrolu gerekmez
+					if (selectedType !== 'retail_price') {
+						// Diger seceneklerde input degeri olmali
+						if (inputVal <= 0) {
+							$selectedOption.addClass('error');
+							$input.css('border-color', '#e53935');
+							hasError = true;
+							errorMessage = 'Lütfen tüm ürünler için fiyat bilgisi giriniz.';
+							if (!$firstError) {
+								$firstError = $row;
+							}
+						}
+
+						// Perakende disinda tuketim adedi zorunlu
+						if (quantity <= 0) {
+							$row.find('.consumption-input-wrapper').addClass('error');
+							hasError = true;
+							errorMessage = 'Perakende fiyat dışında bir seçenek için Aylık Ort. Tüketim girilmelidir.';
+							if (!$firstError) {
+								$firstError = $row;
+							}
+						}
 					}
 				});
 
 				if (hasError) {
-					// Scroll to first error
-					$('html, body').animate({
-						scrollTop: $('.input-group.error').first().offset().top - 100
-					}, 300);
+					showError(errorMessage);
+					if ($firstError) {
+						$('html, body').animate({
+							scrollTop: $firstError.offset().top - 100
+						}, 300);
+					}
 					return;
 				}
 
@@ -1788,18 +2216,43 @@
 						customerId = currentCustomer.id;
 					}
 
-					// Teklif detaylarını topla
+					// Teklif detaylarını topla - yeni fiyatlandırma yapısı ile
 					var offerDetails = [];
 					$('.product-row').each(function() {
 						var $row = $(this);
 						var productId = $row.data('product-id');
-						var price = parseFloat($row.find('.price-input').val()) || 0;
+						var basePrice = parseFloat($row.data('base-price')) || 0;
 						var quantity = parseInt($row.find('.quantity-input').val()) || 0;
 
-						if (price > 0) {
+						// Seçili pricing option'ı bul
+						var $selectedOption = $row.find('.pricing-option.selected');
+						var pricingType = $selectedOption.data('type');
+						var inputVal = parseFloat($selectedOption.find('.discount-input').val()) || 0;
+
+						// Son fiyatı hesapla
+						var finalPrice = 0;
+						var discountValue = 0;
+
+						if (pricingType === 'retail_price') {
+							discountValue = 0;
+							finalPrice = basePrice;
+						} else if (pricingType === 'fixed_discount') {
+							discountValue = inputVal;
+							finalPrice = Math.max(0, basePrice - inputVal);
+						} else if (pricingType === 'fixed_price') {
+							discountValue = 0;
+							finalPrice = inputVal;
+						} else if (pricingType === 'percentage_discount') {
+							discountValue = inputVal;
+							finalPrice = basePrice * (1 - inputVal / 100);
+						}
+
+						if (finalPrice > 0) {
 							offerDetails.push({
 								product_id: productId,
-								unit_price: price,
+								unit_price: finalPrice,
+								pricing_type: pricingType,
+								discount_value: discountValue,
 								commitment_quantity: quantity,
 								this_month_quantity: 0,
 								last_month_quantity: 0

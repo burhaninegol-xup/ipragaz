@@ -54,6 +54,8 @@ const OffersService = {
                     offer_details(
                         id,
                         unit_price,
+                        pricing_type,
+                        discount_value,
                         commitment_quantity,
                         this_month_quantity,
                         last_month_quantity,
@@ -83,10 +85,12 @@ const OffersService = {
                     offer_details(
                         id,
                         unit_price,
+                        pricing_type,
+                        discount_value,
                         commitment_quantity,
                         this_month_quantity,
                         last_month_quantity,
-                        product:products(id, code, name, image_url)
+                        product:products(id, code, name, base_price, image_url)
                     )
                 `)
                 .eq('dealer_id', dealerId);
@@ -119,8 +123,10 @@ const OffersService = {
                     offer_details(
                         id,
                         unit_price,
+                        pricing_type,
+                        discount_value,
                         commitment_quantity,
-                        product:products(id, code, name, image_url)
+                        product:products(id, code, name, base_price, image_url)
                     )
                 `)
                 .eq('customer_id', customerId);
@@ -151,6 +157,8 @@ const OffersService = {
                     offer_details(
                         id,
                         unit_price,
+                        pricing_type,
+                        discount_value,
                         commitment_quantity,
                         this_month_quantity,
                         last_month_quantity,
@@ -288,6 +296,8 @@ const OffersService = {
                     offer_details(
                         id,
                         unit_price,
+                        pricing_type,
+                        discount_value,
                         commitment_quantity,
                         this_month_quantity,
                         last_month_quantity,
