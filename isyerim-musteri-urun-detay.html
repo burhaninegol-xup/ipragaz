@@ -636,6 +636,7 @@
 	<script src="./js/services/customer-prices-service.js"></script>
 	<script src="./js/services/cart-service.js?v=4"></script>
 	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Global değişkenler
@@ -644,6 +645,7 @@
 		var customerPrices = {};
 		var currentQuantity = 1;
 		var tekliftenCekildi = sessionStorage.getItem('tekliften_cekildi') === 'true';
+		var isProductFavorite = false; // Favori durumu
 
 		// URL'den product ID al
 		function getProductIdFromUrl() {
@@ -706,6 +708,15 @@
 					allProducts = allResult.data;
 				}
 
+				// Favori durumunu kontrol et
+				var isyerimCustomerId = sessionStorage.getItem('isyerim_customer_id');
+				if (isyerimCustomerId) {
+					var favResult = await FavoritesService.isFavorite(isyerimCustomerId, productId);
+					if (favResult.data) {
+						isProductFavorite = true;
+					}
+				}
+
 				// Sayfayı render et
 				renderProductDetail();
 				renderRecommendedProducts();
@@ -746,9 +757,12 @@
 			document.getElementById('breadcrumb-product-name').textContent = currentProduct.name;
 			document.title = currentProduct.name + ' - İpragaz İşYerim';
 
+			// Favori butonu class'ı
+			var favBtnClass = isProductFavorite ? 'product-favorite-btn active' : 'product-favorite-btn';
+
 			var html = '<div class="product-detail-grid">' +
 				'<div class="product-image-container">' +
-					'<button class="product-favorite-btn" id="favoriteBtn">' +
+					'<button class="' + favBtnClass + '" id="favoriteBtn">' +
 						'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 					'</button>' +
 					'<img src="' + imageUrl + '" alt="' + currentProduct.name + '">' +
@@ -803,8 +817,27 @@
 			container.innerHTML = html;
 
 			// Favori butonuna event listener ekle
-			document.getElementById('favoriteBtn').addEventListener('click', function() {
-				this.classList.toggle('active');
+			document.getElementById('favoriteBtn').addEventListener('click', async function() {
+				var customerId = sessionStorage.getItem('isyerim_customer_id');
+				if (!customerId) {
+					alert('Favorilere eklemek icin giris yapmaniz gerekiyor.');
+					return;
+				}
+
+				var btn = this;
+				var result = await FavoritesService.toggleFavorite(customerId, currentProduct.id);
+				if (result.error) {
+					console.error('Favori hatasi:', result.error);
+					return;
+				}
+
+				// UI guncelle
+				isProductFavorite = result.data.isFavorite;
+				if (isProductFavorite) {
+					btn.classList.add('active');
+				} else {
+					btn.classList.remove('active');
+				}
 			});
 		}
 

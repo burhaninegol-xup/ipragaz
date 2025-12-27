@@ -1,0 +1,209 @@
+<style>
+	/* Header Styles */
+	.header {
+		background: #fff;
+		box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+		position: sticky;
+		top: 0;
+		z-index: 100;
+	}
+
+	.header .container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 20px;
+	}
+
+	.header__wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 70px;
+	}
+
+	.header__logo img {
+		height: 40px;
+	}
+
+	.header__nav {
+		display: flex;
+		align-items: center;
+		gap: 30px;
+	}
+
+	.header__nav nav ul {
+		display: flex;
+		list-style: none;
+		gap: 25px;
+	}
+
+	.header__nav nav ul li a {
+		text-decoration: none;
+		color: #333;
+		font-size: 14px;
+		font-weight: 500;
+		transition: color 0.2s;
+	}
+
+	.header__nav nav ul li a:hover {
+		color: #002c77;
+	}
+
+	.header__user-panel ul {
+		display: flex;
+		align-items: center;
+		list-style: none;
+		gap: 20px;
+	}
+
+	.header__user-panel .date-display {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		font-size: 12px;
+		color: #666;
+	}
+
+	.header__user-panel .date-display span:first-child {
+		font-weight: 600;
+		color: #333;
+	}
+
+	.header__user-panel .icon-btn {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 10px;
+		background: #f5f7fa;
+		transition: background 0.2s;
+	}
+
+	.header__user-panel .icon-btn:hover {
+		background: #e8ecf1;
+	}
+
+	.header__user-panel .icon-btn img {
+		width: 20px;
+		height: 20px;
+	}
+
+	.header__user-panel .badge {
+		position: absolute;
+		top: -5px;
+		right: -5px;
+		background: #e53935;
+		color: #fff;
+		font-size: 11px;
+		font-weight: 600;
+		min-width: 18px;
+		height: 18px;
+		border-radius: 9px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.header__mobile {
+		display: none;
+		width: 40px;
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+	}
+
+	.header__mobile span,
+	.header__mobile span::before,
+	.header__mobile span::after {
+		display: block;
+		width: 24px;
+		height: 2px;
+		background: #333;
+		position: relative;
+		transition: all 0.3s;
+	}
+
+	.header__mobile span::before,
+	.header__mobile span::after {
+		content: '';
+		position: absolute;
+		left: 0;
+	}
+
+	.header__mobile span::before {
+		top: -7px;
+	}
+
+	.header__mobile span::after {
+		top: 7px;
+	}
+
+	/* Responsive */
+	@media (max-width: 1024px) {
+		.header__nav nav {
+			display: none;
+		}
+
+		.header__mobile {
+			display: flex;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.header__user-panel .desktop-panel {
+			display: none;
+		}
+	}
+</style>
+
+<header class="header">
+	<div class="container">
+		<div class="header__wrapper">
+			<div class="header__logo">
+				<a href="bayi-anasayfa.html">
+					<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
+				</a>
+			</div>
+
+			<div class="header__nav">
+				<nav>
+					<ul>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/reports/all-b2b-reports">Raporlar</a></li>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/tum-urunler-b2b">Siparis Ver</a></li>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/my-orders">Dolum Siparislerim</a></li>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/order">Siparislerim</a></li>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/b2b/staff">Calisanlar</a></li>
+						<li><a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/logout">Cikis</a></li>
+					</ul>
+				</nav>
+
+				<div class="header__user-panel">
+					<ul class="desktop-panel">
+						<li>
+							<div class="date-display">
+								<span id="header-date-day"></span>
+								<span id="header-date-weekday"></span>
+							</div>
+						</li>
+						<li>
+							<a href="#" class="icon-btn">
+								<img src="./İpragaz Bayi_files/search.svg" alt="Ara">
+							</a>
+						</li>
+						<li>
+							<a href="https://ipappbayi.ipragaz.com.tr/bayi/tr/cart" class="icon-btn">
+								<img src="./İpragaz Bayi_files/basket.svg" alt="Sepet">
+								<span class="badge" id="header-cart-badge">0</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="header__mobile" id="hamburger-btn"><span></span></div>
+		</div>
+	</div>
+</header>

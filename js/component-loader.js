@@ -144,6 +144,101 @@ const ComponentLoader = {
                 locationSpan.textContent = savedName;
             }
         }
+    },
+
+    /**
+     * Bayi componentlerini yukle
+     */
+    async loadBayiComponents() {
+        await Promise.all([
+            this.load('bayi-header', './components/bayi-header.html'),
+            this.load('bayi-mobile-sidebar', './components/bayi-mobile-sidebar.html')
+        ]);
+
+        // Componentler yuklendikten sonra event'leri bagla
+        this.initializeBayiComponents();
+    },
+
+    /**
+     * Bayi component event'lerini bagla
+     */
+    initializeBayiComponents() {
+        var $sidebar = document.getElementById('mobile-sidebar');
+        var $overlay = document.getElementById('menu-overlay');
+        var $hamburger = document.getElementById('hamburger-btn');
+        var $closeBtn = document.getElementById('mobile-sidebar-close');
+
+        // Hamburger click - sidebar ac
+        if ($hamburger && $sidebar && $overlay) {
+            $hamburger.addEventListener('click', function() {
+                $sidebar.classList.add('active');
+                $overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        // Close button ve overlay click - sidebar kapat
+        function closeSidebar() {
+            if ($sidebar) $sidebar.classList.remove('active');
+            if ($overlay) $overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if ($closeBtn) {
+            $closeBtn.addEventListener('click', closeSidebar);
+        }
+        if ($overlay) {
+            $overlay.addEventListener('click', closeSidebar);
+        }
+
+        // Dinamik tarih guncelle
+        this.updateBayiDate();
+
+        // Aktif menu item'i isaretlemesi icin sayfa yolu kontrol et
+        this.markActiveMenuItem();
+    },
+
+    /**
+     * Bayi header ve sidebar'da tarihi guncelle
+     */
+    updateBayiDate() {
+        var now = new Date();
+        var days = ['Pazar', 'Pazartesi', 'Sali', 'Carsamba', 'Persembe', 'Cuma', 'Cumartesi'];
+        var months = ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
+
+        var dayNum = now.getDate();
+        var monthName = months[now.getMonth()];
+        var weekday = days[now.getDay()];
+
+        // Header date
+        var headerDay = document.getElementById('header-date-day');
+        var headerWeekday = document.getElementById('header-date-weekday');
+        if (headerDay) headerDay.textContent = dayNum + ' ' + monthName;
+        if (headerWeekday) headerWeekday.textContent = weekday;
+
+        // Sidebar date
+        var sidebarDate = document.getElementById('sidebar-date-text');
+        if (sidebarDate) sidebarDate.textContent = dayNum + ' ' + monthName + ', ' + weekday;
+    },
+
+    /**
+     * Aktif menu item'i isaretlemesi
+     */
+    markActiveMenuItem() {
+        var currentPage = window.location.pathname.split('/').pop();
+        var menuItems = document.querySelectorAll('.mobile-sidebar-menu li');
+
+        menuItems.forEach(function(item) {
+            var link = item.querySelector('a');
+            if (link) {
+                var href = link.getAttribute('href');
+                if (href && href === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            }
+        });
     }
 };
 
@@ -277,11 +372,6 @@ window.confirmAddressSelection = function() {
 
     window.closeAddressModal();
 };
-
-// Sayfa yuklendiginde componentleri yukle
-document.addEventListener('DOMContentLoaded', function() {
-    ComponentLoader.loadAll();
-});
 
 // Global erisim
 window.ComponentLoader = ComponentLoader;

@@ -13,12 +13,80 @@
 		.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
 		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
-		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-		.placeholder-content { text-align: center; padding: 60px 20px; }
-		.placeholder-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #e31e24; }
-		.placeholder-text { font-size: 16px; color: #666; margin-bottom: 10px; }
-		.placeholder-subtext { font-size: 14px; color: #999; }
+		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 25px; }
+
+		/* Search */
+		.search-box { margin-bottom: 20px; }
+		.search-input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; }
+		.search-input:focus { outline: none; border-color: #e31e24; }
+
+		/* Tabs */
+		.tabs { display: flex; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px; }
+		.tab { padding: 12px 20px; font-size: 14px; font-weight: 500; color: #666; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+		.tab:hover { color: #e31e24; }
+		.tab.active { color: #e31e24; border-bottom-color: #e31e24; }
+
+		/* Date Filter */
+		.date-filter { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafafa; }
+		.date-input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; }
+		.date-separator { color: #999; }
+
+		/* Order List */
+		.orders-list { display: flex; flex-direction: column; gap: 15px; }
+		.order-card { border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; }
+		.order-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 15px; }
+		.order-status { display: flex; align-items: center; gap: 10px; }
+		.status-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+		.status-icon svg { width: 14px; height: 14px; }
+		.status-icon.pending { background: #fff3cd; color: #856404; }
+		.status-icon.confirmed { background: #cce5ff; color: #004085; }
+		.status-icon.delivered { background: #d4edda; color: #155724; }
+		.status-icon.cancelled { background: #f8d7da; color: #721c24; }
+		.status-text { font-size: 14px; font-weight: 600; }
+		.status-text.pending { color: #856404; }
+		.status-text.confirmed { color: #004085; }
+		.status-text.delivered { color: #155724; }
+		.status-text.cancelled { color: #721c24; }
+		.order-meta { font-size: 13px; color: #888; }
+		.order-products { font-size: 14px; color: #555; margin-bottom: 15px; line-height: 1.6; }
+		.order-actions { display: flex; gap: 12px; justify-content: flex-end; }
+		.btn-cancel { padding: 10px 20px; border: 1px solid #e31e24; color: #e31e24; background: #fff; border-radius: 25px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+		.btn-cancel:hover { background: #fff5f5; }
+		.btn-detail { padding: 10px 20px; border: none; background: #e31e24; color: #fff; border-radius: 25px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+		.btn-detail:hover { background: #c91a1f; }
+
+		/* Empty State */
+		.empty-state { text-align: center; padding: 60px 20px; }
+		.empty-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #ccc; }
+		.empty-text { font-size: 16px; color: #666; margin-bottom: 10px; }
+		.empty-subtext { font-size: 14px; color: #999; }
+
+		/* Loading */
+		.loading { text-align: center; padding: 40px; color: #666; }
+
+		/* Confirm Modal */
+		.confirm-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+		.confirm-modal.active { display: flex; }
+		.confirm-box { background: #fff; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; text-align: center; }
+		.confirm-icon { width: 60px; height: 60px; margin: 0 auto 20px; color: #e31e24; }
+		.confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+		.confirm-text { font-size: 14px; color: #666; margin-bottom: 25px; }
+		.confirm-buttons { display: flex; gap: 15px; }
+		.confirm-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: background 0.3s; }
+		.confirm-btn.cancel { background: #f0f0f0; color: #333; }
+		.confirm-btn.cancel:hover { background: #e0e0e0; }
+		.confirm-btn.confirm { background: #e31e24; color: #fff; }
+		.confirm-btn.confirm:hover { background: #c91a1f; }
+
 		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+		@media (max-width: 600px) {
+			.tabs { overflow-x: auto; }
+			.tab { white-space: nowrap; padding: 12px 15px; font-size: 13px; }
+			.order-header { flex-direction: column; gap: 10px; }
+			.order-actions { justify-content: stretch; }
+			.order-actions button { flex: 1; }
+			.date-filter { flex-wrap: wrap; }
+		}
 	</style>
 </head>
 <body>
@@ -29,35 +97,250 @@
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
 				<h1 class="content-title">Siparislerim</h1>
-				<div class="placeholder-content">
-					<svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-						<polyline points="14 2 14 8 20 8"/>
-						<line x1="16" y1="13" x2="8" y2="13"/>
-						<line x1="16" y1="17" x2="8" y2="17"/>
-					</svg>
-					<p class="placeholder-text">Bu sayfa yakim zamanda aktif olacak</p>
-					<p class="placeholder-subtext">Siparislerinizi buradan takip edebileceksiniz</p>
+
+				<!-- Search -->
+				<div class="search-box">
+					<input type="text" class="search-input" id="searchInput" placeholder="Siparis Ara" oninput="filterOrders()">
+				</div>
+
+				<!-- Tabs -->
+				<div class="tabs">
+					<div class="tab" data-status="delivered" onclick="switchTab('delivered')">Tamamlanan</div>
+					<div class="tab active" data-status="ongoing" onclick="switchTab('ongoing')">Devam Eden</div>
+					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">Iptal/Teslim Edilemedi</div>
+				</div>
+
+				<!-- Date Filter -->
+				<div class="date-filter">
+					<input type="date" class="date-input" id="dateFrom" onchange="filterOrders()">
+					<span class="date-separator">-</span>
+					<input type="date" class="date-input" id="dateTo" onchange="filterOrders()">
+				</div>
+
+				<!-- Orders List -->
+				<div id="ordersList" class="orders-list">
+					<div class="loading">Siparisler yukleniyor...</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="isyerim-footer"></div>
+
+	<!-- Cancel Confirmation Modal -->
+	<div class="confirm-modal" id="cancelModal">
+		<div class="confirm-box">
+			<svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<circle cx="12" cy="12" r="10"/>
+				<line x1="15" y1="9" x2="9" y2="15"/>
+				<line x1="9" y1="9" x2="15" y2="15"/>
+			</svg>
+			<h3 class="confirm-title">Siparisi Iptal Et</h3>
+			<p class="confirm-text">Bu siparisi iptal etmek istediginizden emin misiniz?</p>
+			<div class="confirm-buttons">
+				<button class="confirm-btn cancel" onclick="closeCancelModal()">Vazgec</button>
+				<button class="confirm-btn confirm" onclick="confirmCancel()">Iptal Et</button>
+			</div>
+		</div>
+	</div>
+
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/addresses-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
+		var customerId = null;
+		var allOrders = [];
+		var currentTab = 'ongoing';
+		var cancelOrderId = null;
+
+		// Durum mapping
+		var statusMap = {
+			'pending': { text: 'Siparisin Hazirlaniyor', class: 'pending' },
+			'confirmed': { text: 'Siparisiniz Yolda', class: 'confirmed' },
+			'delivered': { text: 'Teslim Edildi', class: 'delivered' },
+			'cancelled': { text: 'Iptal Edildi', class: 'cancelled' }
+		};
+
 		document.addEventListener('DOMContentLoaded', async function() {
-			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			customerId = sessionStorage.getItem('isyerim_customer_id');
 			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+
+			// Sidebar yukle
 			try {
 				var response = await fetch('./components/isyerim-settings-sidebar.html');
 				var html = await response.text();
 				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
 				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('siparislerim'); }, 100);
 			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+
+			// Varsayilan tarih filtresi (son 30 gun)
+			var today = new Date();
+			var thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+			document.getElementById('dateTo').value = formatDateForInput(today);
+			document.getElementById('dateFrom').value = formatDateForInput(thirtyDaysAgo);
+
+			// Siparisleri yukle
+			await loadOrders();
 		});
+
+		function formatDateForInput(date) {
+			return date.toISOString().split('T')[0];
+		}
+
+		async function loadOrders() {
+			var listContainer = document.getElementById('ordersList');
+			listContainer.innerHTML = '<div class="loading">Siparisler yukleniyor...</div>';
+
+			var result = await OrdersService.getByCustomerId(customerId);
+
+			if (result.error) {
+				listContainer.innerHTML = '<div class="loading">Siparisler yuklenirken hata olustu</div>';
+				return;
+			}
+
+			allOrders = result.data || [];
+			filterOrders();
+		}
+
+		function switchTab(tab) {
+			currentTab = tab;
+
+			// Tab aktiflik
+			document.querySelectorAll('.tab').forEach(function(t) {
+				t.classList.remove('active');
+				if (t.dataset.status === tab) {
+					t.classList.add('active');
+				}
+			});
+
+			filterOrders();
+		}
+
+		function filterOrders() {
+			var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+			var dateFrom = document.getElementById('dateFrom').value;
+			var dateTo = document.getElementById('dateTo').value;
+
+			var filtered = allOrders.filter(function(order) {
+				// Tab filtresi
+				if (currentTab === 'ongoing') {
+					if (order.status !== 'pending' && order.status !== 'confirmed') return false;
+				} else if (currentTab === 'delivered') {
+					if (order.status !== 'delivered') return false;
+				} else if (currentTab === 'cancelled') {
+					if (order.status !== 'cancelled') return false;
+				}
+
+				// Arama filtresi
+				if (searchTerm) {
+					var orderNumber = (order.order_number || '').toLowerCase();
+					var dealerName = (order.dealer?.name || '').toLowerCase();
+					var productNames = (order.order_items || []).map(function(item) {
+						return (item.product?.name || '').toLowerCase();
+					}).join(' ');
+
+					if (!orderNumber.includes(searchTerm) && !dealerName.includes(searchTerm) && !productNames.includes(searchTerm)) {
+						return false;
+					}
+				}
+
+				// Tarih filtresi
+				if (dateFrom) {
+					var orderDate = new Date(order.created_at);
+					var fromDate = new Date(dateFrom);
+					if (orderDate < fromDate) return false;
+				}
+				if (dateTo) {
+					var orderDate = new Date(order.created_at);
+					var toDate = new Date(dateTo);
+					toDate.setHours(23, 59, 59);
+					if (orderDate > toDate) return false;
+				}
+
+				return true;
+			});
+
+			renderOrders(filtered);
+		}
+
+		function renderOrders(orders) {
+			var listContainer = document.getElementById('ordersList');
+
+			if (orders.length === 0) {
+				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Bu kategoride siparis bulunamadi</p><p class="empty-subtext">Farkli bir filtre deneyin</p></div>';
+				return;
+			}
+
+			var html = '';
+			orders.forEach(function(order) {
+				var status = statusMap[order.status] || { text: order.status, class: 'pending' };
+				var orderDate = new Date(order.created_at);
+				var dateStr = orderDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
+				var timeStr = orderDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+				// Urun ozeti
+				var productSummary = (order.order_items || []).map(function(item) {
+					return item.quantity + 'x ' + (item.product?.name || 'Urun');
+				}).join(', ');
+
+				html += '<div class="order-card">';
+				html += '<div class="order-header">';
+				html += '<div class="order-status">';
+				html += '<div class="status-icon ' + status.class + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+				if (order.status === 'pending') {
+					html += '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>';
+				} else if (order.status === 'confirmed') {
+					html += '<path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>';
+				} else if (order.status === 'delivered') {
+					html += '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+				} else {
+					html += '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+				}
+				html += '</svg></div>';
+				html += '<span class="status-text ' + status.class + '">' + status.text + '</span>';
+				html += '<span class="order-meta">' + (order.dealer?.name || 'Bayi') + ' - ' + dateStr + ' ' + timeStr + '</span>';
+				html += '</div>';
+				html += '</div>';
+				html += '<div class="order-products">' + (productSummary || 'Urun bilgisi yok') + '</div>';
+				html += '<div class="order-actions">';
+				if (order.status === 'pending' || order.status === 'confirmed') {
+					html += '<button class="btn-cancel" onclick="openCancelModal(\'' + order.id + '\')">Siparisi Iptal Et</button>';
+				}
+				html += '<button class="btn-detail" onclick="goToDetail(\'' + order.id + '\')">Siparis Detayi</button>';
+				html += '</div>';
+				html += '</div>';
+			});
+
+			listContainer.innerHTML = html;
+		}
+
+		function goToDetail(orderId) {
+			window.location.href = 'isyerim-musteri-siparis-detay.html?id=' + orderId;
+		}
+
+		function openCancelModal(orderId) {
+			cancelOrderId = orderId;
+			document.getElementById('cancelModal').classList.add('active');
+		}
+
+		function closeCancelModal() {
+			cancelOrderId = null;
+			document.getElementById('cancelModal').classList.remove('active');
+		}
+
+		async function confirmCancel() {
+			if (!cancelOrderId) return;
+
+			var result = await OrdersService.cancel(cancelOrderId);
+
+			if (result.error) {
+				alert('Siparis iptal edilemedi');
+			} else {
+				closeCancelModal();
+				await loadOrders();
+			}
+		}
 	</script>
 </body>
 </html>

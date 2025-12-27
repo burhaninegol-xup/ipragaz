@@ -1212,6 +1212,7 @@
 	<script src="./js/services/customer-prices-service.js"></script>
 	<script src="./js/services/cart-service.js?v=4"></script>
 	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Hero Slider
@@ -1271,6 +1272,7 @@
 		var customerPrices = {};
 		var currentCustomerId = null;
 		var tekliftenCekildi = sessionStorage.getItem('tekliften_cekildi') === 'true';
+		var favoriteIds = []; // Favori urun ID'leri
 
 		// Ürünleri Supabase'den yükle
 		async function loadProducts() {
@@ -1292,6 +1294,15 @@
 								customerPrices[cp.product_id] = cp.unit_price;
 							}
 						});
+					}
+				}
+
+				// Favorileri yükle (giriş yapılmışsa)
+				var isyerimCustomerId = sessionStorage.getItem('isyerim_customer_id');
+				if (isyerimCustomerId) {
+					const { data: favIds } = await FavoritesService.getFavoriteIds(isyerimCustomerId);
+					if (favIds) {
+						favoriteIds = favIds;
 					}
 				}
 
@@ -1317,8 +1328,12 @@
 			// Ürün resim URL'i
 			var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
 
+			// Favori durumu kontrol
+			var isFavorite = favoriteIds.indexOf(product.id) !== -1;
+			var favoriteClass = isFavorite ? 'product-favorite active' : 'product-favorite';
+
 			return '<div class="product-card" data-product-id="' + product.id + '" style="cursor: pointer;">' +
-				'<button class="product-favorite">' +
+				'<button class="' + favoriteClass + '">' +
 					'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 				'</button>' +
 				'<div class="product-image">' +
@@ -1360,10 +1375,36 @@
 
 			// Favorite Toggle
 			document.querySelectorAll('.product-favorite').forEach(function(btn) {
-				btn.addEventListener('click', function(e) {
+				btn.addEventListener('click', async function(e) {
 					e.preventDefault();
 					e.stopPropagation(); // Kartın tıklanmasını engelle
-					this.classList.toggle('active');
+
+					var customerId = sessionStorage.getItem('isyerim_customer_id');
+					if (!customerId) {
+						alert('Favorilere eklemek icin giris yapmaniz gerekiyor.');
+						return;
+					}
+
+					var productCard = this.closest('.product-card');
+					var productId = productCard.getAttribute('data-product-id');
+					var btn = this;
+
+					// Toggle favorite
+					var result = await FavoritesService.toggleFavorite(customerId, productId);
+					if (result.error) {
+						console.error('Favori hatasi:', result.error);
+						return;
+					}
+
+					// UI guncelle
+					if (result.data.isFavorite) {
+						btn.classList.add('active');
+						favoriteIds.push(productId);
+					} else {
+						btn.classList.remove('active');
+						var idx = favoriteIds.indexOf(productId);
+						if (idx !== -1) favoriteIds.splice(idx, 1);
+					}
 				});
 			});
 

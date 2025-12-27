@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Siparis Detayi - iPRAGAZ IsYerim</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: #f5f5f5;
+			color: #333;
+			min-height: 100vh;
+		}
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		/* Main Layout */
+		.main-content {
+			display: flex;
+			gap: 30px;
+			padding: 30px 0;
+		}
+		.content-area {
+			flex: 1;
+			min-width: 0;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+		}
+		.page-header-left {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+		.back-btn {
+			width: 40px;
+			height: 40px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			background: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+		.back-btn:hover {
+			border-color: #e31e24;
+			color: #e31e24;
+		}
+		.back-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+		.page-title {
+			font-size: 22px;
+			font-weight: 600;
+			color: #333;
+		}
+		.status-badge {
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-size: 13px;
+			font-weight: 600;
+		}
+		.status-badge.pending {
+			background: #fff8e6;
+			color: #f5a623;
+		}
+		.status-badge.confirmed {
+			background: #e6f4ff;
+			color: #1890ff;
+		}
+		.status-badge.delivered {
+			background: #e6ffe6;
+			color: #28a745;
+		}
+		.status-badge.cancelled {
+			background: #ffe6e6;
+			color: #e31e24;
+		}
+
+		/* Detail Card */
+		.detail-card {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			margin-bottom: 20px;
+		}
+		.detail-card-header {
+			padding: 20px 25px;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+		.detail-card-body {
+			padding: 25px;
+		}
+
+		/* Summary Grid */
+		.summary-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+		}
+		.summary-item {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+		.summary-label {
+			font-size: 12px;
+			color: #888;
+			font-weight: 500;
+		}
+		.summary-value {
+			font-size: 14px;
+			color: #333;
+			font-weight: 600;
+		}
+		.summary-link {
+			font-size: 14px;
+			color: #e31e24;
+			font-weight: 600;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.summary-link:hover {
+			text-decoration: underline;
+		}
+
+		/* Address Section */
+		.address-section {
+			margin-top: 25px;
+			padding-top: 25px;
+			border-top: 1px solid #f0f0f0;
+		}
+		.address-label {
+			font-size: 12px;
+			color: #888;
+			font-weight: 500;
+			margin-bottom: 8px;
+		}
+		.address-text {
+			font-size: 14px;
+			color: #333;
+			font-weight: 600;
+			line-height: 1.6;
+		}
+
+		/* Products List */
+		.product-item {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			padding: 15px 0;
+			border-bottom: 1px solid #f0f0f0;
+		}
+		.product-item:last-child {
+			border-bottom: none;
+		}
+		.product-number {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			min-width: 60px;
+		}
+		.product-image {
+			width: 60px;
+			height: 80px;
+			background: #f9f9f9;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+		}
+		.product-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+		.product-image svg {
+			width: 30px;
+			height: 30px;
+			color: #ccc;
+		}
+		.product-info {
+			flex: 1;
+		}
+		.product-name {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+		}
+		.product-qty {
+			font-size: 13px;
+			color: #666;
+			margin-left: 10px;
+		}
+
+		/* Warnings Accordion */
+		.warnings-accordion {
+			border-top: 1px solid #f0f0f0;
+		}
+		.warnings-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 25px;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+		.warnings-header:hover {
+			background: #fafafa;
+		}
+		.warnings-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+		}
+		.warnings-toggle {
+			width: 24px;
+			height: 24px;
+			color: #666;
+			transition: transform 0.3s;
+		}
+		.warnings-toggle.open {
+			transform: rotate(180deg);
+		}
+		.warnings-content {
+			padding: 0 25px 25px;
+			display: none;
+		}
+		.warnings-content.open {
+			display: block;
+		}
+		.warnings-text {
+			font-size: 13px;
+			color: #666;
+			line-height: 1.7;
+			background: #fff9e6;
+			padding: 15px;
+			border-radius: 8px;
+			border-left: 4px solid #f5a623;
+		}
+
+		/* Cancel Button */
+		.cancel-section {
+			padding: 25px;
+			display: flex;
+			justify-content: center;
+		}
+		.cancel-btn {
+			padding: 14px 40px;
+			border: 2px solid #e31e24;
+			border-radius: 30px;
+			background: transparent;
+			color: #e31e24;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: all 0.3s;
+		}
+		.cancel-btn:hover {
+			background: #e31e24;
+			color: #fff;
+		}
+		.cancel-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		/* Loading State */
+		.loading-state {
+			text-align: center;
+			padding: 60px;
+			color: #888;
+		}
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f0f0f0;
+			border-top-color: #e31e24;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 15px;
+		}
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Error State */
+		.error-state {
+			text-align: center;
+			padding: 60px;
+			color: #e31e24;
+		}
+		.error-state svg {
+			width: 50px;
+			height: 50px;
+			margin-bottom: 15px;
+		}
+
+		/* Cancel Modal */
+		.cancel-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+		.cancel-modal-overlay.active {
+			display: flex;
+		}
+		.cancel-modal {
+			background: #fff;
+			border-radius: 12px;
+			padding: 30px;
+			width: 400px;
+			max-width: 90%;
+			text-align: center;
+		}
+		.cancel-modal-icon {
+			width: 60px;
+			height: 60px;
+			background: #fff5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+		.cancel-modal-icon svg {
+			width: 30px;
+			height: 30px;
+			color: #e31e24;
+		}
+		.cancel-modal-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 10px;
+		}
+		.cancel-modal-text {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 25px;
+		}
+		.cancel-modal-buttons {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+		.cancel-modal-btn {
+			padding: 12px 30px;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: all 0.2s;
+		}
+		.cancel-modal-btn.secondary {
+			background: #f5f5f5;
+			border: none;
+			color: #666;
+		}
+		.cancel-modal-btn.secondary:hover {
+			background: #e0e0e0;
+		}
+		.cancel-modal-btn.danger {
+			background: #e31e24;
+			border: none;
+			color: #fff;
+		}
+		.cancel-modal-btn.danger:hover {
+			background: #c91a1f;
+		}
+
+		/* Questions Modal */
+		.questions-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+		.questions-modal-overlay.active {
+			display: flex;
+		}
+		.questions-modal {
+			background: #fff;
+			border-radius: 12px;
+			padding: 30px;
+			width: 500px;
+			max-width: 90%;
+			max-height: 80vh;
+			overflow-y: auto;
+		}
+		.questions-modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+		}
+		.questions-modal-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+		.questions-modal-close {
+			width: 32px;
+			height: 32px;
+			border: none;
+			background: #f5f5f5;
+			border-radius: 50%;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			transition: all 0.2s;
+		}
+		.questions-modal-close:hover {
+			background: #e0e0e0;
+		}
+		.questions-modal-close svg {
+			width: 18px;
+			height: 18px;
+		}
+		.question-item {
+			padding: 15px 0;
+			border-bottom: 1px solid #f0f0f0;
+		}
+		.question-item:last-child {
+			border-bottom: none;
+		}
+		.question-label {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 6px;
+		}
+		.question-answer {
+			font-size: 14px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		/* Responsive */
+		@media (max-width: 992px) {
+			.main-content {
+				flex-direction: column;
+			}
+			.settings-sidebar {
+				width: 100%;
+			}
+			.summary-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+		@media (max-width: 576px) {
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 15px;
+			}
+			.summary-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Top Bar -->
+	<div id="isyerim-top-bar"></div>
+
+	<!-- Header -->
+	<div id="isyerim-header"></div>
+
+	<!-- Main Content -->
+	<div class="container">
+		<div class="main-content">
+			<!-- Sidebar -->
+			<div id="isyerim-settings-sidebar"></div>
+
+			<!-- Content -->
+			<div class="content-area">
+				<!-- Page Header -->
+				<div class="page-header">
+					<div class="page-header-left">
+						<a href="isyerim-musteri-siparislerim.html" class="back-btn">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M19 12H5"/>
+								<path d="M12 19l-7-7 7-7"/>
+							</svg>
+						</a>
+						<h1 class="page-title">Siparis Detayi</h1>
+					</div>
+					<span class="status-badge" id="statusBadge">Yukleniyor...</span>
+				</div>
+
+				<!-- Detail Content -->
+				<div id="detailContent">
+					<div class="loading-state">
+						<div class="loading-spinner"></div>
+						<p>Siparis detaylari yukleniyor...</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<div id="isyerim-footer"></div>
+
+	<!-- Cancel Modal -->
+	<div class="cancel-modal-overlay" id="cancelModalOverlay" onclick="closeCancelModal(event)">
+		<div class="cancel-modal" onclick="event.stopPropagation()">
+			<div class="cancel-modal-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="15" y1="9" x2="9" y2="15"/>
+					<line x1="9" y1="9" x2="15" y2="15"/>
+				</svg>
+			</div>
+			<h3 class="cancel-modal-title">Siparisi Iptal Et</h3>
+			<p class="cancel-modal-text">Bu siparisi iptal etmek istediginizden emin misiniz?</p>
+			<div class="cancel-modal-buttons">
+				<button class="cancel-modal-btn secondary" onclick="closeCancelModal()">Vazgec</button>
+				<button class="cancel-modal-btn danger" onclick="confirmCancelOrder()">Iptal Et</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Questions Modal -->
+	<div class="questions-modal-overlay" id="questionsModalOverlay" onclick="closeQuestionsModal(event)">
+		<div class="questions-modal" onclick="event.stopPropagation()">
+			<div class="questions-modal-header">
+				<h3 class="questions-modal-title">Siparis Sorularina Verilen Cevaplar</h3>
+				<button class="questions-modal-close" onclick="closeQuestionsModal()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			<div id="questionsContent"></div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+
+	<script>
+		var currentOrder = null;
+		var orderId = null;
+
+		var statusMap = {
+			'pending': { text: 'Siparisiniz Hazirlaniyor', class: 'pending' },
+			'confirmed': { text: 'Siparisiniz Yolda', class: 'confirmed' },
+			'delivered': { text: 'Teslim Edildi', class: 'delivered' },
+			'cancelled': { text: 'Iptal Edildi', class: 'cancelled' }
+		};
+
+		// Sayfa yuklendiginde
+		document.addEventListener('DOMContentLoaded', async function() {
+			checkAuth();
+
+			// Sidebar yukle
+			try {
+				var response = await fetch('./components/isyerim-settings-sidebar.html');
+				var html = await response.text();
+				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('siparislerim'); }, 100);
+			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+
+			loadOrderDetail();
+		});
+
+		// Auth kontrol
+		function checkAuth() {
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) {
+				window.location.href = 'isyerim-musteri-login.html';
+			}
+		}
+
+		// Siparis detayini yukle
+		async function loadOrderDetail() {
+			// URL'den order id al
+			var urlParams = new URLSearchParams(window.location.search);
+			orderId = urlParams.get('id');
+
+			if (!orderId) {
+				showError('Siparis ID bulunamadi');
+				return;
+			}
+
+			var detailContent = document.getElementById('detailContent');
+
+			try {
+				var result = await OrdersService.getById(orderId);
+
+				if (result.error) {
+					showError('Siparis yuklenemedi');
+					return;
+				}
+
+				currentOrder = result.data;
+
+				if (!currentOrder) {
+					showError('Siparis bulunamadi');
+					return;
+				}
+
+				// Status badge guncelle
+				var statusInfo = statusMap[currentOrder.status] || { text: currentOrder.status, class: 'pending' };
+				var statusBadge = document.getElementById('statusBadge');
+				statusBadge.textContent = statusInfo.text;
+				statusBadge.className = 'status-badge ' + statusInfo.class;
+
+				// Detay icerigini render et
+				renderOrderDetail(currentOrder);
+
+			} catch (error) {
+				console.error('Siparis yukleme hatasi:', error);
+				showError('Bir hata olustu');
+			}
+		}
+
+		// Siparis detayini render et
+		function renderOrderDetail(order) {
+			var detailContent = document.getElementById('detailContent');
+
+			// Toplam urun sayisi ve puan hesapla
+			var totalItems = 0;
+			var totalPoints = 0;
+			if (order.order_items) {
+				order.order_items.forEach(function(item) {
+					totalItems += item.quantity;
+					totalPoints += (item.points || 0) * item.quantity;
+				});
+			}
+
+			// Teslimat tarihi
+			var deliveryDate = 'Belirtilmedi';
+			if (order.delivery_date) {
+				var date = new Date(order.delivery_date);
+				deliveryDate = date.toLocaleDateString('tr-TR');
+			}
+			if (order.delivery_time_slot) {
+				deliveryDate += ' ' + order.delivery_time_slot;
+			}
+
+			// Bayi adi
+			var dealerName = order.dealer ? order.dealer.name : 'Bilinmiyor';
+
+			// Bayi telefonu (eger varsa)
+			var dealerPhone = order.dealer && order.dealer.phone ? order.dealer.phone : '-';
+
+			// Odeme yontemi
+			var paymentMethod = order.payment_method || 'Belirtilmedi';
+			var paymentText = paymentMethod;
+			if (paymentMethod === 'cash') paymentText = 'Kapida nakit odeyecegim';
+			else if (paymentMethod === 'card') paymentText = 'Kapida kart ile odeyecegim';
+			else if (paymentMethod === 'online') paymentText = 'Online odeme';
+
+			var html = '';
+
+			// Ozet Karti
+			html += '<div class="detail-card">';
+			html += '<div class="detail-card-header">Ozet</div>';
+			html += '<div class="detail-card-body">';
+			html += '<div class="summary-grid">';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Siparis No</span>';
+			html += '<span class="summary-value">' + (order.order_number || order.id.substring(0, 8)) + '</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Siparis Istenen Bayi</span>';
+			html += '<span class="summary-value">' + dealerName + '</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Bayi Telefonu</span>';
+			html += '<span class="summary-value">' + dealerPhone + '</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Teslimat Tarihi</span>';
+			html += '<span class="summary-value">' + deliveryDate + '</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Siparis Icerigi</span>';
+			html += '<span class="summary-value">' + totalItems + ' urun</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Toplam Urunler Puani</span>';
+			html += '<span class="summary-value">' + totalPoints + ' Puan</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Odeme Yontemi</span>';
+			html += '<span class="summary-value">' + paymentText + '</span>';
+			html += '</div>';
+
+			html += '<div class="summary-item">';
+			html += '<span class="summary-label">Siparis Sorularina Verilen Cevaplar</span>';
+			html += '<a class="summary-link" onclick="openQuestionsModal()">Incele</a>';
+			html += '</div>';
+
+			html += '</div>'; // summary-grid
+
+			// Adres bolumu
+			html += '<div class="address-section">';
+			html += '<div class="address-label">Siparis Adresi</div>';
+			html += '<div class="address-text">' + (order.delivery_address || 'Adres belirtilmedi') + '</div>';
+			html += '</div>';
+
+			html += '</div>'; // detail-card-body
+			html += '</div>'; // detail-card
+
+			// Urunler Karti
+			html += '<div class="detail-card">';
+			html += '<div class="detail-card-header">Urunler</div>';
+			html += '<div class="detail-card-body" style="padding-top: 10px;">';
+
+			if (order.order_items && order.order_items.length > 0) {
+				order.order_items.forEach(function(item, index) {
+					var productName = item.product ? item.product.name : 'Urun';
+					var productImage = item.product && item.product.image_url ? item.product.image_url : null;
+
+					html += '<div class="product-item">';
+					html += '<span class="product-number">' + (index + 1) + '. Urun</span>';
+					html += '<div class="product-image">';
+					if (productImage) {
+						html += '<img src="' + productImage + '" alt="' + productName + '">';
+					} else {
+						html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">';
+						html += '<rect x="3" y="3" width="18" height="18" rx="2"/>';
+						html += '<circle cx="8.5" cy="8.5" r="1.5"/>';
+						html += '<path d="M21 15l-5-5L5 21"/>';
+						html += '</svg>';
+					}
+					html += '</div>';
+					html += '<div class="product-info">';
+					html += '<span class="product-name">' + productName + '</span>';
+					html += '<span class="product-qty">' + item.quantity + ' Adet</span>';
+					html += '</div>';
+					html += '</div>';
+				});
+			} else {
+				html += '<p style="color: #888; text-align: center; padding: 20px;">Urun bilgisi bulunamadi</p>';
+			}
+
+			html += '</div>'; // detail-card-body
+
+			// Uyarilar Accordion
+			html += '<div class="warnings-accordion">';
+			html += '<div class="warnings-header" onclick="toggleWarnings()">';
+			html += '<span class="warnings-title">Uyarilar</span>';
+			html += '<svg class="warnings-toggle" id="warningsToggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+			html += '<path d="M6 9l6 6 6-6"/>';
+			html += '</svg>';
+			html += '</div>';
+			html += '<div class="warnings-content" id="warningsContent">';
+			html += '<div class="warnings-text">';
+			html += 'Tuplerinizi kullandiginiz cihaza uygun, tam guvenli iPragaz dedantor ile kullanabilirsiniz. ';
+			html += 'Guvenliginiz icin dedantorunuzu uretim tarihinden itibaren 10 yilda 1, hortumunuzu da 3 yilda 1 degistirmeniz gerektigini lutfen unutmayin!';
+			html += '</div>';
+			html += '</div>';
+			html += '</div>'; // warnings-accordion
+
+			html += '</div>'; // detail-card
+
+			// Iptal Butonu (sadece pending veya confirmed durumunda)
+			if (order.status === 'pending' || order.status === 'confirmed') {
+				html += '<div class="detail-card">';
+				html += '<div class="cancel-section">';
+				html += '<button class="cancel-btn" onclick="openCancelModal()">Siparisi Iptal Et</button>';
+				html += '</div>';
+				html += '</div>';
+			}
+
+			detailContent.innerHTML = html;
+		}
+
+		// Hata goster
+		function showError(message) {
+			var detailContent = document.getElementById('detailContent');
+			detailContent.innerHTML = '<div class="error-state">' +
+				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+				'<circle cx="12" cy="12" r="10"/>' +
+				'<line x1="12" y1="8" x2="12" y2="12"/>' +
+				'<line x1="12" y1="16" x2="12.01" y2="16"/>' +
+				'</svg>' +
+				'<p>' + message + '</p>' +
+				'<a href="isyerim-musteri-siparislerim.html" style="color: #e31e24; margin-top: 10px; display: inline-block;">Siparislerime Don</a>' +
+				'</div>';
+		}
+
+		// Uyarilar toggle
+		function toggleWarnings() {
+			var content = document.getElementById('warningsContent');
+			var toggle = document.getElementById('warningsToggle');
+
+			content.classList.toggle('open');
+			toggle.classList.toggle('open');
+		}
+
+		// Iptal modal ac
+		function openCancelModal() {
+			document.getElementById('cancelModalOverlay').classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+
+		// Iptal modal kapat
+		function closeCancelModal(event) {
+			if (event && event.target !== event.currentTarget) return;
+			document.getElementById('cancelModalOverlay').classList.remove('active');
+			document.body.style.overflow = '';
+		}
+
+		// Siparis iptal onayla
+		async function confirmCancelOrder() {
+			if (!orderId) return;
+
+			var dangerBtn = document.querySelector('.cancel-modal-btn.danger');
+			dangerBtn.textContent = 'Iptal Ediliyor...';
+			dangerBtn.disabled = true;
+
+			try {
+				var result = await OrdersService.cancel(orderId);
+
+				if (result.error) {
+					alert('Siparis iptal edilemedi: ' + result.error.message);
+					dangerBtn.textContent = 'Iptal Et';
+					dangerBtn.disabled = false;
+					return;
+				}
+
+				// Basarili - sayfayi yenile
+				closeCancelModal();
+				loadOrderDetail();
+
+			} catch (error) {
+				console.error('Iptal hatasi:', error);
+				alert('Bir hata olustu');
+				dangerBtn.textContent = 'Iptal Et';
+				dangerBtn.disabled = false;
+			}
+		}
+
+		// Sorular modal ac
+		function openQuestionsModal() {
+			var content = document.getElementById('questionsContent');
+
+			// Siparis notlari/sorularini goster
+			var html = '';
+
+			if (currentOrder && currentOrder.notes) {
+				html += '<div class="question-item">';
+				html += '<div class="question-label">Siparis Notu</div>';
+				html += '<div class="question-answer">' + currentOrder.notes + '</div>';
+				html += '</div>';
+			}
+
+			// Eger delivery_instructions varsa
+			if (currentOrder && currentOrder.delivery_instructions) {
+				html += '<div class="question-item">';
+				html += '<div class="question-label">Teslimat Talimatlari</div>';
+				html += '<div class="question-answer">' + currentOrder.delivery_instructions + '</div>';
+				html += '</div>';
+			}
+
+			// Eger hicbir sey yoksa
+			if (!html) {
+				html = '<div class="question-item">';
+				html += '<div class="question-answer" style="color: #888;">Bu siparis icin ek bilgi bulunmamaktadir.</div>';
+				html += '</div>';
+			}
+
+			content.innerHTML = html;
+			document.getElementById('questionsModalOverlay').classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+
+		// Sorular modal kapat
+		function closeQuestionsModal(event) {
+			if (event && event.target !== event.currentTarget) return;
+			document.getElementById('questionsModalOverlay').classList.remove('active');
+			document.body.style.overflow = '';
+		}
+
+		// ESC ile modal kapat
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') {
+				closeCancelModal();
+				closeQuestionsModal();
+			}
+		});
+	</script>
+</body>
+</html>

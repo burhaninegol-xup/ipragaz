@@ -14,11 +14,173 @@
 		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
 		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
 		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-		.placeholder-content { text-align: center; padding: 60px 20px; }
-		.placeholder-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #e31e24; }
-		.placeholder-text { font-size: 16px; color: #666; margin-bottom: 10px; }
-		.placeholder-subtext { font-size: 14px; color: #999; }
-		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+
+		/* Products Grid */
+		.favorites-grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 20px;
+		}
+
+		/* Product Card */
+		.favorite-card {
+			position: relative;
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 12px;
+			padding: 20px;
+			transition: box-shadow 0.2s, transform 0.2s;
+		}
+		.favorite-card:hover {
+			box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+			transform: translateY(-2px);
+		}
+
+		/* Favorite Button */
+		.favorite-btn {
+			position: absolute;
+			top: 15px;
+			right: 15px;
+			width: 36px;
+			height: 36px;
+			background: #fff;
+			border: none;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			z-index: 2;
+			transition: transform 0.2s;
+		}
+		.favorite-btn:hover {
+			transform: scale(1.1);
+		}
+		.favorite-btn svg {
+			width: 20px;
+			height: 20px;
+			color: #e31e24;
+			fill: #e31e24;
+		}
+
+		/* Product Image */
+		.favorite-card-image {
+			height: 180px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 15px;
+		}
+		.favorite-card-image img {
+			max-height: 100%;
+			max-width: 100%;
+			object-fit: contain;
+		}
+
+		/* Product Info */
+		.favorite-card-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 10px;
+			min-height: 45px;
+		}
+		.favorite-card-price {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 20px;
+		}
+
+		/* Add to Cart Button */
+		.btn-add-cart {
+			width: 100%;
+			padding: 12px 20px;
+			background: #fff;
+			border: 2px solid #e31e24;
+			border-radius: 30px;
+			color: #e31e24;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: all 0.2s;
+		}
+		.btn-add-cart:hover {
+			background: #e31e24;
+			color: #fff;
+		}
+		.btn-add-cart.added {
+			background: #28a745;
+			border-color: #28a745;
+			color: #fff;
+			pointer-events: none;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+		.empty-state-icon {
+			width: 80px;
+			height: 80px;
+			margin: 0 auto 20px;
+			color: #e31e24;
+		}
+		.empty-state-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 10px;
+		}
+		.empty-state-text {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 20px;
+		}
+		.empty-state-link {
+			display: inline-block;
+			padding: 12px 30px;
+			background: #e31e24;
+			color: #fff;
+			border-radius: 30px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: background 0.2s;
+		}
+		.empty-state-link:hover {
+			background: #c91a1f;
+		}
+
+		/* Loading State */
+		.loading-state {
+			text-align: center;
+			padding: 60px;
+			color: #888;
+		}
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f0f0f0;
+			border-top-color: #e31e24;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 15px;
+		}
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Responsive */
+		@media (max-width: 992px) {
+			.settings-layout { flex-direction: column; }
+		}
+		@media (max-width: 576px) {
+			.favorites-grid {
+				grid-template-columns: 1fr;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -29,32 +191,202 @@
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
 				<h1 class="content-title">Favorilerim</h1>
-				<div class="placeholder-content">
-					<svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-					</svg>
-					<p class="placeholder-text">Bu sayfa yakim zamanda aktif olacak</p>
-					<p class="placeholder-subtext">Favori urunlerinizi buradan goruntuleyebileceksiniz</p>
+				<div id="favoritesContent">
+					<div class="loading-state">
+						<div class="loading-spinner"></div>
+						<p>Favoriler yukleniyor...</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="isyerim-footer"></div>
+
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/customer-prices-service.js"></script>
+	<script src="./js/services/cart-service.js?v=4"></script>
 	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/component-loader.js"></script>
+
 	<script>
+		var favorites = [];
+		var customerPrices = {};
+		var customerId = null;
+		var tekliftenCekildi = sessionStorage.getItem('tekliften_cekildi') === 'true';
+
 		document.addEventListener('DOMContentLoaded', async function() {
-			var customerId = sessionStorage.getItem('isyerim_customer_id');
-			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+			customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) {
+				window.location.href = 'isyerim-musteri-login.html';
+				return;
+			}
+
+			// Sidebar yukle
 			try {
 				var response = await fetch('./components/isyerim-settings-sidebar.html');
 				var html = await response.text();
 				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
 				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('favorilerim'); }, 100);
 			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+
+			// Sepeti yukle
+			await CartService.loadFromDatabase(customerId);
+
+			// Musteri fiyatlarini yukle
+			if (!tekliftenCekildi) {
+				var pricesResult = await CustomerPricesService.getByCustomerId(customerId);
+				if (pricesResult.data) {
+					pricesResult.data.forEach(function(cp) {
+						if (cp.is_active) {
+							customerPrices[cp.product_id] = cp.unit_price;
+						}
+					});
+				}
+			}
+
+			// Favorileri yukle
+			loadFavorites();
 		});
+
+		async function loadFavorites() {
+			var container = document.getElementById('favoritesContent');
+
+			try {
+				var result = await FavoritesService.getByCustomerId(customerId);
+
+				if (result.error) {
+					container.innerHTML = '<div class="empty-state"><p class="empty-state-text">Favoriler yuklenirken hata olustu.</p></div>';
+					return;
+				}
+
+				favorites = result.data || [];
+
+				if (favorites.length === 0) {
+					renderEmptyState();
+				} else {
+					renderFavorites();
+				}
+			} catch (err) {
+				console.error('Favoriler yukleme hatasi:', err);
+				container.innerHTML = '<div class="empty-state"><p class="empty-state-text">Bir hata olustu.</p></div>';
+			}
+		}
+
+		function renderEmptyState() {
+			var container = document.getElementById('favoritesContent');
+			container.innerHTML = '<div class="empty-state">' +
+				'<svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+					'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
+				'</svg>' +
+				'<h3 class="empty-state-title">Henuz favoriniz yok</h3>' +
+				'<p class="empty-state-text">Begendigniz urunleri favorilerinize ekleyerek kolayca erisebilirsiniz.</p>' +
+				'<a href="isyerim-musteri-anasayfa.html" class="empty-state-link">Urunleri Kesfet</a>' +
+			'</div>';
+		}
+
+		function renderFavorites() {
+			var container = document.getElementById('favoritesContent');
+			var html = '<div class="favorites-grid">';
+
+			favorites.forEach(function(fav) {
+				var product = fav.product;
+				if (!product) return;
+
+				// Fiyat hesapla
+				var price = customerPrices[product.id] || product.base_price;
+				var priceLabel = customerPrices[product.id] && !tekliftenCekildi ? 'Bayi Fiyati' : 'Tavan Fiyattir';
+				var formattedPrice = parseFloat(price).toLocaleString('tr-TR', {
+					minimumFractionDigits: 2,
+					maximumFractionDigits: 2
+				});
+
+				var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+
+				html += '<div class="favorite-card" data-product-id="' + product.id + '" data-favorite-id="' + fav.id + '">' +
+					'<button class="favorite-btn" onclick="removeFavorite(\'' + product.id + '\', this)">' +
+						'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+					'</button>' +
+					'<a href="isyerim-musteri-urun-detay.html?id=' + product.id + '">' +
+						'<div class="favorite-card-image">' +
+							'<img src="' + imageUrl + '" alt="' + product.name + '">' +
+						'</div>' +
+						'<div class="favorite-card-name">' + product.name + '</div>' +
+					'</a>' +
+					'<div class="favorite-card-price">₺' + formattedPrice + ' ' + priceLabel + '</div>' +
+					'<button class="btn-add-cart" onclick="addToCart(\'' + product.id + '\', this)">Sepete Ekle</button>' +
+				'</div>';
+			});
+
+			html += '</div>';
+			container.innerHTML = html;
+		}
+
+		async function removeFavorite(productId, btn) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			var result = await FavoritesService.removeFavorite(customerId, productId);
+			if (result.error) {
+				console.error('Favori silme hatasi:', result.error);
+				return;
+			}
+
+			// Kartı kaldır
+			var card = btn.closest('.favorite-card');
+			card.style.transition = 'opacity 0.3s, transform 0.3s';
+			card.style.opacity = '0';
+			card.style.transform = 'scale(0.9)';
+
+			setTimeout(function() {
+				card.remove();
+
+				// Favoriler dizisinden de kaldır
+				favorites = favorites.filter(function(f) { return f.product.id !== productId; });
+
+				// Eğer hiç favori kalmadıysa boş durumu göster
+				if (favorites.length === 0) {
+					renderEmptyState();
+				}
+			}, 300);
+		}
+
+		async function addToCart(productId, btn) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			// Ürünü bul
+			var fav = favorites.find(function(f) { return f.product.id === productId; });
+			if (!fav || !fav.product) return;
+
+			var product = fav.product;
+			var price = customerPrices[product.id] || product.base_price;
+
+			// Sepete ekle
+			await CartService.addItem({
+				id: product.id,
+				code: product.code,
+				name: product.name,
+				price: price,
+				points: product.points_per_unit || 0,
+				image_url: product.image_url
+			});
+
+			// Buton animasyonu
+			var originalText = btn.textContent;
+			btn.textContent = 'Eklendi ✓';
+			btn.classList.add('added');
+
+			setTimeout(function() {
+				btn.textContent = originalText;
+				btn.classList.remove('added');
+			}, 1500);
+
+			// Cart badge guncelle (component-loader'da dinlenir)
+			window.dispatchEvent(new Event('cartUpdated'));
+		}
 	</script>
 </body>
 </html>
