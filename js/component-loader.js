@@ -375,3 +375,25 @@ window.confirmAddressSelection = function() {
 
 // Global erisim
 window.ComponentLoader = ComponentLoader;
+
+/**
+ * Bayi Auth Kontrol - Giris yapilmamissa login sayfasina yonlendir
+ */
+window.bayiAuthCheck = function() {
+    var dealerId = sessionStorage.getItem('bayi_dealer_id');
+    if (!dealerId) {
+        window.location.href = 'bayi-login.html';
+        return false;
+    }
+    return true;
+};
+
+/**
+ * Bayi Logout - Session'i temizle ve login sayfasina yonlendir
+ */
+window.bayiLogout = function() {
+    sessionStorage.removeItem('bayi_dealer_id');
+    sessionStorage.removeItem('bayi_dealer_name');
+    sessionStorage.removeItem('bayi_dealer_code');
+    window.location.href = 'bayi-login.html';
+};

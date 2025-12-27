@@ -1884,6 +1884,11 @@
 	<script src="./js/component-loader.js"></script>
 
 	<script>
+		// Auth kontrol - giris yapilmamissa login'e yonlendir
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
 		// Barem row counter
 		let baremRowCount = 3;
 		let selectedProductValue = '';

@@ -1047,6 +1047,11 @@
 	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
+		// Auth kontrol - giris yapilmamissa login'e yonlendir
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
 		// Bayi componentlerini yukle
 		document.addEventListener('DOMContentLoaded', function() {
 			ComponentLoader.loadBayiComponents();

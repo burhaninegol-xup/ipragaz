@@ -1379,6 +1379,11 @@
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
+		// Auth kontrol - giris yapilmamissa login'e yonlendir
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
 		$(document).ready(async function() {
 			// Bayi componentlerini yukle
 			ComponentLoader.loadBayiComponents();
