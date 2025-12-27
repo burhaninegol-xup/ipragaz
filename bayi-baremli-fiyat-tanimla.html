@@ -627,6 +627,72 @@
 			box-shadow: 0 2px 10px rgba(0, 44, 119, 0.3);
 		}
 
+		.btn-primary.success {
+			background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+			box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+		}
+
+		.btn-primary.success:hover {
+			background: linear-gradient(135deg, #218838 0%, #1ea882 100%);
+			box-shadow: 0 6px 25px rgba(40, 167, 69, 0.4);
+		}
+
+		.btn-primary.error {
+			background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+			box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+		}
+
+		.btn-primary.error:hover {
+			background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+			box-shadow: 0 6px 25px rgba(220, 53, 69, 0.4);
+		}
+
+		#save-btn .icon-success,
+		#save-btn .icon-error {
+			display: none;
+		}
+
+		#save-btn.success .icon-save { display: inline-block; }
+		#save-btn.success .icon-success { display: none; }
+		#save-btn.success .btn-text { color: #fff; }
+
+		#save-btn.error .icon-save { display: none; }
+		#save-btn.error .icon-error { display: inline-block; }
+		#save-btn.error .btn-text { color: #fff; }
+
+		/* Ürün yükleniyor placeholder */
+		.products-loading {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 60px 20px;
+			color: #6c757d;
+			width: 100%;
+			min-height: 180px;
+			grid-column: 1 / -1; /* Tüm sütunları kapla */
+		}
+
+		.products-loading .spinner {
+			width: 44px;
+			height: 44px;
+			border: 4px solid #e9ecef;
+			border-top-color: #002c77;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin-bottom: 16px;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		.products-loading .loading-text {
+			font-size: 15px;
+			font-weight: 500;
+			color: #495057;
+		}
+
 		.btn-secondary {
 			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 			color: #495057;
@@ -1550,101 +1616,18 @@
                         </button>
 
                         <div class="product-cards-wrapper" id="product-cards-wrapper">
-                            <div class="product-cards-grid">
-                            <div class="product-card" data-value="12kg-uzun" data-name="12 KG - Uzun Tüp" data-desc="Ev tipi uzun tüp" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png" alt="12 KG - Uzun Tüp">
-                            </div>
-                            <div class="product-name">12 KG - Uzun Tüp</div>
-                            <div class="product-desc">Ev tipi uzun tüp</div>
-                            <div class="product-tag">12 KG</div>
-                        </div>
-
-                        <div class="product-card" data-value="12kg-kisa" data-name="12 KG - Kısa Tüp" data-desc="Ev tipi kısa tüp" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png" alt="12 KG - Kısa Tüp">
-                            </div>
-                            <div class="product-name">12 KG - Kısa Tüp</div>
-                            <div class="product-desc">Ev tipi kısa tüp</div>
-                            <div class="product-tag">12 KG</div>
-                        </div>
-
-                        <div class="product-card" data-value="12kg-izopro" data-name="12 KG - İzopro Tüpü" data-desc="İzopro serisi tüp" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-12kg-izo-pro.png" alt="12 KG - İzopro Tüpü">
-                            </div>
-                            <div class="product-name">12 KG - İzopro Tüpü</div>
-                            <div class="product-desc">İzopro serisi tüp</div>
-                            <div class="product-tag">12 KG</div>
-                        </div>
-
-                        <div class="product-card" data-value="12kg-isyerim" data-name="12 KG - İşyerim Tüpü" data-desc="İşyeri tipi tüp" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png" alt="12 KG - İşyerim Tüpü">
-                            </div>
-                            <div class="product-name">12 KG - İşyerim Tüpü</div>
-                            <div class="product-desc">İşyeri tipi tüp</div>
-                            <div class="product-tag">12 KG</div>
-                        </div>
-
-                        <div class="product-card" data-value="24kg-sanayi" data-name="24 KG - Sanayi Tüpü" data-desc="Orta boy sanayi tüpü" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png" alt="24 KG - Sanayi Tüpü">
-                            </div>
-                            <div class="product-name">24 KG - Sanayi Tüpü</div>
-                            <div class="product-desc">Orta boy sanayi tüpü</div>
-                            <div class="product-tag">24 KG</div>
-                        </div>
-
-                        <div class="product-card" data-value="45kg-sanayi" data-name="45 KG - Sanayi Tüpü" data-desc="Büyük boy sanayi tüpü" onclick="selectProductCard(this)">
-                            <div class="check-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                            </div>
-                            <div class="product-image">
-                                <img src="./İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png" alt="45 KG - Sanayi Tüpü">
-                            </div>
-                            <div class="product-name">45 KG - Sanayi Tüpü</div>
-                            <div class="product-desc">Büyük boy sanayi tüpü</div>
-                            <div class="product-tag">45 KG</div>
-                        </div>
+                            <div class="product-cards-grid" id="product-cards-grid">
+                                <!-- Loading placeholder -->
+                                <div class="products-loading" id="products-loading">
+                                    <div class="spinner"></div>
+                                    <div class="loading-text">Ürünler yükleniyor...</div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Carousel Dots -->
                         <div class="carousel-dots" id="carousel-dots">
-                            <button type="button" class="carousel-dot active" data-index="0" aria-label="Ürün 1"></button>
-                            <button type="button" class="carousel-dot" data-index="1" aria-label="Ürün 2"></button>
-                            <button type="button" class="carousel-dot" data-index="2" aria-label="Ürün 3"></button>
-                            <button type="button" class="carousel-dot" data-index="3" aria-label="Ürün 4"></button>
-                            <button type="button" class="carousel-dot" data-index="4" aria-label="Ürün 5"></button>
-                            <button type="button" class="carousel-dot" data-index="5" aria-label="Ürün 6"></button>
+                            <!-- Dots JavaScript ile yüklenecek -->
                         </div>
                     </div>
                 </div>
@@ -1770,11 +1753,17 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
+                        <button type="submit" class="btn btn-primary" id="save-btn">
+                            <svg class="icon-save" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                             </svg>
-                            Kaydet
+                            <svg class="icon-success" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                            <svg class="icon-error" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                            <span class="btn-text">Kaydet</span>
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="resetForm()">
                             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -1823,6 +1812,12 @@
 
 	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
 	<script src="./İpragaz Bayi_files/app.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/barem-prices-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 
 	<script>
@@ -1830,86 +1825,200 @@
 		let baremRowCount = 3;
 		let selectedProductValue = '';
 
-		// Ürünlere göre farklı barem verileri (boş olanlar henüz tanımlanmamış)
-		const productBaremData = {
-			'12kg-uzun': {
-				barems: [
-					{ min: 1, max: 10, price: 850.00 },
-					{ min: 11, max: 30, price: 820.00 },
-					{ min: 31, max: 100, price: 795.00 }
-				]
-			},
-			'12kg-kisa': {
-				barems: [] // Henüz fiyat belirlenmemiş
-			},
-			'12kg-izopro': {
-				barems: [
-					{ min: 1, max: 5, price: 920.00 },
-					{ min: 6, max: 20, price: 885.00 },
-					{ min: 21, max: 50, price: 860.00 }
-				]
-			},
-			'12kg-isyerim': {
-				barems: [] // Henüz fiyat belirlenmemiş
-			},
-			'24kg-sanayi': {
-				barems: [
-					{ min: 1, max: 10, price: 1650.00 },
-					{ min: 11, max: 25, price: 1590.00 },
-					{ min: 26, max: 75, price: 1540.00 }
-				]
-			},
-			'45kg-sanayi': {
-				barems: [
-					{ min: 1, max: 5, price: 2850.00 },
-					{ min: 6, max: 15, price: 2750.00 },
-					{ min: 16, max: 40, price: 2650.00 },
-					{ min: 41, max: 100, price: 2550.00 },
-					{ min: 101, max: 250, price: 2475.00 }
-				]
+		// Dinamik veriler
+		var products = [];
+		var currentDealerId = null;
+		var productBaremData = {}; // DB'den yüklenecek
+
+		// Kaydet butonu durumlarını yönet
+		function setSaveButtonState(state) {
+			var btn = document.getElementById('save-btn');
+			if (!btn) return;
+
+			var textSpan = btn.querySelector('.btn-text');
+			btn.classList.remove('success', 'error');
+
+			if (state === 'success') {
+				btn.classList.add('success');
+				textSpan.textContent = 'Kaydedildi';
+			} else if (state === 'error') {
+				btn.classList.add('error');
+				textSpan.textContent = 'Hata';
+			} else {
+				textSpan.textContent = 'Kaydet';
 			}
-		};
+		}
+
+		// Form değişikliği algılama - butonu normale döndür
+		function markFormAsChanged() {
+			setSaveButtonState('normal');
+		}
+
+		// Ürün imaj URL'sini belirle
+		function getProductImageUrl(product) {
+			if (product.image_url) {
+				return product.image_url;
+			}
+			var code = (product.code || '').toUpperCase();
+			var name = (product.name || '').toLowerCase();
+
+			if (code.includes('12') && (code.includes('UZUN') || name.includes('uzun'))) {
+				return './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+			}
+			if (code.includes('12') && (code.includes('KISA') || name.includes('kısa') || name.includes('kisa'))) {
+				return './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+			}
+			if (code.includes('IZOPRO') || code.includes('İZOPRO') || name.includes('izopro')) {
+				return './İpragaz Bayi_files/IPR-BAYI-12kg-izo-pro.png';
+			}
+			if (code.includes('ISYERIM') || code.includes('İŞYERİM') || name.includes('işyerim') || name.includes('isyerim')) {
+				return './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+			}
+			if (code.includes('45') || name.includes('45')) {
+				return './İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png';
+			}
+			if (code.includes('24') || name.includes('24')) {
+				return './İpragaz Bayi_files/IPR-BAYI-45kg-sanayi.png';
+			}
+			return './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+		}
+
+		// Ürünleri yükle
+		async function loadProducts() {
+			try {
+				const { data, error } = await ProductsService.getAll();
+				if (error) {
+					console.error('Ürünler yüklenirken hata:', error);
+					$('#product-cards-grid').html('<div class="products-loading"><div class="loading-text">Ürünler yüklenemedi</div></div>');
+					return;
+				}
+				products = data || [];
+				renderProductCards();
+				initCarousel();
+			} catch (err) {
+				console.error('Ürünler yüklenirken hata:', err);
+				$('#product-cards-grid').html('<div class="products-loading"><div class="loading-text">Ürünler yüklenemedi</div></div>');
+			}
+		}
+
+		// Ürün kartlarını render et
+		function renderProductCards() {
+			var html = '';
+			products.forEach(function(product) {
+				var imageUrl = getProductImageUrl(product);
+				var hasBarem = productBaremData[product.id] && productBaremData[product.id].length > 0;
+				var weightKg = product.weight_kg || '';
+				var isSelected = selectedProductValue === product.id;
+
+				html += '<div class="product-card ' + (hasBarem ? '' : 'no-barem') + (isSelected ? ' selected' : '') + '" ' +
+						'data-value="' + product.id + '" ' +
+						'data-name="' + product.name + '" ' +
+						'data-desc="' + (product.description || '') + '" ' +
+						'onclick="selectProductCard(this)">' +
+						'<div class="check-icon">' +
+						'<svg viewBox="0 0 24 24" fill="currentColor">' +
+						'<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>' +
+						'</svg>' +
+						'</div>' +
+						(hasBarem ? '' : '<div class="barem-tooltip">Bu ürün grubu için henüz baremli fiyat tanımlamadınız.</div>') +
+						'<div class="product-image">' +
+						'<img src="' + imageUrl + '" alt="' + product.name + '">' +
+						'</div>' +
+						'<div class="product-name">' + product.name + '</div>' +
+						'<div class="product-tag">' + weightKg + ' KG</div>' +
+						'</div>';
+			});
+			$('#product-cards-grid').html(html);
+
+			// Eğer seçili ürün varsa has-selection class'ını koru
+			if (selectedProductValue) {
+				document.querySelector('.product-cards-grid').classList.add('has-selection');
+			}
+
+			// Carousel dots
+			var dotsHtml = '';
+			products.forEach(function(p, i) {
+				dotsHtml += '<button type="button" class="carousel-dot ' + (i === 0 ? 'active' : '') + '" data-index="' + i + '" aria-label="Ürün ' + (i + 1) + '"></button>';
+			});
+			$('#carousel-dots').html(dotsHtml);
+		}
+
+		// Barem verilerini yükle
+		async function loadBaremData() {
+			if (!currentDealerId) return;
+
+			try {
+				const { data, error } = await BaremPricesService.getByDealer(currentDealerId);
+				if (error) {
+					console.error('Barem verileri yüklenirken hata:', error);
+					return;
+				}
+
+				productBaremData = {};
+				if (data) {
+					data.forEach(function(item) {
+						if (!productBaremData[item.product_id]) {
+							productBaremData[item.product_id] = [];
+						}
+						productBaremData[item.product_id].push({
+							min: item.min_quantity,
+							max: item.max_quantity,
+							price: parseFloat(item.unit_price)
+						});
+					});
+
+					// Her ürün için baremleri min değerine göre sırala
+					Object.keys(productBaremData).forEach(function(productId) {
+						productBaremData[productId].sort(function(a, b) { return a.min - b.min; });
+					});
+				}
+			} catch (err) {
+				console.error('Barem verileri yüklenirken hata:', err);
+			}
+		}
 
 		// Ürünün baremi var mı kontrol et
 		function hasBaremData(productValue) {
 			const data = productBaremData[productValue];
-			return data && data.barems && data.barems.length > 0;
-		}
-
-		// Sayfa yüklendiğinde baremi olmayan ürünleri işaretle
-		function markProductsWithoutBarem() {
-			const cards = document.querySelectorAll('.product-card');
-
-			cards.forEach(card => {
-				const productValue = card.dataset.value;
-				const hasBarem = hasBaremData(productValue);
-
-				if (!hasBarem) {
-					card.classList.add('no-barem');
-
-					// Tooltip elementi ekle
-					const tooltip = document.createElement('div');
-					tooltip.className = 'barem-tooltip';
-					tooltip.textContent = 'Bu ürün grubu için henüz baremli fiyat tanımlamadınız.';
-					card.appendChild(tooltip);
-				}
-			});
+			return data && data.length > 0;
 		}
 
 		// Sayfa yüklendiğinde çalıştır
-		document.addEventListener('DOMContentLoaded', function() {
-			markProductsWithoutBarem();
+		$(document).ready(async function() {
+			// Bayi ID'sini al
+			try {
+				const { data: dealers } = await DealersService.getAll();
+				if (dealers && dealers.length > 0) {
+					currentDealerId = dealers[0].id;
+				}
+			} catch (err) {
+				console.error('Bayi bilgisi alınamadı:', err);
+			}
+
+			// Önce barem verilerini yükle
+			await loadBaremData();
+
+			// Sonra ürünleri yükle
+			await loadProducts();
+
+			// Component'leri yükle
+			ComponentLoader.loadBayiComponents();
+
+			// Barem tablosundaki input değişikliklerini dinle
+			$('#barem-table-body').on('input', 'input', function() {
+				markFormAsChanged();
+			});
 		});
 
 		// Barem tablosunu ürüne göre doldur
 		function fillBaremTable(productValue) {
-			const data = productBaremData[productValue];
+			const barems = productBaremData[productValue] || [];
 			const tbody = document.getElementById('barem-table-body');
 			tbody.innerHTML = '';
 
 			// Eğer barem verisi varsa doldur
-			if (data && data.barems && data.barems.length > 0) {
-				data.barems.forEach((barem, index) => {
+			if (barems && barems.length > 0) {
+				barems.forEach((barem, index) => {
 					const rowNum = index + 1;
 					const row = document.createElement('tr');
 					row.setAttribute('data-row', rowNum);
@@ -1938,7 +2047,7 @@
 					`;
 					tbody.appendChild(row);
 				});
-				baremRowCount = data.barems.length;
+				baremRowCount = barems.length;
 			} else {
 				// Barem yoksa varsayılan boş satır ekle
 				const row = document.createElement('tr');
@@ -2000,6 +2109,9 @@
 			document.getElementById('barem-empty-state').style.display = 'none';
 			document.getElementById('barem-content').classList.add('active');
 
+			// Butonu normale döndür (yeni ürün seçildi)
+			setSaveButtonState('normal');
+
 			// Smooth scroll to barem section
 			setTimeout(() => {
 				document.getElementById('barem-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2059,6 +2171,9 @@
 			`;
 			tbody.appendChild(newRow);
 			updateRowNumbers();
+
+			// Butonu normale döndür (değişiklik yapıldı)
+			markFormAsChanged();
 		}
 
 		// Delete barem row
@@ -2068,6 +2183,8 @@
 				const row = button.closest('tr');
 				row.remove();
 				updateRowNumbers();
+				// Butonu normale döndür (değişiklik yapıldı)
+				markFormAsChanged();
 			} else {
 				alert('En az bir barem satırı olmalıdır.');
 			}
@@ -2147,8 +2264,11 @@
 			const rows = document.querySelectorAll('#barem-table-body tr');
 			let isValid = true;
 			let prevMax = 0;
+			let hasMinOne = false; // En az bir barem min=1 içermeli
 
 			rows.forEach((row, index) => {
+				if (!isValid) return; // Önceki hata varsa devam etme
+
 				const minInput = row.querySelector('input[name^="min_"]');
 				const maxInput = row.querySelector('input[name^="max_"]');
 				const priceInput = row.querySelector('input[name^="price_"]');
@@ -2156,6 +2276,25 @@
 				const min = parseInt(minInput.value);
 				const max = parseInt(maxInput.value);
 				const price = parseFloat(priceInput.value);
+
+				// 0 ve negatif değer kontrolü
+				if (isNaN(min) || min <= 0) {
+					alert(`Satır ${index + 1}: Minimum adet 0 veya negatif olamaz.`);
+					isValid = false;
+					return;
+				}
+
+				if (isNaN(max) || max <= 0) {
+					alert(`Satır ${index + 1}: Maksimum adet 0 veya negatif olamaz.`);
+					isValid = false;
+					return;
+				}
+
+				if (isNaN(price) || price <= 0) {
+					alert(`Satır ${index + 1}: Fiyat 0 veya negatif olamaz.`);
+					isValid = false;
+					return;
+				}
 
 				// Validation
 				if (min > max) {
@@ -2170,10 +2309,9 @@
 					return;
 				}
 
-				if (!price || price <= 0) {
-					alert(`Satır ${index + 1}: Lütfen geçerli bir fiyat giriniz.`);
-					isValid = false;
-					return;
+				// min=1 kontrolü
+				if (min === 1) {
+					hasMinOne = true;
 				}
 
 				prevMax = max;
@@ -2186,6 +2324,12 @@
 			});
 
 			if (!isValid) return false;
+
+			// Tek ürün için barem kontrolü (min=1 olmalı)
+			if (!hasMinOne) {
+				alert('Tek ürün için mutlaka barem belirlemelisiniz. İlk baremin minimum değeri 1 olmalıdır.');
+				return false;
+			}
 
 			// Store data and show confirmation modal
 			pendingBaremData = baremData;
@@ -2233,20 +2377,43 @@
 		}
 
 		// Confirm and save
-		function confirmSave() {
+		async function confirmSave() {
 			if (!pendingBaremData) return;
+			if (!currentDealerId) {
+				setSaveButtonState('error');
+				closeConfirmModal();
+				return;
+			}
 
-			// Here you would typically send this data to the server
-			console.log('Barem Data:', pendingBaremData);
+			try {
+				// Veritabanına kaydet
+				const result = await BaremPricesService.save(
+					currentDealerId,
+					pendingBaremData.product,
+					pendingBaremData.barems
+				);
 
-			// Close modal
-			closeConfirmModal();
+				if (result.error) {
+					console.error('Kaydetme hatası:', result.error);
+					setSaveButtonState('error');
+					closeConfirmModal();
+					return;
+				}
 
-			// Show success message
-			alert('Baremli fiyatlar başarıyla kaydedildi!\n\nÜrün: ' + pendingBaremData.productName + '\nBarem Sayısı: ' + pendingBaremData.barems.length);
+				// Başarılı - barem verilerini yenile
+				await loadBaremData();
+				renderProductCards(); // no-barem class'ı güncellensin
 
-			// Reset form after successful save
-			resetForm();
+				// Close modal
+				closeConfirmModal();
+
+				// Butonu başarılı duruma getir
+				setSaveButtonState('success');
+			} catch (err) {
+				console.error('Kaydetme hatası:', err);
+				setSaveButtonState('error');
+				closeConfirmModal();
+			}
 		}
 
 		// Product Carousel functionality

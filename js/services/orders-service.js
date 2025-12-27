@@ -222,52 +222,52 @@ const OrdersService = {
     },
 
     /**
-     * Sipariş onayla
+     * Sipariş dagitima cikar (on_the_way)
      */
-    async confirm(orderId) {
-        return this.updateStatus(orderId, 'confirmed');
+    async startDelivery(orderId) {
+        return this.updateStatus(orderId, 'on_the_way');
     },
 
     /**
-     * Sipariş teslim edildi
+     * Sipariş teslim edildi (completed)
      */
     async markDelivered(orderId) {
-        return this.updateStatus(orderId, 'delivered');
+        return this.updateStatus(orderId, 'completed');
     },
 
     /**
-     * Bekleyen sipariş sayısı (bayi dashboard için)
+     * Atama bekleyen siparis sayisi (waiting_for_assignment)
      */
-    async getPendingCount(dealerId) {
+    async getWaitingCount(dealerId) {
         try {
             const { count, error } = await supabaseClient
                 .from('orders')
                 .select('id', { count: 'exact' })
                 .eq('dealer_id', dealerId)
-                .eq('status', 'pending');
+                .eq('status', 'waiting_for_assignment');
 
             if (error) throw error;
             return { data: count, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'OrdersService.getPendingCount');
+            return handleSupabaseError(error, 'OrdersService.getWaitingCount');
         }
     },
 
     /**
-     * Dağıtımdaki sipariş sayısı
+     * Dagitimdaki siparis sayisi (on_the_way)
      */
-    async getConfirmedCount(dealerId) {
+    async getOnTheWayCount(dealerId) {
         try {
             const { count, error } = await supabaseClient
                 .from('orders')
                 .select('id', { count: 'exact' })
                 .eq('dealer_id', dealerId)
-                .eq('status', 'confirmed');
+                .eq('status', 'on_the_way');
 
             if (error) throw error;
             return { data: count, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'OrdersService.getConfirmedCount');
+            return handleSupabaseError(error, 'OrdersService.getOnTheWayCount');
         }
     },
 
