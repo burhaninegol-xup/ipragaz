@@ -1482,6 +1482,30 @@
 				showLoading('Müşteri sorgulanıyor...');
 
 				try {
+					// Önce bu VKN'li müşterinin başka bayilerle aktif teklifi var mı kontrol et
+					const { data: offerCheck, error: offerCheckError } = await OffersService.hasActiveOfferWithOtherDealer(vkn, currentDealerId);
+
+					if (offerCheckError) {
+						hideLoading();
+						showError('Kontrol sırasında hata oluştu');
+						return;
+					}
+
+					// Başka bayi ile anlaşması varsa uyarı göster ve devam etme
+					if (offerCheck && offerCheck.hasOffer) {
+						hideLoading();
+						$('#customer-info-box').addClass('visible error');
+						$('#customer-name').text('Bu VKN\'li müşterinin başka bayi ile anlaşması olduğu için müşteriyi ekleyemez ve fiyat oluşturamazsınız.');
+						$('#products-form').removeClass('visible');
+						$('#form-actions').hide();
+						$('#existing-notice').removeClass('visible');
+						$('#passive-status-banner').removeClass('visible');
+						return;
+					}
+
+					console.log('Current Dealer ID:', currentDealerId);
+					console.log('Offer Check Result:', offerCheck);
+
 					// Supabase'den müşteriyi sorgula
 					const { data: customer, error } = await CustomersService.getByVkn(vkn);
 

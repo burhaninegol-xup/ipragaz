@@ -346,6 +346,52 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.delete');
         }
+    },
+
+    /**
+     * VKN ile müşterinin başka bayilerle aktif teklifi var mı kontrol et
+     * Aktif teklif = pending veya accepted durumunda olan teklif
+     */
+    async hasActiveOfferWithOtherDealer(vkn, currentDealerId) {
+        try {
+            // Önce VKN ile müşteriyi bul
+            const { data: customer, error: customerError } = await supabaseClient
+                .from('customers')
+                .select('id')
+                .eq('vkn', vkn)
+                .maybeSingle();
+
+            if (customerError) throw customerError;
+            if (!customer) return { data: { hasOffer: false }, error: null };
+
+            // Müşterinin başka bayilerle aktif teklifi var mı kontrol et
+            const { data: offers, error: offersError } = await supabaseClient
+                .from('offers')
+                .select(`
+                    id,
+                    status,
+                    dealer:dealers(id, name, code)
+                `)
+                .eq('customer_id', customer.id)
+                .neq('dealer_id', currentDealerId)
+                .in('status', ['pending', 'accepted']);
+
+            if (offersError) throw offersError;
+
+            if (offers && offers.length > 0) {
+                return {
+                    data: {
+                        hasOffer: true,
+                        dealerName: offers[0].dealer?.name || 'Başka bayi'
+                    },
+                    error: null
+                };
+            }
+
+            return { data: { hasOffer: false }, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.hasActiveOfferWithOtherDealer');
+        }
     }
 };
 

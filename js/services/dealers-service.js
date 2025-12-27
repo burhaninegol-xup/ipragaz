@@ -217,6 +217,33 @@ const DealersService = {
         } catch (error) {
             return handleSupabaseError(error, 'DealersService.getDistricts');
         }
+    },
+
+    /**
+     * Bayi girişi (username + password_hash ile)
+     */
+    async login(username, passwordHash) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('dealers')
+                .select('id, code, name, city, district, phone')
+                .eq('username', username)
+                .eq('password_hash', passwordHash)
+                .eq('is_active', true)
+                .single();
+
+            if (error) {
+                if (error.code === 'PGRST116') {
+                    // Kayıt bulunamadı
+                    return { data: null, error: 'Kullanıcı adı veya şifre hatalı' };
+                }
+                throw error;
+            }
+
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'DealersService.login');
+        }
     }
 };
 
