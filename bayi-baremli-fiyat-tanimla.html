@@ -19,15 +19,67 @@
 	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/smarteditaddon.css">
 
 	<style>
-		/* Baremli Fiyat Form Styles */
-		.page-title {
-			font-size: 24px;
-			font-weight: 600;
-			color: #002c77;
-			margin-bottom: 30px;
-			padding-bottom: 15px;
-			border-bottom: 2px solid #e5e5e5;
+		/* Main Content - Consistent Width */
+		.page-baremli-fiyat.main {
+			padding-top: 0 !important;
+			margin-top: 0 !important;
 		}
+
+		.page-baremli-fiyat .container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header - Back Button Style */
+		.page-header {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 25px;
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 44px;
+			height: 44px;
+			border-radius: 12px;
+			background: #fff;
+			border: 1px solid #e0e0e0;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+		}
+
+		.back-btn:hover {
+			background: #f5f7fa;
+			border-color: #002c77;
+			color: #002c77;
+			transform: translateX(-2px);
+		}
+
+		.back-btn svg {
+			width: 22px;
+			height: 22px;
+		}
+
+		.page-header-text h1 {
+			font-size: 24px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 4px;
+		}
+
+		.page-header-text p {
+			color: #666;
+			font-size: 14px;
+			margin: 0;
+		}
+
+		/* Baremli Fiyat Form Styles */
 
 		.baremli-fiyat-container {
 			background: #fff;
@@ -1583,7 +1635,18 @@
 
     <main class="page-baremli-fiyat main">
         <div class="container">
-            <h1 class="page-title">Baremli Fiyat Tanımla</h1>
+            <!-- Page Header -->
+            <div class="page-header">
+                <a href="bayi-anasayfa.html" class="back-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                </a>
+                <div class="page-header-text">
+                    <h1>Baremli Fiyat Tanımla</h1>
+                    <p>Ürün gruplarına göre baremli fiyat tanımlayın</p>
+                </div>
+            </div>
 
             <div class="baremli-fiyat-container">
                 <div class="info-box">

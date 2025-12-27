@@ -1044,6 +1044,7 @@
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Bayi componentlerini yukle
@@ -1068,7 +1069,7 @@
 				$('#loading-overlay').hide();
 			}
 
-			// Müşteri listesini Supabase'den yükle
+			// Müşteri listesini Supabase'den yükle (Kabul edilmiş teklifler üzerinden)
 			async function loadCustomers() {
 				showLoading();
 				try {
@@ -1078,11 +1079,19 @@
 						currentDealerId = dealers[0].id;
 					}
 
-					// Müşterileri çek
-					const { data: customers, error } = await CustomersService.getAll(currentDealerId);
+					// Kabul edilmiş teklifleri olan müşterileri çek
+					const { data: offersData, error } = await OffersService.getCustomersWithAcceptedOffers(currentDealerId);
 					if (error) throw new Error(error);
 
-					allCustomers = customers || [];
+					// Offers verisini müşteri formatına dönüştür (uyumluluk için)
+					allCustomers = (offersData || []).map(function(offer) {
+						return {
+							...offer.customer,
+							offer_id: offer.id,
+							customer_prices: offer.offer_details // Eski isimle uyumluluk
+						};
+					});
+
 					renderCustomerList(allCustomers);
 					updateFilterCounts();
 					hideLoading();

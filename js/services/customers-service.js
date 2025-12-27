@@ -13,16 +13,7 @@ const CustomersService = {
                 .from('customers')
                 .select(`
                     *,
-                    dealer:dealers(id, name, code),
-                    customer_prices(
-                        id,
-                        unit_price,
-                        commitment_quantity,
-                        this_month_quantity,
-                        last_month_quantity,
-                        is_active,
-                        product:products(id, code, name, base_price, image_url)
-                    )
+                    dealer:dealers(id, name, code)
                 `)
                 .order('name');
 
@@ -47,16 +38,7 @@ const CustomersService = {
                 .from('customers')
                 .select(`
                     *,
-                    dealer:dealers(id, name, code),
-                    customer_prices(
-                        id,
-                        unit_price,
-                        commitment_quantity,
-                        this_month_quantity,
-                        last_month_quantity,
-                        is_active,
-                        product:products(id, code, name, base_price, image_url)
-                    )
+                    dealer:dealers(id, name, code)
                 `)
                 .eq('id', id)
                 .single();
@@ -77,16 +59,7 @@ const CustomersService = {
                 .from('customers')
                 .select(`
                     *,
-                    dealer:dealers(id, name, code),
-                    customer_prices(
-                        id,
-                        unit_price,
-                        commitment_quantity,
-                        this_month_quantity,
-                        last_month_quantity,
-                        is_active,
-                        product:products(id, code, name, base_price, image_url)
-                    )
+                    dealer:dealers(id, name, code)
                 `)
                 .eq('vkn', vkn)
                 .single();
@@ -108,16 +81,7 @@ const CustomersService = {
                 .from('customers')
                 .select(`
                     *,
-                    dealer:dealers(id, name, code),
-                    customer_prices(
-                        id,
-                        unit_price,
-                        commitment_quantity,
-                        this_month_quantity,
-                        last_month_quantity,
-                        is_active,
-                        product:products(id, code, name, base_price, image_url)
-                    )
+                    dealer:dealers(id, name, code)
                 `)
                 .eq('phone', phone)
                 .single();
@@ -214,16 +178,7 @@ const CustomersService = {
                 .from('customers')
                 .select(`
                     *,
-                    dealer:dealers(id, name),
-                    customer_prices(
-                        id,
-                        unit_price,
-                        commitment_quantity,
-                        this_month_quantity,
-                        last_month_quantity,
-                        is_active,
-                        product:products(id, code, name)
-                    )
+                    dealer:dealers(id, name)
                 `);
 
             // Bayi filtresi
