@@ -1445,8 +1445,10 @@
 
 		// Sepet badge güncelleme
 		function updateCartBadge() {
-			var count = CartService.getItemCount();
 			var badge = document.getElementById('cartBadge');
+			if (!badge) return; // Component henuz yuklenmemis olabilir
+
+			var count = CartService.getItemCount();
 			if (count > 0) {
 				badge.textContent = count;
 				badge.style.display = 'flex';

@@ -650,6 +650,97 @@
 			}
 		}
 
+		/* Teklif Status Badge'leri */
+		.offer-status-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			flex-shrink: 0;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+
+		.offer-status-badge svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.offer-status-badge.requested {
+			background: #fff3e0;
+			color: #e65100;
+			border: 1px solid #ffe0b2;
+		}
+
+		.offer-status-badge.pending {
+			background: #e3f2fd;
+			color: #1565c0;
+			border: 1px solid #bbdefb;
+		}
+
+		.offer-status-badge.accepted {
+			background: #e8f5e9;
+			color: #2e7d32;
+			border: 1px solid #c8e6c9;
+		}
+
+		.offer-status-badge.rejected {
+			background: #ffebee;
+			color: #c62828;
+			border: 1px solid #ffcdd2;
+		}
+
+		.offer-status-badge.cancelled {
+			background: #fafafa;
+			color: #616161;
+			border: 1px solid #e0e0e0;
+		}
+
+		/* Status Filter Buttons */
+		.filter-btn.requested .count {
+			background: #fff3e0;
+			color: #e65100;
+		}
+		.filter-btn.requested.active .count {
+			background: #ff9800;
+			color: #fff;
+		}
+
+		.filter-btn.pending .count {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+		.filter-btn.pending.active .count {
+			background: #1976d2;
+			color: #fff;
+		}
+
+		.filter-btn.accepted .count {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+		.filter-btn.accepted.active .count {
+			background: #4caf50;
+			color: #fff;
+		}
+
+		.filter-btn.rejected .count {
+			background: #ffebee;
+			color: #c62828;
+		}
+		.filter-btn.rejected.active .count {
+			background: #e53935;
+			color: #fff;
+		}
+
+		@media (max-width: 768px) {
+			.offer-status-badge span {
+				display: none;
+			}
+		}
+
 		/* Empty State */
 		.empty-state {
 			text-align: center;
@@ -1003,23 +1094,23 @@
 				<div class="filter-buttons">
 					<button class="filter-btn active" data-filter="all">
 						Tümü
-						<span class="count">9</span>
+						<span class="count">0</span>
 					</button>
-					<button class="filter-btn warning" data-filter="warning">
-						Uyarılı
-						<span class="count">2</span>
+					<button class="filter-btn requested" data-filter="requested">
+						Talep
+						<span class="count">0</span>
 					</button>
-					<button class="filter-btn passive" data-filter="passive">
-						Pasif
-						<span class="count">2</span>
+					<button class="filter-btn pending" data-filter="pending">
+						Bekleyen
+						<span class="count">0</span>
 					</button>
-					<button class="filter-btn noprice" data-filter="noprice">
-						Fiyatsız
-						<span class="count">1</span>
+					<button class="filter-btn accepted" data-filter="accepted">
+						Kabul
+						<span class="count">0</span>
 					</button>
-					<button class="filter-btn" data-filter="normal">
-						Normal
-						<span class="count">4</span>
+					<button class="filter-btn rejected" data-filter="rejected">
+						Red
+						<span class="count">0</span>
 					</button>
 				</div>
 			</div>
@@ -1074,18 +1165,21 @@
 				$('#loading-overlay').hide();
 			}
 
-			// Müşteri listesini Supabase'den yükle (Kabul edilmiş teklifler üzerinden)
+			// Müşteri listesini Supabase'den yükle (Tüm teklifler üzerinden)
 			async function loadCustomers() {
 				showLoading();
 				try {
-					// Bayi ID'sini al
-					const { data: dealers } = await DealersService.getAll();
-					if (dealers && dealers.length > 0) {
-						currentDealerId = dealers[0].id;
+					// Bayi ID'sini sessionStorage'dan al (login sirasinda kaydedilir)
+					currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+					if (!currentDealerId) {
+						console.error('Bayi ID bulunamadi');
+						hideLoading();
+						$('.customer-list').html('<div class="empty-state"><p>Bayi bilgisi bulunamadi. Lutfen tekrar giris yapin.</p></div>');
+						return;
 					}
 
-					// Kabul edilmiş teklifleri olan müşterileri çek
-					const { data: offersData, error } = await OffersService.getCustomersWithAcceptedOffers(currentDealerId);
+					// Tüm teklifleri olan müşterileri çek
+					const { data: offersData, error } = await OffersService.getAllOffersByDealerId(currentDealerId);
 					if (error) throw new Error(error);
 
 					// Offers verisini müşteri formatına dönüştür (uyumluluk için)
@@ -1093,7 +1187,9 @@
 						return {
 							...offer.customer,
 							offer_id: offer.id,
-							customer_prices: offer.offer_details // Eski isimle uyumluluk
+							offer_status: offer.status,
+							offer_created_at: offer.created_at,
+							customer_prices: offer.offer_details
 						};
 					});
 
@@ -1107,29 +1203,37 @@
 				}
 			}
 
+			// Teklif durumu badge'i oluştur
+			function getStatusBadge(status) {
+				var statusLabels = {
+					requested: 'Talep Edildi',
+					pending: 'Beklemede',
+					accepted: 'Kabul Edildi',
+					rejected: 'Reddedildi',
+					cancelled: 'İptal Edildi'
+				};
+
+				var statusIcons = {
+					requested: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+					pending: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
+					accepted: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+					rejected: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>',
+					cancelled: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>'
+				};
+
+				return '<div class="offer-status-badge ' + status + '">' +
+					statusIcons[status] +
+					'<span>' + statusLabels[status] + '</span></div>';
+			}
+
 			// Müşteri kartı oluştur
 			function createCustomerCard(customer) {
-				var hasPrices = customer.customer_prices && customer.customer_prices.some(p => p.unit_price);
-				var isPassive = !customer.is_active;
-				var warnings = getWarnings(customer);
-				var hasWarning = warnings.length > 0;
+				var offerStatus = customer.offer_status || 'pending';
 
-				var cardClass = isPassive ? 'is-passive' : (!hasPrices ? 'no-price' : (hasWarning ? 'has-warning' : ''));
-				var status = isPassive ? 'passive' : (!hasPrices ? 'noprice' : (hasWarning ? 'warning' : 'normal'));
-
-				var badgeHtml = '';
-				if (isPassive) {
-					badgeHtml = '<div class="customer-passive-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg><span>Fiyatlar Pasif</span></div>';
-				} else if (!hasPrices) {
-					badgeHtml = '<div class="customer-noprice-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg><span>Fiyat Girilmedi</span></div>';
-				} else if (hasWarning) {
-					badgeHtml = '<div class="customer-warning"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg><span>' + warnings.length + ' Uyarı</span></div>';
-				}
-
-				return '<div class="customer-card ' + cardClass + '" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-status="' + status + '">' +
+				return '<div class="customer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-status="' + offerStatus + '">' +
 					'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
 					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div></div>' +
-					badgeHtml +
+					getStatusBadge(offerStatus) +
 					'<a href="bayi-musteri-ekle.html?vkn=' + customer.vkn + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
 				'</div>';
 			}
@@ -1174,24 +1278,31 @@
 
 			// Filtre sayılarını güncelle
 			function updateFilterCounts() {
-				var counts = { all: 0, warning: 0, passive: 0, noprice: 0, normal: 0 };
+				var counts = {
+					all: 0,
+					requested: 0,
+					pending: 0,
+					accepted: 0,
+					rejected: 0,
+					cancelled: 0
+				};
+
 				allCustomers.forEach(function(c) {
 					counts.all++;
-					var hasPrices = c.customer_prices && c.customer_prices.some(p => p.unit_price);
-					var isPassive = !c.is_active;
-					var hasWarning = getWarnings(c).length > 0;
-
-					if (isPassive) counts.passive++;
-					else if (!hasPrices) counts.noprice++;
-					else if (hasWarning) counts.warning++;
-					else counts.normal++;
+					var status = c.offer_status || 'pending';
+					if (counts[status] !== undefined) {
+						counts[status]++;
+					}
 				});
 
+				// Rejected ve cancelled birleşik sayılsın
+				var rejectedTotal = counts.rejected + counts.cancelled;
+
 				$('.filter-btn[data-filter="all"] .count').text(counts.all);
-				$('.filter-btn[data-filter="warning"] .count').text(counts.warning);
-				$('.filter-btn[data-filter="passive"] .count').text(counts.passive);
-				$('.filter-btn[data-filter="noprice"] .count').text(counts.noprice);
-				$('.filter-btn[data-filter="normal"] .count').text(counts.normal);
+				$('.filter-btn[data-filter="requested"] .count').text(counts.requested);
+				$('.filter-btn[data-filter="pending"] .count').text(counts.pending);
+				$('.filter-btn[data-filter="accepted"] .count').text(counts.accepted);
+				$('.filter-btn[data-filter="rejected"] .count').text(rejectedTotal);
 			}
 
 			// Müşterileri yükle
@@ -1213,13 +1324,9 @@
 
 					if (filter === 'all') {
 						$card.show();
-					} else if (filter === 'warning' && status === 'warning') {
+					} else if (filter === 'rejected' && (status === 'rejected' || status === 'cancelled')) {
 						$card.show();
-					} else if (filter === 'passive' && status === 'passive') {
-						$card.show();
-					} else if (filter === 'noprice' && status === 'noprice') {
-						$card.show();
-					} else if (filter === 'normal' && status === 'normal') {
+					} else if (filter === status) {
 						$card.show();
 					} else {
 						$card.hide();

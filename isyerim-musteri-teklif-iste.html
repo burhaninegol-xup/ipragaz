@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Teklif Iste - IsYerim Ipragaz</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f5f5;
+			color: #333;
+		}
+
+		a {
+			text-decoration: none;
+			color: inherit;
+		}
+
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			background: #fff;
+			padding: 30px 0;
+			border-bottom: 1px solid #eee;
+		}
+
+		.page-title {
+			font-size: 24px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.page-subtitle {
+			font-size: 14px;
+			color: #666;
+		}
+
+		/* Main Content */
+		.main-content {
+			padding: 30px 0;
+		}
+
+		/* Info Card */
+		.info-card {
+			background: #fff5f5;
+			border: 1px solid #ffebee;
+			border-radius: 12px;
+			padding: 20px;
+			margin-bottom: 30px;
+			display: flex;
+			align-items: flex-start;
+			gap: 15px;
+		}
+
+		.info-card svg {
+			width: 24px;
+			height: 24px;
+			color: #e31e24;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+
+		.info-card-content h4 {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 5px;
+		}
+
+		.info-card-content p {
+			font-size: 13px;
+			color: #666;
+			line-height: 1.5;
+		}
+
+		/* Products Grid */
+		.products-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 20px;
+			margin-bottom: 30px;
+		}
+
+		/* Product Card */
+		.product-card {
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 12px;
+			padding: 20px;
+			transition: box-shadow 0.2s, transform 0.2s;
+		}
+
+		.product-card:hover {
+			box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+			transform: translateY(-2px);
+		}
+
+		.product-image {
+			height: 100px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 15px;
+		}
+
+		.product-image img {
+			max-height: 100%;
+			max-width: 100%;
+			object-fit: contain;
+		}
+
+		.product-name {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 5px;
+			text-align: center;
+		}
+
+		.product-code {
+			font-size: 12px;
+			color: #888;
+			text-align: center;
+			margin-bottom: 15px;
+		}
+
+		/* Consumption Input */
+		.consumption-input-wrapper {
+			background: #f9f9f9;
+			border-radius: 8px;
+			padding: 12px;
+		}
+
+		.consumption-input-wrapper label {
+			display: block;
+			font-size: 11px;
+			color: #666;
+			margin-bottom: 8px;
+			text-align: center;
+		}
+
+		.consumption-input-row {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.consumption-input {
+			flex: 1;
+			padding: 10px 12px;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			font-size: 14px;
+			font-family: inherit;
+			text-align: center;
+			transition: border-color 0.2s;
+		}
+
+		.consumption-input:focus {
+			outline: none;
+			border-color: #e31e24;
+		}
+
+		.consumption-unit {
+			font-size: 12px;
+			color: #888;
+			white-space: nowrap;
+		}
+
+		/* Submit Section */
+		.submit-section {
+			background: #fff;
+			border-radius: 12px;
+			padding: 20px 30px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+			display: grid;
+			grid-template-columns: minmax(200px, 1fr) auto auto;
+			gap: 24px;
+			align-items: center;
+		}
+
+		.selected-count {
+			font-size: 14px;
+			color: #666;
+			white-space: nowrap;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.selected-count strong {
+			color: #e31e24;
+			font-size: 18px;
+			font-weight: 700;
+			background: #fff5f5;
+			padding: 4px 12px;
+			border-radius: 6px;
+			border: 1px solid #ffebee;
+		}
+
+		.btn-submit {
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			padding: 15px 40px;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			transition: background 0.3s;
+		}
+
+		.btn-submit:hover {
+			background: #c91a1f;
+		}
+
+		.btn-submit:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+		}
+
+		.btn-submit svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Dealer Info */
+		.dealer-info {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			min-width: 0;
+			background: #f0f9ff;
+			padding: 10px 16px;
+			border-radius: 8px;
+			border: 1px solid #e0f2fe;
+		}
+
+		.dealer-info svg {
+			width: 20px;
+			height: 20px;
+			color: #0ea5e9;
+			flex-shrink: 0;
+		}
+
+		.dealer-info-text {
+			font-size: 13px;
+			color: #334155;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			line-height: 1.4;
+		}
+
+		.dealer-info-text strong {
+			color: #0369a1;
+			font-weight: 600;
+		}
+
+		/* Success Modal */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+		}
+
+		.modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 40px;
+			max-width: 450px;
+			width: 90%;
+			text-align: center;
+		}
+
+		.modal-icon {
+			width: 80px;
+			height: 80px;
+			background: #e8f5e9;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.modal-icon svg {
+			width: 40px;
+			height: 40px;
+			color: #4caf50;
+		}
+
+		.modal-title {
+			font-size: 20px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.modal-text {
+			font-size: 14px;
+			color: #666;
+			line-height: 1.6;
+			margin-bottom: 25px;
+		}
+
+		.modal-btn {
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			padding: 12px 30px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+		}
+
+		.modal-btn:hover {
+			background: #c91a1f;
+		}
+
+		/* Loading */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255,255,255,0.9);
+			z-index: 2000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.loading-overlay.active {
+			display: flex;
+		}
+
+		.loading-spinner {
+			width: 50px;
+			height: 50px;
+			border: 4px solid #f0f0f0;
+			border-top-color: #e31e24;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		.loading-text {
+			font-size: 14px;
+			color: #666;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+			background: #fff;
+			border-radius: 12px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #666;
+		}
+
+		/* Dealer Selection Section */
+		.dealer-selection-section {
+			display: none;
+		}
+
+		.dealer-selection-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.dealer-list {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 20px;
+			margin-bottom: 25px;
+		}
+
+		.dealer-card {
+			background: #fff;
+			border: 2px solid #eee;
+			border-radius: 12px;
+			padding: 20px;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.dealer-card:hover {
+			border-color: #e31e24;
+			box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+		}
+
+		.dealer-card.selected {
+			border-color: #e31e24;
+			background: #fff5f5;
+		}
+
+		.dealer-card-name {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.dealer-card-location {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 5px;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.dealer-card-location svg {
+			width: 14px;
+			height: 14px;
+			color: #888;
+		}
+
+		.dealer-card-phone {
+			font-size: 13px;
+			color: #888;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.dealer-card-phone svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.dealer-continue-btn {
+			display: block;
+			width: 100%;
+			max-width: 300px;
+			margin: 0 auto;
+			background: #e31e24;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			padding: 15px 30px;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: background 0.3s;
+		}
+
+		.dealer-continue-btn:hover {
+			background: #c91a1f;
+		}
+
+		.dealer-continue-btn:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+		}
+
+		@media (max-width: 992px) {
+			.dealer-list {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		@media (max-width: 576px) {
+			.dealer-list {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		/* Responsive */
+		@media (max-width: 992px) {
+			.products-grid {
+				grid-template-columns: repeat(3, 1fr);
+			}
+
+			/* Tablet için 2 satırlı düzen */
+			.submit-section {
+				grid-template-columns: 1fr auto;
+				grid-template-rows: auto auto;
+				gap: 16px 20px;
+			}
+
+			.dealer-info {
+				grid-column: 1 / -1;
+			}
+
+			.selected-count {
+				grid-column: 1;
+				justify-self: start;
+			}
+
+			.btn-submit {
+				grid-column: 2;
+				justify-self: end;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.products-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+
+			.page-title {
+				font-size: 20px;
+			}
+
+			/* Mobil için tamamen dikey düzen */
+			.submit-section {
+				grid-template-columns: 1fr;
+				grid-template-rows: auto auto auto;
+				gap: 15px;
+				padding: 20px;
+			}
+
+			.dealer-info {
+				grid-column: 1;
+			}
+
+			.selected-count {
+				text-align: center;
+				grid-column: 1;
+			}
+
+			.btn-submit {
+				width: 100%;
+				justify-content: center;
+				grid-column: 1;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.products-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		/* Offer Status Banner - Enhanced */
+		.offer-status-banner {
+			background: linear-gradient(135deg, #f0f9ff 0%, #e6f4ff 100%);
+			border: 3px solid #bae6fd;
+			border-radius: 16px;
+			padding: 32px;
+			margin-bottom: 40px;
+			display: flex;
+			align-items: flex-start;
+			gap: 24px;
+			box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+			position: relative;
+			overflow: hidden;
+		}
+
+		.offer-status-banner.status-requested {
+			background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+			border-color: #fbbf24;
+		}
+
+		.offer-status-banner.status-pending {
+			background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+			border-color: #3b82f6;
+		}
+
+		.offer-status-banner.status-accepted {
+			background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+			border-color: #10b981;
+		}
+
+		.offer-status-banner.status-rejected {
+			background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+			border-color: #ef4444;
+		}
+
+		.offer-status-banner.status-cancelled {
+			background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+			border-color: #9ca3af;
+		}
+
+		/* Shimmer animation for active statuses */
+		.offer-status-banner.status-requested::before,
+		.offer-status-banner.status-pending::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -100%;
+			width: 100%;
+			height: 100%;
+			background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+			animation: shimmer 3s ease-in-out infinite;
+		}
+
+		@keyframes shimmer {
+			to { left: 100%; }
+		}
+
+		.status-icon {
+			width: 72px;
+			height: 72px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+		}
+
+		.status-requested .status-icon {
+			background: #fde047;
+			color: #854d0e;
+		}
+
+		.status-pending .status-icon {
+			background: #60a5fa;
+			color: #1e3a8a;
+		}
+
+		.status-accepted .status-icon {
+			background: #4ade80;
+			color: #166534;
+		}
+
+		.status-rejected .status-icon {
+			background: #f87171;
+			color: #7f1d1d;
+		}
+
+		.status-cancelled .status-icon {
+			background: #9ca3af;
+			color: #374151;
+		}
+
+		/* Pulse animation for pending statuses */
+		.status-requested .status-icon,
+		.status-pending .status-icon {
+			animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+		}
+
+		@keyframes pulse {
+			0%, 100% { opacity: 1; transform: scale(1); }
+			50% { opacity: 0.85; transform: scale(0.98); }
+		}
+
+		.status-icon svg {
+			width: 36px;
+			height: 36px;
+		}
+
+		.status-content {
+			flex: 1;
+			position: relative;
+			z-index: 1;
+		}
+
+		.status-title {
+			font-size: 22px;
+			font-weight: 700;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.status-message {
+			font-size: 15px;
+			color: #555;
+			line-height: 1.6;
+			margin-bottom: 12px;
+		}
+
+		.status-dealer {
+			font-size: 14px;
+			color: #444;
+			font-weight: 500;
+		}
+
+		.status-dealer strong {
+			color: #333;
+			font-weight: 600;
+		}
+
+		.btn-cancel-offer {
+			background: #fff;
+			border: 1px solid #e31e24;
+			color: #e31e24;
+			border-radius: 8px;
+			padding: 10px 20px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			transition: all 0.2s;
+			white-space: nowrap;
+			flex-shrink: 0;
+		}
+
+		.btn-cancel-offer:hover {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		.btn-cancel-offer svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Read-only Product Card - Compact Horizontal Layout */
+		.product-card.readonly {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 20px;
+			padding: 16px 20px;
+			cursor: default;
+			opacity: 1;
+		}
+
+		.product-card.readonly:hover {
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+			transform: none;
+		}
+
+		.product-card.readonly .product-image {
+			width: 80px;
+			height: 80px;
+			flex-shrink: 0;
+			margin-bottom: 0;
+			background: #fafafa;
+			border-radius: 8px;
+			padding: 8px;
+		}
+
+		.product-card.readonly .product-content {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			min-width: 0;
+		}
+
+		.product-card.readonly .product-info {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 0;
+		}
+
+		.product-card.readonly .product-name {
+			text-align: left;
+			font-size: 15px;
+			margin-bottom: 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.product-card.readonly .product-code {
+			text-align: left;
+			margin-bottom: 0;
+			font-size: 12px;
+		}
+
+		/* Stats Container - Taahhut ve Fiyat yan yana, saga yasli */
+		.product-card.readonly .product-stats {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-shrink: 0;
+		}
+
+		/* Consumption Display - Kompakt */
+		.consumption-display {
+			background: #f0f9ff;
+			border: 1px solid #e0f2fe;
+			border-radius: 6px;
+			padding: 8px 12px;
+			text-align: center;
+			white-space: nowrap;
+		}
+
+		.consumption-display-label {
+			font-size: 10px;
+			color: #666;
+			margin-bottom: 2px;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+		}
+
+		.consumption-display-value {
+			font-size: 16px;
+			font-weight: 600;
+			color: #0369a1;
+		}
+
+		.consumption-display-value span {
+			font-size: 11px;
+			font-weight: 400;
+			color: #888;
+			margin-left: 2px;
+		}
+
+		/* Price Display - Kompakt */
+		.price-display {
+			background: #f9fafb;
+			border: 1px solid #e5e7eb;
+			border-radius: 6px;
+			padding: 8px 12px;
+			text-align: center;
+			white-space: nowrap;
+		}
+
+		.price-display-label {
+			font-size: 10px;
+			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.3px;
+			margin-bottom: 2px;
+		}
+
+		.price-display-value {
+			font-size: 16px;
+			font-weight: 700;
+			color: #e31e24;
+		}
+
+		.price-display-value .unit {
+			font-size: 11px;
+			font-weight: 400;
+			color: #6b7280;
+		}
+
+		/* Price Pending State - Kompakt */
+		.price-display-pending {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 12px;
+			background: #fffbeb;
+			border: 1px dashed #fbbf24;
+			border-radius: 6px;
+			font-size: 12px;
+			color: #92400e;
+			font-style: italic;
+			white-space: nowrap;
+		}
+
+		.price-display-pending svg {
+			width: 14px;
+			height: 14px;
+			color: #fbbf24;
+			flex-shrink: 0;
+			animation: rotate 3s linear infinite;
+		}
+
+		@keyframes rotate {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		/* Products Grid for readonly - single column */
+		.products-grid.readonly-grid {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		@media (max-width: 768px) {
+			.offer-status-banner {
+				flex-direction: column;
+				align-items: stretch;
+				gap: 20px;
+				padding: 24px 20px;
+			}
+
+			.btn-cancel-offer {
+				justify-content: center;
+			}
+
+			/* Mobilde kart yapisi */
+			.product-card.readonly {
+				flex-wrap: wrap;
+				gap: 12px;
+			}
+
+			.product-card.readonly .product-content {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 10px;
+			}
+
+			.product-card.readonly .product-stats {
+				width: 100%;
+				justify-content: flex-start;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Top Bar (Component) -->
+	<div id="isyerim-top-bar"></div>
+
+	<!-- Header (Component) -->
+	<div id="isyerim-header"></div>
+
+	<!-- Page Header -->
+	<section class="page-header">
+		<div class="container">
+			<h1 class="page-title">Teklif Iste</h1>
+			<p class="page-subtitle">Bayinizden fiyat teklifi talep edin</p>
+		</div>
+	</section>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<div class="container">
+			<!-- Status Banner (Aktif teklif varken gosterilecek) -->
+			<div class="offer-status-banner" id="offerStatusBanner" style="display: none;">
+				<div class="status-icon" id="statusIcon"></div>
+				<div class="status-content">
+					<h4 class="status-title" id="statusTitle">Teklif Durumu</h4>
+					<p class="status-message" id="statusMessage">Teklif talebiniz bayiye iletildi</p>
+					<div class="status-dealer" id="statusDealer">
+						<span>Bayi:</span> <strong id="statusDealerName">-</strong>
+					</div>
+				</div>
+				<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10"/>
+						<line x1="15" y1="9" x2="9" y2="15"/>
+						<line x1="9" y1="9" x2="15" y2="15"/>
+					</svg>
+					Teklifi Iptal Et
+				</button>
+			</div>
+
+			<!-- Info Card -->
+			<div class="info-card">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="16" x2="12" y2="12"/>
+					<line x1="12" y1="8" x2="12.01" y2="8"/>
+				</svg>
+				<div class="info-card-content">
+					<h4>Nasil Calisir?</h4>
+					<p>Her urun icin aylik ortalama tuketim miktarinizi girin. Bayiniz bu bilgilere gore size ozel fiyat teklifi hazirlayacaktir.</p>
+				</div>
+			</div>
+
+			<!-- Submit Section -->
+			<div class="submit-section" id="submitSection" style="display: none;">
+				<div class="dealer-info" id="dealerInfo" style="display: none;">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+						<polyline points="9 22 9 12 15 12 15 22"/>
+					</svg>
+					<span class="dealer-info-text">Teklif talep edilecek bayi: <strong id="dealerName">-</strong></span>
+				</div>
+				<div class="selected-count">
+					Secilen urun: <strong id="selectedCount">0</strong>
+				</div>
+				<button class="btn-submit" id="submitBtn" disabled>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+						<polyline points="14 2 14 8 20 8"/>
+						<line x1="12" y1="18" x2="12" y2="12"/>
+						<line x1="9" y1="15" x2="15" y2="15"/>
+					</svg>
+					Teklif Iste
+				</button>
+			</div>
+
+			<!-- Products Grid -->
+			<div class="products-grid" id="productsGrid">
+				<!-- Urunler yukleniyor -->
+				<div class="loading-placeholder" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+					<p>Urunler yukleniyor...</p>
+				</div>
+			</div>
+
+			<!-- Dealer Selection Section -->
+			<div class="dealer-selection-section" id="dealerSelectionSection">
+				<h3 class="dealer-selection-title">Teklif Isteyeceginiz Bayiyi Secin</h3>
+				<div class="dealer-list" id="dealerList">
+					<!-- Bayiler dinamik yuklenir -->
+					<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+						<p>Bayiler yukleniyor...</p>
+					</div>
+				</div>
+				<button class="dealer-continue-btn" id="dealerContinueBtn" disabled onclick="confirmDealerSelection()">
+					Devam Et
+				</button>
+			</div>
+		</div>
+	</main>
+
+	<!-- Footer (Component) -->
+	<div id="isyerim-footer"></div>
+
+	<!-- Success Modal -->
+	<div class="modal-overlay" id="successModal">
+		<div class="modal">
+			<div class="modal-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="20 6 9 17 4 12"/>
+				</svg>
+			</div>
+			<h3 class="modal-title">Teklif Talebiniz Alindi!</h3>
+			<p class="modal-text">Teklif talebiniz bayinize iletildi. Bayiniz en kisa surede size ozel fiyat teklifi hazirlayacaktir.</p>
+			<button class="modal-btn" onclick="window.location.href='isyerim-musteri-anasayfa.html'">Anasayfaya Don</button>
+		</div>
+	</div>
+
+	<!-- Loading Overlay -->
+	<div class="loading-overlay" id="loadingOverlay">
+		<div class="loading-spinner"></div>
+		<div class="loading-text" id="loadingText">Yukleniyor...</div>
+	</div>
+
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		// Global degiskenler
+		var products = [];
+		var currentCustomer = null;
+		var selectedProducts = {};
+		var selectedDealerId = null;
+		var selectedDealerName = null;
+		var activeOffer = null;
+		var isReadOnlyMode = false;
+
+		// Loading goster
+		function showLoading(text) {
+			document.getElementById('loadingText').textContent = text || 'Yukleniyor...';
+			document.getElementById('loadingOverlay').classList.add('active');
+		}
+
+		// Loading gizle
+		function hideLoading() {
+			document.getElementById('loadingOverlay').classList.remove('active');
+		}
+
+		// Mevcut teklif kontrolu (tum durumlar dahil)
+		async function checkExistingOffer() {
+			if (!currentCustomer) return { hasOffer: false, isActive: false };
+
+			try {
+				const { data, error } = await OffersService.getLatestOfferByCustomerId(currentCustomer.id);
+
+				if (error) {
+					console.error('Teklif kontrolu hatasi:', error);
+					return { hasOffer: false, isActive: false };
+				}
+
+				if (data) {
+					// Teklif detayi kontrolu - detay yoksa gecersiz teklif
+					if (!data.offer_details || data.offer_details.length === 0) {
+						console.log('Teklif detayi bulunamadi, gecersiz teklif olarak isaretlendi');
+						return { hasOffer: false, isActive: false };
+					}
+
+					activeOffer = data;
+					// Aktif durumlar: requested, pending, accepted
+					var isActiveStatus = ['requested', 'pending', 'accepted'].includes(data.status);
+
+					if (isActiveStatus) {
+						// Aktif teklif - read-only mod
+						isReadOnlyMode = true;
+						renderReadOnlyMode();
+					} else {
+						// Sonuclanan teklif (rejected/cancelled) - sadece banner goster
+						isReadOnlyMode = false;
+						renderCompletedOfferBanner();
+					}
+
+					return { hasOffer: true, isActive: isActiveStatus };
+				}
+
+				return { hasOffer: false, isActive: false };
+			} catch (err) {
+				console.error('Teklif kontrolu hatasi:', err);
+				return { hasOffer: false, isActive: false };
+			}
+		}
+
+		// Read-only modu render et (aktif teklifler icin)
+		function renderReadOnlyMode() {
+			if (!activeOffer) return;
+
+			// Status banner'i goster
+			showStatusBanner(activeOffer.status, activeOffer.dealer);
+
+			// Info card'i guncelle
+			updateInfoCardForReadOnly();
+
+			// Urunleri read-only modda render et
+			renderReadOnlyProducts(activeOffer.offer_details);
+
+			// Submit section'i gizle
+			document.getElementById('submitSection').style.display = 'none';
+
+			// Bayi secim bolumunu gizle
+			document.getElementById('dealerSelectionSection').style.display = 'none';
+		}
+
+		// Sonuclanan teklif banner'i goster (rejected/cancelled - yeni teklif isteyebilir)
+		function renderCompletedOfferBanner() {
+			if (!activeOffer) return;
+
+			// Status banner'i goster (iptal butonu olmadan)
+			showStatusBanner(activeOffer.status, activeOffer.dealer);
+
+			// Iptal butonunu gizle (yeni teklif isteyebilecegi icin)
+			var cancelBtn = document.getElementById('btnCancelOffer');
+			if (cancelBtn) {
+				cancelBtn.style.display = 'none';
+			}
+		}
+
+		// Status banner'i goster
+		function showStatusBanner(status, dealer) {
+			var banner = document.getElementById('offerStatusBanner');
+			var iconContainer = document.getElementById('statusIcon');
+			var title = document.getElementById('statusTitle');
+			var message = document.getElementById('statusMessage');
+			var dealerName = document.getElementById('statusDealerName');
+
+			var statusConfig = {
+				'requested': {
+					title: 'Teklif Talebiniz Iletildi',
+					message: 'Teklif talebiniz bayiye iletildi. Bayiniz en kisa surede size ozel fiyat teklifi hazirlayacaktir.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+					className: 'status-requested'
+				},
+				'pending': {
+					title: 'Teklifiniz Degerlendiriliyor',
+					message: 'Bayiniz teklifinizi degerlendiriyor. Onay sonrasi size bildirim gonderilecektir.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>',
+					className: 'status-pending'
+				},
+				'accepted': {
+					title: 'Teklifiniz Kabul Edildi',
+					message: 'Tebrikler! Bayiniz teklifinizi kabul etti. Artik ozel fiyatlarla siparis verebilirsiniz.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+					className: 'status-accepted'
+				},
+				'rejected': {
+					title: 'Teklifiniz Reddedildi',
+					message: 'Bayiniz teklifinizi reddetmistir. Asagidan yeni bir teklif talebi olusturabilirsiniz.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+					className: 'status-rejected'
+				},
+				'cancelled': {
+					title: 'Teklif Iptal Edildi',
+					message: 'Onceki teklifiniz iptal edilmistir. Asagidan yeni bir teklif talebi olusturabilirsiniz.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+					className: 'status-cancelled'
+				}
+			};
+
+			var config = statusConfig[status] || statusConfig['requested'];
+
+			banner.className = 'offer-status-banner ' + config.className;
+			iconContainer.innerHTML = config.icon;
+			title.textContent = config.title;
+			message.textContent = config.message;
+			dealerName.textContent = dealer ? dealer.name : '-';
+
+			banner.style.display = 'flex';
+		}
+
+		// Info card'i read-only mod icin guncelle
+		function updateInfoCardForReadOnly() {
+			var infoCard = document.querySelector('.info-card');
+			if (!infoCard) return;
+
+			var content = infoCard.querySelector('.info-card-content');
+			if (content) {
+				content.querySelector('h4').textContent = 'Mevcut Teklifiniz';
+				content.querySelector('p').textContent = 'Asagida teklif talebinizde belirttiginiz urunler ve miktarlar yer almaktadir. Yeni bir teklif talebi olusturmak icin mevcut teklifinizi iptal etmeniz gerekmektedir.';
+			}
+		}
+
+		// Urunleri read-only modda render et (yatay layout + fiyat gosterimi)
+		function renderReadOnlyProducts(offerDetails) {
+			var grid = document.getElementById('productsGrid');
+
+			if (!offerDetails || offerDetails.length === 0) {
+				grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">' +
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+					'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' +
+					'<h3>Teklif Detayi Bulunamadi</h3>' +
+					'<p>Teklifinizin detaylarina ulasilamiyor.</p></div>';
+				return;
+			}
+
+			grid.innerHTML = '';
+			grid.className = 'products-grid readonly-grid';
+
+			offerDetails.forEach(function(detail) {
+				var product = detail.product;
+				if (!product) return;
+
+				var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+
+				// Fiyat gosterimi - kosullu
+				var priceHtml = '';
+				if (detail.unit_price && detail.unit_price > 0) {
+					// Fiyat var
+					priceHtml = '<div class="price-display">' +
+						'<div class="price-display-label">Teklif Edilen Fiyat</div>' +
+						'<div class="price-display-value">' + formatCurrency(detail.unit_price) + ' <span class="unit">/ adet</span></div>' +
+					'</div>';
+				} else {
+					// Fiyat henuz belirlenmemis
+					priceHtml = '<div class="price-display-pending">' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+							'<circle cx="12" cy="12" r="10"/>' +
+							'<polyline points="12 6 12 12 16 14"/>' +
+						'</svg>' +
+						'Henuz fiyat belirlenmemis' +
+					'</div>';
+				}
+
+				// Kompakt yatay kart yapisi
+				var cardHtml = '<div class="product-card readonly" data-product-id="' + product.id + '">' +
+					'<div class="product-image">' +
+						'<img src="' + imageUrl + '" alt="' + product.name + '">' +
+					'</div>' +
+					'<div class="product-content">' +
+						'<div class="product-info">' +
+							'<div class="product-name">' + product.name + '</div>' +
+							'<div class="product-code">' + product.code + '</div>' +
+						'</div>' +
+						'<div class="product-stats">' +
+							'<div class="consumption-display">' +
+								'<div class="consumption-display-label">Taahhut</div>' +
+								'<div class="consumption-display-value">' + detail.commitment_quantity + '<span>adet/ay</span></div>' +
+							'</div>' +
+							priceHtml +
+						'</div>' +
+					'</div>' +
+				'</div>';
+
+				grid.innerHTML += cardHtml;
+			});
+
+			grid.style.display = 'flex';
+		}
+
+		// Para birimi formatlama
+		function formatCurrency(amount) {
+			return new Intl.NumberFormat('tr-TR', {
+				style: 'currency',
+				currency: 'TRY',
+				minimumFractionDigits: 2
+			}).format(amount);
+		}
+
+		// Aktif teklifi iptal et
+		async function cancelActiveOffer() {
+			if (!activeOffer) return;
+
+			var confirmed = confirm('Teklif talebinizi iptal etmek istediginize emin misiniz? Bu islem geri alinamaz.');
+			if (!confirmed) return;
+
+			showLoading('Teklif iptal ediliyor...');
+
+			try {
+				const { data, error } = await OffersService.cancel(activeOffer.id);
+
+				if (error) throw new Error(error);
+
+				hideLoading();
+				alert('Teklif talebiniz iptal edildi.');
+
+				// Sayfayi yenile
+				window.location.reload();
+
+			} catch (err) {
+				hideLoading();
+				console.error('Teklif iptal hatasi:', err);
+				alert('Teklif iptal edilirken bir hata olustu. Lutfen tekrar deneyin.');
+			}
+		}
+
+		// Urunleri yukle
+		async function loadProducts() {
+			try {
+				const { data, error } = await ProductsService.getAll();
+				if (error) throw new Error(error);
+
+				products = data || [];
+				renderProducts();
+			} catch (err) {
+				console.error('Urun yukleme hatasi:', err);
+				document.getElementById('productsGrid').innerHTML =
+					'<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Urunler Yuklenemedi</h3><p>Lutfen sayfayi yenileyip tekrar deneyin.</p></div>';
+			}
+		}
+
+		// Urun kartini olustur
+		function createProductCard(product) {
+			var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+
+			return '<div class="product-card" data-product-id="' + product.id + '">' +
+				'<div class="product-image">' +
+					'<img src="' + imageUrl + '" alt="' + product.name + '">' +
+				'</div>' +
+				'<div class="product-name">' + product.name + '</div>' +
+				'<div class="product-code">' + product.code + '</div>' +
+				'<div class="consumption-input-wrapper">' +
+					'<label>Aylik Ortalama Tuketim</label>' +
+					'<div class="consumption-input-row">' +
+						'<input type="number" class="consumption-input" ' +
+							'data-product-id="' + product.id + '" ' +
+							'min="0" ' +
+							'placeholder="0" ' +
+							'onchange="updateSelectedCount()">' +
+						'<span class="consumption-unit">adet/ay</span>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+		}
+
+		// Urunleri render et
+		function renderProducts() {
+			var grid = document.getElementById('productsGrid');
+
+			if (products.length === 0) {
+				grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>Urun Bulunamadi</h3><p>Henuz sistemde tanimli urun bulunmamaktadir.</p></div>';
+				return;
+			}
+
+			grid.innerHTML = '';
+			products.forEach(function(product) {
+				grid.innerHTML += createProductCard(product);
+			});
+
+			// Submit section'i goster
+			document.getElementById('submitSection').style.display = 'grid';
+		}
+
+		// Bayileri yukle
+		async function loadDealers() {
+			try {
+				const { data, error } = await DealersService.getAll();
+				if (error) throw new Error(error);
+
+				renderDealerList(data || []);
+			} catch (err) {
+				console.error('Bayi yukleme hatasi:', err);
+				document.getElementById('dealerList').innerHTML =
+					'<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p>Bayiler yuklenirken hata olustu.</p></div>';
+			}
+		}
+
+		// Bayi listesini render et
+		function renderDealerList(dealers) {
+			var list = document.getElementById('dealerList');
+
+			if (dealers.length === 0) {
+				list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p>Sistemde kayitli bayi bulunamadi.</p></div>';
+				return;
+			}
+
+			var html = '';
+			dealers.forEach(function(dealer) {
+				html += '<div class="dealer-card" data-dealer-id="' + dealer.id + '" data-dealer-name="' + dealer.name + '" onclick="selectDealer(\'' + dealer.id + '\', \'' + dealer.name.replace(/'/g, "\\'") + '\')">';
+				html += '<div class="dealer-card-name">' + dealer.name + '</div>';
+				html += '<div class="dealer-card-location">';
+				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+				html += (dealer.district || '') + (dealer.district && dealer.city ? ', ' : '') + (dealer.city || '');
+				html += '</div>';
+				if (dealer.phone) {
+					html += '<div class="dealer-card-phone">';
+					html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+					html += dealer.phone;
+					html += '</div>';
+				}
+				html += '</div>';
+			});
+
+			list.innerHTML = html;
+		}
+
+		// Bayi sec
+		function selectDealer(dealerId, dealerName) {
+			selectedDealerId = dealerId;
+			selectedDealerName = dealerName;
+
+			// Tum kartlarin secimini kaldir
+			document.querySelectorAll('.dealer-card').forEach(function(card) {
+				card.classList.remove('selected');
+			});
+
+			// Secilen karti isaretler
+			var selectedCard = document.querySelector('.dealer-card[data-dealer-id="' + dealerId + '"]');
+			if (selectedCard) {
+				selectedCard.classList.add('selected');
+			}
+
+			// Devam Et butonunu aktif et
+			document.getElementById('dealerContinueBtn').disabled = false;
+		}
+
+		// Bayi secimi onaylandi
+		function confirmDealerSelection() {
+			if (!selectedDealerId || !selectedDealerName) return;
+
+			// Bayi secim bolumunu gizle
+			document.getElementById('dealerSelectionSection').style.display = 'none';
+
+			// Urun listesini ve formu goster
+			document.getElementById('productsGrid').style.display = 'grid';
+			document.getElementById('submitSection').style.display = 'grid';
+			document.querySelector('.info-card').style.display = 'flex';
+
+			// Bayi bilgisini goster
+			document.getElementById('dealerName').textContent = selectedDealerName;
+			document.getElementById('dealerInfo').style.display = 'flex';
+
+			// Urunleri yukle
+			loadProducts();
+		}
+
+		// Secilen urun sayisini guncelle
+		function updateSelectedCount() {
+			var inputs = document.querySelectorAll('.consumption-input');
+			var count = 0;
+
+			selectedProducts = {};
+
+			inputs.forEach(function(input) {
+				var value = parseInt(input.value) || 0;
+				if (value > 0) {
+					count++;
+					var productId = input.getAttribute('data-product-id');
+					selectedProducts[productId] = value;
+				}
+			});
+
+			document.getElementById('selectedCount').textContent = count;
+			document.getElementById('submitBtn').disabled = count === 0;
+		}
+
+		// Teklif talebini gonder
+		async function submitOfferRequest() {
+			// Validation
+			if (Object.keys(selectedProducts).length === 0) {
+				alert('Lutfen en az bir urun icin tuketim miktari girin.');
+				return;
+			}
+
+			// Bayi ID'sini belirle - secilen veya mevcut
+			var dealerId = selectedDealerId || (currentCustomer ? currentCustomer.dealer_id : null);
+
+			if (!currentCustomer || !dealerId) {
+				alert('Bayi bilgisi bulunamadi. Lutfen destek ile iletisime gecin.');
+				return;
+			}
+
+			showLoading('Teklif talebiniz gonderiliyor...');
+
+			try {
+				// Offer data
+				var offerData = {
+					customer_id: currentCustomer.id,
+					dealer_id: dealerId,
+					status: 'requested',
+					notes: 'Musteri tarafindan teklif talebi'
+				};
+
+				// Offer details
+				var offerDetails = [];
+				for (var productId in selectedProducts) {
+					offerDetails.push({
+						product_id: productId,
+						commitment_quantity: selectedProducts[productId],
+						unit_price: 0,
+						pricing_type: null,
+						discount_value: 0,
+						this_month_quantity: 0,
+						last_month_quantity: 0
+					});
+				}
+
+				// Teklifi olustur
+				const { data, error } = await OffersService.create(offerData, offerDetails);
+
+				if (error) throw new Error(error);
+
+				hideLoading();
+
+				// Basari modalini goster
+				document.getElementById('successModal').classList.add('active');
+
+			} catch (err) {
+				hideLoading();
+				console.error('Teklif gonderme hatasi:', err);
+				alert('Teklif gonderilirken bir hata olustu. Lutfen tekrar deneyin.');
+			}
+		}
+
+		// Musteri bilgilerini yukle
+		async function loadCustomerData() {
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+
+			if (!customerId) {
+				// Giris yapilmamis, login sayfasina yonlendir
+				window.location.href = 'isyerim-musteri-login.html';
+				return false;
+			}
+
+			try {
+				const { data, error } = await CustomersService.getById(customerId);
+				if (error) throw new Error(error);
+
+				currentCustomer = data;
+
+				// ONCE mevcut teklif kontrolu yap (dealer_id kontrolunden once!)
+				var offerResult = await checkExistingOffer();
+				if (offerResult.isActive) {
+					return false; // Read-only mod aktif, normal akisi durdur
+				}
+
+				// Aktif teklif yoksa dealer_id kontrolu yap
+				if (!currentCustomer.dealer_id) {
+					// Bayi yok, bayi secim ekranini goster
+					document.getElementById('productsGrid').style.display = 'none';
+					document.getElementById('submitSection').style.display = 'none';
+					document.querySelector('.info-card').style.display = 'none';
+					document.getElementById('dealerSelectionSection').style.display = 'block';
+					await loadDealers();
+					return false;
+				}
+
+				// Bayi bilgisini goster
+				if (currentCustomer.dealer) {
+					document.getElementById('dealerName').textContent = currentCustomer.dealer.name;
+					document.getElementById('dealerInfo').style.display = 'flex';
+				}
+
+				return true;
+
+			} catch (err) {
+				console.error('Musteri bilgisi yukleme hatasi:', err);
+				return false;
+			}
+		}
+
+		// Sayfa yuklendiginde
+		document.addEventListener('DOMContentLoaded', async function() {
+			showLoading('Sayfa yukleniyor...');
+
+			// Musteri bilgilerini yukle
+			var hasDealer = await loadCustomerData();
+
+			// Read-only modda degilsek normal akisa devam et
+			if (!isReadOnlyMode) {
+				if (hasDealer) {
+					// Urunleri yukle
+					await loadProducts();
+				}
+
+				// Submit butonuna event listener (read-only degilse)
+				document.getElementById('submitBtn').addEventListener('click', submitOfferRequest);
+			}
+
+			hideLoading();
+		});
+	</script>
+</body>
+</html>

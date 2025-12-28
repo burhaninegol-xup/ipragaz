@@ -376,6 +376,18 @@ window.confirmAddressSelection = function() {
 // Global erisim
 window.ComponentLoader = ComponentLoader;
 
+// Sayfa yuklendiginde otomatik olarak componentleri yukle
+document.addEventListener('DOMContentLoaded', function() {
+    // isyerim sayfasi mi kontrol et
+    if (document.getElementById('isyerim-header') || document.getElementById('isyerim-top-bar')) {
+        ComponentLoader.loadAll();
+    }
+    // bayi sayfasi mi kontrol et
+    else if (document.getElementById('bayi-header')) {
+        ComponentLoader.loadBayiComponents();
+    }
+});
+
 /**
  * Bayi Auth Kontrol - Giris yapilmamissa login sayfasina yonlendir
  */

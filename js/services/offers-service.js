@@ -402,6 +402,80 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.hasActiveOfferWithOtherDealer');
         }
+    },
+
+    /**
+     * Bayinin tum tekliflerini getir (tum statusler dahil)
+     */
+    async getAllOffersByDealerId(dealerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    id,
+                    status,
+                    created_at,
+                    updated_at,
+                    notes,
+                    customer:customers(
+                        id,
+                        vkn,
+                        name,
+                        company_name,
+                        phone,
+                        email,
+                        is_active
+                    ),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        this_month_quantity,
+                        last_month_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('dealer_id', dealerId)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getAllOffersByDealerId');
+        }
+    },
+
+    /**
+     * Musterinin en son teklifini getir (tum durumlar dahil)
+     */
+    async getLatestOfferByCustomerId(customerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code, city, district, phone),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) throw error;
+            return { data: data || null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getLatestOfferByCustomerId');
+        }
     }
 };
 
