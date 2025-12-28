@@ -633,6 +633,11 @@
 			border-color: #9ca3af;
 		}
 
+		.offer-status-banner.status-passive {
+			background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+			border-color: #9c27b0;
+		}
+
 		/* Shimmer animation for active statuses */
 		.offer-status-banner.status-requested::before,
 		.offer-status-banner.status-pending::before {
@@ -686,6 +691,11 @@
 			color: #374151;
 		}
 
+		.status-passive .status-icon {
+			background: #ce93d8;
+			color: #4a148c;
+		}
+
 		/* Pulse animation for pending statuses */
 		.status-requested .status-icon,
 		.status-pending .status-icon {
@@ -731,6 +741,63 @@
 		.status-dealer strong {
 			color: #333;
 			font-weight: 600;
+		}
+
+		/* Add Product Notice */
+		.add-product-notice {
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+			border: 2px solid #ffc107;
+			border-radius: 12px;
+			padding: 20px 24px;
+			margin-top: 20px;
+		}
+
+		.add-product-notice .notice-icon {
+			width: 48px;
+			height: 48px;
+			background: #ffc107;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.add-product-notice .notice-icon svg {
+			width: 24px;
+			height: 24px;
+			color: #5d4037;
+		}
+
+		.add-product-notice .notice-content p {
+			margin: 0 0 10px 0;
+			font-size: 14px;
+			color: #5d4037;
+			line-height: 1.5;
+		}
+
+		.add-product-notice .dealer-contact {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
+
+		.add-product-notice .dealer-contact strong {
+			color: #333;
+			font-size: 15px;
+		}
+
+		.add-product-notice .dealer-contact .phone {
+			background: #fff;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 14px;
+			color: #333;
+			font-weight: 500;
 		}
 
 		.offer-buttons {
@@ -1712,8 +1779,8 @@
 					}
 
 					activeOffer = data;
-					// Aktif durumlar: requested, pending, accepted
-					var isActiveStatus = ['requested', 'pending', 'accepted'].includes(data.status);
+					// Aktif durumlar: requested, pending, accepted, passive
+					var isActiveStatus = ['requested', 'pending', 'accepted', 'passive'].includes(data.status);
 
 					if (isActiveStatus) {
 						// Aktif teklif - read-only mod
@@ -1807,6 +1874,12 @@
 					message: 'Onceki teklifiniz iptal edilmistir. Asagidan yeni bir teklif talebi olusturabilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
 					className: 'status-cancelled'
+				},
+				'passive': {
+					title: 'Teklifiniz Pasif Durumda',
+					message: 'Bu teklif bayi tarafindan pasife alinmistir. Bu fiyatlarla siparis veremezsiniz. Detayli bilgi icin bayinizi arayabilirsiniz.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
+					className: 'status-passive'
 				}
 			};
 
@@ -1815,7 +1888,14 @@
 			banner.className = 'offer-status-banner ' + config.className;
 			iconContainer.innerHTML = config.icon;
 			title.textContent = config.title;
-			message.textContent = config.message;
+
+			// Passive durumda bayi telefonunu mesaja ekle
+			if (status === 'passive' && dealer && dealer.phone) {
+				message.innerHTML = config.message + '<br><strong style="margin-top:8px;display:inline-block;">📞 ' + dealer.phone + '</strong>';
+			} else {
+				message.textContent = config.message;
+			}
+
 			dealerName.textContent = dealer ? dealer.name : '-';
 
 			banner.style.display = 'flex';
@@ -1910,6 +1990,32 @@
 
 				grid.innerHTML += cardHtml;
 			});
+
+			// Yeni urun ekleme mesaji - sadece aktif durumlar icin
+			if (activeOffer && ['requested', 'pending', 'accepted'].includes(activeOffer.status)) {
+				var dealer = activeOffer.dealer;
+				var dealerInfo = dealer ? dealer.name : 'Bayiniz';
+				var dealerPhone = dealer && dealer.phone ? dealer.phone : '';
+
+				var addProductMessage = '<div class="add-product-notice">' +
+					'<div class="notice-icon">' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+							'<circle cx="12" cy="12" r="10"/>' +
+							'<line x1="12" y1="8" x2="12" y2="16"/>' +
+							'<line x1="8" y1="12" x2="16" y2="12"/>' +
+						'</svg>' +
+					'</div>' +
+					'<div class="notice-content">' +
+						'<p>Mevcut teklifinize yeni bir urun eklemek icin bayinizi aramalisiniz.</p>' +
+						'<div class="dealer-contact">' +
+							'<strong>' + dealerInfo + '</strong>' +
+							(dealerPhone ? '<span class="phone">📞 ' + dealerPhone + '</span>' : '') +
+						'</div>' +
+					'</div>' +
+				'</div>';
+
+				grid.innerHTML += addProductMessage;
+			}
 
 			grid.style.display = 'flex';
 		}

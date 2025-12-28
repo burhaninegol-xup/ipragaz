@@ -698,6 +698,12 @@
 			border: 1px solid #e0e0e0;
 		}
 
+		.offer-status-badge.passive {
+			background: #f3e5f5;
+			color: #7b1fa2;
+			border: 1px solid #e1bee7;
+		}
+
 		/* Status Filter Buttons */
 		.filter-btn.requested .count {
 			background: #fff3e0;
@@ -732,6 +738,15 @@
 		}
 		.filter-btn.rejected.active .count {
 			background: #e53935;
+			color: #fff;
+		}
+
+		.filter-btn.passive .count {
+			background: #f3e5f5;
+			color: #7b1fa2;
+		}
+		.filter-btn.passive.active .count {
+			background: #9c27b0;
 			color: #fff;
 		}
 
@@ -1126,6 +1141,10 @@
 						Kabul
 						<span class="count">0</span>
 					</button>
+					<button class="filter-btn passive" data-filter="passive">
+						Pasif
+						<span class="count">0</span>
+					</button>
 					<button class="filter-btn rejected divider-left" data-filter="rejected">
 						İptal
 						<span class="count">0</span>
@@ -1228,7 +1247,8 @@
 					pending: 'Beklemede',
 					accepted: 'Kabul Edildi',
 					rejected: 'Reddedildi',
-					cancelled: 'İptal Edildi'
+					cancelled: 'İptal Edildi',
+					passive: 'Pasif'
 				};
 
 				var statusIcons = {
@@ -1236,7 +1256,8 @@
 					pending: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
 					accepted: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
 					rejected: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>',
-					cancelled: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>'
+					cancelled: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>',
+					passive: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>'
 				};
 
 				return '<div class="offer-status-badge ' + status + '">' +
@@ -1302,7 +1323,8 @@
 					pending: 0,
 					accepted: 0,
 					rejected: 0,
-					cancelled: 0
+					cancelled: 0,
+					passive: 0
 				};
 
 				allCustomers.forEach(function(c) {
@@ -1316,13 +1338,14 @@
 				// Rejected ve cancelled birleşik sayılsın
 				var rejectedTotal = counts.rejected + counts.cancelled;
 
-				// Tümü = toplam - (rejected + cancelled)
+				// Tümü = toplam - (rejected + cancelled) - pasifler de dahil
 				var activeCount = counts.all - counts.rejected - counts.cancelled;
 				$('.filter-btn[data-filter="all"] .count').text(activeCount);
 				$('.filter-btn[data-filter="requested"] .count').text(counts.requested);
 				$('.filter-btn[data-filter="pending"] .count').text(counts.pending);
 				$('.filter-btn[data-filter="accepted"] .count').text(counts.accepted);
 				$('.filter-btn[data-filter="rejected"] .count').text(rejectedTotal);
+				$('.filter-btn[data-filter="passive"] .count').text(counts.passive);
 			}
 
 			// Müşterileri yükle
@@ -1343,13 +1366,15 @@
 					var status = $card.data('status');
 
 					if (filter === 'all') {
-						// Tümü: cancelled ve rejected dışındakileri göster
+						// Tümü: cancelled ve rejected dışındakileri göster (passive dahil)
 						if (status === 'cancelled' || status === 'rejected') {
 							$card.hide();
 						} else {
 							$card.show();
 						}
 					} else if (filter === 'rejected' && (status === 'rejected' || status === 'cancelled')) {
+						$card.show();
+					} else if (filter === 'passive' && status === 'passive') {
 						$card.show();
 					} else if (filter === status) {
 						$card.show();

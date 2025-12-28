@@ -1367,6 +1367,37 @@
 			letter-spacing: 0.5px;
 		}
 
+		/* Cancelled Status Banner */
+		.cancelled-status-banner {
+			display: none;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 18px;
+			background: #fafafa;
+			border: 2px solid #9e9e9e;
+			border-radius: 12px;
+			margin-bottom: 20px;
+		}
+
+		.cancelled-status-banner.visible {
+			display: flex;
+		}
+
+		.cancelled-status-banner svg {
+			width: 24px;
+			height: 24px;
+			color: #757575;
+			flex-shrink: 0;
+		}
+
+		.cancelled-status-banner span {
+			font-size: 14px;
+			font-weight: 600;
+			color: #616161;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
 		/* Success Button */
 		.btn-success {
 			background: #fff;
@@ -2221,6 +2252,14 @@
 			<span>MÜŞTERİ FİYATLARI PASİF DURUMDA</span>
 		</div>
 
+		<!-- Cancelled Status Banner -->
+		<div class="cancelled-status-banner" id="cancelled-status-banner">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+			</svg>
+			<span>BU TEKLİF İPTAL EDİLMİŞTİR</span>
+		</div>
+
 		<!-- VKN Search Section -->
 		<div class="form-section">
 			<div class="section-title">
@@ -2315,17 +2354,17 @@
 				</svg>
 				Aktif Et
 			</button>
-			<button type="button" class="btn btn-danger" id="delete-prices-btn" style="display: none;">
+			<button type="button" class="btn btn-danger" id="cancel-offer-btn" style="display: none;">
 				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+					<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 				</svg>
-				Fiyatları Sil
+				Teklifi İptal Et
 			</button>
 			<a href="bayi-musteri-listesi.html" class="btn btn-secondary">
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 				</svg>
-				İptal
+				Vazgeç
 			</a>
 			<button type="button" class="btn btn-primary" id="save-btn">
 				<svg viewBox="0 0 24 24" fill="currentColor">
@@ -2412,36 +2451,15 @@
 					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
 				</svg>
 			</div>
-			<h3>Müşteri Fiyatlarını Pasife Çek</h3>
+			<h3>Teklifi Pasife Çek</h3>
 			<div class="modal-message">
-				<p>Müşterinizi pasife çekmek üzeresiniz.</p>
-				<p>Eğer bu işlemi tamamlarsanız müşteriniz için verdiğiniz fiyatlar silinecektir.</p>
-				<p>Müşteri sipariş vermek istediğinde baremli fiyatlar üzerinden alım yapacaktır.</p>
+				<p>Bu teklifi pasife çekmek üzeresiniz.</p>
+				<p>Pasife çekerseniz müşteri bu teklifte belirlediğiniz fiyatlardan sipariş veremeyecektir.</p>
+				<p>İstediğiniz zaman tekrar aktif edebilirsiniz.</p>
 			</div>
 			<div class="modal-actions">
 				<button type="button" class="btn btn-secondary" id="passive-modal-cancel">İptal</button>
 				<button type="button" class="btn btn-warning" id="passive-modal-confirm">Pasife Çek</button>
-			</div>
-		</div>
-	</div>
-
-	<!-- Fiyatları Sil Modal -->
-	<div class="modal-overlay" id="delete-prices-modal">
-		<div class="modal">
-			<div class="modal-icon warning">
-				<svg viewBox="0 0 24 24" fill="currentColor">
-					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-				</svg>
-			</div>
-			<h3>Müşteri Fiyatlarını Sil</h3>
-			<div class="modal-message">
-				<p>Müşterinizin tüm ürün fiyatlarını silmek üzeresiniz.</p>
-				<p>Bu işlem geri alınamaz.</p>
-				<p>Silme işleminden sonra müşteri baremli fiyatlar üzerinden alım yapabilecektir.</p>
-			</div>
-			<div class="modal-actions">
-				<button type="button" class="btn btn-secondary" id="delete-prices-cancel">İptal</button>
-				<button type="button" class="btn btn-danger" id="delete-prices-confirm">Fiyatları Sil</button>
 			</div>
 		</div>
 	</div>
@@ -2454,14 +2472,34 @@
 					<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
 				</svg>
 			</div>
-			<h3>Müşteri Fiyatlarını Aktif Et</h3>
+			<h3>Teklifi Aktif Et</h3>
 			<div class="modal-message">
-				<p>Müşterinizin fiyatlarını aktif etmek üzeresiniz.</p>
-				<p>Aktif edildikten sonra müşteri tanımlı fiyatlar üzerinden alım yapabilecektir.</p>
+				<p>Bu teklifi tekrar aktif etmek üzeresiniz.</p>
+				<p>Aktif edildikten sonra müşteri bu fiyatlardan sipariş verebilecektir.</p>
 			</div>
 			<div class="modal-actions">
 				<button type="button" class="btn btn-secondary" id="activate-modal-cancel">İptal</button>
 				<button type="button" class="btn btn-success" id="activate-modal-confirm">Aktif Et</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Teklifi İptal Et Modal -->
+	<div class="modal-overlay" id="cancel-offer-modal">
+		<div class="modal">
+			<div class="modal-icon warning">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+				</svg>
+			</div>
+			<h3>Teklifi İptal Et</h3>
+			<div class="modal-message">
+				<p>Bu teklifi iptal etmek üzeresiniz.</p>
+				<p>İptal edildikten sonra müşteri bu teklifi göremeyecek ve bu fiyatlardan sipariş veremeyecektir.</p>
+			</div>
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="cancel-offer-modal-cancel">Vazgeç</button>
+				<button type="button" class="btn btn-danger" id="cancel-offer-modal-confirm">İptal Et</button>
 			</div>
 		</div>
 	</div>
@@ -2670,21 +2708,35 @@
 							$('#passive-status-banner').removeClass('visible');
 							$('#passive-customer-btn').hide();
 							$('#activate-customer-btn').hide();
-							$('#delete-prices-btn').hide();
+							$('#cancel-offer-btn').hide();
 						} else {
 							$('#existing-notice').removeClass('visible');
 
-							// Pasif durum kontrolü
-							if (!customer.is_active) {
+							// Teklif durumuna gore buton kontrolu
+							if (currentOffer && currentOffer.status === 'passive') {
 								$('#passive-status-banner').addClass('visible');
 								$('#passive-customer-btn').hide();
 								$('#activate-customer-btn').show();
-							} else {
+								$('#cancel-offer-btn').show();
+							} else if (currentOffer && currentOffer.status === 'accepted') {
 								$('#passive-status-banner').removeClass('visible');
 								$('#passive-customer-btn').show();
 								$('#activate-customer-btn').hide();
+								$('#cancel-offer-btn').show();
+							} else if (currentOffer && currentOffer.status === 'cancelled') {
+								$('#passive-status-banner').removeClass('visible');
+								$('#cancelled-status-banner').addClass('visible');
+								$('#passive-customer-btn').hide();
+								$('#activate-customer-btn').hide();
+								$('#cancel-offer-btn').hide();
+								// Duzenlemeyi engelle
+								disableEditingForCancelledOffer();
+							} else {
+								$('#passive-status-banner').removeClass('visible');
+								$('#passive-customer-btn').hide();
+								$('#activate-customer-btn').hide();
+								$('#cancel-offer-btn').hide();
 							}
-							$('#delete-prices-btn').show();
 						}
 
 						// Ürün satırlarını temizle
@@ -2739,7 +2791,7 @@
 						$('#passive-status-banner').removeClass('visible');
 						$('#passive-customer-btn').hide();
 						$('#activate-customer-btn').hide();
-						$('#delete-prices-btn').hide();
+						$('#cancel-offer-btn').hide();
 
 						// Tüm ürünleri varsayılan perakende fiyatla göster
 						$('#product-rows').empty();
@@ -3316,10 +3368,11 @@
 				showLoading('İşlem yapılıyor...');
 
 				try {
-					if (currentCustomer) {
-						// Müşteriyi pasife al
-						const { error } = await CustomersService.deactivate(currentCustomer.id);
+					if (currentOffer) {
+						// Teklifi pasife al
+						const { error } = await OffersService.updateStatus(currentOffer.id, 'passive');
 						if (error) throw new Error(error);
+						currentOffer.status = 'passive';
 					}
 
 					hideLoading();
@@ -3330,7 +3383,7 @@
 					$('#activate-customer-btn').show();
 
 					// Show success message
-					$('#success-message').find('span').text('Müşteri fiyatları pasife çekildi!');
+					$('#success-message').find('span').text('Teklif pasife alındı!');
 					$('#success-message').addClass('active');
 
 					setTimeout(function() {
@@ -3356,10 +3409,11 @@
 				showLoading('İşlem yapılıyor...');
 
 				try {
-					if (currentCustomer) {
-						// Müşteriyi aktif et
-						const { error } = await CustomersService.activate(currentCustomer.id);
+					if (currentOffer) {
+						// Teklifi aktif et (accepted durumuna geri al)
+						const { error } = await OffersService.updateStatus(currentOffer.id, 'accepted');
 						if (error) throw new Error(error);
+						currentOffer.status = 'accepted';
 					}
 
 					hideLoading();
@@ -3370,7 +3424,7 @@
 					$('#activate-customer-btn').hide();
 
 					// Show success message
-					$('#success-message').find('span').text('Müşteri fiyatları aktif edildi!');
+					$('#success-message').find('span').text('Teklif aktif edildi!');
 					$('#success-message').addClass('active');
 
 					setTimeout(function() {
@@ -3382,38 +3436,41 @@
 				}
 			});
 
-			// Fiyatları Sil handlers
-			$('#delete-prices-btn').on('click', function() {
-				$('#delete-prices-modal').addClass('active');
+			// Teklifi İptal Et handlers
+			$('#cancel-offer-btn').on('click', function() {
+				$('#cancel-offer-modal').addClass('active');
 			});
 
-			$('#delete-prices-cancel').on('click', function() {
-				$('#delete-prices-modal').removeClass('active');
+			$('#cancel-offer-modal-cancel').on('click', function() {
+				$('#cancel-offer-modal').removeClass('active');
 			});
 
-			$('#delete-prices-confirm').on('click', async function() {
-				$('#delete-prices-modal').removeClass('active');
-				showLoading('Fiyatlar siliniyor...');
+			$('#cancel-offer-modal-confirm').on('click', async function() {
+				$('#cancel-offer-modal').removeClass('active');
+				showLoading('İşlem yapılıyor...');
 
 				try {
 					if (currentOffer) {
 						// Teklifi iptal et
-						const { error } = await OffersService.cancel(currentOffer.id);
+						const { error } = await OffersService.updateStatus(currentOffer.id, 'cancelled');
 						if (error) throw new Error(error);
-						currentOffer = null;
+						currentOffer.status = 'cancelled';
 					}
 
 					hideLoading();
 
-					// Clear all price and quantity inputs
-					$('.product-row').each(function() {
-						$(this).find('.price-input').val('');
-						$(this).find('.quantity-input').val('');
-						$(this).find('.input-group').removeClass('error');
-					});
+					// Update UI - hide cancel button
+					$('#cancel-offer-btn').hide();
+					$('#passive-customer-btn').hide();
+					$('#activate-customer-btn').hide();
+					$('#passive-status-banner').removeClass('visible');
+					$('#cancelled-status-banner').addClass('visible');
+
+					// Duzenlemeyi engelle
+					disableEditingForCancelledOffer();
 
 					// Show success message
-					$('#success-message').find('span').text('Müşteri fiyatları başarıyla silindi!');
+					$('#success-message').find('span').text('Teklif iptal edildi!');
 					$('#success-message').addClass('active');
 
 					setTimeout(function() {
@@ -3599,6 +3656,25 @@
 					sendMessage();
 				}
 			};
+
+			// Iptal edilmis teklifler icin duzenlemeyi engelle
+			function disableEditingForCancelledOffer() {
+				// Tum fiyat inputlarini disable et
+				$('.discount-input').prop('disabled', true);
+				$('.pricing-type-select').prop('disabled', true);
+
+				// Urun ekleme bolumunu gizle
+				$('#addProductSection').hide();
+
+				// Kaydet butonunu gizle
+				$('#save-btn').hide();
+
+				// Mesajlasmayi kapat
+				showChatDisabled();
+
+				// Chat disabled mesajini guncelle
+				$('#chatDisabled p').text('İptal edilmiş tekliflerde mesaj gönderilemez');
+			}
 
 			// Chat'i devre disi goster
 			function showChatDisabled() {
