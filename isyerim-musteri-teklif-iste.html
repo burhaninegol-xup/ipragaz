@@ -1950,8 +1950,10 @@
 			// Bayi secim bolumunu gizle
 			document.getElementById('dealerSelectionSection').style.display = 'none';
 
-			// Teklif gecmisini yukle
-			loadOfferLogs(activeOffer.id);
+			// Teklif gecmisini yukle (cancelled degilse)
+			if (activeOffer.status !== 'cancelled') {
+				loadOfferLogs(activeOffer.id);
+			}
 		}
 
 		// Sonuclanan teklif banner'i goster (rejected/cancelled - yeni teklif isteyebilir)
@@ -1967,8 +1969,7 @@
 				cancelBtn.style.display = 'none';
 			}
 
-			// Teklif gecmisini yukle
-			loadOfferLogs(activeOffer.id);
+			// Cancelled tekliflerde gecmis gosterme
 		}
 
 		// Status banner'i goster
@@ -2052,26 +2053,23 @@
 
 		// Teklif gecmisini yukle ve goster
 		async function loadOfferLogs(offerId) {
+			var metadataEl = document.getElementById('offer-metadata');
+
 			if (!offerId) {
-				document.getElementById('offer-metadata').style.display = 'none';
+				metadataEl.style.display = 'none';
 				return;
 			}
 
-			document.getElementById('offer-metadata').style.display = 'block';
 			var timeline = document.getElementById('metadata-timeline');
-			timeline.innerHTML = '<p class="timeline-empty">Yukleniyor...</p>';
 
 			var result = await OfferLogsService.getByOfferId(offerId);
-			if (result.error || !result.data) {
-				timeline.innerHTML = '<p class="timeline-empty">Gecmis yuklenemedi</p>';
+			if (result.error || !result.data || !result.data.length) {
+				// Hata veya log yoksa gizli tut
+				metadataEl.style.display = 'none';
 				return;
 			}
 
 			var logs = result.data;
-			if (!logs.length) {
-				timeline.innerHTML = '<p class="timeline-empty">Henuz kayit yok</p>';
-				return;
-			}
 
 			var actionLabels = {
 				'created': 'Teklif olusturuldu',
@@ -2101,6 +2099,7 @@
 			}).join('');
 
 			timeline.innerHTML = html;
+			metadataEl.style.display = 'block';
 		}
 
 		// Info card'i read-only mod icin guncelle

@@ -1221,6 +1221,106 @@
 			}
 		}
 
+		/* Save Options - Custom Checkbox Design */
+		.save-options {
+			margin: 20px 0;
+			padding: 16px;
+			background: #f8fafc;
+			border-radius: 8px;
+			border: 1px solid #e2e8f0;
+		}
+
+		.checkbox-option {
+			position: relative;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			cursor: pointer;
+			padding: 8px 0;
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-option:hover .custom-checkbox {
+			border-color: #f97316;
+		}
+
+		/* Native checkbox gizle ama erişilebilirlik koru */
+		.checkbox-option input[type="checkbox"] {
+			position: absolute !important;
+			opacity: 0 !important;
+			cursor: pointer;
+			width: 20px !important;
+			height: 20px !important;
+			left: 0 !important;
+			margin: 0 !important;
+			z-index: 1;
+		}
+
+		/* Custom checkbox görünümü */
+		.custom-checkbox {
+			position: relative;
+			width: 20px;
+			height: 20px;
+			min-width: 20px;
+			border: 2px solid #cbd5e1;
+			border-radius: 4px;
+			background: #ffffff;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		/* Checkmark ikonu */
+		.custom-checkbox::after {
+			content: '';
+			position: absolute;
+			width: 5px;
+			height: 10px;
+			border: solid #ffffff;
+			border-width: 0 2px 2px 0;
+			transform: rotate(45deg) scale(0);
+			transition: transform 0.15s ease;
+		}
+
+		/* Checked durumu */
+		.checkbox-option input[type="checkbox"]:checked + .custom-checkbox {
+			background: #f97316;
+			border-color: #f97316;
+		}
+
+		.checkbox-option input[type="checkbox"]:checked + .custom-checkbox::after {
+			transform: rotate(45deg) scale(1);
+		}
+
+		/* Focus durumu */
+		.checkbox-option input[type="checkbox"]:focus + .custom-checkbox {
+			outline: 2px solid #f97316;
+			outline-offset: 2px;
+		}
+
+		/* Label text */
+		.checkbox-label {
+			font-size: 14px;
+			color: #374151;
+			user-select: none;
+		}
+
+		/* İkinci seçenek slide animasyonu */
+		.checkbox-option.slide-option {
+			max-height: 0;
+			opacity: 0;
+			overflow: hidden;
+			padding: 0;
+			transition: all 0.25s ease;
+		}
+
+		.checkbox-option.slide-option.show {
+			max-height: 50px;
+			opacity: 1;
+			padding: 8px 0;
+		}
+
 		/* Form Actions */
 		.form-actions {
 			display: flex;
@@ -2384,7 +2484,7 @@
 				Müşteri Bilgileri
 			</div>
 
-			<div class="vkn-search-row">
+			<div class="vkn-search-row" id="vkn-search-section">
 				<div class="vkn-input-wrapper">
 					<label for="vkn-input">Vergi Kimlik Numarası (VKN)</label>
 					<input type="text" id="vkn-input" placeholder="10 haneli VKN giriniz" maxlength="10">
@@ -2453,6 +2553,20 @@
 					</div>
 				</div>
 			</div>
+		</div>
+
+		<!-- Teklif Kaydetme Seçenekleri -->
+		<div class="save-options" id="save-options" style="display: none;">
+			<label class="checkbox-option" for="save-as-accepted">
+				<input type="checkbox" id="save-as-accepted">
+				<span class="custom-checkbox"></span>
+				<span class="checkbox-label">Teklifi "Kabul Edilmiş" olarak kaydet</span>
+			</label>
+			<label class="checkbox-option slide-option" id="notify-customer-option" for="notify-customer">
+				<input type="checkbox" id="notify-customer">
+				<span class="custom-checkbox"></span>
+				<span class="checkbox-label">Müşteriye bildirim gönder</span>
+			</label>
 		</div>
 
 		<!-- Form Actions -->
@@ -2730,12 +2844,17 @@
 
 					hideLoading();
 
-					// URL'de VKN varsa otomatik sorgula
+					// URL parametrelerini kontrol et
 					var urlParams = new URLSearchParams(window.location.search);
-					var vknParam = urlParams.get('vkn');
-					if (vknParam) {
-						$('#vkn-input').val(vknParam);
-						await searchVkn(vknParam);
+					var offerIdParam = urlParams.get('offer_id');
+
+					if (offerIdParam) {
+						// Mevcut teklif düzenleme - VKN arama gizle
+						$('#vkn-search-section').hide();
+						await loadOfferById(offerIdParam);
+					} else {
+						// Yeni müşteri ekleme - VKN arama göster
+						$('#vkn-search-section').show();
 					}
 				} catch (error) {
 					hideLoading();
@@ -2763,6 +2882,145 @@
 					$('#vkn-search-btn').click();
 				}
 			});
+
+			// Offer ID ile teklif yükleme
+			async function loadOfferById(offerId) {
+				showLoading('Teklif yükleniyor...');
+
+				try {
+					const { data: offer, error } = await OffersService.getById(offerId);
+
+					if (error) {
+						hideLoading();
+						showError('Teklif yüklenirken hata oluştu');
+						return;
+					}
+
+					if (!offer) {
+						hideLoading();
+						showError('Teklif bulunamadı');
+						return;
+					}
+
+					// Bayi kontrolü - sadece kendi teklifini görebilir
+					if (offer.dealer_id !== currentDealerId) {
+						hideLoading();
+						showError('Bu teklifi görüntüleme yetkiniz yok');
+						return;
+					}
+
+					// Form değişkenlerini set et
+					currentOffer = offer;
+					currentCustomer = offer.customer;
+					currentVkn = offer.customer.vkn;
+					isEditMode = true;
+
+					// Chat'i baslat
+					initializeChat();
+
+					// offer_details'ı customer_prices formatına dönüştür
+					var customerPrices = offer.offer_details || [];
+
+					$('#customer-info-box').removeClass('error').addClass('visible');
+					$('#customer-name').text(offer.customer.name + (offer.customer.company_name ? ' - ' + offer.customer.company_name : ''));
+					$('#page-title').text('Müşteri Fiyat Düzenleme');
+					$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
+
+					// Fiyat tanımlanmış mı kontrolü
+					var hasPrices = customerPrices.some(function(p) { return p.unit_price !== undefined; });
+
+					if (!hasPrices) {
+						$('#existing-notice').addClass('visible');
+						$('#existing-notice-text').text('Bu müşteriniz için henüz fiyat tanımlamadınız.');
+						$('#passive-status-banner').removeClass('visible');
+						$('#passive-customer-btn').hide();
+						$('#activate-customer-btn').hide();
+						$('#cancel-offer-btn').hide();
+					} else {
+						$('#existing-notice').removeClass('visible');
+
+						// Teklif durumuna gore buton kontrolu
+						if (offer.status === 'passive') {
+							$('#passive-status-banner').addClass('visible');
+							$('#passive-customer-btn').hide();
+							$('#activate-customer-btn').show();
+							$('#cancel-offer-btn').show();
+						} else if (offer.status === 'accepted') {
+							$('#passive-status-banner').removeClass('visible');
+							$('#passive-customer-btn').show();
+							$('#activate-customer-btn').hide();
+							$('#cancel-offer-btn').show();
+						} else if (offer.status === 'cancelled' || offer.status === 'rejected') {
+							// Cancelled/rejected teklif - banner göster, butonları gizle
+							$('#passive-status-banner').removeClass('visible');
+							$('#cancelled-status-banner').addClass('visible');
+							$('#passive-customer-btn').hide();
+							$('#activate-customer-btn').hide();
+							$('#cancel-offer-btn').hide();
+							// Form populate edilecek sonra disable edilecek
+						} else {
+							$('#passive-status-banner').removeClass('visible');
+							$('#passive-customer-btn').hide();
+							$('#activate-customer-btn').hide();
+							$('#cancel-offer-btn').hide();
+						}
+					}
+
+					// Ürün satırlarını temizle
+					$('#product-rows').empty();
+
+					// Teklif detayları varsa sadece onları göster
+					if (customerPrices && customerPrices.length > 0) {
+						customerPrices.forEach(function(detail) {
+							var product = detail.product;
+							if (product) {
+								var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
+								addProductRow(
+									{ id: product.id, code: product.code, name: product.name, base_price: product.base_price, image: fullProduct.image || product.image_url },
+									detail.commitment_quantity || '',
+									detail.unit_price || '',
+									detail.this_month_quantity,
+									detail.last_month_quantity,
+									detail.pricing_type || 'retail_price',
+									detail.discount_value || 0
+								);
+							}
+						});
+					} else {
+						// Teklif yoksa tüm ürünleri göster
+						products.forEach(function(product) {
+							addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
+						});
+					}
+
+					$('#products-form').addClass('visible');
+					$('#form-actions').show();
+
+					// Save options - mevcut teklif var, gizle
+					$('#save-options').hide();
+
+					// Teklif gecmisini yukle
+					loadOfferLogs(offer.id);
+
+					// Teklif varsa "Yeni Ürün Ekle" butonunu göster
+					if (customerPrices && customerPrices.length > 0) {
+						$('#addProductSection').show();
+					} else {
+						$('#addProductSection').hide();
+					}
+
+					hideLoading();
+
+					// Cancelled/rejected teklifler icin duzenlemeyi engelle (form doldurulduktan sonra)
+					if (offer.status === 'cancelled' || offer.status === 'rejected') {
+						disableEditingForCancelledOffer();
+					}
+				} catch (error) {
+					hideLoading();
+					showError('Teklif yüklenirken hata: ' + error.message);
+					console.error(error);
+				}
+			}
 
 			// Supabase ile VKN sorgulama
 			async function searchVkn(vkn) {
@@ -2812,15 +3070,23 @@
 
 						// Bu bayi-müşteri için en son teklifi çek (tüm durumlar dahil)
 						const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
-						currentOffer = offer;
+
+						// Cancelled/rejected teklif döndüyse yeni teklif oluşturulabilmesi için null yap
+						if (offer && (offer.status === 'cancelled' || offer.status === 'rejected')) {
+							currentOffer = null; // Kaydetince yeni teklif oluşturulacak
+						} else {
+							currentOffer = offer; // Aktif teklif varsa güncelle
+						}
 
 						// Chat'i baslat
 						initializeChat();
 
 						// offer_details'ı customer_prices formatına dönüştür (uyumluluk için)
+						// Sadece aktif teklif varsa (currentOffer set) fiyatları göster
+						// Cancelled/rejected ise currentOffer null, boş form açılacak
 						var customerPrices = [];
-						if (offer && offer.offer_details) {
-							customerPrices = offer.offer_details;
+						if (currentOffer && currentOffer.offer_details) {
+							customerPrices = currentOffer.offer_details;
 						}
 						customer.customer_prices = customerPrices;
 
@@ -2844,6 +3110,8 @@
 							$('#existing-notice').removeClass('visible');
 
 							// Teklif durumuna gore buton kontrolu
+							// Not: cancelled/rejected teklifler icin currentOffer = null
+							// Bu durumda yeni teklif olusturma modu aktif, butonlar gizli
 							if (currentOffer && currentOffer.status === 'passive') {
 								$('#passive-status-banner').addClass('visible');
 								$('#passive-customer-btn').hide();
@@ -2854,16 +3122,10 @@
 								$('#passive-customer-btn').show();
 								$('#activate-customer-btn').hide();
 								$('#cancel-offer-btn').show();
-							} else if (currentOffer && currentOffer.status === 'cancelled') {
-								$('#passive-status-banner').removeClass('visible');
-								$('#cancelled-status-banner').addClass('visible');
-								$('#passive-customer-btn').hide();
-								$('#activate-customer-btn').hide();
-								$('#cancel-offer-btn').hide();
-								// Duzenlemeyi engelle
-								disableEditingForCancelledOffer();
 							} else {
+								// Yeni teklif olusturma modu (cancelled/rejected veya hic teklif yok)
 								$('#passive-status-banner').removeClass('visible');
+								$('#cancelled-status-banner').removeClass('visible');
 								$('#passive-customer-btn').hide();
 								$('#activate-customer-btn').hide();
 								$('#cancel-offer-btn').hide();
@@ -2901,8 +3163,15 @@
 						$('#products-form').addClass('visible');
 						$('#form-actions').show();
 
+						// Save options - sadece yeni teklif oluşturulurken göster
+						if (currentOffer) {
+							$('#save-options').hide();
+						} else {
+							$('#save-options').show();
+						}
+
 						// Teklif gecmisini yukle
-						loadOfferLogs(currentOffer.id);
+						loadOfferLogs(currentOffer ? currentOffer.id : null);
 
 						// Teklif varsa "Yeni Ürün Ekle" butonunu göster
 						if (customerPrices && customerPrices.length > 0) {
@@ -2936,6 +3205,7 @@
 
 						$('#products-form').addClass('visible');
 						$('#form-actions').show();
+						$('#save-options').show(); // Yeni müşteri için save options göster
 						$('#addProductSection').hide(); // Yeni müşteri için gösterme
 					}
 				} catch (err) {
@@ -3199,6 +3469,16 @@
 			$('#productModalOverlay').on('click', function(e) {
 				if (e.target === this) {
 					closeProductModal();
+				}
+			});
+
+			// Save options checkbox toggle
+			$('#save-as-accepted').on('change', function() {
+				if (this.checked) {
+					$('#notify-customer-option').addClass('show');
+				} else {
+					$('#notify-customer-option').removeClass('show');
+					$('#notify-customer').prop('checked', false);
 				}
 			});
 
@@ -3470,11 +3750,12 @@
 								if (statusError) throw new Error(statusError);
 							}
 						} else {
-							// Yeni teklif oluştur (otomatik kabul edilmiş olarak)
+							// Yeni teklif oluştur
+							const saveAsAccepted = $('#save-as-accepted').is(':checked');
 							const offerData = {
 								dealer_id: currentDealerId,
 								customer_id: customerId,
-								status: 'accepted',
+								status: saveAsAccepted ? 'accepted' : 'pending',
 								notes: 'Bayi panelinden oluşturuldu'
 							};
 							const { data: newOffer, error: offerError } = await OffersService.create(offerData, offerDetails);

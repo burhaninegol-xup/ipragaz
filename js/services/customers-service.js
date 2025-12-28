@@ -62,10 +62,9 @@ const CustomersService = {
                     dealer:dealers(id, name, code)
                 `)
                 .eq('vkn', vkn)
-                .single();
+                .maybeSingle();
 
-            // PGRST116 = kayıt bulunamadı, bu hata değil
-            if (error && error.code !== 'PGRST116') throw error;
+            if (error) throw error;
             return { data: data || null, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'CustomersService.getByVkn');
@@ -84,10 +83,9 @@ const CustomersService = {
                     dealer:dealers(id, name, code)
                 `)
                 .eq('phone', phone)
-                .single();
+                .maybeSingle();
 
-            // PGRST116 = kayıt bulunamadı, bu hata değil
-            if (error && error.code !== 'PGRST116') throw error;
+            if (error) throw error;
             return { data: data || null, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'CustomersService.getByPhone');

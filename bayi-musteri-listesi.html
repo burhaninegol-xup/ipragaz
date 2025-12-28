@@ -1269,11 +1269,11 @@
 			function createCustomerCard(customer) {
 				var offerStatus = customer.offer_status || 'pending';
 
-				return '<div class="customer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-status="' + offerStatus + '">' +
+				return '<div class="customer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-offer-id="' + customer.offer_id + '" data-status="' + offerStatus + '">' +
 					'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
 					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div></div>' +
 					getStatusBadge(offerStatus) +
-					'<a href="bayi-musteri-ekle.html?vkn=' + customer.vkn + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
+					'<a href="bayi-musteri-ekle.html?offer_id=' + customer.offer_id + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
 				'</div>';
 			}
 
@@ -1309,8 +1309,8 @@
 				// Kart tıklama olayını yeniden bağla
 				$('.customer-card').on('click', function(e) {
 					if (!$(e.target).closest('.customer-action').length) {
-						var vkn = $(this).data('vkn');
-						window.location.href = 'bayi-musteri-ekle.html?vkn=' + vkn;
+						var offerId = $(this).data('offer-id');
+						window.location.href = 'bayi-musteri-ekle.html?offer_id=' + offerId;
 					}
 				});
 			}
@@ -1410,8 +1410,8 @@
 			// Customer card click - navigate to detail
 			$('.customer-card').on('click', function(e) {
 				if (!$(e.target).closest('.customer-action').length) {
-					var vkn = $(this).data('vkn');
-					window.location.href = 'bayi-musteri-ekle.html?vkn=' + vkn;
+					var offerId = $(this).data('offer-id');
+					window.location.href = 'bayi-musteri-ekle.html?offer_id=' + offerId;
 				}
 			});
 		});

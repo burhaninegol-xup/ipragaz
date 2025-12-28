@@ -448,11 +448,41 @@ const OffersService = {
     },
 
     /**
-     * Musterinin en son teklifini getir (tum durumlar dahil)
+     * Musterinin en son teklifini getir (aktif teklifler oncelikli)
+     * Oncelik: Aktif teklif (requested, pending, accepted, passive) > cancelled/rejected
      */
     async getLatestOfferByCustomerId(customerId) {
         try {
-            const { data, error } = await supabaseClient
+            // 1. Önce aktif teklif ara (cancelled/rejected dışında)
+            const { data: activeOffer, error: activeError } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code, city, district, phone),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .not('status', 'in', '("cancelled","rejected")')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (activeError) throw activeError;
+
+            // Aktif teklif varsa döndür
+            if (activeOffer) {
+                return { data: activeOffer, error: null };
+            }
+
+            // 2. Aktif teklif yoksa, en son cancelled/rejected teklifi getir
+            const { data: lastOffer, error: lastError } = await supabaseClient
                 .from('offers')
                 .select(`
                     *,
@@ -471,19 +501,52 @@ const OffersService = {
                 .limit(1)
                 .maybeSingle();
 
-            if (error) throw error;
-            return { data: data || null, error: null };
+            if (lastError) throw lastError;
+            return { data: lastOffer || null, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getLatestOfferByCustomerId');
         }
     },
 
     /**
-     * Bayi ve musteri icin en son teklifi getir (tum durumlar dahil)
+     * Bayi ve musteri icin en son teklifi getir
+     * Oncelik: Aktif teklif (requested, pending, accepted, passive) > cancelled/rejected
      */
     async getLatestOfferForDealerCustomer(dealerId, customerId) {
         try {
-            const { data, error } = await supabaseClient
+            // 1. Önce aktif teklif ara (cancelled/rejected dışında)
+            const { data: activeOffer, error: activeError } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        this_month_quantity,
+                        last_month_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('dealer_id', dealerId)
+                .eq('customer_id', customerId)
+                .not('status', 'in', '("cancelled","rejected")')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (activeError) throw activeError;
+
+            // Aktif teklif varsa döndür
+            if (activeOffer) {
+                return { data: activeOffer, error: null };
+            }
+
+            // 2. Aktif teklif yoksa, en son cancelled/rejected teklifi getir
+            // Bu durumda bayi yeni teklif oluşturabilir
+            const { data: lastOffer, error: lastError } = await supabaseClient
                 .from('offers')
                 .select(`
                     *,
@@ -504,8 +567,8 @@ const OffersService = {
                 .limit(1)
                 .maybeSingle();
 
-            if (error) throw error;
-            return { data: data || null, error: null };
+            if (lastError) throw lastError;
+            return { data: lastOffer || null, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getLatestOfferForDealerCustomer');
         }
