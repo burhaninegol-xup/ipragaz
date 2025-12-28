@@ -800,6 +800,121 @@
 			font-weight: 500;
 		}
 
+		/* Offer Metadata - Minimal Timeline */
+		.offer-metadata {
+			margin-top: 40px;
+			padding-top: 20px;
+			border-top: 1px solid #e5e7eb;
+		}
+
+		.offer-metadata summary {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 0;
+			cursor: pointer;
+			color: #9ca3af;
+			font-size: 11px;
+			font-weight: 500;
+			letter-spacing: 0.02em;
+			list-style: none;
+			transition: color 0.2s;
+		}
+
+		.offer-metadata summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.offer-metadata summary:hover {
+			color: #6b7280;
+		}
+
+		.offer-metadata summary svg {
+			width: 12px;
+			height: 12px;
+			transition: transform 0.2s;
+			opacity: 0.6;
+		}
+
+		.offer-metadata[open] summary svg {
+			transform: rotate(180deg);
+		}
+
+		.metadata-timeline {
+			margin-top: 12px;
+			padding: 0;
+			max-height: 300px;
+			overflow-y: auto;
+			animation: metadataSlide 0.2s ease-out;
+		}
+
+		@keyframes metadataSlide {
+			from { opacity: 0; transform: translateY(-6px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.timeline-item {
+			display: flex;
+			gap: 12px;
+			padding: 10px 0;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 12px;
+		}
+
+		.timeline-item:last-child {
+			border-bottom: none;
+		}
+
+		.timeline-dot {
+			width: 8px;
+			height: 8px;
+			background: #9ca3af;
+			border-radius: 50%;
+			margin-top: 4px;
+			flex-shrink: 0;
+		}
+
+		.timeline-dot.created { background: #22c55e; }
+		.timeline-dot.requested { background: #3b82f6; }
+		.timeline-dot.price_updated { background: #f59e0b; }
+		.timeline-dot.accepted { background: #10b981; }
+		.timeline-dot.rejected { background: #ef4444; }
+		.timeline-dot.cancelled { background: #6b7280; }
+		.timeline-dot.passived { background: #8b5cf6; }
+		.timeline-dot.activated { background: #06b6d4; }
+
+		.timeline-content {
+			flex: 1;
+		}
+
+		.timeline-action {
+			font-weight: 500;
+			color: #374151;
+		}
+
+		.timeline-actor {
+			color: #6b7280;
+			font-size: 11px;
+		}
+
+		.timeline-time {
+			color: #9ca3af;
+			font-size: 10px;
+		}
+
+		.timeline-empty {
+			color: #9ca3af;
+			font-size: 12px;
+			padding: 12px;
+			text-align: center;
+		}
+
+		@media (max-width: 640px) {
+			.metadata-list {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
 		.offer-buttons {
 			display: flex;
 			flex-direction: column;
@@ -1605,6 +1720,19 @@
 						Devam Et
 					</button>
 				</div>
+
+				<!-- Teklif Gecmisi Timeline -->
+				<details class="offer-metadata" id="offer-metadata" style="display: none;">
+					<summary>
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="6 9 12 15 18 9"/>
+						</svg>
+						Teklif gecmisi
+					</summary>
+					<div class="metadata-timeline" id="metadata-timeline">
+						<p class="timeline-empty">Yukleniyor...</p>
+					</div>
+				</details>
 			</div>
 
 			<!-- Chat Column -->
@@ -1711,6 +1839,7 @@
 	<script src="./js/services/products-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/messages-service.js"></script>
 	<script src="./js/component-loader.js"></script>
@@ -1820,6 +1949,9 @@
 
 			// Bayi secim bolumunu gizle
 			document.getElementById('dealerSelectionSection').style.display = 'none';
+
+			// Teklif gecmisini yukle
+			loadOfferLogs(activeOffer.id);
 		}
 
 		// Sonuclanan teklif banner'i goster (rejected/cancelled - yeni teklif isteyebilir)
@@ -1834,6 +1966,9 @@
 			if (cancelBtn) {
 				cancelBtn.style.display = 'none';
 			}
+
+			// Teklif gecmisini yukle
+			loadOfferLogs(activeOffer.id);
 		}
 
 		// Status banner'i goster
@@ -1913,6 +2048,59 @@
 			if (cancelBtn) {
 				cancelBtn.style.display = ['requested', 'pending', 'accepted'].includes(status) ? 'flex' : 'none';
 			}
+		}
+
+		// Teklif gecmisini yukle ve goster
+		async function loadOfferLogs(offerId) {
+			if (!offerId) {
+				document.getElementById('offer-metadata').style.display = 'none';
+				return;
+			}
+
+			document.getElementById('offer-metadata').style.display = 'block';
+			var timeline = document.getElementById('metadata-timeline');
+			timeline.innerHTML = '<p class="timeline-empty">Yukleniyor...</p>';
+
+			var result = await OfferLogsService.getByOfferId(offerId);
+			if (result.error || !result.data) {
+				timeline.innerHTML = '<p class="timeline-empty">Gecmis yuklenemedi</p>';
+				return;
+			}
+
+			var logs = result.data;
+			if (!logs.length) {
+				timeline.innerHTML = '<p class="timeline-empty">Henuz kayit yok</p>';
+				return;
+			}
+
+			var actionLabels = {
+				'created': 'Teklif olusturuldu',
+				'requested': 'Teklif talep edildi',
+				'price_updated': 'Fiyatlar guncellendi',
+				'accepted': 'Teklif kabul edildi',
+				'rejected': 'Teklif reddedildi',
+				'cancelled': 'Teklif iptal edildi',
+				'passived': 'Teklif pasife alindi',
+				'activated': 'Teklif aktif edildi',
+				'details_updated': 'Teklif detaylari guncellendi'
+			};
+
+			var html = logs.map(function(log) {
+				var date = new Date(log.created_at);
+				var timeStr = date.toLocaleDateString('tr-TR') + ' ' +
+							  date.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
+
+				return '<div class="timeline-item">' +
+					'<div class="timeline-dot ' + log.action + '"></div>' +
+					'<div class="timeline-content">' +
+						'<div class="timeline-action">' + (actionLabels[log.action] || log.action) + '</div>' +
+						'<div class="timeline-actor">' + (log.actor_name || '-') + '</div>' +
+						'<div class="timeline-time">' + timeStr + '</div>' +
+					'</div>' +
+				'</div>';
+			}).join('');
+
+			timeline.innerHTML = html;
 		}
 
 		// Info card'i read-only mod icin guncelle
@@ -2039,9 +2227,22 @@
 			showLoading('Teklif kabul ediliyor...');
 
 			try {
-				const { data, error } = await OffersService.accept(activeOffer.id);
+				// Teklifi kabul et
+				const { data, error } = await OffersService.update(activeOffer.id, {
+					status: 'accepted'
+				});
 
 				if (error) throw new Error(error);
+
+				// Kabul logunu kaydet
+				var customerName = currentCustomer.company_name || currentCustomer.name || 'Musteri';
+				await OfferLogsService.log(
+					activeOffer.id,
+					'accepted',
+					'customer',
+					currentCustomer.id,
+					customerName
+				);
 
 				hideLoading();
 				alert('Teklif kabul edildi! Artik ozel fiyatlarla siparis verebilirsiniz.');
@@ -2072,9 +2273,22 @@
 				showLoading('Teklif iptal ediliyor...');
 
 				try {
-					const { data, error } = await OffersService.cancel(activeOffer.id);
+					// Teklifi iptal et
+					const { data, error } = await OffersService.update(activeOffer.id, {
+						status: 'cancelled'
+					});
 
 					if (error) throw new Error(error);
+
+					// Iptal logunu kaydet
+					var customerName = currentCustomer.company_name || currentCustomer.name || 'Musteri';
+					await OfferLogsService.log(
+						activeOffer.id,
+						'cancelled',
+						'customer',
+						currentCustomer.id,
+						customerName
+					);
 
 					hideLoading();
 					alert('Teklif talebiniz iptal edildi.');
@@ -2295,6 +2509,18 @@
 				const { data, error } = await OffersService.create(offerData, offerDetails);
 
 				if (error) throw new Error(error);
+
+				// Teklif talep logunu kaydet
+				if (data && data.id) {
+					var customerName = currentCustomer.company_name || currentCustomer.name || 'Musteri';
+					await OfferLogsService.log(
+						data.id,
+						'requested',
+						'customer',
+						currentCustomer.id,
+						customerName
+					);
+				}
 
 				hideLoading();
 
