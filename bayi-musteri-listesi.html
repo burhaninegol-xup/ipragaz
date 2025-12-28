@@ -735,6 +735,24 @@
 			color: #fff;
 		}
 
+		/* Filter Button Divider */
+		.filter-btn.divider-left {
+			margin-left: 8px;
+			padding-left: 18px;
+			position: relative;
+		}
+
+		.filter-btn.divider-left::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			height: 20px;
+			width: 1px;
+			background: #d0d0d0;
+		}
+
 		@media (max-width: 768px) {
 			.offer-status-badge span {
 				display: none;
@@ -1108,8 +1126,8 @@
 						Kabul
 						<span class="count">0</span>
 					</button>
-					<button class="filter-btn rejected" data-filter="rejected">
-						Red
+					<button class="filter-btn rejected divider-left" data-filter="rejected">
+						İptal
 						<span class="count">0</span>
 					</button>
 				</div>
@@ -1298,7 +1316,9 @@
 				// Rejected ve cancelled birleşik sayılsın
 				var rejectedTotal = counts.rejected + counts.cancelled;
 
-				$('.filter-btn[data-filter="all"] .count').text(counts.all);
+				// Tümü = toplam - (rejected + cancelled)
+				var activeCount = counts.all - counts.rejected - counts.cancelled;
+				$('.filter-btn[data-filter="all"] .count').text(activeCount);
 				$('.filter-btn[data-filter="requested"] .count').text(counts.requested);
 				$('.filter-btn[data-filter="pending"] .count').text(counts.pending);
 				$('.filter-btn[data-filter="accepted"] .count').text(counts.accepted);
@@ -1323,7 +1343,12 @@
 					var status = $card.data('status');
 
 					if (filter === 'all') {
-						$card.show();
+						// Tümü: cancelled ve rejected dışındakileri göster
+						if (status === 'cancelled' || status === 'rejected') {
+							$card.hide();
+						} else {
+							$card.show();
+						}
 					} else if (filter === 'rejected' && (status === 'rejected' || status === 'cancelled')) {
 						$card.show();
 					} else if (filter === status) {

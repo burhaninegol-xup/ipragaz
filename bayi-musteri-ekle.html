@@ -470,6 +470,421 @@
 			}
 		}
 
+		/* YENİ: Üst İstatistik Konteyner - GEÇEN AY | BU AY | AYLIK ORT. TÜKETİM */
+		.product-stats-header {
+			display: flex;
+			gap: 12px;
+			justify-content: flex-end;
+			align-items: stretch;
+			margin-bottom: 0;
+		}
+
+		.product-stats-header.visible {
+			display: flex;
+		}
+
+		/* Kompakt Stat Kutuları (Geçen Ay & Bu Ay) */
+		.stat-box-compact {
+			min-width: 110px;
+			max-width: 140px;
+			background: #fff;
+			border-radius: 8px;
+			padding: 10px 12px;
+			border: 1px solid #e8ecf1;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+		}
+
+		.stat-box-compact-title {
+			font-size: 10px;
+			font-weight: 700;
+			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 4px;
+		}
+
+		.stat-box-compact-value {
+			font-size: 13px;
+			font-weight: 700;
+			color: #1a1a2e;
+			margin-bottom: 6px;
+		}
+
+		.stat-progress-compact {
+			height: 4px;
+			background: #e8ecf1;
+			border-radius: 2px;
+			overflow: hidden;
+			margin-bottom: 4px;
+		}
+
+		.stat-progress-compact-fill {
+			height: 100%;
+			border-radius: 2px;
+			transition: width 0.3s ease;
+		}
+
+		.stat-progress-compact-fill.low {
+			background: linear-gradient(90deg, #e53935 0%, #ef5350 100%);
+		}
+
+		.stat-progress-compact-fill.medium {
+			background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);
+		}
+
+		.stat-progress-compact-fill.good {
+			background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+		}
+
+		.stat-percent-compact {
+			font-size: 10px;
+			font-weight: 700;
+			text-align: right;
+		}
+
+		.stat-percent-compact.low { color: #e53935; }
+		.stat-percent-compact.medium { color: #ff9800; }
+		.stat-percent-compact.good { color: #4caf50; }
+
+		/* Kompakt Tüketim Kutusu */
+		.consumption-box-compact {
+			min-width: 130px;
+			max-width: 160px;
+			padding: 10px 12px;
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+			border: 2px solid #1976d2;
+			border-radius: 8px;
+		}
+
+		.consumption-box-compact-label {
+			font-size: 10px;
+			font-weight: 700;
+			color: #1976d2;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 6px;
+		}
+
+		.consumption-box-compact-input {
+			position: relative;
+		}
+
+		.consumption-box-compact-input input {
+			width: 100%;
+			padding: 6px 32px 6px 8px;
+			border: 1px solid #90caf9;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 600;
+			text-align: center;
+			background: #fff;
+		}
+
+		.consumption-box-compact-input input:focus {
+			outline: none;
+			border-color: #1976d2;
+			box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.15);
+		}
+
+		.consumption-box-compact-input span {
+			position: absolute;
+			right: 8px;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 11px;
+			color: #666;
+			font-weight: 500;
+		}
+
+		/* Error state for consumption box */
+		.consumption-box-compact.error {
+			background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+			border-color: #e53935;
+		}
+
+		.consumption-box-compact.error .consumption-box-compact-label {
+			color: #e53935;
+		}
+
+		.consumption-box-compact.error .consumption-box-compact-input input {
+			border-color: #e53935;
+		}
+
+		/* Responsive: Tablet */
+		@media (max-width: 1024px) {
+			.product-stats-header {
+				gap: 10px;
+			}
+			.stat-box-compact {
+				min-width: 95px;
+				max-width: 120px;
+				padding: 9px 10px;
+			}
+			.consumption-box-compact {
+				min-width: 115px;
+				max-width: 140px;
+			}
+		}
+
+		/* Responsive: Mobil */
+		@media (max-width: 767px) {
+			.product-stats-header {
+				flex-wrap: wrap;
+				justify-content: flex-end;
+				gap: 10px;
+			}
+			.stat-box-compact {
+				flex: 0 1 auto;
+				min-width: 90px;
+			}
+			.consumption-box-compact {
+				flex: 0 1 auto;
+				min-width: 110px;
+			}
+		}
+
+		/* Responsive: Küçük Mobil */
+		@media (max-width: 575px) {
+			.product-stats-header {
+				flex-direction: column;
+				align-items: flex-end;
+				gap: 8px;
+			}
+			.stat-box-compact,
+			.consumption-box-compact {
+				min-width: 140px;
+				max-width: 160px;
+			}
+		}
+
+		/* ===== YENİ ÜRÜN EKLE SECTION ===== */
+		.add-product-section {
+			margin-top: 20px;
+			padding: 20px;
+			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+			border: 2px dashed #002c77;
+			border-radius: 12px;
+			text-align: center;
+		}
+
+		.btn-add-product {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			padding: 14px 28px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+			border: none;
+			border-radius: 10px;
+			font-size: 15px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.btn-add-product:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0,44,119,0.3);
+		}
+
+		.btn-add-product svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* ===== ÜRÜN SEÇİM MODALI ===== */
+		.product-modal-overlay {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(0,0,0,0.6);
+			z-index: 9999;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.product-modal-overlay.active {
+			display: flex;
+		}
+
+		.product-modal {
+			background: #fff;
+			width: 90%;
+			max-width: 800px;
+			max-height: 85vh;
+			border-radius: 16px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+		}
+
+		.product-modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 24px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+		}
+
+		.product-modal-header h3 {
+			margin: 0;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		.modal-close {
+			width: 36px;
+			height: 36px;
+			background: rgba(255,255,255,0.2);
+			border: none;
+			border-radius: 50%;
+			color: #fff;
+			font-size: 24px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.2s;
+		}
+
+		.modal-close:hover {
+			background: rgba(255,255,255,0.3);
+		}
+
+		.product-modal-search {
+			padding: 16px 24px;
+			background: #f8f9fa;
+			border-bottom: 1px solid #e9ecef;
+		}
+
+		.product-modal-search input {
+			width: 100%;
+			padding: 12px 16px;
+			border: 1px solid #dee2e6;
+			border-radius: 8px;
+			font-size: 14px;
+		}
+
+		.product-modal-search input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.product-modal-body {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px;
+		}
+
+		.product-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 16px;
+		}
+
+		.product-grid-item {
+			background: #fff;
+			border: 1px solid #e9ecef;
+			border-radius: 12px;
+			padding: 16px;
+			text-align: center;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.product-grid-item:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 12px rgba(0,44,119,0.15);
+			transform: translateY(-2px);
+		}
+
+		.product-grid-item img {
+			width: 60px;
+			height: 75px;
+			object-fit: contain;
+			margin-bottom: 12px;
+		}
+
+		.product-grid-name {
+			font-size: 13px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+		}
+
+		.product-grid-code {
+			font-size: 11px;
+			color: #666;
+			margin-bottom: 12px;
+		}
+
+		.btn-select-product {
+			width: 100%;
+			padding: 10px 16px;
+			background: #002c77;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			font-size: 13px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-select-product:hover {
+			background: #0056b3;
+		}
+
+		.product-grid-empty {
+			grid-column: 1 / -1;
+			text-align: center;
+			padding: 40px;
+			color: #666;
+		}
+
+		/* Yeni eklenen satır highlight */
+		@keyframes slideInHighlight {
+			0% {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			100% {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.product-row.newly-added {
+			animation: slideInHighlight 0.5s ease;
+			background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%) !important;
+			border: 2px solid #ffc107 !important;
+			box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3);
+		}
+
+		/* Modal Responsive */
+		@media (max-width: 768px) {
+			.product-modal {
+				width: 100%;
+				max-width: 100%;
+				max-height: 100vh;
+				border-radius: 0;
+			}
+
+			.product-grid {
+				grid-template-columns: repeat(2, 1fr);
+				gap: 12px;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.product-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
 		.product-image {
 			width: 60px;
 			height: 75px;
@@ -1494,6 +1909,41 @@
 				<!-- Product rows will be added here dynamically -->
 			</div>
 
+			<!-- Yeni Ürün Ekle Bölümü -->
+			<div class="add-product-section" id="addProductSection" style="display: none;">
+				<button type="button" class="btn-add-product" id="btnAddProduct">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="10"/>
+						<line x1="12" y1="8" x2="12" y2="16"/>
+						<line x1="8" y1="12" x2="16" y2="12"/>
+					</svg>
+					Yeni Ürün Ekle
+				</button>
+			</div>
+
+		</div>
+
+		<!-- Ürün Seçim Modalı -->
+		<div class="product-modal-overlay" id="productModalOverlay">
+			<div class="product-modal">
+				<div class="product-modal-header">
+					<h3>Ürün Seçin</h3>
+					<button type="button" class="modal-close" id="productModalClose">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="18" y1="6" x2="6" y2="18"/>
+							<line x1="6" y1="6" x2="18" y2="18"/>
+						</svg>
+					</button>
+				</div>
+				<div class="product-modal-search">
+					<input type="text" id="productSearchInput" placeholder="Ürün adı veya kodu ile ara...">
+				</div>
+				<div class="product-modal-body">
+					<div class="product-grid" id="productModalGrid">
+						<!-- Ürünler JavaScript ile doldurulacak -->
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<!-- Form Actions -->
@@ -1691,10 +2141,13 @@
 						base_price: p.base_price
 					}));
 
-					// İlk bayi ID'sini al (gerçek uygulamada session'dan gelir)
-					const { data: dealers } = await DealersService.getAll();
-					if (dealers && dealers.length > 0) {
-						currentDealerId = dealers[0].id;
+					// Session'dan bayi ID'sini al
+					currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+					if (!currentDealerId) {
+						console.error('Bayi ID bulunamadi');
+						hideLoading();
+						showError('Bayi bilgisi bulunamadi. Lutfen tekrar giris yapin.');
+						return;
 					}
 
 					hideLoading();
@@ -1779,8 +2232,8 @@
 						currentCustomer = customer;
 						isEditMode = true;
 
-						// Bu bayi-müşteri için kabul edilmiş teklifi çek
-						const { data: offer } = await OffersService.getAcceptedOffer(currentDealerId, customer.id);
+						// Bu bayi-müşteri için en son teklifi çek (tüm durumlar dahil)
+						const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
 						currentOffer = offer;
 
 						// offer_details'ı customer_prices formatına dönüştür (uyumluluk için)
@@ -1822,25 +2275,43 @@
 							$('#delete-prices-btn').show();
 						}
 
-						// Tüm ürünleri göster, varsa fiyatları doldur
+						// Ürün satırlarını temizle
 						$('#product-rows').empty();
 
-						products.forEach(function(product) {
-							var existingPrice = customerPrices.find(function(cp) {
-								return cp.product && cp.product.id === product.id;
+						// Teklif detayları varsa sadece onları göster
+						if (customerPrices && customerPrices.length > 0) {
+							customerPrices.forEach(function(detail) {
+								var product = detail.product;
+								if (product) {
+									// Ürün bilgilerini products dizisinden tamamla (image için)
+									var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
+									addProductRow(
+										{ id: product.id, code: product.code, name: product.name, base_price: product.base_price, image: fullProduct.image || product.image_url },
+										detail.commitment_quantity || '',
+										detail.unit_price || '',
+										detail.this_month_quantity,
+										detail.last_month_quantity,
+										detail.pricing_type || 'retail_price',
+										detail.discount_value || 0
+									);
+								}
 							});
-
-							var qty = existingPrice ? existingPrice.commitment_quantity : '';
-							var price = existingPrice ? existingPrice.unit_price : '';
-							var thisMonth = existingPrice ? existingPrice.this_month_quantity : undefined;
-							var lastMonth = existingPrice ? existingPrice.last_month_quantity : undefined;
-							var pricingType = existingPrice ? existingPrice.pricing_type : 'fixed_price';
-							var discountValue = existingPrice ? existingPrice.discount_value : 0;
-							addProductRow(product, qty, price, thisMonth, lastMonth, pricingType, discountValue);
-						});
+						} else {
+							// Teklif yoksa tüm ürünleri göster
+							products.forEach(function(product) {
+								addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
+							});
+						}
 
 						$('#products-form').addClass('visible');
 						$('#form-actions').show();
+
+						// Teklif varsa "Yeni Ürün Ekle" butonunu göster
+						if (customerPrices && customerPrices.length > 0) {
+							$('#addProductSection').show();
+						} else {
+							$('#addProductSection').hide();
+						}
 					} else {
 						// Yeni müşteri
 						currentCustomer = null;
@@ -1867,6 +2338,7 @@
 
 						$('#products-form').addClass('visible');
 						$('#form-actions').show();
+						$('#addProductSection').hide(); // Yeni müşteri için gösterme
 					}
 				} catch (err) {
 					hideLoading();
@@ -1935,12 +2407,33 @@
 						'<div class="product-code">' + product.code + '</div>' +
 					'</div>' +
 
-					// Aylık Ortalama Tüketim - üst kısımda görünür şekilde
-					'<div class="consumption-input-wrapper">' +
-						'<label>Aylık Ort. Tüketim</label>' +
-						'<div class="input-suffix">' +
-							'<input type="number" class="quantity-input" placeholder="0" value="' + (quantity || '') + '" min="0">' +
-							'<span>adet</span>' +
+					// YENİ: Üst İstatistik Bölümü - GEÇEN AY | BU AY | AYLIK ORT. TÜKETİM
+					'<div class="product-stats-header' + statsVisible + '">' +
+						// 1. GEÇEN AY
+						'<div class="stat-box-compact">' +
+							'<div class="stat-box-compact-title">Geçen Ay</div>' +
+							'<div class="stat-box-compact-value">' + lastMonthValueText + '</div>' +
+							'<div class="stat-progress-compact">' +
+								'<div class="stat-progress-compact-fill ' + lastMonthClass + '" style="width: ' + Math.min(lastMonthPercent, 100) + '%"></div>' +
+							'</div>' +
+							'<div class="stat-percent-compact ' + lastMonthClass + '">%' + lastMonthPercent + '</div>' +
+						'</div>' +
+						// 2. BU AY
+						'<div class="stat-box-compact">' +
+							'<div class="stat-box-compact-title">Bu Ay</div>' +
+							'<div class="stat-box-compact-value">' + thisMonthValueText + '</div>' +
+							'<div class="stat-progress-compact">' +
+								'<div class="stat-progress-compact-fill ' + thisMonthClass + '" style="width: ' + Math.min(thisMonthPercent, 100) + '%"></div>' +
+							'</div>' +
+							'<div class="stat-percent-compact ' + thisMonthClass + '">%' + thisMonthPercent + '</div>' +
+						'</div>' +
+						// 3. AYLIK ORT. TÜKETİM
+						'<div class="consumption-box-compact">' +
+							'<div class="consumption-box-compact-label">Aylık Ort. Tüketim</div>' +
+							'<div class="consumption-box-compact-input">' +
+								'<input type="number" class="quantity-input" placeholder="0" value="' + (quantity || '') + '" min="0">' +
+								'<span>adet</span>' +
+							'</div>' +
 						'</div>' +
 					'</div>' +
 
@@ -1995,34 +2488,6 @@
 							'<span class="final-price-value">' + formatPrice(finalPrice) + ' TL</span>' +
 						'</div>' +
 					'</div>' +
-
-					// Stats Section
-					'<div class="product-stats' + statsVisible + '">' +
-						'<div class="stat-box">' +
-							'<div class="stat-box-header">' +
-								'<div class="stat-box-title">Bu Ay</div>' +
-							'</div>' +
-							'<div class="stat-box-value">' + thisMonthValueText + '</div>' +
-							'<div class="stat-progress">' +
-								'<div class="stat-progress-bar">' +
-									'<div class="stat-progress-bar-fill ' + thisMonthClass + '" style="width: ' + Math.min(thisMonthPercent, 100) + '%"></div>' +
-								'</div>' +
-								'<span class="stat-progress-percent ' + thisMonthClass + '">%' + thisMonthPercent + '</span>' +
-							'</div>' +
-						'</div>' +
-						'<div class="stat-box">' +
-							'<div class="stat-box-header">' +
-								'<div class="stat-box-title">Gecen Ay</div>' +
-							'</div>' +
-							'<div class="stat-box-value">' + lastMonthValueText + '</div>' +
-							'<div class="stat-progress">' +
-								'<div class="stat-progress-bar">' +
-									'<div class="stat-progress-bar-fill ' + lastMonthClass + '" style="width: ' + Math.min(lastMonthPercent, 100) + '%"></div>' +
-								'</div>' +
-								'<span class="stat-progress-percent ' + lastMonthClass + '">%' + lastMonthPercent + '</span>' +
-							'</div>' +
-						'</div>' +
-					'</div>' +
 				'</div>';
 
 				$('#product-rows').append(rowHtml);
@@ -2048,6 +2513,131 @@
 						return basePrice;
 				}
 			}
+
+			// ===== YENİ ÜRÜN EKLEME FONKSİYONLARI =====
+
+			// Eklenen ürün ID'lerini al
+			function getAddedProductIds() {
+				var ids = [];
+				$('.product-row').each(function() {
+					ids.push($(this).data('product-id'));
+				});
+				return ids;
+			}
+
+			// Modal aç ve kullanılabilir ürünleri göster
+			function openProductModal() {
+				var addedIds = getAddedProductIds();
+				var available = products.filter(function(p) {
+					return !addedIds.includes(p.id);
+				});
+				renderProductGrid(available);
+				$('#productModalOverlay').addClass('active');
+				$('body').css('overflow', 'hidden');
+				$('#productSearchInput').val('').focus();
+			}
+
+			// Modal kapat
+			function closeProductModal() {
+				$('#productModalOverlay').removeClass('active');
+				$('body').css('overflow', '');
+			}
+
+			// Ürün grid render
+			function renderProductGrid(productList) {
+				var html = '';
+				if (productList.length === 0) {
+					html = '<div class="product-grid-empty">Eklenebilecek ürün kalmadı.</div>';
+				} else {
+					productList.forEach(function(p) {
+						html += '<div class="product-grid-item" data-id="' + p.id + '">' +
+									'<img src="' + p.image + '" alt="' + p.name + '">' +
+									'<div class="product-grid-name">' + p.name + '</div>' +
+									'<div class="product-grid-code">' + p.code + '</div>' +
+									'<button type="button" class="btn-select-product">Ekle</button>' +
+								'</div>';
+					});
+				}
+				$('#productModalGrid').html(html);
+			}
+
+			// Ürün seç ve listeye ekle
+			function selectProduct(productId) {
+				var product = products.find(function(p) { return p.id === productId; });
+				if (!product) return;
+
+				// Yeni satır ekle
+				addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
+
+				// Son eklenen satıra highlight ekle
+				var $newRow = $('.product-row').last();
+				$newRow.addClass('newly-added');
+
+				// Smooth scroll
+				setTimeout(function() {
+					$newRow[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}, 100);
+
+				// 3 saniye sonra highlight kaldır
+				setTimeout(function() {
+					$newRow.removeClass('newly-added');
+				}, 3000);
+
+				// Modal kapat
+				closeProductModal();
+			}
+
+			// Yeni Ürün Ekle butonu click
+			$('#btnAddProduct').on('click', function() {
+				openProductModal();
+			});
+
+			// Modal kapat butonu
+			$('#productModalClose').on('click', function() {
+				closeProductModal();
+			});
+
+			// Modal overlay click - kapat
+			$('#productModalOverlay').on('click', function(e) {
+				if (e.target === this) {
+					closeProductModal();
+				}
+			});
+
+			// ESC tuşu ile modal kapat
+			$(document).on('keydown', function(e) {
+				if (e.key === 'Escape' && $('#productModalOverlay').hasClass('active')) {
+					closeProductModal();
+				}
+			});
+
+			// Ürün seç butonu click
+			$(document).on('click', '.btn-select-product', function(e) {
+				e.stopPropagation();
+				var productId = $(this).closest('.product-grid-item').data('id');
+				selectProduct(productId);
+			});
+
+			// Ürün kartına click (tüm kart tıklanabilir)
+			$(document).on('click', '.product-grid-item', function(e) {
+				if (!$(e.target).is('.btn-select-product')) {
+					var productId = $(this).data('id');
+					selectProduct(productId);
+				}
+			});
+
+			// Ürün arama
+			$('#productSearchInput').on('input', function() {
+				var query = $(this).val().toLowerCase().trim();
+				var addedIds = getAddedProductIds();
+				var filtered = products.filter(function(p) {
+					return !addedIds.includes(p.id) &&
+						(p.name.toLowerCase().includes(query) || p.code.toLowerCase().includes(query));
+				});
+				renderProductGrid(filtered);
+			});
+
+			// ===== YENİ ÜRÜN EKLEME FONKSİYONLARI SONU =====
 
 			// Pricing option click - select pricing type
 			$(document).on('click', '.pricing-option', function(e) {
@@ -2082,7 +2672,7 @@
 
 				// Perakende fiyat seçildiğinde tüketim zorunluluğu kalkar
 				if (selectedType === 'retail_price') {
-					$row.find('.consumption-input-wrapper').removeClass('error');
+					$row.find('.consumption-box-compact').removeClass('error');
 				}
 
 				// Update final price display
@@ -2104,7 +2694,7 @@
 			// Quantity input change - clear error
 			$(document).on('input', '.quantity-input', function() {
 				var $row = $(this).closest('.product-row');
-				$row.find('.consumption-input-wrapper').removeClass('error');
+				$row.find('.consumption-box-compact').removeClass('error');
 			});
 
 			// Update final price for a row
@@ -2146,7 +2736,7 @@
 					// Hata durumlarini temizle
 					$selectedOption.removeClass('error');
 					$input.css('border-color', '#e0e0e0');
-					$row.find('.consumption-input-wrapper').removeClass('error');
+					$row.find('.consumption-box-compact').removeClass('error');
 
 					// Perakende fiyat seciliyse input kontrolu gerekmez
 					if (selectedType !== 'retail_price') {
@@ -2163,7 +2753,7 @@
 
 						// Perakende disinda tuketim adedi zorunlu
 						if (quantity <= 0) {
-							$row.find('.consumption-input-wrapper').addClass('error');
+							$row.find('.consumption-box-compact').addClass('error');
 							hasError = true;
 							errorMessage = 'Perakende fiyat dışında bir seçenek için Aylık Ort. Tüketim girilmelidir.';
 							if (!$firstError) {
@@ -2266,6 +2856,12 @@
 							// Mevcut teklifi güncelle
 							const { error: detailsError } = await OffersService.updateDetails(currentOffer.id, offerDetails);
 							if (detailsError) throw new Error(detailsError);
+
+							// Status 'requested' ise 'pending' yap (bayi fiyat girdi)
+							if (currentOffer.status === 'requested') {
+								const { error: statusError } = await OffersService.updateStatus(currentOffer.id, 'pending');
+								if (statusError) throw new Error(statusError);
+							}
 						} else {
 							// Yeni teklif oluştur (otomatik kabul edilmiş olarak)
 							const offerData = {

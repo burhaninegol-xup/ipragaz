@@ -733,6 +733,39 @@
 			font-weight: 600;
 		}
 
+		.offer-buttons {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			flex-shrink: 0;
+		}
+
+		.btn-accept-offer {
+			background: #10b981;
+			border: none;
+			color: #fff;
+			border-radius: 8px;
+			padding: 10px 20px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			transition: all 0.2s;
+			white-space: nowrap;
+		}
+
+		.btn-accept-offer:hover {
+			background: #059669;
+		}
+
+		.btn-accept-offer svg {
+			width: 18px;
+			height: 18px;
+		}
+
 		.btn-cancel-offer {
 			background: #fff;
 			border: 1px solid #e31e24;
@@ -951,6 +984,101 @@
 				justify-content: flex-start;
 			}
 		}
+
+		/* Confirmation Modal */
+		.modal-confirmation {
+			max-width: 480px;
+			padding: 35px 40px 30px;
+		}
+
+		.modal-icon-warning {
+			background: linear-gradient(135deg, #fff4e6 0%, #ffedd5 100%);
+			border: 3px solid #fb923c;
+			box-shadow: 0 4px 20px rgba(251, 146, 60, 0.25);
+			animation: warningPulse 2s ease-in-out infinite;
+		}
+
+		.modal-icon-warning svg {
+			color: #ea580c;
+		}
+
+		@keyframes warningPulse {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.05); }
+		}
+
+		.modal-text-warning {
+			color: #78350f;
+			background: #fffbeb;
+			border-left: 4px solid #fbbf24;
+			padding: 15px 18px;
+			border-radius: 8px;
+			margin-bottom: 25px;
+			font-weight: 500;
+			line-height: 1.6;
+		}
+
+		.modal-actions {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.modal-btn {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			padding: 13px 24px;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 8px;
+			cursor: pointer;
+			font-family: inherit;
+			transition: all 0.2s ease;
+		}
+
+		.modal-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.modal-btn-cancel {
+			background: #fff;
+			color: #64748b;
+			border: 2px solid #e2e8f0;
+		}
+
+		.modal-btn-cancel:hover {
+			background: #f8fafc;
+			border-color: #cbd5e1;
+		}
+
+		.modal-btn-danger {
+			background: linear-gradient(135deg, #e31e24 0%, #c91a1f 100%);
+			color: #fff;
+			border: none;
+			box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+		}
+
+		.modal-btn-danger:hover {
+			background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+			transform: translateY(-2px);
+			box-shadow: 0 6px 16px rgba(227, 30, 36, 0.4);
+		}
+
+		@media (max-width: 576px) {
+			.modal-confirmation {
+				padding: 30px 24px 24px;
+			}
+			.modal-actions {
+				flex-direction: column-reverse;
+			}
+			.modal-btn {
+				width: 100%;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -981,14 +1109,22 @@
 						<span>Bayi:</span> <strong id="statusDealerName">-</strong>
 					</div>
 				</div>
-				<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="12" r="10"/>
-						<line x1="15" y1="9" x2="9" y2="15"/>
-						<line x1="9" y1="9" x2="15" y2="15"/>
-					</svg>
-					Teklifi Iptal Et
-				</button>
+				<div class="offer-buttons">
+					<button class="btn-accept-offer" id="btnAcceptOffer" onclick="acceptActiveOffer()" style="display: none;">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="20 6 9 17 4 12"/>
+						</svg>
+						Teklifi Kabul Et
+					</button>
+					<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="15" y1="9" x2="9" y2="15"/>
+							<line x1="9" y1="9" x2="15" y2="15"/>
+						</svg>
+						Teklifi Iptal Et
+					</button>
+				</div>
 			</div>
 
 			<!-- Info Card -->
@@ -1074,6 +1210,29 @@
 		<div class="loading-text" id="loadingText">Yukleniyor...</div>
 	</div>
 
+	<!-- Confirmation Modal -->
+	<div class="modal-overlay" id="confirmationModal">
+		<div class="modal modal-confirmation">
+			<div class="modal-icon modal-icon-warning">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+					<line x1="12" y1="9" x2="12" y2="13"/>
+					<line x1="12" y1="17" x2="12.01" y2="17"/>
+				</svg>
+			</div>
+			<h3 class="modal-title" id="confirmationTitle">Teklifi Iptal Et</h3>
+			<p class="modal-text modal-text-warning" id="confirmationMessage"></p>
+			<div class="modal-actions">
+				<button class="modal-btn modal-btn-cancel" onclick="closeConfirmationModal()">
+					Vazgec
+				</button>
+				<button class="modal-btn modal-btn-danger" id="confirmationActionBtn">
+					Evet, Iptal Et
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
@@ -1101,6 +1260,28 @@
 		// Loading gizle
 		function hideLoading() {
 			document.getElementById('loadingOverlay').classList.remove('active');
+		}
+
+		// Confirmation Modal goster
+		function showConfirmationModal(title, message, onConfirm) {
+			document.getElementById('confirmationTitle').textContent = title;
+			document.getElementById('confirmationMessage').textContent = message;
+
+			var actionBtn = document.getElementById('confirmationActionBtn');
+			var newBtn = actionBtn.cloneNode(true);
+			actionBtn.parentNode.replaceChild(newBtn, actionBtn);
+
+			newBtn.addEventListener('click', function() {
+				closeConfirmationModal();
+				if (onConfirm) onConfirm();
+			});
+
+			document.getElementById('confirmationModal').classList.add('active');
+		}
+
+		// Confirmation Modal kapat
+		function closeConfirmationModal() {
+			document.getElementById('confirmationModal').classList.remove('active');
 		}
 
 		// Mevcut teklif kontrolu (tum durumlar dahil)
@@ -1196,14 +1377,14 @@
 					className: 'status-requested'
 				},
 				'pending': {
-					title: 'Teklifiniz Degerlendiriliyor',
-					message: 'Bayiniz teklifinizi degerlendiriyor. Onay sonrasi size bildirim gonderilecektir.',
-					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>',
+					title: 'Fiyat Teklifi Hazir',
+					message: 'Bayiniz fiyat teklifini hazirladi. Asagidaki urunleri ve fiyatlari inceleyip teklifi kabul edebilirsiniz.',
+					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
 					className: 'status-pending'
 				},
 				'accepted': {
-					title: 'Teklifiniz Kabul Edildi',
-					message: 'Tebrikler! Bayiniz teklifinizi kabul etti. Artik ozel fiyatlarla siparis verebilirsiniz.',
+					title: 'Teklif Kabul Edildi',
+					message: 'Tebrikler! Teklifi kabul ettiniz. Artik ozel fiyatlarla siparis verebilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
 					className: 'status-accepted'
 				},
@@ -1230,6 +1411,20 @@
 			dealerName.textContent = dealer ? dealer.name : '-';
 
 			banner.style.display = 'flex';
+
+			// Buton gorunurluk kontrolu
+			var acceptBtn = document.getElementById('btnAcceptOffer');
+			var cancelBtn = document.getElementById('btnCancelOffer');
+
+			// Kabul Et butonu: sadece 'pending' durumunda goster (bayi fiyat girmis)
+			if (acceptBtn) {
+				acceptBtn.style.display = (status === 'pending') ? 'flex' : 'none';
+			}
+
+			// Iptal Et butonu: requested, pending ve accepted durumlarinda goster
+			if (cancelBtn) {
+				cancelBtn.style.display = ['requested', 'pending', 'accepted'].includes(status) ? 'flex' : 'none';
+			}
 		}
 
 		// Info card'i read-only mod icin guncelle
@@ -1320,31 +1515,65 @@
 			}).format(amount);
 		}
 
-		// Aktif teklifi iptal et
-		async function cancelActiveOffer() {
+		// Aktif teklifi kabul et
+		async function acceptActiveOffer() {
 			if (!activeOffer) return;
 
-			var confirmed = confirm('Teklif talebinizi iptal etmek istediginize emin misiniz? Bu islem geri alinamaz.');
+			var confirmed = confirm('Teklifi kabul etmek istediginize emin misiniz?');
 			if (!confirmed) return;
 
-			showLoading('Teklif iptal ediliyor...');
+			showLoading('Teklif kabul ediliyor...');
 
 			try {
-				const { data, error } = await OffersService.cancel(activeOffer.id);
+				const { data, error } = await OffersService.accept(activeOffer.id);
 
 				if (error) throw new Error(error);
 
 				hideLoading();
-				alert('Teklif talebiniz iptal edildi.');
+				alert('Teklif kabul edildi! Artik ozel fiyatlarla siparis verebilirsiniz.');
 
 				// Sayfayi yenile
 				window.location.reload();
 
 			} catch (err) {
 				hideLoading();
-				console.error('Teklif iptal hatasi:', err);
-				alert('Teklif iptal edilirken bir hata olustu. Lutfen tekrar deneyin.');
+				console.error('Teklif kabul hatasi:', err);
+				alert('Teklif kabul edilirken bir hata olustu. Lutfen tekrar deneyin.');
 			}
+		}
+
+		// Aktif teklifi iptal et
+		function cancelActiveOffer() {
+			if (!activeOffer) return;
+
+			var title = activeOffer.status === 'accepted'
+				? 'Kabul Edilmis Teklifi Iptal Et'
+				: 'Teklif Talebini Iptal Et';
+
+			var message = activeOffer.status === 'accepted'
+				? 'Teklifi iptal ederseniz size ozel fiyatlar ortadan kalkacaktir. Bu islemi geri alamazsiniz.'
+				: 'Teklif talebinizi iptal etmek istediginize emin misiniz? Bu islem geri alinamaz.';
+
+			showConfirmationModal(title, message, async function() {
+				showLoading('Teklif iptal ediliyor...');
+
+				try {
+					const { data, error } = await OffersService.cancel(activeOffer.id);
+
+					if (error) throw new Error(error);
+
+					hideLoading();
+					alert('Teklif talebiniz iptal edildi.');
+
+					// Sayfayi yenile
+					window.location.reload();
+
+				} catch (err) {
+					hideLoading();
+					console.error('Teklif iptal hatasi:', err);
+					alert('Teklif iptal edilirken bir hata olustu. Lutfen tekrar deneyin.');
+				}
+			});
 		}
 
 		// Urunleri yukle
@@ -1541,7 +1770,7 @@
 						product_id: productId,
 						commitment_quantity: selectedProducts[productId],
 						unit_price: 0,
-						pricing_type: null,
+						pricing_type: 'retail_price',
 						discount_value: 0,
 						this_month_quantity: 0,
 						last_month_quantity: 0

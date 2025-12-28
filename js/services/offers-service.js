@@ -476,6 +476,39 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getLatestOfferByCustomerId');
         }
+    },
+
+    /**
+     * Bayi ve musteri icin en son teklifi getir (tum durumlar dahil)
+     */
+    async getLatestOfferForDealerCustomer(dealerId, customerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        this_month_quantity,
+                        last_month_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('dealer_id', dealerId)
+                .eq('customer_id', customerId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) throw error;
+            return { data: data || null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getLatestOfferForDealerCustomer');
+        }
     }
 };
 
