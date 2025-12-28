@@ -1828,6 +1828,359 @@
 				min-width: 100%;
 			}
 		}
+
+		/* Two Column Layout with Chat */
+		.content-with-chat {
+			display: grid;
+			grid-template-columns: 1fr 380px;
+			gap: 30px;
+			max-width: 1600px;
+		}
+
+		.main-column {
+			min-width: 0;
+		}
+
+		/* Chat Column */
+		.chat-column {
+			position: sticky;
+			top: 90px;
+			height: calc(100vh - 120px);
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.chat-header {
+			padding: 16px 20px;
+			border-bottom: 1px solid #eee;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			background: #fafafa;
+		}
+
+		.chat-header h3 {
+			font-size: 16px;
+			font-weight: 600;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.chat-header h3 svg {
+			width: 20px;
+			height: 20px;
+			color: #002c77;
+		}
+
+		.chat-badge {
+			background: #e31e24;
+			color: #fff;
+			font-size: 12px;
+			padding: 2px 8px;
+			border-radius: 10px;
+			font-weight: 600;
+		}
+
+		/* Chat Messages Area */
+		.chat-messages {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+			background: #f9fafb;
+		}
+
+		.chat-messages::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.chat-messages::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		.chat-messages::-webkit-scrollbar-thumb {
+			background: #ddd;
+			border-radius: 3px;
+		}
+
+		/* Message Bubble */
+		.message-bubble {
+			max-width: 85%;
+			padding: 12px 16px;
+			border-radius: 16px;
+			position: relative;
+			animation: chatFadeInUp 0.3s ease;
+		}
+
+		@keyframes chatFadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.message-bubble.dealer {
+			align-self: flex-end;
+			background: linear-gradient(135deg, #002c77 0%, #003d99 100%);
+			color: #fff;
+			border-bottom-right-radius: 4px;
+		}
+
+		.message-bubble.customer {
+			align-self: flex-start;
+			background: #fff;
+			border: 1px solid #e5e7eb;
+			border-bottom-left-radius: 4px;
+		}
+
+		.message-sender {
+			font-size: 11px;
+			font-weight: 600;
+			margin-bottom: 4px;
+		}
+
+		.message-bubble.dealer .message-sender {
+			color: rgba(255,255,255,0.8);
+		}
+
+		.message-bubble.customer .message-sender {
+			color: #002c77;
+		}
+
+		.message-text {
+			font-size: 14px;
+			line-height: 1.5;
+			word-break: break-word;
+		}
+
+		.message-time {
+			font-size: 11px;
+			margin-top: 6px;
+		}
+
+		.message-bubble.dealer .message-time {
+			color: rgba(255,255,255,0.7);
+		}
+
+		.message-bubble.customer .message-time {
+			color: #999;
+		}
+
+		/* Date Separator */
+		.date-separator {
+			display: flex;
+			align-items: center;
+			margin: 20px 0;
+			gap: 12px;
+		}
+
+		.date-separator::before,
+		.date-separator::after {
+			content: '';
+			flex: 1;
+			height: 1px;
+			background: #e5e7eb;
+		}
+
+		.date-separator span {
+			font-size: 12px;
+			color: #6b7280;
+			font-weight: 500;
+			white-space: nowrap;
+		}
+
+		/* No Messages State */
+		.no-messages {
+			text-align: center;
+			padding: 40px 20px;
+			color: #999;
+		}
+
+		.no-messages svg {
+			width: 48px;
+			height: 48px;
+			color: #ddd;
+			margin-bottom: 12px;
+		}
+
+		.no-messages p {
+			font-size: 14px;
+		}
+
+		/* Chat Input Area */
+		.chat-input-wrapper {
+			padding: 16px;
+			border-top: 1px solid #eee;
+			display: flex;
+			gap: 10px;
+			background: #fff;
+		}
+
+		.chat-input-wrapper textarea {
+			flex: 1;
+			padding: 12px 14px;
+			border: 1px solid #ddd;
+			border-radius: 12px;
+			resize: none;
+			font-size: 14px;
+			font-family: inherit;
+			max-height: 100px;
+			min-height: 44px;
+			transition: border-color 0.2s;
+		}
+
+		.chat-input-wrapper textarea:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		.chat-input-wrapper textarea::placeholder {
+			color: #999;
+		}
+
+		.btn-send-message {
+			padding: 12px 18px;
+			background: linear-gradient(135deg, #002c77 0%, #003d99 100%);
+			color: #fff;
+			border: none;
+			border-radius: 12px;
+			cursor: pointer;
+			font-weight: 600;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s;
+		}
+
+		.btn-send-message:hover {
+			background: linear-gradient(135deg, #003d99 0%, #0050cc 100%);
+			transform: translateY(-1px);
+		}
+
+		.btn-send-message:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		.btn-send-message svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Chat Disabled State */
+		.chat-disabled {
+			padding: 20px;
+			text-align: center;
+			color: #999;
+			font-size: 13px;
+			background: #f9fafb;
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.chat-disabled svg {
+			width: 40px;
+			height: 40px;
+			color: #ddd;
+			margin-bottom: 12px;
+		}
+
+		/* Mobile Chat Toggle */
+		.chat-toggle-mobile {
+			display: none;
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			padding: 14px 24px;
+			background: linear-gradient(135deg, #002c77 0%, #003d99 100%);
+			color: #fff;
+			border: none;
+			border-radius: 30px;
+			font-size: 14px;
+			font-weight: 600;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+			z-index: 100;
+			cursor: pointer;
+			font-family: inherit;
+		}
+
+		.chat-toggle-mobile .unread-badge {
+			background: #e31e24;
+			color: #fff;
+			font-size: 12px;
+			padding: 2px 8px;
+			border-radius: 10px;
+			margin-left: 8px;
+		}
+
+		/* Mobile Close Button */
+		.chat-close-mobile {
+			display: none;
+			position: absolute;
+			top: 12px;
+			right: 12px;
+			width: 32px;
+			height: 32px;
+			border: none;
+			background: #f0f0f0;
+			border-radius: 50%;
+			cursor: pointer;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.chat-close-mobile svg {
+			width: 18px;
+			height: 18px;
+			color: #666;
+		}
+
+		/* Responsive - Chat Column */
+		@media (max-width: 1200px) {
+			.content-with-chat {
+				grid-template-columns: 1fr;
+			}
+
+			.chat-column {
+				display: none;
+				position: fixed;
+				inset: 0;
+				top: 0;
+				height: 100vh;
+				border-radius: 0;
+				z-index: 1000;
+			}
+
+			.chat-column.active {
+				display: flex;
+			}
+
+			.chat-toggle-mobile {
+				display: flex;
+				align-items: center;
+			}
+
+			.chat-close-mobile {
+				display: flex;
+			}
+		}
 	</style>
 </head>
 
@@ -1836,9 +2189,11 @@
 	<div id="bayi-header"></div>
 
 	<!-- Main Content -->
-	<main class="main-content">
-		<!-- Page Header -->
-		<div class="page-header">
+	<main class="main-content content-with-chat">
+		<!-- Main Column -->
+		<div class="main-column">
+			<!-- Page Header -->
+			<div class="page-header">
 			<a href="bayi-musteri-listesi.html" class="back-btn">
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
@@ -1979,7 +2334,58 @@
 				Kaydet
 			</button>
 		</div>
+		</div>
+
+		<!-- Chat Column -->
+		<aside class="chat-column" id="chatColumn">
+			<button class="chat-close-mobile" id="chatCloseMobile" onclick="closeChatMobile()">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="18" y1="6" x2="6" y2="18"/>
+					<line x1="6" y1="6" x2="18" y2="18"/>
+				</svg>
+			</button>
+			<div class="chat-header">
+				<h3>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+					</svg>
+					Mesajlar
+				</h3>
+				<span class="chat-badge" id="chatBadge" style="display: none;">0</span>
+			</div>
+			<div class="chat-messages" id="chatMessages">
+				<div class="no-messages" id="noMessages">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+					</svg>
+					<p>Henuz mesaj yok</p>
+				</div>
+			</div>
+			<div class="chat-input-wrapper" id="chatInputWrapper">
+				<textarea id="messageInput" placeholder="Mesajinizi yazin..." rows="1" onkeydown="handleMessageKeydown(event)"></textarea>
+				<button class="btn-send-message" id="btnSendMessage" onclick="sendMessage()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="22" y1="2" x2="11" y2="13"/>
+						<polygon points="22 2 15 22 11 13 2 9 22 2"/>
+					</svg>
+				</button>
+			</div>
+			<div class="chat-disabled" id="chatDisabled" style="display: none;">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="8" x2="12" y2="12"/>
+					<line x1="12" y1="16" x2="12.01" y2="16"/>
+				</svg>
+				<p>Musteri secimi yapildiginda mesajlasma aktif olacaktir</p>
+			</div>
+		</aside>
 	</main>
+
+	<!-- Mobile Chat Toggle -->
+	<button class="chat-toggle-mobile" id="chatToggleMobile" onclick="openChatMobile()">
+		Mesajlar
+		<span class="unread-badge" id="unreadBadgeMobile" style="display: none;">0</span>
+	</button>
 
 	<!-- Confirm Save Modal -->
 	<div class="modal-overlay" id="save-modal">
@@ -2079,6 +2485,7 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/messages-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Auth kontrol - giris yapilmamissa login'e yonlendir
@@ -2097,6 +2504,8 @@
 			var isEditMode = false;
 			var currentVkn = '';
 			var isLoading = false;
+			var messageSubscription = null;
+			var currentUserType = 'dealer';
 
 			// Loading overlay
 			function showLoading(text) {
@@ -2235,6 +2644,9 @@
 						// Bu bayi-müşteri için en son teklifi çek (tüm durumlar dahil)
 						const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
 						currentOffer = offer;
+
+						// Chat'i baslat
+						initializeChat();
 
 						// offer_details'ı customer_prices formatına dönüştür (uyumluluk için)
 						var customerPrices = [];
@@ -3019,6 +3431,248 @@
 					$(this).removeClass('active');
 				}
 			});
+
+			// ==================== MESAJLASMA FONKSIYONLARI ====================
+
+			// Mesajlari yukle
+			async function loadMessages() {
+				if (!currentOffer) {
+					showChatDisabled();
+					return;
+				}
+
+				try {
+					const { data, error } = await MessagesService.getByOfferId(currentOffer.id);
+					if (error) {
+						console.error('Mesaj yukleme hatasi:', error);
+						return;
+					}
+
+					renderMessages(data || []);
+
+					// Okundu isaretle
+					await MessagesService.markAsRead(currentOffer.id, currentUserType);
+					updateUnreadBadge(0);
+
+				} catch (err) {
+					console.error('Mesaj yukleme hatasi:', err);
+				}
+			}
+
+			// Mesajlari render et
+			function renderMessages(messages) {
+				var container = document.getElementById('chatMessages');
+
+				if (!messages || messages.length === 0) {
+					container.innerHTML = '<div class="no-messages">' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+						'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' +
+						'</svg>' +
+						'<p>Henuz mesaj yok</p>' +
+					'</div>';
+					return;
+				}
+
+				var html = '';
+				var lastDate = null;
+
+				messages.forEach(function(msg) {
+					var msgDate = new Date(msg.created_at).toDateString();
+
+					// Gun degistiyse ayirici ekle
+					if (lastDate !== msgDate) {
+						html += '<div class="date-separator"><span>' +
+							formatDateSeparator(msg.created_at) + '</span></div>';
+						lastDate = msgDate;
+					}
+
+					var senderName = msg.sender_type === 'dealer' ? 'Siz' : 'Musteri';
+					var timeStr = formatMessageTime(msg.created_at);
+
+					html += '<div class="message-bubble ' + msg.sender_type + '">' +
+						'<div class="message-sender">' + senderName + '</div>' +
+						'<div class="message-text">' + escapeHtml(msg.message) + '</div>' +
+						'<div class="message-time">' + timeStr + '</div>' +
+					'</div>';
+				});
+
+				container.innerHTML = html;
+				scrollToBottom();
+			}
+
+			// HTML escape
+			function escapeHtml(text) {
+				var div = document.createElement('div');
+				div.textContent = text;
+				return div.innerHTML;
+			}
+
+			// Gun ayirici formatlama
+			function formatDateSeparator(dateStr) {
+				var date = new Date(dateStr);
+				var now = new Date();
+
+				if (date.toDateString() === now.toDateString()) {
+					return 'Bugun';
+				}
+
+				var yesterday = new Date(now);
+				yesterday.setDate(yesterday.getDate() - 1);
+				if (date.toDateString() === yesterday.toDateString()) {
+					return 'Dun';
+				}
+
+				return date.toLocaleDateString('tr-TR', {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				});
+			}
+
+			// Mesaj zamani formatlama
+			function formatMessageTime(dateStr) {
+				var date = new Date(dateStr);
+				var now = new Date();
+
+				// Bugun mi?
+				if (date.toDateString() === now.toDateString()) {
+					return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+				}
+
+				// Dun mu?
+				var yesterday = new Date(now);
+				yesterday.setDate(yesterday.getDate() - 1);
+				if (date.toDateString() === yesterday.toDateString()) {
+					return 'Dun ' + date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+				}
+
+				// Daha eski
+				return date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }) + ' ' +
+					date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+			}
+
+			// Mesaj alanini en alta kaydir
+			function scrollToBottom() {
+				var container = document.getElementById('chatMessages');
+				container.scrollTop = container.scrollHeight;
+			}
+
+			// Mesaj gonder
+			window.sendMessage = async function() {
+				var input = document.getElementById('messageInput');
+				var message = input.value.trim();
+
+				if (!message || !currentOffer || !currentDealerId) return;
+
+				var btn = document.getElementById('btnSendMessage');
+				btn.disabled = true;
+
+				try {
+					const { data, error } = await MessagesService.create({
+						offer_id: currentOffer.id,
+						sender_type: currentUserType,
+						sender_id: currentDealerId,
+						message: message
+					});
+
+					if (error) {
+						console.error('Mesaj gonderme hatasi:', error);
+						alert('Mesaj gonderilemedi. Lutfen tekrar deneyin.');
+					} else {
+						input.value = '';
+						input.style.height = 'auto';
+						loadMessages();
+					}
+
+				} catch (err) {
+					console.error('Mesaj gonderme hatasi:', err);
+					alert('Mesaj gonderilemedi. Lutfen tekrar deneyin.');
+				}
+
+				btn.disabled = false;
+			};
+
+			// Enter tusu ile mesaj gonder
+			window.handleMessageKeydown = function(event) {
+				if (event.key === 'Enter' && !event.shiftKey) {
+					event.preventDefault();
+					sendMessage();
+				}
+			};
+
+			// Chat'i devre disi goster
+			function showChatDisabled() {
+				document.getElementById('chatMessages').style.display = 'none';
+				document.getElementById('chatInputWrapper').style.display = 'none';
+				document.getElementById('chatDisabled').style.display = 'flex';
+			}
+
+			// Chat'i aktif goster
+			function showChatEnabled() {
+				document.getElementById('chatMessages').style.display = 'flex';
+				document.getElementById('chatInputWrapper').style.display = 'flex';
+				document.getElementById('chatDisabled').style.display = 'none';
+			}
+
+			// Okunmamis mesaj badge'i guncelle
+			function updateUnreadBadge(count) {
+				var badge = document.getElementById('chatBadge');
+				var mobileBadge = document.getElementById('unreadBadgeMobile');
+
+				if (count > 0) {
+					badge.textContent = count;
+					badge.style.display = 'inline';
+					mobileBadge.textContent = count;
+					mobileBadge.style.display = 'inline';
+				} else {
+					badge.style.display = 'none';
+					mobileBadge.style.display = 'none';
+				}
+			}
+
+			// Real-time mesaj dinleme
+			function subscribeToMessages() {
+				if (!currentOffer) return;
+
+				// Onceki subscription'i kaldir
+				if (messageSubscription) {
+					MessagesService.unsubscribe(messageSubscription);
+				}
+
+				messageSubscription = MessagesService.subscribeToOffer(currentOffer.id, function(payload) {
+					// Her yeni mesajda yükle (hem kendi hem karşı taraf)
+					if (payload.new) {
+						loadMessages();
+					}
+				});
+			}
+
+			// Mobil chat ac
+			window.openChatMobile = function() {
+				document.getElementById('chatColumn').classList.add('active');
+				document.body.style.overflow = 'hidden';
+				scrollToBottom();
+			};
+
+			// Mobil chat kapat
+			window.closeChatMobile = function() {
+				document.getElementById('chatColumn').classList.remove('active');
+				document.body.style.overflow = '';
+			};
+
+			// Chat'i baslat
+			window.initializeChat = async function() {
+				if (currentOffer && ['requested', 'pending', 'accepted'].includes(currentOffer.status)) {
+					showChatEnabled();
+					await loadMessages();
+					subscribeToMessages();
+				} else {
+					showChatDisabled();
+				}
+			};
+
+			// Sayfa yuklendiginde chat disabled olarak baslasin
+			showChatDisabled();
 		});
 	</script>
 </body>
