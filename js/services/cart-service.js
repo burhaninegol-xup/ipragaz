@@ -8,6 +8,13 @@ const CartService = {
     CART_KEY: 'isyerim_cart',
 
     /**
+     * Fiyattan puan hesapla (1 TL = 1 Puan)
+     */
+    calculatePointsFromPrice(price) {
+        return Math.floor(parseFloat(price) || 0);
+    },
+
+    /**
      * Sepeti sessionStorage'dan getir
      */
     getCart() {
@@ -62,7 +69,7 @@ const CartService = {
                         code: item.product.code,
                         name: item.product.name,
                         price: item.unit_price,
-                        points: item.product.points_per_unit || 0,
+                        points: this.calculatePointsFromPrice(item.unit_price || item.product.base_price),
                         image_url: item.product.image_url || '',
                         quantity: item.quantity
                     }))
@@ -140,7 +147,7 @@ const CartService = {
                 code: product.code,
                 name: product.name,
                 price: price,
-                points: product.points_per_unit || product.points || 0,
+                points: this.calculatePointsFromPrice(price),
                 image_url: product.image_url || '',
                 quantity: quantity
             });
@@ -333,7 +340,7 @@ const CartService = {
             quantity: item.quantity,
             unit_price: parseFloat(item.price),
             total_price: parseFloat(item.price) * item.quantity,
-            points: item.points * item.quantity
+            points: this.calculatePointsFromPrice(parseFloat(item.price)) * item.quantity
         }));
 
         const result = await OrdersService.create(orderData, orderItems);
