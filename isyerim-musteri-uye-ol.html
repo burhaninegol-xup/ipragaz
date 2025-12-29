@@ -613,8 +613,8 @@
 				sessionStorage.setItem('isyerim_customer_name', result.data.name || customerData.name);
 				sessionStorage.setItem('isNewUser', 'false');
 
-				// Anasayfaya yönlendir
-				window.location.href = 'isyerim-musteri-anasayfa.html';
+				// Güvenlik sorularına yönlendir
+				window.location.href = 'isyerim-musteri-sorular.html';
 
 			} catch (error) {
 				console.error('Kayıt hatası:', error);

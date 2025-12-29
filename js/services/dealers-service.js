@@ -3,6 +3,23 @@
  * Bayi CRUD işlemleri
  */
 
+/**
+ * Türkçe karakterleri ASCII'ye normalize et
+ * Kadıköy -> kadikoy, İstanbul -> istanbul
+ */
+function normalizeTurkish(str) {
+    if (!str) return '';
+    return str
+        .toLowerCase()
+        .replace(/ç/g, 'c')
+        .replace(/ğ/g, 'g')
+        .replace(/ı/g, 'i')
+        .replace(/i̇/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ş/g, 's')
+        .replace(/ü/g, 'u');
+}
+
 const DealersService = {
     /**
      * Tüm aktif bayileri getir
@@ -59,38 +76,59 @@ const DealersService = {
     },
 
     /**
-     * Şehre göre bayileri getir
+     * Şehre göre bayileri getir (Türkçe karakter normalize edilmiş)
      */
     async getByCity(city) {
         try {
+            // Türkçe karakterleri normalize et
+            const normalizedCity = normalizeTurkish(city);
+
+            // Tüm aktif bayileri çek
             const { data, error } = await supabaseClient
                 .from('dealers')
                 .select('*')
-                .eq('city', city)
-                .eq('is_active', true)
-                .order('district');
+                .eq('is_active', true);
 
             if (error) throw error;
-            return { data, error: null };
+
+            // Client-side filtreleme ile normalize karşılaştırma
+            const filtered = data.filter(dealer =>
+                normalizeTurkish(dealer.city) === normalizedCity
+            );
+
+            // İlçeye göre sırala
+            filtered.sort((a, b) => (a.district || '').localeCompare(b.district || '', 'tr'));
+
+            return { data: filtered, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'DealersService.getByCity');
         }
     },
 
     /**
-     * İlçeye göre bayileri getir
+     * İlçeye göre bayileri getir (Türkçe karakter normalize edilmiş)
      */
     async getByDistrict(city, district) {
         try {
+            // Türkçe karakterleri normalize et
+            const normalizedCity = normalizeTurkish(city);
+            const normalizedDistrict = normalizeTurkish(district);
+
+            // Tüm aktif bayileri çek
             const { data, error } = await supabaseClient
                 .from('dealers')
                 .select('*')
-                .eq('city', city)
-                .eq('district', district)
                 .eq('is_active', true);
 
             if (error) throw error;
-            return { data, error: null };
+
+            // Client-side filtreleme ile normalize karşılaştırma
+            const filtered = data.filter(dealer =>
+                normalizeTurkish(dealer.city) === normalizedCity &&
+                normalizeTurkish(dealer.district) === normalizedDistrict
+            );
+
+            return { data: filtered, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'DealersService.getByDistrict');
         }

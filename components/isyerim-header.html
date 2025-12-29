@@ -844,6 +844,297 @@
 		.header-user-location {
 			display: none;
 		}
+		.header-dealer-select {
+			display: none;
+		}
+	}
+	/* Dealer Selection Button */
+	.header-dealer-select {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 18px;
+		background: #fff;
+		border: 1px solid #e0e0e0;
+		border-radius: 30px;
+		cursor: pointer;
+		transition: all 0.2s;
+		max-width: 200px;
+		font-size: 14px;
+		color: #333;
+	}
+	.header-dealer-select:hover {
+		border-color: #e31e24;
+		box-shadow: 0 2px 8px rgba(227, 30, 36, 0.15);
+	}
+	.header-dealer-select.empty {
+		border-style: dashed;
+		color: #999;
+	}
+	.header-dealer-select .dealer-icon {
+		width: 18px;
+		height: 18px;
+		color: #e31e24;
+		flex-shrink: 0;
+	}
+	.header-dealer-select .dealer-name {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 140px;
+		font-weight: 500;
+	}
+	.header-dealer-select .dealer-chevron {
+		width: 14px;
+		height: 14px;
+		color: #999;
+		flex-shrink: 0;
+		transition: transform 0.2s;
+	}
+	.header-dealer-select:hover .dealer-chevron {
+		color: #e31e24;
+	}
+	/* Dealer Modal */
+	.dealer-modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0,0,0,0.5);
+		z-index: 1000;
+		display: none;
+		align-items: center;
+		justify-content: center;
+	}
+	.dealer-modal-overlay.active {
+		display: flex;
+	}
+	.dealer-modal {
+		background: #fff;
+		border-radius: 12px;
+		padding: 30px;
+		width: 450px;
+		max-width: 90%;
+		max-height: 80vh;
+		display: flex;
+		flex-direction: column;
+	}
+	.dealer-modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		margin-bottom: 8px;
+	}
+	.dealer-modal-title {
+		font-size: 18px;
+		font-weight: 600;
+		color: #333;
+	}
+	.dealer-modal-close {
+		background: none;
+		border: none;
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		color: #999;
+		transition: background 0.2s, color 0.2s;
+	}
+	.dealer-modal-close:hover {
+		background: #f5f5f5;
+		color: #333;
+	}
+	.dealer-modal-close svg {
+		width: 18px;
+		height: 18px;
+	}
+	.dealer-modal-location {
+		font-size: 13px;
+		color: #666;
+		margin-bottom: 20px;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	.dealer-modal-location svg {
+		width: 14px;
+		height: 14px;
+		color: #e31e24;
+	}
+	.dealer-modal-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin-bottom: 20px;
+		overflow-y: auto;
+		max-height: 320px;
+		flex: 1;
+	}
+	.dealer-modal-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 15px;
+		padding: 15px;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: border-color 0.2s, background 0.2s;
+	}
+	.dealer-modal-item:hover {
+		border-color: #e31e24;
+	}
+	.dealer-modal-item.selected {
+		border-color: #e31e24;
+		background: #fff5f5;
+	}
+	.dealer-radio {
+		width: 20px;
+		height: 20px;
+		border: 2px solid #ccc;
+		border-radius: 50%;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 2px;
+	}
+	.dealer-modal-item.selected .dealer-radio {
+		border-color: #e31e24;
+	}
+	.dealer-radio-inner {
+		width: 10px;
+		height: 10px;
+		background: #e31e24;
+		border-radius: 50%;
+		display: none;
+	}
+	.dealer-modal-item.selected .dealer-radio-inner {
+		display: block;
+	}
+	.dealer-modal-info {
+		flex: 1;
+	}
+	.dealer-modal-name {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333;
+		margin-bottom: 6px;
+	}
+	.dealer-modal-details {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.dealer-modal-detail {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		color: #666;
+	}
+	.dealer-modal-detail svg {
+		width: 14px;
+		height: 14px;
+		color: #999;
+	}
+	.dealer-select-btn {
+		width: 100%;
+		background: #e31e24;
+		color: #fff;
+		border: none;
+		border-radius: 8px;
+		padding: 15px;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		font-family: inherit;
+		transition: background 0.3s;
+		flex-shrink: 0;
+	}
+	.dealer-select-btn:hover {
+		background: #c91a1f;
+	}
+	.dealer-select-btn:disabled {
+		background: #ccc;
+		cursor: not-allowed;
+	}
+	.dealer-select-btn svg {
+		width: 18px;
+		height: 18px;
+	}
+	.dealer-empty {
+		text-align: center;
+		padding: 40px 20px;
+		color: #666;
+	}
+	.dealer-empty-icon {
+		width: 64px;
+		height: 64px;
+		margin: 0 auto 16px;
+		background: #fff3f3;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.dealer-empty-icon svg {
+		width: 32px;
+		height: 32px;
+		color: #e31e24;
+	}
+	.dealer-empty-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333;
+		margin-bottom: 8px;
+	}
+	.dealer-empty-text {
+		font-size: 14px;
+		color: #666;
+		line-height: 1.5;
+		margin-bottom: 20px;
+	}
+	.dealer-empty-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 12px 24px;
+		background: #f5f5f5;
+		border: none;
+		border-radius: 25px;
+		color: #333;
+		font-size: 14px;
+		font-weight: 500;
+		font-family: inherit;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+	.dealer-empty-btn:hover {
+		background: #eee;
+	}
+	.dealer-empty-btn svg {
+		width: 16px;
+		height: 16px;
+	}
+	@media (max-width: 768px) {
+		.dealer-modal {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			max-width: 100%;
+			max-height: 85vh;
+			border-radius: 20px 20px 0 0;
+			padding: 24px;
+		}
 	}
 </style>
 
@@ -867,6 +1158,17 @@
 				<span id="headerUserLocation">Adres Seciniz</span>
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+				</svg>
+			</div>
+			<!-- Dealer Selection -->
+			<div class="header-dealer-select empty" id="dealerSelectBtn" onclick="openDealerModal()">
+				<svg class="dealer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+					<polyline points="9 22 9 12 15 12 15 22"/>
+				</svg>
+				<span class="dealer-name" id="selectedDealerName">Bayi Seciniz</span>
+				<svg class="dealer-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="6 9 12 15 18 9"/>
 				</svg>
 			</div>
 			<!-- Notification -->
@@ -969,6 +1271,35 @@
 	</div>
 </div>
 
+<!-- Dealer Selection Modal -->
+<div class="dealer-modal-overlay" id="dealerModalOverlay" onclick="closeDealerModal(event)">
+	<div class="dealer-modal" onclick="event.stopPropagation()">
+		<div class="dealer-modal-header">
+			<h3 class="dealer-modal-title">Bayi Secin</h3>
+			<button class="dealer-modal-close" onclick="closeDealerModal()">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+				</svg>
+			</button>
+		</div>
+		<p class="dealer-modal-location" id="dealerModalLocation">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+			</svg>
+			<span id="dealerModalLocationText">Yukleniyor...</span>
+		</p>
+		<div class="dealer-modal-list" id="dealerModalList">
+			<div class="dealer-empty">Yukleniyor...</div>
+		</div>
+		<button class="dealer-select-btn" id="dealerSelectConfirmBtn" onclick="confirmDealerSelection()" disabled>
+			Sec
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="20 6 9 17 4 12"/>
+			</svg>
+		</button>
+	</div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1008,6 +1339,26 @@
 </div>
 
 <script>
+// Global functions for onclick handlers - must be defined first
+function openDealerModal() {
+	if (typeof DealerUI !== 'undefined') {
+		DealerUI.openModal();
+	}
+}
+
+function closeDealerModal(event) {
+	if (event && event.target !== event.currentTarget) return;
+	if (typeof DealerUI !== 'undefined') {
+		DealerUI.closeModal();
+	}
+}
+
+function confirmDealerSelection() {
+	if (typeof DealerUI !== 'undefined') {
+		DealerUI.confirmSelection();
+	}
+}
+
 // Notification System
 const NotificationUI = {
 	isInitialized: false,
@@ -1251,5 +1602,305 @@ const NotificationUI = {
 document.addEventListener('DOMContentLoaded', () => {
 	// Wait a bit for other scripts to load
 	setTimeout(() => NotificationUI.init(), 500);
+	setTimeout(() => DealerUI.init(), 600);
 });
+
+// Dealer Selection System
+const DealerUI = {
+	isInitialized: false,
+	currentDealerId: null,
+	currentDealers: [],
+	selectedTempDealerId: null,
+	currentAddressCity: null,
+	currentAddressDistrict: null,
+
+	async init() {
+		if (this.isInitialized) return;
+
+		// Wait for supabase and services to be ready
+		if (typeof supabaseClient === 'undefined' ||
+			typeof DealersService === 'undefined' ||
+			typeof CustomersService === 'undefined' ||
+			typeof AddressesService === 'undefined') {
+			setTimeout(() => this.init(), 200);
+			return;
+		}
+
+		this.isInitialized = true;
+
+		// Load current dealer from customer data
+		await this.loadCurrentDealer();
+	},
+
+	async loadCurrentDealer() {
+		const customerId = sessionStorage.getItem('isyerim_customer_id');
+		if (!customerId) return;
+
+		try {
+			// Get customer with dealer info
+			const { data: customer, error } = await CustomersService.getById(customerId);
+			if (error || !customer) return;
+
+			if (customer.dealer_id && customer.dealer) {
+				this.currentDealerId = customer.dealer_id;
+				this.updateDealerButton(customer.dealer.name);
+				sessionStorage.setItem('isyerim_dealer_id', customer.dealer_id);
+				sessionStorage.setItem('isyerim_dealer_name', customer.dealer.name);
+			}
+		} catch (err) {
+			console.error('Error loading current dealer:', err);
+		}
+	},
+
+	updateDealerButton(dealerName) {
+		const btn = document.getElementById('dealerSelectBtn');
+		const nameEl = document.getElementById('selectedDealerName');
+
+		if (btn && nameEl) {
+			if (dealerName) {
+				btn.classList.remove('empty');
+				nameEl.textContent = dealerName;
+			} else {
+				btn.classList.add('empty');
+				nameEl.textContent = 'Bayi Seciniz';
+			}
+		}
+	},
+
+	async getAddressLocation() {
+		const addressId = sessionStorage.getItem('selected_address_id');
+		if (!addressId) return null;
+
+		try {
+			const { data: address, error } = await AddressesService.getById(addressId);
+			if (error || !address) return null;
+
+			return {
+				city: address.city,
+				district: address.district
+			};
+		} catch (err) {
+			console.error('Error getting address:', err);
+			return null;
+		}
+	},
+
+	async loadDealersForLocation(city, district) {
+		try {
+			const { data: dealers, error } = await DealersService.getByDistrict(city, district);
+			if (error) {
+				console.error('Error loading dealers:', error);
+				return [];
+			}
+			return dealers || [];
+		} catch (err) {
+			console.error('Error loading dealers:', err);
+			return [];
+		}
+	},
+
+	renderDealerList(dealers) {
+		const list = document.getElementById('dealerModalList');
+		if (!list) return;
+
+		if (!dealers || dealers.length === 0) {
+			list.innerHTML = `
+				<div class="dealer-empty">
+					<div class="dealer-empty-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+							<line x1="9" y1="9" x2="9.01" y2="9"/>
+							<line x1="15" y1="9" x2="15.01" y2="9"/>
+						</svg>
+					</div>
+					<h4 class="dealer-empty-title">Bolgenizde Bayi Bulunamadi</h4>
+					<p class="dealer-empty-text">Maalesef ${this.currentAddressDistrict || ''}, ${this.currentAddressCity || ''} bolgesinde aktif bayi bulunmamaktadir.</p>
+					<button class="dealer-empty-btn" onclick="openAddressModal()">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+						</svg>
+						Farkli Adres Sec
+					</button>
+				</div>
+			`;
+			return;
+		}
+
+		this.currentDealers = dealers;
+
+		list.innerHTML = dealers.map(dealer => {
+			const isSelected = dealer.id === this.currentDealerId;
+			return `
+				<div class="dealer-modal-item ${isSelected ? 'selected' : ''}" onclick="DealerUI.selectDealer('${dealer.id}')">
+					<div class="dealer-radio">
+						<div class="dealer-radio-inner"></div>
+					</div>
+					<div class="dealer-modal-info">
+						<div class="dealer-modal-name">${this.escapeHtml(dealer.name)}</div>
+						<div class="dealer-modal-details">
+							<div class="dealer-modal-detail">
+								<svg viewBox="0 0 24 24" fill="currentColor">
+									<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+								</svg>
+								<span>${this.escapeHtml(dealer.district || '')}, ${this.escapeHtml(dealer.city || '')}</span>
+							</div>
+							${dealer.phone ? `
+							<div class="dealer-modal-detail">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+								</svg>
+								<span>${this.escapeHtml(dealer.phone)}</span>
+							</div>
+							` : ''}
+						</div>
+					</div>
+				</div>
+			`;
+		}).join('');
+
+		// Pre-select current dealer
+		if (this.currentDealerId) {
+			this.selectedTempDealerId = this.currentDealerId;
+			document.getElementById('dealerSelectConfirmBtn').disabled = false;
+		}
+	},
+
+	selectDealer(dealerId) {
+		// Update selection
+		this.selectedTempDealerId = dealerId;
+
+		// Update UI
+		document.querySelectorAll('.dealer-modal-item').forEach(item => {
+			item.classList.remove('selected');
+		});
+		event.currentTarget.classList.add('selected');
+
+		// Enable confirm button
+		document.getElementById('dealerSelectConfirmBtn').disabled = false;
+	},
+
+	async confirmSelection() {
+		if (!this.selectedTempDealerId) return;
+
+		const customerId = sessionStorage.getItem('isyerim_customer_id');
+		if (!customerId) return;
+
+		const btn = document.getElementById('dealerSelectConfirmBtn');
+		btn.disabled = true;
+		btn.innerHTML = '<span class="spinner"></span> Kaydediliyor...';
+
+		try {
+			// Update customer with new dealer_id
+			const { error } = await CustomersService.update(customerId, {
+				dealer_id: this.selectedTempDealerId
+			});
+
+			if (error) {
+				console.error('Error updating dealer:', error);
+				alert('Bayi kaydedilemedi. Lutfen tekrar deneyiniz.');
+				btn.disabled = false;
+				btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+				return;
+			}
+
+			// Update local state
+			this.currentDealerId = this.selectedTempDealerId;
+
+			// Find dealer name
+			const dealer = this.currentDealers.find(d => d.id === this.selectedTempDealerId);
+			const dealerName = dealer ? dealer.name : 'Bayi';
+
+			// Update sessionStorage
+			sessionStorage.setItem('isyerim_dealer_id', this.selectedTempDealerId);
+			sessionStorage.setItem('isyerim_dealer_name', dealerName);
+
+			// Update header button
+			this.updateDealerButton(dealerName);
+
+			// Close modal
+			this.closeModal();
+
+		} catch (err) {
+			console.error('Error confirming dealer:', err);
+			alert('Bir hata olustu. Lutfen tekrar deneyiniz.');
+			btn.disabled = false;
+			btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+		}
+	},
+
+	async openModal() {
+		const overlay = document.getElementById('dealerModalOverlay');
+		const locationText = document.getElementById('dealerModalLocationText');
+		const list = document.getElementById('dealerModalList');
+		const btn = document.getElementById('dealerSelectConfirmBtn');
+
+		if (!overlay) return;
+
+		// Reset state
+		this.selectedTempDealerId = this.currentDealerId;
+		btn.disabled = !this.currentDealerId;
+		btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+
+		// Show loading
+		list.innerHTML = '<div class="dealer-empty">Yukleniyor...</div>';
+		locationText.textContent = 'Yukleniyor...';
+
+		// Show modal
+		overlay.classList.add('active');
+
+		// Get address location
+		const location = await this.getAddressLocation();
+
+		if (!location || !location.city || !location.district) {
+			locationText.textContent = 'Adres bilgisi alinamadi';
+			list.innerHTML = `
+				<div class="dealer-empty">
+					<div class="dealer-empty-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="12" y1="8" x2="12" y2="12"/>
+							<line x1="12" y1="16" x2="12.01" y2="16"/>
+						</svg>
+					</div>
+					<h4 class="dealer-empty-title">Adres Secilmedi</h4>
+					<p class="dealer-empty-text">Lutfen once bir adres seciniz.</p>
+					<button class="dealer-empty-btn" onclick="openAddressModal(); closeDealerModal();">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+						</svg>
+						Adres Sec
+					</button>
+				</div>
+			`;
+			return;
+		}
+
+		this.currentAddressCity = location.city;
+		this.currentAddressDistrict = location.district;
+
+		// Update location text
+		locationText.textContent = `${location.district}, ${location.city}`;
+
+		// Load dealers for this location
+		const dealers = await this.loadDealersForLocation(location.city, location.district);
+
+		// Render dealer list
+		this.renderDealerList(dealers);
+	},
+
+	closeModal() {
+		const overlay = document.getElementById('dealerModalOverlay');
+		if (overlay) {
+			overlay.classList.remove('active');
+		}
+	},
+
+	escapeHtml(text) {
+		if (!text) return '';
+		const div = document.createElement('div');
+		div.textContent = text;
+		return div.innerHTML;
+	}
+};
 </script>

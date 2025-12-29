@@ -221,6 +221,31 @@ const CustomersService = {
         } catch (error) {
             return handleSupabaseError(error, 'CustomersService.getCount');
         }
+    },
+
+    /**
+     * Güvenlik sorularının cevaplarını kaydet
+     */
+    async updateSecurityAnswers(customerId, answers) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('customers')
+                .update({
+                    security_q1: answers.q1,
+                    security_q2: answers.q2,
+                    security_q3: answers.q3,
+                    security_q4: answers.q4,
+                    security_accepted_at: new Date().toISOString()
+                })
+                .eq('id', customerId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'CustomersService.updateSecurityAnswers');
+        }
     }
 };
 
