@@ -1090,6 +1090,133 @@
 				font-size: 12px;
 			}
 		}
+
+		/* Pagination Styles */
+		.pagination-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+			margin-top: 20px;
+			padding: 15px 20px;
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+		}
+
+		.pagination-info {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.pagination-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.pagination-btn {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 16px;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-btn:hover:not(:disabled) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		.pagination-pages {
+			display: flex;
+			gap: 4px;
+		}
+
+		.pagination-page {
+			min-width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-page:hover:not(.ellipsis) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-page.active {
+			background: #002c77;
+			border-color: #002c77;
+			color: #fff;
+		}
+
+		.pagination-page.ellipsis {
+			border: none;
+			cursor: default;
+			background: transparent;
+		}
+
+		.pagination-size {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.pagination-size select {
+			padding: 6px 10px;
+			border: 1px solid #e0e0e0;
+			border-radius: 6px;
+			font-size: 13px;
+			cursor: pointer;
+		}
+
+		.pagination-size select:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		@media (max-width: 768px) {
+			.pagination-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.pagination-controls {
+				justify-content: center;
+			}
+
+			.pagination-pages {
+				display: none;
+			}
+
+			.pagination-info,
+			.pagination-size {
+				justify-content: center;
+			}
+		}
 	</style>
 </head>
 
@@ -1161,6 +1288,35 @@
 				<p>Müşteriler yükleniyor...</p>
 			</div>
 		</div>
+
+		<!-- Pagination Controls -->
+		<div class="pagination-container" id="pagination-container" style="display: none;">
+			<div class="pagination-info">
+				<span id="pagination-info-text">1-20 / 150 müşteri</span>
+			</div>
+			<div class="pagination-controls">
+				<button class="pagination-btn" id="prev-page" disabled>
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+					Önceki
+				</button>
+				<div class="pagination-pages" id="pagination-pages">
+					<!-- Dinamik sayfa numaraları -->
+				</div>
+				<button class="pagination-btn" id="next-page">
+					Sonraki
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+				</button>
+			</div>
+			<div class="pagination-size">
+				<label>Sayfa başına:</label>
+				<select id="page-size-select">
+					<option value="10">10</option>
+					<option value="20" selected>20</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+			</div>
+		</div>
 	</main>
 
 	<!-- Mobile Sidebar Component -->
@@ -1190,6 +1346,15 @@
 			var allCustomers = [];
 			var currentDealerId = null;
 
+			// Pagination state
+			var paginationState = {
+				currentPage: 0,
+				pageSize: 20,
+				totalCount: 0,
+				totalPages: 0,
+				currentFilter: 'all' // Varsayılan: Tümü (rejected/cancelled hariç)
+			};
+
 			// Loading overlay
 			function showLoading() {
 				if (!$('#loading-overlay').length) {
@@ -1203,7 +1368,7 @@
 				$('#loading-overlay').hide();
 			}
 
-			// Müşteri listesini Supabase'den yükle (Tüm teklifler üzerinden)
+			// Müşteri listesini Supabase'den yükle (Pagination destekli)
 			async function loadCustomers() {
 				showLoading();
 				try {
@@ -1216,12 +1381,34 @@
 						return;
 					}
 
-					// Tüm teklifleri olan müşterileri çek
-					const { data: offersData, error } = await OffersService.getAllOffersByDealerId(currentDealerId);
-					if (error) throw new Error(error);
+					// Pagination ve filtre seçeneklerini hazırla
+					var options = {
+						page: paginationState.currentPage,
+						pageSize: paginationState.pageSize
+					};
 
-					// Offers verisini müşteri formatına dönüştür (uyumluluk için)
-					allCustomers = (offersData || []).map(function(offer) {
+					// Filtre uygula
+					if (paginationState.currentFilter === 'all') {
+						// Tümü: rejected ve cancelled hariç
+						options.excludeStatus = ['rejected', 'cancelled'];
+					} else if (paginationState.currentFilter === 'rejected') {
+						// İptal: rejected + cancelled birlikte
+						options.includeStatus = ['rejected', 'cancelled'];
+					} else {
+						// Belirli bir status
+						options.status = paginationState.currentFilter;
+					}
+
+					// Sayfalı veri çek
+					const result = await OffersService.getPaginatedOffersByDealerId(currentDealerId, options);
+					if (result.error) throw new Error(result.error);
+
+					// Pagination state güncelle
+					paginationState.totalCount = result.totalCount;
+					paginationState.totalPages = result.totalPages;
+
+					// Offers verisini müşteri formatına dönüştür
+					allCustomers = (result.data || []).map(function(offer) {
 						return {
 							...offer.customer,
 							offer_id: offer.id,
@@ -1232,13 +1419,70 @@
 					});
 
 					renderCustomerList(allCustomers);
+					renderPagination();
+
+					// Filtre sayılarını ayrı sorguda güncelle (ilk yüklemede)
 					updateFilterCounts();
+
 					hideLoading();
 				} catch (err) {
 					hideLoading();
 					console.error('Müşteri yükleme hatası:', err);
 					$('.customer-list').html('<div class="empty-state"><p>Müşteriler yüklenirken hata oluştu</p></div>');
 				}
+			}
+
+			// Pagination render
+			function renderPagination() {
+				var $container = $('#pagination-container');
+				if (paginationState.totalCount === 0) {
+					$container.hide();
+					return;
+				}
+				$container.show();
+
+				// Info text
+				var from = paginationState.currentPage * paginationState.pageSize + 1;
+				var to = Math.min(from + paginationState.pageSize - 1, paginationState.totalCount);
+				$('#pagination-info-text').text(from + '-' + to + ' / ' + paginationState.totalCount + ' müşteri');
+
+				// Prev/Next buttons
+				$('#prev-page').prop('disabled', paginationState.currentPage === 0);
+				$('#next-page').prop('disabled', paginationState.currentPage >= paginationState.totalPages - 1);
+
+				// Page numbers
+				renderPageNumbers();
+			}
+
+			function renderPageNumbers() {
+				var $pages = $('#pagination-pages');
+				$pages.empty();
+
+				var total = paginationState.totalPages;
+				var current = paginationState.currentPage;
+
+				// Basit pagination: max 7 buton göster
+				var pages = [];
+				if (total <= 7) {
+					for (var i = 0; i < total; i++) pages.push(i);
+				} else {
+					pages = [0];
+					if (current > 2) pages.push('...');
+					for (var j = Math.max(1, current - 1); j <= Math.min(total - 2, current + 1); j++) {
+						pages.push(j);
+					}
+					if (current < total - 3) pages.push('...');
+					pages.push(total - 1);
+				}
+
+				pages.forEach(function(p) {
+					if (p === '...') {
+						$pages.append('<span class="pagination-page ellipsis">...</span>');
+					} else {
+						var isActive = p === current ? ' active' : '';
+						$pages.append('<button class="pagination-page' + isActive + '" data-page="' + p + '">' + (p + 1) + '</button>');
+					}
+				});
 			}
 
 			// Teklif durumu badge'i oluştur
@@ -1278,21 +1522,6 @@
 				'</div>';
 			}
 
-			// Uyarıları hesapla
-			function getWarnings(customer) {
-				var warnings = [];
-				if (!customer.customer_prices) return warnings;
-				customer.customer_prices.forEach(function(cp) {
-					if (cp.commitment_quantity > 0 && cp.this_month_quantity !== undefined) {
-						var percent = (cp.this_month_quantity / cp.commitment_quantity) * 100;
-						if (percent < 50) {
-							warnings.push({ product: cp.product, percent: Math.round(percent) });
-						}
-					}
-				});
-				return warnings;
-			}
-
 			// Müşteri listesini render et
 			function renderCustomerList(customers) {
 				var $list = $('.customer-list');
@@ -1316,43 +1545,58 @@
 				});
 			}
 
-			// Filtre sayılarını güncelle
-			function updateFilterCounts() {
-				var counts = {
-					all: 0,
-					requested: 0,
-					pending: 0,
-					accepted: 0,
-					rejected: 0,
-					cancelled: 0,
-					passive: 0
-				};
+			// Filtre sayılarını güncelle (server-side count)
+			async function updateFilterCounts() {
+				if (!currentDealerId) return;
 
-				allCustomers.forEach(function(c) {
-					counts.all++;
-					var status = c.offer_status || 'pending';
-					if (counts[status] !== undefined) {
-						counts[status]++;
-					}
-				});
+				try {
+					const { data: counts, error } = await OffersService.getOffersCountByStatus(currentDealerId);
+					if (error) throw error;
 
-				// Rejected ve cancelled birleşik sayılsın
-				var rejectedTotal = counts.rejected + counts.cancelled;
+					// Rejected ve cancelled birleşik sayılsın
+					var rejectedTotal = (counts.rejected || 0) + (counts.cancelled || 0);
 
-				// Tümü = toplam - (rejected + cancelled) - pasifler de dahil
-				var activeCount = counts.all - counts.rejected - counts.cancelled;
-				$('.filter-btn[data-filter="all"] .count').text(activeCount);
-				$('.filter-btn[data-filter="requested"] .count').text(counts.requested);
-				$('.filter-btn[data-filter="pending"] .count').text(counts.pending);
-				$('.filter-btn[data-filter="accepted"] .count').text(counts.accepted);
-				$('.filter-btn[data-filter="rejected"] .count').text(rejectedTotal);
-				$('.filter-btn[data-filter="passive"] .count').text(counts.passive);
+					$('.filter-btn[data-filter="all"] .count').text(counts.all || 0);
+					$('.filter-btn[data-filter="requested"] .count').text(counts.requested || 0);
+					$('.filter-btn[data-filter="pending"] .count').text(counts.pending || 0);
+					$('.filter-btn[data-filter="accepted"] .count').text(counts.accepted || 0);
+					$('.filter-btn[data-filter="rejected"] .count').text(rejectedTotal);
+					$('.filter-btn[data-filter="passive"] .count').text(counts.passive || 0);
+				} catch (err) {
+					console.error('Filtre sayıları yüklenemedi:', err);
+				}
 			}
 
 			// Müşterileri yükle
 			loadCustomers();
 
-			// Filter functionality
+			// Pagination event handlers
+			$('#prev-page').on('click', function() {
+				if (paginationState.currentPage > 0) {
+					paginationState.currentPage--;
+					loadCustomers();
+				}
+			});
+
+			$('#next-page').on('click', function() {
+				if (paginationState.currentPage < paginationState.totalPages - 1) {
+					paginationState.currentPage++;
+					loadCustomers();
+				}
+			});
+
+			$(document).on('click', '.pagination-page:not(.ellipsis)', function() {
+				paginationState.currentPage = parseInt($(this).data('page'));
+				loadCustomers();
+			});
+
+			$('#page-size-select').on('change', function() {
+				paginationState.pageSize = parseInt($(this).val());
+				paginationState.currentPage = 0; // Sayfa başına dön
+				loadCustomers();
+			});
+
+			// Filter functionality (server-side)
 			$('.filter-btn').on('click', function() {
 				var $btn = $(this);
 				var filter = $btn.data('filter');
@@ -1361,38 +1605,20 @@
 				$('.filter-btn').removeClass('active');
 				$btn.addClass('active');
 
-				// Filter customers
-				$('.customer-card').each(function() {
-					var $card = $(this);
-					var status = $card.data('status');
-
-					if (filter === 'all') {
-						// Tümü: cancelled ve rejected dışındakileri göster (passive dahil)
-						if (status === 'cancelled' || status === 'rejected') {
-							$card.hide();
-						} else {
-							$card.show();
-						}
-					} else if (filter === 'rejected' && (status === 'rejected' || status === 'cancelled')) {
-						$card.show();
-					} else if (filter === 'passive' && status === 'passive') {
-						$card.show();
-					} else if (filter === status) {
-						$card.show();
-					} else {
-						$card.hide();
-					}
-				});
+				// Filtre değiştiğinde sayfa 0'a dön ve yeniden yükle
+				paginationState.currentFilter = filter;
+				paginationState.currentPage = 0;
+				loadCustomers();
 			});
 
-			// Search functionality
+			// Search functionality (client-side - mevcut sayfada)
 			$('#search-input').on('keyup', function() {
 				var searchTerm = $(this).val().toLowerCase();
 
 				$('.customer-card').each(function() {
 					var $card = $(this);
-					var name = $card.data('name').toLowerCase();
-					var vkn = $card.data('vkn').toString();
+					var name = ($card.data('name') || '').toLowerCase();
+					var vkn = ($card.data('vkn') || '').toString();
 
 					if (name.indexOf(searchTerm) > -1 || vkn.indexOf(searchTerm) > -1) {
 						$card.show();
@@ -1400,20 +1626,6 @@
 						$card.hide();
 					}
 				});
-
-				// Reset filter buttons when searching
-				if (searchTerm.length > 0) {
-					$('.filter-btn').removeClass('active');
-					$('.filter-btn[data-filter="all"]').addClass('active');
-				}
-			});
-
-			// Customer card click - navigate to detail
-			$('.customer-card').on('click', function(e) {
-				if (!$(e.target).closest('.customer-action').length) {
-					var offerId = $(this).data('offer-id');
-					window.location.href = 'bayi-musteri-ekle.html?offer_id=' + offerId;
-				}
 			});
 		});
 	</script>

@@ -441,6 +441,241 @@
 			max-width: none;
 		}
 	}
+	/* Notification Detail Modal */
+	.notification-modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 1000;
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.3s ease, visibility 0.3s ease;
+	}
+	.notification-modal-overlay.active {
+		opacity: 1;
+		visibility: visible;
+	}
+	.notification-modal {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(0.95);
+		background: #fff;
+		border-radius: 16px;
+		width: 480px;
+		max-width: 90vw;
+		max-height: 80vh;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		opacity: 0;
+		transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+	.notification-modal-overlay.active .notification-modal {
+		transform: translate(-50%, -50%) scale(1);
+		opacity: 1;
+	}
+	.notification-modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		padding: 20px 24px;
+		border-bottom: 1px solid #eee;
+		flex-shrink: 0;
+	}
+	.notification-modal-title-area {
+		flex: 1;
+	}
+	.notification-modal-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 12px;
+		border-radius: 20px;
+		font-size: 13px;
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+	.notification-modal-status.accepted { background: #dcfce7; color: #16a34a; }
+	.notification-modal-status.rejected { background: #fee2e2; color: #dc2626; }
+	.notification-modal-status.pending { background: #dbeafe; color: #2563eb; }
+	.notification-modal-status.price_updated { background: #fef3c7; color: #d97706; }
+	.notification-modal-status.message { background: #e0e7ff; color: #4f46e5; }
+	.notification-modal-status.activated { background: #dcfce7; color: #16a34a; }
+	.notification-modal-status.passived { background: #f3f4f6; color: #6b7280; }
+	.notification-modal-status.cancelled { background: #f3f4f6; color: #6b7280; }
+	.notification-modal-status svg {
+		width: 16px;
+		height: 16px;
+	}
+	.notification-modal-subtitle {
+		font-size: 13px;
+		color: #666;
+	}
+	.notification-modal-close {
+		background: none;
+		border: none;
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		color: #999;
+		transition: background 0.2s, color 0.2s;
+		flex-shrink: 0;
+		margin-left: 12px;
+	}
+	.notification-modal-close:hover {
+		background: #f5f5f5;
+		color: #333;
+	}
+	.notification-modal-close svg {
+		width: 20px;
+		height: 20px;
+	}
+	.notification-modal-body {
+		padding: 24px;
+		overflow-y: auto;
+		flex: 1;
+	}
+	.notification-modal-info {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+	.notification-modal-row {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+	}
+	.notification-modal-row-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 10px;
+		background: #f5f5f5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+	.notification-modal-row-icon svg {
+		width: 20px;
+		height: 20px;
+		color: #666;
+	}
+	.notification-modal-row-content {
+		flex: 1;
+	}
+	.notification-modal-row-label {
+		font-size: 12px;
+		color: #999;
+		margin-bottom: 2px;
+	}
+	.notification-modal-row-value {
+		font-size: 15px;
+		color: #333;
+		font-weight: 500;
+	}
+	.notification-modal-row-value.price {
+		font-size: 20px;
+		color: #e31e24;
+		font-weight: 700;
+	}
+	.notification-modal-message {
+		background: #f9f9f9;
+		border-radius: 12px;
+		padding: 16px;
+		margin-top: 8px;
+	}
+	.notification-modal-message-label {
+		font-size: 12px;
+		color: #999;
+		margin-bottom: 6px;
+	}
+	.notification-modal-message-text {
+		font-size: 14px;
+		color: #333;
+		line-height: 1.5;
+	}
+	.notification-modal-footer {
+		display: flex;
+		gap: 12px;
+		padding: 20px 24px;
+		border-top: 1px solid #eee;
+		flex-shrink: 0;
+	}
+	.notification-modal-btn {
+		flex: 1;
+		padding: 14px 20px;
+		border-radius: 10px;
+		font-size: 15px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		font-family: inherit;
+	}
+	.notification-modal-btn.primary {
+		background: #e31e24;
+		color: #fff;
+		border: none;
+	}
+	.notification-modal-btn.primary:hover {
+		background: #c91a1f;
+	}
+	.notification-modal-btn.secondary {
+		background: #fff;
+		color: #666;
+		border: 1px solid #ddd;
+	}
+	.notification-modal-btn.secondary:hover {
+		background: #f5f5f5;
+		border-color: #ccc;
+	}
+	.notification-modal-btn svg {
+		width: 18px;
+		height: 18px;
+	}
+	.notification-modal-loading {
+		text-align: center;
+		padding: 40px;
+		color: #666;
+	}
+	@media (max-width: 768px) {
+		.notification-modal {
+			top: auto;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			transform: translateY(100%);
+			width: 100%;
+			max-width: 100%;
+			max-height: 75vh;
+			border-radius: 20px 20px 0 0;
+		}
+		.notification-modal-overlay.active .notification-modal {
+			transform: translateY(0);
+		}
+		.notification-modal-header {
+			padding: 16px 20px;
+		}
+		.notification-modal-body {
+			padding: 20px;
+		}
+		.notification-modal-footer {
+			padding: 16px 20px;
+			flex-direction: column;
+		}
+	}
 	/* Address Selection Modal */
 	.address-modal-overlay {
 		position: fixed;
@@ -641,7 +876,7 @@
 						<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
 						<path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 					</svg>
-					<span class="notification-badge hidden" id="notificationBadge">0</span>
+					<span class="notification-badge" id="notificationBadge">0</span>
 				</a>
 				<!-- Notification Dropdown -->
 				<div class="notification-dropdown" id="notificationDropdown">
@@ -655,7 +890,7 @@
 								<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
 								<path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 							</svg>
-							<p>Bildirim bulunmuyor</p>
+							<p>Hic okunmamis mesajiniz yok</p>
 						</div>
 					</div>
 				</div>
@@ -736,6 +971,41 @@
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Notification Detail Modal -->
+<div class="notification-modal-overlay" id="notificationModalOverlay" onclick="ComponentLoader.closeNotificationModal(event)">
+	<div class="notification-modal" onclick="event.stopPropagation()">
+		<div class="notification-modal-header">
+			<div class="notification-modal-title-area">
+				<div class="notification-modal-status" id="notificationModalStatus">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+					<span id="notificationModalStatusText">Durum</span>
+				</div>
+				<div class="notification-modal-subtitle" id="notificationModalTime">2 saat once</div>
+			</div>
+			<button class="notification-modal-close" onclick="ComponentLoader.closeNotificationModal()">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+				</svg>
+			</button>
+		</div>
+		<div class="notification-modal-body" id="notificationModalBody">
+			<div class="notification-modal-loading">Yukleniyor...</div>
+		</div>
+		<div class="notification-modal-footer">
+			<button class="notification-modal-btn secondary" onclick="ComponentLoader.closeNotificationModal()">
+				Kapat
+			</button>
+			<button class="notification-modal-btn primary" id="notificationModalViewBtn" onclick="ComponentLoader.goToOffer()">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+					<circle cx="12" cy="12" r="3"/>
+				</svg>
+				Teklifi Goruntule
+			</button>
+		</div>
+	</div>
+</div>
 
 <script>
 // Notification System
@@ -824,7 +1094,7 @@ const NotificationUI = {
 						<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
 						<path d="M13.73 21a2 2 0 0 1-3.46 0"/>
 					</svg>
-					<p>Bildirim bulunmuyor</p>
+					<p>Hic okunmamis mesajiniz yok</p>
 				</div>
 			`;
 			return;
@@ -892,13 +1162,7 @@ const NotificationUI = {
 		if (!badge) return;
 
 		const unreadCount = notifications ? notifications.filter(n => !n.is_read).length : 0;
-
-		if (unreadCount > 0) {
-			badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-			badge.classList.remove('hidden');
-		} else {
-			badge.classList.add('hidden');
-		}
+		badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
 	},
 
 	async handleNotificationClick(notificationId, offerId) {

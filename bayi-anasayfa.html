@@ -49,19 +49,19 @@
 			height: 40px;
 		}
 
-		.header__nav {
-			display: flex;
+		.bayi-header-nav {
+			display: none; /* Nav gizli - sidebar'dan acilacak */
 			align-items: center;
 			gap: 30px;
 		}
 
-		.header__nav nav ul {
+		.bayi-header-nav nav ul {
 			display: flex;
 			list-style: none;
 			gap: 25px;
 		}
 
-		.header__nav nav ul li a {
+		.bayi-header-nav nav ul li a {
 			text-decoration: none;
 			color: #333;
 			font-size: 14px;
@@ -69,8 +69,12 @@
 			transition: color 0.2s;
 		}
 
-		.header__nav nav ul li a:hover {
+		.bayi-header-nav nav ul li a:hover {
 			color: #002c77;
+		}
+
+		.header__user-panel {
+			display: none; /* User panel gizli */
 		}
 
 		.header__user-panel ul {
@@ -131,7 +135,7 @@
 		}
 
 		.header__mobile {
-			display: none;
+			display: flex;
 			width: 40px;
 			height: 40px;
 			align-items: center;
@@ -941,15 +945,54 @@
 			}
 		}
 
+		/* Mobil Kontroller Container - Her zaman gorunur */
+		.header__mobile-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		/* Mobile Notification Bell */
+		.header__mobile-notification {
+			display: flex;
+			position: relative;
+			width: 40px;
+			height: 40px;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			background: #f5f7fa;
+			border-radius: 10px;
+		}
+
+		.header__mobile-notification:hover {
+			background: #e8ecf1;
+		}
+
+		.header__mobile-notification svg {
+			width: 20px;
+			height: 20px;
+			stroke: #333;
+		}
+
+		.header__mobile-notification .badge {
+			position: absolute;
+			top: -2px;
+			right: -2px;
+			min-width: 18px;
+			height: 18px;
+			background: #e31e24;
+			color: #fff;
+			font-size: 11px;
+			font-weight: 600;
+			border-radius: 9px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0 4px;
+		}
+
 		@media (max-width: 1024px) {
-			.header__nav nav {
-				display: none;
-			}
-
-			.header__mobile {
-				display: flex;
-			}
-
 			.stats-grid {
 				grid-template-columns: 1fr;
 			}

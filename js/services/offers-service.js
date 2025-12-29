@@ -572,6 +572,133 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getLatestOfferForDealerCustomer');
         }
+    },
+
+    /**
+     * Bayinin tekliflerini sayfalı olarak getir
+     * @param {string} dealerId - Bayi ID
+     * @param {object} options - Sayfalama ve filtreleme seçenekleri
+     * @param {number} options.page - Sayfa numarası (0 tabanlı)
+     * @param {number} options.pageSize - Sayfa başına kayıt sayısı
+     * @param {string} options.status - Tek bir status filtresi (opsiyonel)
+     * @param {array} options.excludeStatus - Hariç tutulacak statusler (opsiyonel)
+     * @param {array} options.includeStatus - Dahil edilecek statusler (opsiyonel)
+     * @param {string} options.search - Arama terimi (opsiyonel)
+     */
+    async getPaginatedOffersByDealerId(dealerId, options = {}) {
+        try {
+            const {
+                page = 0,
+                pageSize = 20,
+                status = null,
+                excludeStatus = null,
+                includeStatus = null,
+                search = ''
+            } = options;
+
+            const from = page * pageSize;
+            const to = from + pageSize - 1;
+
+            let query = supabaseClient
+                .from('offers')
+                .select(`
+                    id,
+                    status,
+                    created_at,
+                    updated_at,
+                    notes,
+                    customer:customers(
+                        id,
+                        vkn,
+                        name,
+                        company_name,
+                        phone,
+                        email,
+                        is_active
+                    ),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        this_month_quantity,
+                        last_month_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `, { count: 'exact' })
+                .eq('dealer_id', dealerId);
+
+            // Status filtreleri
+            if (status) {
+                query = query.eq('status', status);
+            } else if (includeStatus && includeStatus.length > 0) {
+                query = query.in('status', includeStatus);
+            } else if (excludeStatus && excludeStatus.length > 0) {
+                excludeStatus.forEach(s => {
+                    query = query.neq('status', s);
+                });
+            }
+
+            query = query
+                .order('created_at', { ascending: false })
+                .range(from, to);
+
+            const { data, error, count } = await query;
+
+            if (error) throw error;
+
+            return {
+                data,
+                error: null,
+                totalCount: count,
+                totalPages: Math.ceil(count / pageSize),
+                currentPage: page,
+                pageSize
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getPaginatedOffersByDealerId');
+        }
+    },
+
+    /**
+     * Bayinin teklif sayılarını status bazında getir
+     * @param {string} dealerId - Bayi ID
+     */
+    async getOffersCountByStatus(dealerId) {
+        try {
+            // Tek sorguda tüm status'ları al
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select('status')
+                .eq('dealer_id', dealerId);
+
+            if (error) throw error;
+
+            const counts = {
+                requested: 0,
+                pending: 0,
+                accepted: 0,
+                rejected: 0,
+                cancelled: 0,
+                passive: 0
+            };
+
+            // Sayıları hesapla
+            data.forEach(offer => {
+                if (counts[offer.status] !== undefined) {
+                    counts[offer.status]++;
+                }
+            });
+
+            // "Tümü" = toplam - rejected - cancelled
+            const total = data.length;
+            counts.all = total - counts.rejected - counts.cancelled;
+
+            return { data: counts, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getOffersCountByStatus');
+        }
     }
 };
 
