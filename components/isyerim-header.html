@@ -1339,25 +1339,7 @@
 </div>
 
 <script>
-// Global functions for onclick handlers - must be defined first
-function openDealerModal() {
-	if (typeof DealerUI !== 'undefined') {
-		DealerUI.openModal();
-	}
-}
-
-function closeDealerModal(event) {
-	if (event && event.target !== event.currentTarget) return;
-	if (typeof DealerUI !== 'undefined') {
-		DealerUI.closeModal();
-	}
-}
-
-function confirmDealerSelection() {
-	if (typeof DealerUI !== 'undefined') {
-		DealerUI.confirmSelection();
-	}
-}
+// Bayi modal fonksiyonlari component-loader.js'de tanimli
 
 // Notification System
 const NotificationUI = {

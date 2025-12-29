@@ -38,6 +38,9 @@ const ComponentLoader = {
 
         // Componentler yuklendikten sonra event'leri bagla
         this.initializeComponents();
+
+        // Mevcut bayiyi yukle
+        loadCurrentDealer();
     },
 
     /**
@@ -1191,6 +1194,307 @@ window.confirmAddressSelection = function() {
 
     window.closeAddressModal();
 };
+
+// ============================================
+// BAYI SECIM MODAL FONKSIYONLARI
+// ============================================
+
+// Bayi Modal Global Degiskenleri
+var currentDealerId = sessionStorage.getItem('isyerim_dealer_id') || null;
+var currentDealerName = sessionStorage.getItem('isyerim_dealer_name') || null;
+var selectedTempDealerId = null;
+var dealerModalDealers = [];
+
+// Turkce karakterleri ASCII'ye cevir
+function normalizeTurkishForDealer(str) {
+    if (!str) return '';
+    return str
+        .toLowerCase()
+        .replace(/ç/g, 'c')
+        .replace(/ğ/g, 'g')
+        .replace(/ı/g, 'i')
+        .replace(/i̇/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ş/g, 's')
+        .replace(/ü/g, 'u');
+}
+
+// Bayi Modal Ac
+window.openDealerModal = async function() {
+    var customerId = sessionStorage.getItem('isyerim_customer_id');
+    if (!customerId) {
+        window.location.href = 'isyerim-musteri-login.html';
+        return;
+    }
+
+    var overlay = document.getElementById('dealerModalOverlay');
+    if (!overlay) {
+        console.error('Dealer modal overlay bulunamadi');
+        return;
+    }
+
+    // Reset state
+    selectedTempDealerId = currentDealerId;
+
+    var locationText = document.getElementById('dealerModalLocationText');
+    var list = document.getElementById('dealerModalList');
+    var btn = document.getElementById('dealerSelectConfirmBtn');
+
+    if (btn) {
+        btn.disabled = !currentDealerId;
+    }
+
+    // Show loading
+    if (list) {
+        list.innerHTML = '<div class="dealer-empty">Yukleniyor...</div>';
+    }
+    if (locationText) {
+        locationText.textContent = 'Yukleniyor...';
+    }
+
+    // Show modal
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // Get address location
+    var addressId = sessionStorage.getItem('selected_address_id');
+    if (!addressId) {
+        if (locationText) locationText.textContent = 'Adres bilgisi alinamadi';
+        if (list) {
+            list.innerHTML = '<div class="dealer-empty">' +
+                '<div class="dealer-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>' +
+                '<h4 class="dealer-empty-title">Adres Secilmedi</h4>' +
+                '<p class="dealer-empty-text">Lutfen once bir adres seciniz.</p>' +
+                '<button class="dealer-empty-btn" onclick="openAddressModal(); closeDealerModal();">' +
+                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
+                'Adres Sec</button></div>';
+        }
+        return;
+    }
+
+    // Get address details
+    if (typeof AddressesService === 'undefined') {
+        if (locationText) locationText.textContent = 'Servis yuklenemedi';
+        return;
+    }
+
+    var addressResult = await AddressesService.getById(addressId);
+    if (addressResult.error || !addressResult.data) {
+        if (locationText) locationText.textContent = 'Adres bilgisi alinamadi';
+        return;
+    }
+
+    var address = addressResult.data;
+    var city = address.city;
+    var district = address.district;
+
+    if (locationText) {
+        locationText.textContent = district + ', ' + city;
+    }
+
+    // Load dealers for this location
+    if (typeof DealersService === 'undefined') {
+        if (list) list.innerHTML = '<div class="dealer-empty">Bayi servisi yuklenemedi</div>';
+        return;
+    }
+
+    var dealersResult = await DealersService.getByDistrict(city, district);
+    if (dealersResult.error) {
+        if (list) list.innerHTML = '<div class="dealer-empty">Bayiler yuklenemedi</div>';
+        return;
+    }
+
+    var dealers = dealersResult.data || [];
+    dealerModalDealers = dealers;
+
+    // Render dealer list
+    if (!dealers || dealers.length === 0) {
+        if (list) {
+            list.innerHTML = '<div class="dealer-empty">' +
+                '<div class="dealer-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>' +
+                '<h4 class="dealer-empty-title">Bolgenizde Bayi Bulunamadi</h4>' +
+                '<p class="dealer-empty-text">Maalesef ' + district + ', ' + city + ' bolgesinde aktif bayi bulunmamaktadir.</p>' +
+                '<button class="dealer-empty-btn" onclick="openAddressModal(); closeDealerModal();">' +
+                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
+                'Farkli Adres Sec</button></div>';
+        }
+        return;
+    }
+
+    var html = '';
+    dealers.forEach(function(dealer) {
+        var isSelected = dealer.id === currentDealerId;
+        html += '<div class="dealer-modal-item' + (isSelected ? ' selected' : '') + '" data-id="' + dealer.id + '" onclick="selectModalDealer(\'' + dealer.id + '\')">';
+        html += '<div class="dealer-radio"><div class="dealer-radio-inner"></div></div>';
+        html += '<div class="dealer-modal-info">';
+        html += '<div class="dealer-modal-name">' + escapeHtmlForDealer(dealer.name) + '</div>';
+        html += '<div class="dealer-modal-details">';
+        html += '<div class="dealer-modal-detail"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span>' + escapeHtmlForDealer(dealer.district || '') + ', ' + escapeHtmlForDealer(dealer.city || '') + '</span></div>';
+        if (dealer.phone) {
+            html += '<div class="dealer-modal-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>' + escapeHtmlForDealer(dealer.phone) + '</span></div>';
+        }
+        html += '</div></div></div>';
+    });
+
+    if (list) {
+        list.innerHTML = html;
+    }
+
+    // Pre-select current dealer
+    if (currentDealerId && btn) {
+        selectedTempDealerId = currentDealerId;
+        btn.disabled = false;
+    }
+};
+
+// Bayi Sec (radio)
+window.selectModalDealer = function(dealerId) {
+    selectedTempDealerId = dealerId;
+
+    var items = document.querySelectorAll('.dealer-modal-item');
+    items.forEach(function(item) {
+        item.classList.remove('selected');
+        if (item.dataset.id === dealerId) {
+            item.classList.add('selected');
+        }
+    });
+
+    var btn = document.getElementById('dealerSelectConfirmBtn');
+    if (btn) {
+        btn.disabled = false;
+    }
+};
+
+// Bayi Modal Kapat
+window.closeDealerModal = function(event) {
+    if (event && event.target !== event.currentTarget) return;
+    var overlay = document.getElementById('dealerModalOverlay');
+    if (overlay) {
+        overlay.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+};
+
+// Bayi Secimini Onayla
+window.confirmDealerSelection = async function() {
+    if (!selectedTempDealerId) return;
+
+    var customerId = sessionStorage.getItem('isyerim_customer_id');
+    if (!customerId) return;
+
+    var btn = document.getElementById('dealerSelectConfirmBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Kaydediliyor...';
+    }
+
+    try {
+        // Update customer with new dealer_id
+        if (typeof CustomersService === 'undefined') {
+            alert('Musteri servisi yuklenemedi');
+            return;
+        }
+
+        var result = await CustomersService.update(customerId, {
+            dealer_id: selectedTempDealerId
+        });
+
+        if (result.error) {
+            console.error('Error updating dealer:', result.error);
+            alert('Bayi kaydedilemedi. Lutfen tekrar deneyiniz.');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+            return;
+        }
+
+        // Update local state
+        currentDealerId = selectedTempDealerId;
+
+        // Find dealer name
+        var dealer = dealerModalDealers.find(function(d) { return d.id === selectedTempDealerId; });
+        var dealerName = dealer ? dealer.name : 'Bayi';
+        currentDealerName = dealerName;
+
+        // Update sessionStorage
+        sessionStorage.setItem('isyerim_dealer_id', selectedTempDealerId);
+        sessionStorage.setItem('isyerim_dealer_name', dealerName);
+
+        // Update header button
+        updateDealerButton(dealerName);
+
+        // Close modal
+        window.closeDealerModal();
+
+    } catch (err) {
+        console.error('Error confirming dealer:', err);
+        alert('Bir hata olustu. Lutfen tekrar deneyiniz.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        }
+    }
+};
+
+// Header'daki bayi butonunu guncelle
+function updateDealerButton(dealerName) {
+    var btn = document.getElementById('dealerSelectBtn');
+    var nameEl = document.getElementById('selectedDealerName');
+
+    if (btn && nameEl) {
+        if (dealerName) {
+            btn.classList.remove('empty');
+            nameEl.textContent = dealerName;
+        } else {
+            btn.classList.add('empty');
+            nameEl.textContent = 'Bayi Seciniz';
+        }
+    }
+}
+
+// Mevcut bayiyi yukle (sayfa acildiginda)
+async function loadCurrentDealer() {
+    var customerId = sessionStorage.getItem('isyerim_customer_id');
+    if (!customerId) return;
+
+    // sessionStorage'da varsa direkt goster
+    var savedDealerName = sessionStorage.getItem('isyerim_dealer_name');
+    if (savedDealerName) {
+        updateDealerButton(savedDealerName);
+        return;
+    }
+
+    // Yoksa veritabanindan cek
+    if (typeof CustomersService === 'undefined') {
+        setTimeout(loadCurrentDealer, 500);
+        return;
+    }
+
+    try {
+        var result = await CustomersService.getById(customerId);
+        if (result.error || !result.data) return;
+
+        var customer = result.data;
+        if (customer.dealer_id && customer.dealer) {
+            currentDealerId = customer.dealer_id;
+            currentDealerName = customer.dealer.name;
+            sessionStorage.setItem('isyerim_dealer_id', customer.dealer_id);
+            sessionStorage.setItem('isyerim_dealer_name', customer.dealer.name);
+            updateDealerButton(customer.dealer.name);
+        }
+    } catch (err) {
+        console.error('Error loading current dealer:', err);
+    }
+}
+
+// HTML escape helper
+function escapeHtmlForDealer(text) {
+    if (!text) return '';
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
 
 // Global erisim
 window.ComponentLoader = ComponentLoader;
