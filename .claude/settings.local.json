@@ -28,7 +28,15 @@
       "Bash(tail:*)",
       "Bash(sort:*)",
       "Bash(uniq:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(xargs cat:*)",
+      "Bash(find:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:data.ibb.gov.tr)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(unzip:*)",
+      "Bash(awk:*)"
     ]
   }
 }

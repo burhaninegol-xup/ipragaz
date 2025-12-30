@@ -1,0 +1,610 @@
+<!-- Back Office Header Component -->
+<!-- Include edilecek: Her backoffice sayfasinda #backoffice-header div icine -->
+
+<style>
+    /* =====================================================
+       BACK OFFICE HEADER STYLES
+       ===================================================== */
+
+    :root {
+        /* Content Area */
+        --bo-bg-main: #f5f5f5;
+        --bo-bg-paper: #ffffff;
+        --bo-text-primary: #262626;
+        --bo-text-secondary: #525252;
+        --bo-border: #e5e5e5;
+
+        /* Primary */
+        --bo-primary: #e31e24;
+        --bo-primary-dark: #b91820;
+
+        /* Status */
+        --bo-success: #10b981;
+        --bo-warning: #f59e0b;
+        --bo-error: #ef4444;
+    }
+
+    /* Header Container */
+    .bo-header {
+        position: fixed;
+        top: 0;
+        left: var(--bo-sidebar-width, 260px);
+        right: 0;
+        height: var(--bo-header-height, 64px);
+        background: var(--bo-bg-paper);
+        border-bottom: 1px solid var(--bo-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        z-index: 999;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar-collapsed .bo-header,
+    .bo-main-content.sidebar-collapsed .bo-header {
+        left: var(--bo-sidebar-collapsed, 72px);
+    }
+
+    /* Breadcrumb */
+    .bo-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .bo-breadcrumb-item {
+        color: var(--bo-text-secondary);
+        font-size: 14px;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .bo-breadcrumb-item:hover {
+        color: var(--bo-primary);
+    }
+
+    .bo-breadcrumb-item.active {
+        color: var(--bo-text-primary);
+        font-weight: 500;
+    }
+
+    .bo-breadcrumb-separator {
+        color: var(--bo-text-secondary);
+        opacity: 0.5;
+    }
+
+    .bo-breadcrumb-separator svg {
+        width: 16px;
+        height: 16px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    /* Page Title */
+    .bo-page-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--bo-text-primary);
+        margin: 0;
+    }
+
+    /* Header Right */
+    .bo-header-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    /* Search */
+    .bo-header-search {
+        position: relative;
+    }
+
+    .bo-header-search input {
+        width: 240px;
+        padding: 8px 12px 8px 36px;
+        border: 1px solid var(--bo-border);
+        border-radius: 8px;
+        font-size: 14px;
+        background: var(--bo-bg-main);
+        transition: all 0.2s ease;
+    }
+
+    .bo-header-search input:focus {
+        outline: none;
+        border-color: var(--bo-primary);
+        background: var(--bo-bg-paper);
+        width: 280px;
+    }
+
+    .bo-header-search input::placeholder {
+        color: var(--bo-text-secondary);
+    }
+
+    .bo-header-search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--bo-text-secondary);
+    }
+
+    .bo-header-search-icon svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    /* Notifications */
+    .bo-header-notifications {
+        position: relative;
+    }
+
+    .bo-header-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--bo-text-secondary);
+        transition: all 0.2s ease;
+    }
+
+    .bo-header-btn:hover {
+        background: var(--bo-bg-main);
+        color: var(--bo-text-primary);
+    }
+
+    .bo-header-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .bo-notification-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: 18px;
+        height: 18px;
+        background: var(--bo-primary);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 600;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* User Dropdown */
+    .bo-header-user {
+        position: relative;
+    }
+
+    .bo-header-user-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px;
+        border: 1px solid var(--bo-border);
+        background: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .bo-header-user-btn:hover {
+        background: var(--bo-bg-main);
+    }
+
+    .bo-header-user-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--bo-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .bo-header-user-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--bo-text-primary);
+    }
+
+    .bo-header-user-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--bo-text-secondary);
+        fill: none;
+        stroke-width: 2;
+        transition: transform 0.2s ease;
+    }
+
+    .bo-header-user.open .bo-header-user-btn svg {
+        transform: rotate(180deg);
+    }
+
+    /* Dropdown Menu */
+    .bo-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        min-width: 200px;
+        background: var(--bo-bg-paper);
+        border: 1px solid var(--bo-border);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        z-index: 1001;
+    }
+
+    .bo-header-user.open .bo-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .bo-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        color: var(--bo-text-primary);
+        text-decoration: none;
+        font-size: 14px;
+        transition: background 0.2s ease;
+    }
+
+    .bo-dropdown-item:first-child {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .bo-dropdown-item:last-child {
+        border-radius: 0 0 8px 8px;
+    }
+
+    .bo-dropdown-item:hover {
+        background: var(--bo-bg-main);
+    }
+
+    .bo-dropdown-item svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .bo-dropdown-divider {
+        height: 1px;
+        background: var(--bo-border);
+        margin: 4px 0;
+    }
+
+    .bo-dropdown-item.danger {
+        color: var(--bo-error);
+    }
+
+    /* Notification Dropdown */
+    .bo-notification-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        width: 320px;
+        background: var(--bo-bg-paper);
+        border: 1px solid var(--bo-border);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        z-index: 1001;
+    }
+
+    .bo-header-notifications.open .bo-notification-dropdown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .bo-notification-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--bo-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .bo-notification-header h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--bo-text-primary);
+    }
+
+    .bo-notification-mark-read {
+        font-size: 12px;
+        color: var(--bo-primary);
+        cursor: pointer;
+    }
+
+    .bo-notification-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .bo-notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--bo-border);
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .bo-notification-item:hover {
+        background: var(--bo-bg-main);
+    }
+
+    .bo-notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .bo-notification-item.unread {
+        background: rgba(227, 30, 36, 0.05);
+    }
+
+    .bo-notification-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--bo-text-primary);
+        margin-bottom: 4px;
+    }
+
+    .bo-notification-text {
+        font-size: 12px;
+        color: var(--bo-text-secondary);
+        margin-bottom: 4px;
+    }
+
+    .bo-notification-time {
+        font-size: 11px;
+        color: var(--bo-text-secondary);
+        opacity: 0.7;
+    }
+
+    .bo-notification-empty {
+        padding: 24px;
+        text-align: center;
+        color: var(--bo-text-secondary);
+        font-size: 13px;
+    }
+</style>
+
+<header class="bo-header" id="boHeader">
+    <!-- Left: Breadcrumb / Page Title -->
+    <div class="bo-header-left">
+        <nav class="bo-breadcrumb" id="boBreadcrumb">
+            <a href="backoffice-anasayfa.html" class="bo-breadcrumb-item">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </a>
+            <span class="bo-breadcrumb-separator">
+                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </span>
+            <span class="bo-breadcrumb-item active" id="currentPageName">Dashboard</span>
+        </nav>
+    </div>
+
+    <!-- Right: Search, Notifications, User -->
+    <div class="bo-header-right">
+        <!-- Search -->
+        <div class="bo-header-search">
+            <span class="bo-header-search-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </span>
+            <input type="text" placeholder="Ara... (Ctrl+K)" id="globalSearch">
+        </div>
+
+        <!-- Notifications -->
+        <div class="bo-header-notifications" id="notificationsDropdown">
+            <button class="bo-header-btn" onclick="toggleNotifications()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="bo-notification-badge" id="notificationCount">3</span>
+            </button>
+            <div class="bo-notification-dropdown">
+                <div class="bo-notification-header">
+                    <h4>Bildirimler</h4>
+                    <span class="bo-notification-mark-read" onclick="markAllRead()">Tumunu Okundu Isaretle</span>
+                </div>
+                <div class="bo-notification-list" id="notificationList">
+                    <!-- Notifications will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="bo-header-user" id="userDropdown">
+            <button class="bo-header-user-btn" onclick="toggleUserDropdown()">
+                <div class="bo-header-user-avatar" id="headerUserInitials">AD</div>
+                <span class="bo-header-user-name" id="headerUserName">Admin</span>
+                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="bo-dropdown-menu">
+                <a href="backoffice-profil.html" class="bo-dropdown-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Profil
+                </a>
+                <a href="backoffice-ayarlar.html" class="bo-dropdown-item">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4"></path>
+                    </svg>
+                    Ayarlar
+                </a>
+                <div class="bo-dropdown-divider"></div>
+                <a href="#" class="bo-dropdown-item danger" onclick="logoutAdmin(event)">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Cikis Yap
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    // Dropdown toggles
+    function toggleNotifications() {
+        var dropdown = document.getElementById('notificationsDropdown');
+        dropdown.classList.toggle('open');
+
+        // Close user dropdown if open
+        document.getElementById('userDropdown').classList.remove('open');
+    }
+
+    function toggleUserDropdown() {
+        var dropdown = document.getElementById('userDropdown');
+        dropdown.classList.toggle('open');
+
+        // Close notifications if open
+        document.getElementById('notificationsDropdown').classList.remove('open');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        var notifDropdown = document.getElementById('notificationsDropdown');
+        var userDropdown = document.getElementById('userDropdown');
+
+        if (!notifDropdown.contains(e.target)) {
+            notifDropdown.classList.remove('open');
+        }
+        if (!userDropdown.contains(e.target)) {
+            userDropdown.classList.remove('open');
+        }
+    });
+
+    // Global search shortcut (Ctrl+K)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            document.getElementById('globalSearch').focus();
+        }
+    });
+
+    // Logout
+    function logoutAdmin(e) {
+        e.preventDefault();
+        if (confirm('Cikis yapmak istediginize emin misiniz?')) {
+            sessionStorage.removeItem('backoffice_admin_id');
+            sessionStorage.removeItem('backoffice_admin_data');
+            window.location.href = 'backoffice-login.html';
+        }
+    }
+
+    // Mark all notifications as read
+    function markAllRead() {
+        document.querySelectorAll('.bo-notification-item.unread').forEach(function(item) {
+            item.classList.remove('unread');
+        });
+        document.getElementById('notificationCount').textContent = '0';
+        document.getElementById('notificationCount').style.display = 'none';
+    }
+
+    // Load user info in header
+    function loadHeaderUserInfo() {
+        var adminData = sessionStorage.getItem('backoffice_admin_data');
+        if (adminData) {
+            try {
+                var admin = JSON.parse(adminData);
+                document.getElementById('headerUserName').textContent = admin.name || 'Admin';
+                document.getElementById('headerUserInitials').textContent = getInitials(admin.name || 'Admin');
+            } catch (e) {
+                console.error('Admin data parse error:', e);
+            }
+        }
+    }
+
+    // Get initials from name
+    function getInitials(name) {
+        return name.split(' ').map(function(n) { return n[0]; }).join('').toUpperCase().substring(0, 2);
+    }
+
+    // Set page name in breadcrumb
+    function setPageName(name) {
+        document.getElementById('currentPageName').textContent = name;
+        document.title = name + ' - Ipragaz Back Office';
+    }
+
+    // Load sample notifications
+    function loadNotifications() {
+        var list = document.getElementById('notificationList');
+        var sampleNotifications = [
+            { title: 'Yeni Bayi Basvurusu', text: 'Mehmet Yilmaz bayi olmak icin basvurdu', time: '5 dakika once', unread: true },
+            { title: 'Siparis Onayi Bekliyor', text: '3 yeni siparis onayinizi bekliyor', time: '1 saat once', unread: true },
+            { title: 'Sistem Guncellendi', text: 'Back Office v2.1 basariyla yuklendi', time: 'Dun', unread: false }
+        ];
+
+        if (sampleNotifications.length === 0) {
+            list.innerHTML = '<div class="bo-notification-empty">Bildirim bulunmuyor</div>';
+            return;
+        }
+
+        list.innerHTML = sampleNotifications.map(function(n) {
+            return '<div class="bo-notification-item ' + (n.unread ? 'unread' : '') + '">' +
+                '<div class="bo-notification-title">' + n.title + '</div>' +
+                '<div class="bo-notification-text">' + n.text + '</div>' +
+                '<div class="bo-notification-time">' + n.time + '</div>' +
+                '</div>';
+        }).join('');
+
+        var unreadCount = sampleNotifications.filter(function(n) { return n.unread; }).length;
+        var badge = document.getElementById('notificationCount');
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+    // Initialize header
+    document.addEventListener('DOMContentLoaded', function() {
+        loadHeaderUserInfo();
+        loadNotifications();
+    });
+</script>

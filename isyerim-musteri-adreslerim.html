@@ -202,50 +202,12 @@
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/addresses-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/locations-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		var customerId = null;
 		var currentAddressId = null;
 		var deleteAddressId = null;
-
-		// Turkiye Il/Ilce/Mahalle/Sokak Statik Verileri
-		var locationData = {
-			cities: ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep', 'Kayseri', 'Mersin'],
-			districts: {
-				'Istanbul': ['Kadikoy', 'Besiktas', 'Sisli', 'Uskudar', 'Bakirkoy', 'Fatih', 'Beyoglu', 'Sariyer', 'Maltepe', 'Kartal', 'Pendik', 'Atasehir', 'Umraniye', 'Bagcilar', 'Bahcelievler'],
-				'Ankara': ['Cankaya', 'Kecioren', 'Mamak', 'Etimesgut', 'Sincan', 'Yenimahalle', 'Altindag', 'Pursaklar', 'Golbasi', 'Polatli'],
-				'Izmir': ['Konak', 'Karsiyaka', 'Bornova', 'Buca', 'Cigli', 'Bayrakli', 'Gaziemir', 'Balcova', 'Narlidere', 'Alsancak'],
-				'Bursa': ['Osmangazi', 'Nilufer', 'Yildirim', 'Gursu', 'Kestel', 'Mudanya', 'Gemlik', 'Inegol'],
-				'Antalya': ['Muratpasa', 'Konyaalti', 'Kepez', 'Aksu', 'Dosemealti', 'Alanya', 'Manavgat', 'Serik'],
-				'Adana': ['Seyhan', 'Cukurova', 'Yuregir', 'Saricam', 'Kozan', 'Ceyhan', 'Imamoglu'],
-				'Konya': ['Selcuklu', 'Meram', 'Karatay', 'Eregli', 'Aksehir', 'Beysehi', 'Seydisehir'],
-				'Gaziantep': ['Sahinbey', 'Sehitkamil', 'Nizip', 'Islahiye', 'Nurdagi', 'Oguzeli'],
-				'Kayseri': ['Melikgazi', 'Kocasinan', 'Talas', 'Hacilar', 'Incesu', 'Develi'],
-				'Mersin': ['Yenisehir', 'Mezitli', 'Akdeniz', 'Toroslar', 'Tarsus', 'Silifke', 'Erdemli']
-			},
-			neighborhoods: {
-				'Kadikoy': ['Caferaga', 'Moda', 'Fenerbahce', 'Goztepe', 'Bostanci', 'Suadiye', 'Caddebostan', 'Kozyatagi', 'Acibadem', 'Fikirtepe'],
-				'Besiktas': ['Levent', 'Etiler', 'Bebek', 'Ortakoy', 'Arnavutkoy', 'Akatlar', 'Ulus', 'Dikilitasi', 'Sinanpasa'],
-				'Sisli': ['Mecidiyekoy', 'Nisantasi', 'Osmanbey', 'Bomonti', 'Kagithane', 'Gultepe', 'Esentepe', 'Fulya'],
-				'Uskudar': ['Cengelkoy', 'Beylerbeyi', 'Kuzguncuk', 'Altunizade', 'Acibadem', 'Icerenkoy', 'Kucukcamlica', 'Bulgurlu'],
-				'Cankaya': ['Kizilay', 'Kavaklidere', 'Cukurambar', 'GOP', 'Bahcelievler', 'Birlik', 'Sogutozu', 'Balgat', 'Oran'],
-				'Konak': ['Alsancak', 'Goztepe', 'Hatay', 'Guzelyali', 'Karsiyaka', 'Basmane', 'Pasaport'],
-				'Osmangazi': ['Cekirge', 'Altiparmak', 'Yildirim', 'Hamitler', 'Heykel', 'Muradiye'],
-				'Muratpasa': ['Lara', 'Konyaalti', 'Memurevleri', 'Sirinyal', 'Fener', 'Yesilbahce'],
-				'Seyhan': ['Cemalpasar', 'Resatbey', 'Gurselpasar', 'Yesiloba', 'Sarıcam'],
-				'Selcuklu': ['Bosna Hersek', 'Yazir', 'Sille', 'Selcuk', 'Tepekoy']
-			},
-			streets: {
-				'Caferaga': ['Moda Caddesi', 'Bahariye Caddesi', 'Kadife Sokak', 'Tell Sokak', 'Sakiz Sokak'],
-				'Moda': ['Moda Caddesi', 'Ferit Tek Sokak', 'Sifa Sokak', 'Dr. Esref Sokak'],
-				'Levent': ['Buyukdere Caddesi', 'Nispetiye Caddesi', 'Levent Caddesi', 'Sahil Sokak'],
-				'Etiler': ['Nispetiye Caddesi', 'Akmerkez Sokak', 'Etiler Caddesi'],
-				'Kizilay': ['Ataturk Bulvari', 'Izmir Caddesi', 'GMK Bulvari', 'Meşrutiyet Caddesi'],
-				'Alsancak': ['Kibris Sehitleri Caddesi', 'Ataturk Caddesi', 'Kordon', '1453 Sokak'],
-				'Cekirge': ['1. Murat Caddesi', 'Cekirge Caddesi', 'Kultur Park Yolu'],
-				'Lara': ['Lara Caddesi', 'Falez Caddesi', 'Akdeniz Bulvari']
-			}
-		};
 
 		document.addEventListener('DOMContentLoaded', async function() {
 			customerId = sessionStorage.getItem('isyerim_customer_id');
@@ -303,52 +265,113 @@
 			container.innerHTML = html;
 		}
 
-		// Il/Ilce dropdownlari
-		function loadCities() {
+		// Il/Ilce dropdownlari - API tabanli
+		async function loadCities() {
 			var select = document.getElementById('citySelect');
+			select.innerHTML = '<option value="">Il Yukleniyor...</option>';
+
+			var result = await LocationsService.getCities();
+
+			if (result.error) {
+				select.innerHTML = '<option value="">Hata olustu</option>';
+				console.error('Iller yuklenemedi:', result.error);
+				return;
+			}
+
 			select.innerHTML = '<option value="">Il Seciniz</option>';
-			locationData.cities.forEach(function(city) {
-				select.innerHTML += '<option value="' + city + '">' + city + '</option>';
+			result.data.forEach(function(city) {
+				select.innerHTML += '<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>';
 			});
 		}
 
-		function loadDistricts() {
-			var city = document.getElementById('citySelect').value;
+		async function loadDistricts() {
+			var cityId = document.getElementById('citySelect').value;
 			var select = document.getElementById('districtSelect');
+			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+			var streetSelect = document.getElementById('streetSelect');
+
+			// Reset alt dropdown'lar
+			neighborhoodSelect.innerHTML = '<option value="">Once ilce seciniz</option>';
+			streetSelect.innerHTML = '<option value="">Once mahalle seciniz</option>';
+
+			if (!cityId) {
+				select.innerHTML = '<option value="">Once il seciniz</option>';
+				return;
+			}
+
+			select.innerHTML = '<option value="">Ilce Yukleniyor...</option>';
+
+			var result = await LocationsService.getDistrictsByCityId(cityId);
+
+			if (result.error) {
+				select.innerHTML = '<option value="">Hata olustu</option>';
+				console.error('Ilceler yuklenemedi:', result.error);
+				return;
+			}
+
 			select.innerHTML = '<option value="">Ilce Seciniz</option>';
-			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
-			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
-
-			if (city && locationData.districts[city]) {
-				locationData.districts[city].forEach(function(district) {
-					select.innerHTML += '<option value="' + district + '">' + district + '</option>';
-				});
-			}
+			result.data.forEach(function(district) {
+				select.innerHTML += '<option value="' + district.id + '" data-name="' + district.name + '">' + district.name + '</option>';
+			});
 		}
 
-		function loadNeighborhoods() {
-			var district = document.getElementById('districtSelect').value;
+		async function loadNeighborhoods() {
+			var districtId = document.getElementById('districtSelect').value;
 			var select = document.getElementById('neighborhoodSelect');
-			select.innerHTML = '<option value="">Mahalle Seciniz</option>';
-			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			var streetSelect = document.getElementById('streetSelect');
 
-			if (district && locationData.neighborhoods[district]) {
-				locationData.neighborhoods[district].forEach(function(n) {
-					select.innerHTML += '<option value="' + n + '">' + n + '</option>';
-				});
+			// Reset sokak dropdown
+			streetSelect.innerHTML = '<option value="">Once mahalle seciniz</option>';
+
+			if (!districtId) {
+				select.innerHTML = '<option value="">Once ilce seciniz</option>';
+				return;
 			}
+
+			select.innerHTML = '<option value="">Mahalle Yukleniyor...</option>';
+
+			var result = await LocationsService.getNeighborhoodsByDistrictId(districtId);
+
+			if (result.error || !result.data || result.data.length === 0) {
+				select.innerHTML = '<option value="">Mahalle bulunamadi</option>';
+				return;
+			}
+
+			select.innerHTML = '<option value="">Mahalle Seciniz</option>';
+			result.data.forEach(function(n) {
+				select.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
+			});
 		}
 
-		function loadStreets() {
-			var neighborhood = document.getElementById('neighborhoodSelect').value;
+		async function loadStreets() {
+			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
 			var select = document.getElementById('streetSelect');
-			select.innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
 
-			if (neighborhood && locationData.streets[neighborhood]) {
-				locationData.streets[neighborhood].forEach(function(s) {
-					select.innerHTML += '<option value="' + s + '">' + s + '</option>';
-				});
+			if (!neighborhoodId) {
+				select.innerHTML = '<option value="">Once mahalle seciniz</option>';
+				return;
 			}
+
+			select.innerHTML = '<option value="">Sokak Yukleniyor...</option>';
+
+			var result = await LocationsService.getStreetsByNeighborhoodId(neighborhoodId);
+
+			if (result.error || !result.data || result.data.length === 0) {
+				select.innerHTML = '<option value="">Sokak bulunamadi</option>';
+				return;
+			}
+
+			select.innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			result.data.forEach(function(s) {
+				select.innerHTML += '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>';
+			});
+		}
+
+		// Secili option'in data-name degerini al
+		function getSelectedOptionName(selectId) {
+			var select = document.getElementById(selectId);
+			var selectedOption = select.options[select.selectedIndex];
+			return selectedOption ? selectedOption.getAttribute('data-name') : null;
 		}
 
 		// Panel ac/kapat
@@ -389,26 +412,28 @@
 
 			var addr = result.data;
 
-			// Il sec ve ilceleri yukle
-			document.getElementById('citySelect').value = addr.city || '';
-			loadDistricts();
+			// Il sec ve ilceleri yukle (ID veya isim bazli)
+			if (addr.city_id) {
+				document.getElementById('citySelect').value = addr.city_id;
+			}
+			await loadDistricts();
 
 			// Ilce sec ve mahalleleri yukle
-			setTimeout(function() {
-				document.getElementById('districtSelect').value = addr.district || '';
-				loadNeighborhoods();
+			if (addr.district_id) {
+				document.getElementById('districtSelect').value = addr.district_id;
+			}
+			await loadNeighborhoods();
 
-				// Mahalle sec ve sokaklari yukle
-				setTimeout(function() {
-					document.getElementById('neighborhoodSelect').value = addr.neighborhood || '';
-					loadStreets();
+			// Mahalle sec ve sokaklari yukle
+			if (addr.neighborhood_id) {
+				document.getElementById('neighborhoodSelect').value = addr.neighborhood_id;
+			}
+			await loadStreets();
 
-					// Sokak sec
-					setTimeout(function() {
-						document.getElementById('streetSelect').value = addr.street || '';
-					}, 50);
-				}, 50);
-			}, 50);
+			// Sokak sec
+			if (addr.street_id) {
+				document.getElementById('streetSelect').value = addr.street_id;
+			}
 
 			document.getElementById('buildingNo').value = addr.building_no || '';
 			document.getElementById('floor').value = addr.floor || '';
@@ -420,10 +445,18 @@
 		// Adres kaydet
 		async function saveAddress() {
 			var addressName = document.getElementById('addressName').value.trim();
-			var city = document.getElementById('citySelect').value;
-			var district = document.getElementById('districtSelect').value;
+			var cityId = document.getElementById('citySelect').value;
+			var districtId = document.getElementById('districtSelect').value;
+			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
+			var streetId = document.getElementById('streetSelect').value;
 
-			if (!addressName || !city || !district) {
+			// Text degerlerini de al (backward compatibility icin)
+			var cityName = getSelectedOptionName('citySelect');
+			var districtName = getSelectedOptionName('districtSelect');
+			var neighborhoodName = getSelectedOptionName('neighborhoodSelect');
+			var streetName = getSelectedOptionName('streetSelect');
+
+			if (!addressName || !cityId || !districtId) {
 				alert('Lutfen zorunlu alanlari doldurun');
 				return;
 			}
@@ -431,10 +464,17 @@
 			var addressData = {
 				customer_id: customerId,
 				address_name: addressName,
-				city: city,
-				district: district,
-				neighborhood: document.getElementById('neighborhoodSelect').value || null,
-				street: document.getElementById('streetSelect').value || null,
+				// Yeni FK kolonlari
+				city_id: cityId || null,
+				district_id: districtId || null,
+				neighborhood_id: neighborhoodId || null,
+				street_id: streetId || null,
+				// Eski VARCHAR kolonlari (backward compatibility)
+				city: cityName || null,
+				district: districtName || null,
+				neighborhood: neighborhoodName || null,
+				street: streetName || null,
+				// Diger alanlar
 				building_no: document.getElementById('buildingNo').value.trim() || null,
 				floor: document.getElementById('floor').value.trim() || null,
 				apartment: document.getElementById('apartment').value.trim() || null,

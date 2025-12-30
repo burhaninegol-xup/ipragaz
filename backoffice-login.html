@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giris - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-error: #ef4444;
+            --bo-success: #10b981;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        /* Logo Card */
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo img {
+            height: 48px;
+            margin-bottom: 16px;
+        }
+
+        .login-logo h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .login-logo p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: var(--bo-bg-paper);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-card h2 {
+            color: var(--bo-text-primary);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .login-card p {
+            color: var(--bo-text-secondary);
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--bo-text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-input-wrapper {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1px solid var(--bo-border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main);
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+            background: var(--bo-bg-paper);
+            box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--bo-text-secondary);
+        }
+
+        .form-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--bo-text-secondary);
+        }
+
+        .form-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--bo-text-secondary);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .password-toggle:hover {
+            color: var(--bo-text-primary);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Remember me */
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .form-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--bo-primary);
+            cursor: pointer;
+        }
+
+        .form-checkbox span {
+            color: var(--bo-text-secondary);
+            font-size: 13px;
+        }
+
+        .forgot-link {
+            color: var(--bo-primary);
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .btn-login {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--bo-primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            background: var(--bo-primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            background: var(--bo-text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-login svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--bo-error);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-message svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--bo-error);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .error-message span {
+            color: var(--bo-error);
+            font-size: 13px;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .login-footer p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        /* Mobile Warning */
+        .mobile-warning {
+            display: none;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--bo-warning);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .mobile-warning span {
+            color: #f59e0b;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-warning {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Logo -->
+        <div class="login-logo">
+            <img src="https://www.ipragaz.com.tr/assets/images/logo.png" alt="Ipragaz">
+            <h1>Back Office</h1>
+            <p>Bayi Yonetim Paneli</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2>Hosgeldiniz</h2>
+            <p>Devam etmek icin giris yapin</p>
+
+            <!-- Mobile Warning -->
+            <div class="mobile-warning">
+                <span>Bu panel masaustu cihazlar icin optimize edilmistir. En iyi deneyim icin bilgisayar kullanin.</span>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span id="errorText">Kullanici adi veya sifre hatali</span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Kullanici Adi</label>
+                    <div class="form-input-wrapper">
+                        <span class="form-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <input type="text" class="form-input" id="username" placeholder="admin" autocomplete="username" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Sifre</label>
+                    <div class="form-input-wrapper">
+                        <span class="form-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input type="password" class="form-input" id="password" placeholder="••••••••" autocomplete="current-password" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <svg viewBox="0 0 24 24" id="eyeIcon">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="form-checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Beni hatirla</span>
+                    </label>
+                    <a href="#" class="forgot-link" onclick="showForgotPassword(event)">Sifremi unuttum</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span id="loginBtnText">Giris Yap</span>
+                    <svg viewBox="0 0 24 24" id="loginBtnIcon">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>&copy; 2024 Ipragaz. Tum haklar saklidir.</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword() {
+            var passwordInput = document.getElementById('password');
+            var eyeIcon = document.getElementById('eyeIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
+        // Handle login
+        async function handleLogin(e) {
+            e.preventDefault();
+
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+            var loginBtn = document.getElementById('loginBtn');
+            var loginBtnText = document.getElementById('loginBtnText');
+            var loginBtnIcon = document.getElementById('loginBtnIcon');
+            var errorMessage = document.getElementById('errorMessage');
+            var errorText = document.getElementById('errorText');
+
+            // Hide previous error
+            errorMessage.classList.remove('show');
+
+            // Show loading
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'Giris yapiliyor...';
+            loginBtnIcon.outerHTML = '<div class="spinner"></div>';
+
+            // Simulate API call
+            await new Promise(function(resolve) { setTimeout(resolve, 1000); });
+
+            // Simple auth check (in production, this would be an API call)
+            // Default credentials: admin / admin123
+            if (username === 'admin' && password === 'admin123') {
+                // Success - store session
+                sessionStorage.setItem('backoffice_admin_id', 'admin-001');
+                sessionStorage.setItem('backoffice_admin_data', JSON.stringify({
+                    id: 'admin-001',
+                    name: 'Sistem Yoneticisi',
+                    username: 'admin',
+                    role: 'super_admin'
+                }));
+
+                // Remember me
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('bo_remember_username', username);
+                } else {
+                    localStorage.removeItem('bo_remember_username');
+                }
+
+                // Redirect to dashboard
+                window.location.href = 'backoffice-anasayfa.html';
+            } else {
+                // Error
+                errorText.textContent = 'Kullanici adi veya sifre hatali';
+                errorMessage.classList.add('show');
+
+                // Reset button
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Giris Yap';
+                var iconHtml = '<svg viewBox="0 0 24 24" id="loginBtnIcon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+                loginBtn.innerHTML = '<span id="loginBtnText">Giris Yap</span>' + iconHtml;
+            }
+        }
+
+        // Forgot password
+        function showForgotPassword(e) {
+            e.preventDefault();
+            alert('Sifre sifirlama icin sistem yoneticisi ile iletisime gecin.');
+        }
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (adminId) {
+                window.location.href = 'backoffice-anasayfa.html';
+            }
+
+            // Load remembered username
+            var rememberedUsername = localStorage.getItem('bo_remember_username');
+            if (rememberedUsername) {
+                document.getElementById('username').value = rememberedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        // Enter key support
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
