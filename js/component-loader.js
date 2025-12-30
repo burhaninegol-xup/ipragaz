@@ -1292,13 +1292,29 @@ window.openDealerModal = async function() {
         locationText.textContent = district + ', ' + city;
     }
 
-    // Load dealers for this location
+    // Load dealers for this location (Mikro Pazar dahil)
     if (typeof DealersService === 'undefined') {
         if (list) list.innerHTML = '<div class="dealer-empty">Bayi servisi yuklenemedi</div>';
         return;
     }
 
-    var dealersResult = await DealersService.getByDistrict(city, district);
+    // İlçe ID'sini bul (dealer_districts kontrolü için)
+    var districtId = null;
+    try {
+        var districtResult = await supabaseClient
+            .from('districts')
+            .select('id')
+            .ilike('name', district)
+            .single();
+        if (districtResult.data) {
+            districtId = districtResult.data.id;
+        }
+    } catch (e) {
+        console.warn('İlçe ID bulunamadı:', e);
+    }
+
+    // Mikro Pazar destekli bayi arama
+    var dealersResult = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
     if (dealersResult.error) {
         if (list) list.innerHTML = '<div class="dealer-empty">Bayiler yuklenemedi</div>';
         return;

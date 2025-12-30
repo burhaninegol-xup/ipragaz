@@ -135,6 +135,72 @@ const DealersService = {
     },
 
     /**
+     * İlçeye göre bayileri getir - Mikro Pazar dahil
+     * 1. Ana ilçesi eşleşen bayiler
+     * 2. VEYA dealer_districts tablosunda o ilçeyi seçmiş bayiler
+     * @param {string} city - Şehir adı
+     * @param {string} district - İlçe adı
+     * @param {string} districtId - İlçe UUID (dealer_districts sorgusu için)
+     */
+    async getByDistrictWithMikroPazar(city, district, districtId) {
+        try {
+            const normalizedCity = normalizeTurkish(city);
+            const normalizedDistrict = normalizeTurkish(district);
+
+            // 1. Tüm aktif bayileri çek
+            const { data: allDealers, error } = await supabaseClient
+                .from('dealers')
+                .select('*')
+                .eq('is_active', true);
+
+            if (error) throw error;
+
+            // 2. Ana ilçesi eşleşen bayiler
+            const mainDistrictDealers = allDealers.filter(function(dealer) {
+                return normalizeTurkish(dealer.city) === normalizedCity &&
+                       normalizeTurkish(dealer.district) === normalizedDistrict;
+            });
+
+            // 3. Mikro pazar olarak hizmet veren bayiler (districtId varsa)
+            var mikroPazarDealerIds = [];
+            if (districtId) {
+                const { data: mikroPazar, error: mikroError } = await supabaseClient
+                    .from('dealer_districts')
+                    .select('dealer_id')
+                    .eq('district_id', districtId);
+
+                if (!mikroError && mikroPazar) {
+                    mikroPazarDealerIds = mikroPazar.map(function(m) { return m.dealer_id; });
+                }
+            }
+
+            // 4. Mikro pazar bayilerini filtrele (aynı şehirde ve aktif olanlar)
+            const mikroPazarDealers = allDealers.filter(function(dealer) {
+                return mikroPazarDealerIds.indexOf(dealer.id) !== -1 &&
+                       normalizeTurkish(dealer.city) === normalizedCity;
+            });
+
+            // 5. Birleştir ve duplicate kaldır
+            const allMatchingDealers = mainDistrictDealers.slice();
+            mikroPazarDealers.forEach(function(dealer) {
+                var exists = allMatchingDealers.find(function(d) { return d.id === dealer.id; });
+                if (!exists) {
+                    allMatchingDealers.push(dealer);
+                }
+            });
+
+            // İlçeye göre sırala
+            allMatchingDealers.sort(function(a, b) {
+                return (a.district || '').localeCompare(b.district || '', 'tr');
+            });
+
+            return { data: allMatchingDealers, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'DealersService.getByDistrictWithMikroPazar');
+        }
+    },
+
+    /**
      * Lokasyona göre en yakın bayileri getir
      */
     async getNearby(lat, lng, limit = 5) {

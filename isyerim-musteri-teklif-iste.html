@@ -90,9 +90,10 @@
 		/* Products Grid */
 		.products-grid {
 			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			gap: 20px;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 16px;
 			margin-bottom: 30px;
+			max-width: 100%;
 		}
 
 		/* Product Card */
@@ -1271,6 +1272,7 @@
 
 		.main-column {
 			min-width: 0;
+			overflow: hidden;
 		}
 
 		/* Chat Column */
@@ -1716,7 +1718,7 @@
 							<p>Bayiler yukleniyor...</p>
 						</div>
 					</div>
-					<button class="dealer-continue-btn" id="dealerContinueBtn" disabled onclick="confirmDealerSelection()">
+					<button class="dealer-continue-btn" id="dealerContinueBtn" disabled onclick="confirmPageDealerSelection()">
 						Devam Et
 					</button>
 				</div>
@@ -1838,6 +1840,7 @@
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/products-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/addresses-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
@@ -2424,8 +2427,8 @@
 			document.getElementById('dealerContinueBtn').disabled = false;
 		}
 
-		// Bayi secimi onaylandi
-		function confirmDealerSelection() {
+		// Bayi secimi onaylandi (sayfa ici bayi karti secimi)
+		function confirmPageDealerSelection() {
 			if (!selectedDealerId || !selectedDealerName) return;
 
 			// Bayi secim bolumunu gizle

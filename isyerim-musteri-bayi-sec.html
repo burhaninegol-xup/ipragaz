@@ -474,6 +474,7 @@
 		var customerId = sessionStorage.getItem('isyerim_customer_id');
 		var userCity = sessionStorage.getItem('isyerim_user_city');
 		var userDistrict = sessionStorage.getItem('isyerim_user_district');
+		var userDistrictId = sessionStorage.getItem('isyerim_user_district_id');
 
 		// Kullanıcı kontrolü
 		if (!customerId) {
@@ -498,13 +499,16 @@
 			loadDealers();
 		});
 
-		// Bayileri yükle
+		// Bayileri yükle (Mikro Pazar dahil)
 		async function loadDealers() {
 			var container = document.getElementById('dealerListContainer');
 			var footer = document.getElementById('footerSection');
 
 			try {
-				var result = await DealersService.getByDistrict(userCity, userDistrict);
+				// Mikro Pazar destekli bayi arama
+				// 1. Ana ilçesi eşleşen bayiler
+				// 2. VEYA o ilçeyi mikro pazar olarak seçmiş bayiler
+				var result = await DealersService.getByDistrictWithMikroPazar(userCity, userDistrict, userDistrictId);
 
 				if (result.error) {
 					console.error('Bayi yükleme hatası:', result.error);
