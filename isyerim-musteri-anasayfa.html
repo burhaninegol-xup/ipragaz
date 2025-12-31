@@ -915,6 +915,427 @@
 				font-size: 22px;
 			}
 		}
+
+		/* Repeat Order Section */
+		.repeat-order-section {
+			padding: 20px 0;
+			background: #f5f5f5;
+			display: none;
+		}
+
+		.repeat-order-section.visible {
+			display: block;
+		}
+
+		.btn-repeat-order {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			padding: 20px 25px;
+			background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+			border: none;
+			border-radius: 16px;
+			color: #fff;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+		}
+
+		.btn-repeat-order:hover {
+			transform: scale(1.02);
+			box-shadow: 0 6px 25px rgba(227, 30, 36, 0.4);
+		}
+
+		.btn-repeat-order-content {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.btn-repeat-order-icon {
+			width: 48px;
+			height: 48px;
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.btn-repeat-order-icon svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.btn-repeat-order-text h3 {
+			font-size: 16px;
+			font-weight: 600;
+			margin: 0 0 4px 0;
+		}
+
+		.btn-repeat-order-text p {
+			font-size: 13px;
+			margin: 0;
+			opacity: 0.9;
+		}
+
+		.btn-repeat-order-arrow svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		/* Repeat Order Modal / Overlay */
+		.repeat-order-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+
+		.repeat-order-overlay.active {
+			display: flex;
+		}
+
+		.repeat-order-modal {
+			background: #fff;
+			border-radius: 20px;
+			width: 100%;
+			max-width: 550px;
+			max-height: 90vh;
+			overflow-y: auto;
+			animation: modalSlideIn 0.3s ease;
+		}
+
+		@keyframes modalSlideIn {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.repeat-order-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 25px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.repeat-order-header h2 {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin: 0;
+		}
+
+		.repeat-order-close {
+			width: 36px;
+			height: 36px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 50%;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.2s;
+		}
+
+		.repeat-order-close:hover {
+			background: #eee;
+		}
+
+		.repeat-order-close svg {
+			width: 20px;
+			height: 20px;
+			color: #666;
+		}
+
+		.repeat-order-body {
+			padding: 20px 25px;
+		}
+
+		.repeat-order-dealer {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 15px;
+			background: #f9f9f9;
+			border-radius: 12px;
+			margin-bottom: 20px;
+		}
+
+		.repeat-order-dealer svg {
+			width: 20px;
+			height: 20px;
+			color: #e31e24;
+		}
+
+		.repeat-order-dealer span {
+			font-size: 14px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		.repeat-order-items-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 12px;
+		}
+
+		.repeat-order-items {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			margin-bottom: 20px;
+		}
+
+		.repeat-order-item {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			padding: 12px 15px;
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 12px;
+		}
+
+		.repeat-order-item-image {
+			width: 50px;
+			height: 50px;
+			border-radius: 8px;
+			overflow: hidden;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.repeat-order-item-image img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.repeat-order-item-info {
+			flex: 1;
+		}
+
+		.repeat-order-item-name {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 2px;
+		}
+
+		.repeat-order-item-qty {
+			font-size: 12px;
+			color: #888;
+		}
+
+		.repeat-order-item-price {
+			font-size: 14px;
+			font-weight: 600;
+			color: #e31e24;
+		}
+
+		.time-slots-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 12px;
+		}
+
+		.time-slots {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 10px;
+			margin-bottom: 20px;
+		}
+
+		.time-slot {
+			padding: 15px 10px;
+			background: #f9f9f9;
+			border: 2px solid transparent;
+			border-radius: 12px;
+			text-align: center;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.time-slot:hover {
+			background: #f0f0f0;
+		}
+
+		.time-slot.selected {
+			background: #fff5f5;
+			border-color: #e31e24;
+		}
+
+		.time-slot-hour {
+			font-size: 18px;
+			font-weight: 700;
+			color: #333;
+			margin-bottom: 2px;
+		}
+
+		.time-slot-day {
+			font-size: 11px;
+			color: #888;
+			text-transform: uppercase;
+		}
+
+		.repeat-order-total {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 15px;
+			background: #f9f9f9;
+			border-radius: 12px;
+			margin-bottom: 20px;
+		}
+
+		.repeat-order-total-label {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.repeat-order-total-value {
+			font-size: 20px;
+			font-weight: 700;
+			color: #e31e24;
+		}
+
+		.repeat-order-actions {
+			display: flex;
+			gap: 12px;
+		}
+
+		.btn-repeat-cancel {
+			flex: 1;
+			padding: 14px 20px;
+			background: #f5f5f5;
+			border: none;
+			border-radius: 12px;
+			color: #666;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		.btn-repeat-cancel:hover {
+			background: #eee;
+		}
+
+		.btn-repeat-submit {
+			flex: 2;
+			padding: 14px 20px;
+			background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+			border: none;
+			border-radius: 12px;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-repeat-submit:hover {
+			transform: scale(1.02);
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+		}
+
+		.btn-repeat-submit:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		/* Repeat Order Empty State */
+		.repeat-order-empty {
+			text-align: center;
+			padding: 30px 20px;
+		}
+
+		.repeat-order-empty-icon {
+			width: 80px;
+			height: 80px;
+			background: #f5f5f5;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+
+		.repeat-order-empty-icon svg {
+			width: 40px;
+			height: 40px;
+			color: #ccc;
+		}
+
+		.repeat-order-empty h3 {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin: 0 0 8px 0;
+		}
+
+		.repeat-order-empty p {
+			font-size: 13px;
+			color: #888;
+			margin: 0;
+		}
+
+		/* Repeat Order Mobile Bottom Sheet */
+		@media (max-width: 768px) {
+			.repeat-order-overlay {
+				align-items: flex-end;
+				padding: 0;
+			}
+
+			.repeat-order-modal {
+				border-radius: 20px 20px 0 0;
+				max-height: 85vh;
+				animation: bottomSheetSlideIn 0.3s ease;
+			}
+
+			@keyframes bottomSheetSlideIn {
+				from {
+					transform: translateY(100%);
+				}
+				to {
+					transform: translateY(0);
+				}
+			}
+
+			.time-slots {
+				grid-template-columns: 1fr;
+			}
+
+			.repeat-order-actions {
+				flex-direction: column;
+			}
+
+			.btn-repeat-cancel,
+			.btn-repeat-submit {
+				flex: none;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -1021,6 +1442,31 @@
 				<div class="hero-dot" data-slide="2"></div>
 				<div class="hero-dot" data-slide="3"></div>
 			</div>
+		</div>
+	</section>
+
+	<!-- Repeat Last Order Section -->
+	<section class="repeat-order-section" id="repeatOrderSection">
+		<div class="container">
+			<button class="btn-repeat-order" id="btnRepeatOrder" onclick="openRepeatOrderModal()">
+				<div class="btn-repeat-order-content">
+					<div class="btn-repeat-order-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M23 4v6h-6"/>
+							<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+						</svg>
+					</div>
+					<div class="btn-repeat-order-text">
+						<h3>Son Siparisimi Tekrarla</h3>
+						<p>Son siparisini tek tikla tekrarlayiniz</p>
+					</div>
+				</div>
+				<div class="btn-repeat-order-arrow">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M9 18l6-6-6-6"/>
+					</svg>
+				</div>
+			</button>
 		</div>
 	</section>
 
@@ -1204,6 +1650,23 @@
 	<!-- Footer (Component) -->
 	<div id="isyerim-footer"></div>
 
+	<!-- Repeat Order Modal -->
+	<div class="repeat-order-overlay" id="repeatOrderOverlay">
+		<div class="repeat-order-modal">
+			<div class="repeat-order-header">
+				<h2>Son Siparisi Tekrarla</h2>
+				<button class="repeat-order-close" onclick="closeRepeatOrderModal()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M18 6L6 18M6 6l12 12"/>
+					</svg>
+				</button>
+			</div>
+			<div class="repeat-order-body" id="repeatOrderBody">
+				<!-- Content will be dynamically loaded -->
+			</div>
+		</div>
+	</div>
+
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
@@ -1215,6 +1678,7 @@
 	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Hero Slider
@@ -1487,6 +1951,9 @@
 
 			// Sepet badge'ini güncelle
 			updateCartBadge();
+
+			// Son siparisi yukle (buton icin)
+			loadLastOrder();
 		});
 
 		// Sepet güncellendiğinde badge'i güncelle
@@ -1495,6 +1962,231 @@
 		});
 
 		// Profile Dropdown Toggle artik component-loader.js tarafindan yonetiliyor
+
+		// =============================================
+		// REPEAT ORDER FUNCTIONALITY
+		// =============================================
+		var lastOrder = null;
+		var selectedTimeSlot = null;
+
+		// Son siparisi yukle
+		async function loadLastOrder() {
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) {
+				console.log('Musteri giris yapmamis, son siparis yuklenmiyor');
+				return;
+			}
+
+			try {
+				const { data: orders, error } = await OrdersService.getByCustomerId(customerId, 1);
+				if (error) {
+					console.error('Son siparis yukleme hatasi:', error);
+					return;
+				}
+
+				if (orders && orders.length > 0) {
+					lastOrder = orders[0];
+					// Butonu goster
+					document.getElementById('repeatOrderSection').classList.add('visible');
+					console.log('Son siparis yuklendi:', lastOrder);
+				} else {
+					console.log('Son siparis bulunamadi');
+				}
+			} catch (err) {
+				console.error('Son siparis yukleme hatasi:', err);
+			}
+		}
+
+		// Repeat order modal ac
+		function openRepeatOrderModal() {
+			if (!lastOrder) {
+				alert('Son siparis bulunamadi');
+				return;
+			}
+
+			// Modal icerigini olustur
+			var bodyHtml = '';
+
+			// Bayi bilgisi
+			var dealerName = lastOrder.dealer ? lastOrder.dealer.name : 'Bayi';
+			bodyHtml += '<div class="repeat-order-dealer">' +
+				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+					'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>' +
+					'<circle cx="12" cy="10" r="3"/>' +
+				'</svg>' +
+				'<span>Bayi: ' + dealerName + '</span>' +
+			'</div>';
+
+			// Siparis kalemleri
+			bodyHtml += '<div class="repeat-order-items-title">Siparis Kalemleri</div>';
+			bodyHtml += '<div class="repeat-order-items">';
+
+			var total = 0;
+			if (lastOrder.order_items && lastOrder.order_items.length > 0) {
+				lastOrder.order_items.forEach(function(item) {
+					var imageUrl = item.product && item.product.image_url ? item.product.image_url : './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+					var productName = item.product ? item.product.name : 'Urun';
+					var itemTotal = parseFloat(item.total_price) || (item.quantity * item.unit_price);
+					total += itemTotal;
+
+					bodyHtml += '<div class="repeat-order-item">' +
+						'<div class="repeat-order-item-image">' +
+							'<img src="' + imageUrl + '" alt="' + productName + '">' +
+						'</div>' +
+						'<div class="repeat-order-item-info">' +
+							'<div class="repeat-order-item-name">' + productName + '</div>' +
+							'<div class="repeat-order-item-qty">x' + item.quantity + '</div>' +
+						'</div>' +
+						'<div class="repeat-order-item-price">' + formatPrice(itemTotal) + '</div>' +
+					'</div>';
+				});
+			}
+			bodyHtml += '</div>';
+
+			// Zaman slotlari
+			bodyHtml += '<div class="time-slots-title">Teslimat Zamani Secin</div>';
+			bodyHtml += '<div class="time-slots" id="timeSlots">';
+			var timeSlots = generateTimeSlots();
+			timeSlots.forEach(function(slot, index) {
+				var selectedClass = index === 0 ? ' selected' : '';
+				bodyHtml += '<div class="time-slot' + selectedClass + '" data-slot-index="' + index + '" onclick="selectTimeSlot(' + index + ')">' +
+					'<div class="time-slot-hour">' + slot.hour + '</div>' +
+					'<div class="time-slot-day">' + slot.day + '</div>' +
+				'</div>';
+			});
+			bodyHtml += '</div>';
+
+			// Ilk slotu varsayilan olarak sec
+			selectedTimeSlot = timeSlots[0];
+
+			// Toplam
+			bodyHtml += '<div class="repeat-order-total">' +
+				'<span class="repeat-order-total-label">Toplam</span>' +
+				'<span class="repeat-order-total-value">' + formatPrice(total) + '</span>' +
+			'</div>';
+
+			// Butonlar
+			bodyHtml += '<div class="repeat-order-actions">' +
+				'<button class="btn-repeat-cancel" onclick="closeRepeatOrderModal()">Iptal</button>' +
+				'<button class="btn-repeat-submit" id="btnRepeatSubmit" onclick="submitRepeatOrder()">Siparis Ver</button>' +
+			'</div>';
+
+			document.getElementById('repeatOrderBody').innerHTML = bodyHtml;
+			document.getElementById('repeatOrderOverlay').classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+
+		// Modal kapat
+		function closeRepeatOrderModal() {
+			document.getElementById('repeatOrderOverlay').classList.remove('active');
+			document.body.style.overflow = '';
+		}
+
+		// Overlay'e tiklayinca kapat
+		document.getElementById('repeatOrderOverlay').addEventListener('click', function(e) {
+			if (e.target === this) {
+				closeRepeatOrderModal();
+			}
+		});
+
+		// Zaman slotlarini olustur (sonraki 3 saat)
+		function generateTimeSlots() {
+			var slots = [];
+			var now = new Date();
+			var currentHour = now.getHours();
+
+			for (var i = 1; i <= 3; i++) {
+				var slotHour = currentHour + i;
+				var slotDate = new Date(now);
+
+				if (slotHour >= 24) {
+					slotHour = slotHour - 24;
+					slotDate.setDate(slotDate.getDate() + 1);
+				}
+
+				var dayLabel = isToday(slotDate) ? 'BUGUN' : 'YARIN';
+				var hourStr = slotHour.toString().padStart(2, '0') + ':00';
+
+				slots.push({
+					hour: hourStr,
+					day: dayLabel,
+					date: slotDate,
+					hourValue: slotHour
+				});
+			}
+
+			return slots;
+		}
+
+		// Bugun mu kontrolu
+		function isToday(date) {
+			var today = new Date();
+			return date.getDate() === today.getDate() &&
+				   date.getMonth() === today.getMonth() &&
+				   date.getFullYear() === today.getFullYear();
+		}
+
+		// Zaman slotu sec
+		function selectTimeSlot(index) {
+			var slots = document.querySelectorAll('.time-slot');
+			slots.forEach(function(slot, i) {
+				slot.classList.toggle('selected', i === index);
+			});
+
+			var timeSlots = generateTimeSlots();
+			selectedTimeSlot = timeSlots[index];
+		}
+
+		// Fiyat formatlama
+		function formatPrice(amount) {
+			return '₺' + parseFloat(amount).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+
+		// Siparisi gonder
+		async function submitRepeatOrder() {
+			if (!lastOrder || !selectedTimeSlot) {
+				alert('Lutfen bir teslimat zamani secin');
+				return;
+			}
+
+			var submitBtn = document.getElementById('btnRepeatSubmit');
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Gonderiliyor...';
+
+			try {
+				// Sepete urunleri ekle
+				for (var i = 0; i < lastOrder.order_items.length; i++) {
+					var item = lastOrder.order_items[i];
+					await CartService.addItem({
+						id: item.product.id,
+						code: item.product.code,
+						name: item.product.name,
+						price: item.unit_price,
+						points: item.points || 0,
+						image_url: item.product.image_url
+					}, item.quantity);
+				}
+
+				// Badge'i guncelle
+				updateCartBadge();
+
+				// Modalı kapat
+				closeRepeatOrderModal();
+
+				// Sepet sayfasina yonlendir
+				alert('Urunler sepete eklendi! Sepet sayfasina yonlendiriliyorsunuz...');
+				window.location.href = 'isyerim-musteri-sepet.html';
+
+			} catch (err) {
+				console.error('Siparis gonderme hatasi:', err);
+				alert('Siparis gonderilirken bir hata olustu. Lutfen tekrar deneyin.');
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Siparis Ver';
+			}
+		}
 	</script>
 </body>
 </html>

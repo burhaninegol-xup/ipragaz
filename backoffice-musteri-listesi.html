@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musteri Listesi - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-sidebar-bg: #1a1a1a;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bo-bg-main);
+            min-height: 100vh;
+        }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed {
+            margin-left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-content {
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .bo-page-header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .bo-page-header-left p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .bo-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-btn-primary {
+            background: var(--bo-primary);
+            color: #ffffff;
+        }
+
+        .bo-btn-primary:hover {
+            background: var(--bo-primary-dark);
+        }
+
+        .bo-btn-secondary {
+            background: var(--bo-bg-paper);
+            color: var(--bo-text-primary);
+            border: 1px solid var(--bo-border);
+        }
+
+        .bo-btn-secondary:hover {
+            background: var(--bo-bg-main);
+        }
+
+        .bo-btn-danger {
+            background: var(--bo-error);
+            color: #ffffff;
+        }
+
+        .bo-btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .bo-btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .bo-btn-sm svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Card */
+        .bo-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Toolbar */
+        .bo-toolbar {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .bo-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .bo-toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Search */
+        .bo-search {
+            position: relative;
+        }
+
+        .bo-search input {
+            width: 280px;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main);
+            transition: all 0.2s ease;
+        }
+
+        .bo-search input:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+            background: var(--bo-bg-paper);
+        }
+
+        .bo-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-search-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Select */
+        .bo-select {
+            padding: 10px 36px 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+            cursor: pointer;
+            appearance: none;
+        }
+
+        .bo-select:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+        }
+
+        /* Table */
+        .bo-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .bo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bo-table th,
+        .bo-table td {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .bo-table th {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .bo-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .bo-table th.sortable:hover {
+            color: var(--bo-text-primary);
+        }
+
+        .bo-table th .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.3;
+        }
+
+        .bo-table th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--bo-primary);
+        }
+
+        .bo-table td {
+            border-bottom: 1px solid var(--bo-border);
+            color: var(--bo-text-primary);
+        }
+
+        .bo-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bo-table tr:hover td {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .bo-table-checkbox {
+            width: 40px;
+        }
+
+        .bo-table-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--bo-primary);
+            cursor: pointer;
+        }
+
+        .bo-table-actions {
+            white-space: nowrap;
+        }
+
+        /* Badge */
+        .bo-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .bo-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--bo-success);
+        }
+
+        .bo-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--bo-warning);
+        }
+
+        .bo-badge.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--bo-error);
+        }
+
+        .bo-badge.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--bo-info);
+        }
+
+        /* Action Buttons */
+        .bo-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .bo-action-btn:hover {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-primary);
+        }
+
+        .bo-action-btn.view:hover {
+            color: var(--bo-info);
+        }
+
+        .bo-action-btn.edit:hover {
+            color: var(--bo-info);
+        }
+
+        .bo-action-btn.delete:hover {
+            color: var(--bo-error);
+        }
+
+        .bo-action-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Pagination */
+        .bo-pagination {
+            padding: 16px 24px;
+            border-top: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bo-pagination-info {
+            font-size: 13px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bo-pagination-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--bo-border);
+            background: var(--bo-bg-paper);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .bo-pagination-btn:hover:not(:disabled) {
+            border-color: var(--bo-primary);
+            color: var(--bo-primary);
+        }
+
+        .bo-pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .bo-pagination-btn.active {
+            background: var(--bo-primary);
+            border-color: var(--bo-primary);
+            color: #ffffff;
+        }
+
+        .bo-pagination-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Empty State */
+        .bo-empty-state {
+            text-align: center;
+            padding: 64px 24px;
+        }
+
+        .bo-empty-state svg {
+            width: 80px;
+            height: 80px;
+            stroke: var(--bo-border);
+            fill: none;
+            stroke-width: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .bo-empty-state h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--bo-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .bo-empty-state p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Bulk Actions Bar */
+        .bo-bulk-actions {
+            padding: 12px 24px;
+            background: var(--bo-primary);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bo-bulk-actions.show {
+            display: flex;
+        }
+
+        .bo-bulk-actions-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .bo-bulk-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bo-bulk-btn {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .bo-bulk-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Loading */
+        .bo-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px;
+        }
+
+        .bo-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .bo-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .bo-toast.success {
+            background: var(--bo-success);
+        }
+
+        .bo-toast.error {
+            background: var(--bo-error);
+        }
+
+        .bo-toast svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Confirm Modal */
+        .bo-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+
+        .bo-modal-overlay.show {
+            display: flex;
+        }
+
+        .bo-modal {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .bo-modal h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 12px;
+        }
+
+        .bo-modal p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .bo-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Customer Info Cell */
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .customer-name {
+            font-weight: 500;
+            color: var(--bo-text-primary);
+        }
+
+        .customer-company {
+            font-size: 12px;
+            color: var(--bo-text-secondary);
+        }
+
+        .dealer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: var(--bo-bg-main);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--bo-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="backoffice-sidebar"></div>
+
+    <!-- Main Content -->
+    <main class="bo-main-content">
+        <!-- Header -->
+        <div id="backoffice-header"></div>
+
+        <!-- Page Content -->
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <h1>Musteri Listesi</h1>
+                    <p>Sistemdeki tum musterileri listeleyin, duzenleyin veya silin</p>
+                </div>
+                <a href="backoffice-musteri-ekle.html" class="bo-btn bo-btn-primary">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Yeni Musteri Ekle
+                </a>
+            </div>
+
+            <!-- Table Card -->
+            <div class="bo-card">
+                <!-- Bulk Actions Bar -->
+                <div class="bo-bulk-actions" id="bulkActions">
+                    <div class="bo-bulk-actions-left">
+                        <span><strong id="selectedCount">0</strong> musteri secildi</span>
+                    </div>
+                    <div class="bo-bulk-actions-right">
+                        <button class="bo-bulk-btn" onclick="bulkActivate()">Aktif Yap</button>
+                        <button class="bo-bulk-btn" onclick="bulkDeactivate()">Pasif Yap</button>
+                        <button class="bo-bulk-btn" onclick="bulkDelete()">Sil</button>
+                        <button class="bo-bulk-btn" onclick="clearSelection()">Secimi Kaldir</button>
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="bo-toolbar">
+                    <div class="bo-toolbar-left">
+                        <div class="bo-search">
+                            <span class="bo-search-icon">
+                                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
+                            <input type="text" placeholder="Musteri ara (Ad, Telefon, VKN)..." id="searchInput" onkeyup="handleSearch()">
+                        </div>
+                        <select class="bo-select" id="dealerFilter" onchange="applyFilters()">
+                            <option value="">Tum Bayiler</option>
+                        </select>
+                        <select class="bo-select" id="statusFilter" onchange="applyFilters()">
+                            <option value="">Tum Durumlar</option>
+                            <option value="active">Aktif</option>
+                            <option value="inactive">Pasif</option>
+                        </select>
+                    </div>
+                    <div class="bo-toolbar-right">
+                        <select class="bo-select" id="perPage" onchange="changePerPage()">
+                            <option value="10">10 / sayfa</option>
+                            <option value="25">25 / sayfa</option>
+                            <option value="50">50 / sayfa</option>
+                        </select>
+                        <button class="bo-btn bo-btn-secondary bo-btn-sm" onclick="exportData()">
+                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Disari Aktar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bo-table-wrapper">
+                    <table class="bo-table">
+                        <thead>
+                            <tr>
+                                <th class="bo-table-checkbox">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                </th>
+                                <th class="sortable" onclick="sortBy('name')">
+                                    Musteri
+                                    <span class="sort-icon">&#8597;</span>
+                                </th>
+                                <th>Telefon</th>
+                                <th>Email</th>
+                                <th>VKN</th>
+                                <th class="sortable" onclick="sortBy('dealer')">
+                                    Bayi
+                                    <span class="sort-icon">&#8597;</span>
+                                </th>
+                                <th class="sortable" onclick="sortBy('is_active')">
+                                    Durum
+                                    <span class="sort-icon">&#8597;</span>
+                                </th>
+                                <th class="sortable" onclick="sortBy('created_at')">
+                                    Kayit Tarihi
+                                    <span class="sort-icon">&#8597;</span>
+                                </th>
+                                <th class="bo-table-actions">Islemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTable">
+                            <!-- Customers will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="bo-pagination" id="pagination">
+                    <div class="bo-pagination-info" id="paginationInfo">
+                        0 musteriden 0 - 0 arasi gosteriliyor
+                    </div>
+                    <div class="bo-pagination-controls" id="paginationControls">
+                        <!-- Pagination buttons will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="bo-modal-overlay" id="confirmModal">
+        <div class="bo-modal">
+            <h3 id="modalTitle">Emin misiniz?</h3>
+            <p id="modalMessage">Bu islemi geri alamazsiniz.</p>
+            <div class="bo-modal-actions">
+                <button class="bo-btn bo-btn-secondary" onclick="closeModal()">Iptal</button>
+                <button class="bo-btn bo-btn-danger" id="modalConfirmBtn" onclick="confirmAction()">Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/customers-service.js"></script>
+    <script src="js/services/dealers-service.js"></script>
+
+    <script>
+        // State
+        var allCustomers = [];
+        var filteredCustomers = [];
+        var selectedCustomers = [];
+        var allDealers = [];
+        var currentPage = 1;
+        var perPage = 10;
+        var sortColumn = 'created_at';
+        var sortDirection = 'desc';
+        var pendingAction = null;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            await loadComponents();
+
+            if (typeof setPageName === 'function') {
+                setPageName('Musteri Listesi');
+            }
+
+            await loadDealers();
+            await loadCustomers();
+        });
+
+        // Load components
+        async function loadComponents() {
+            try {
+                var sidebarResponse = await fetch('components/backoffice-sidebar.html');
+                var sidebarHtml = await sidebarResponse.text();
+                document.getElementById('backoffice-sidebar').innerHTML = sidebarHtml;
+
+                var headerResponse = await fetch('components/backoffice-header.html');
+                var headerHtml = await headerResponse.text();
+                document.getElementById('backoffice-header').innerHTML = headerHtml;
+
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (error) {
+                console.error('Component load error:', error);
+            }
+        }
+
+        function executeScripts(container) {
+            var scripts = container.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Load dealers for filter
+        async function loadDealers() {
+            try {
+                var result = await DealersService.getAll();
+                if (!result.error && result.data) {
+                    allDealers = result.data;
+                    populateDealerFilter();
+                }
+            } catch (error) {
+                console.error('Load dealers error:', error);
+            }
+        }
+
+        // Populate dealer filter
+        function populateDealerFilter() {
+            var dealerFilter = document.getElementById('dealerFilter');
+            dealerFilter.innerHTML = '<option value="">Tum Bayiler</option>';
+            allDealers.forEach(function(dealer) {
+                dealerFilter.innerHTML += '<option value="' + dealer.id + '">' + (dealer.name || '-') + '</option>';
+            });
+        }
+
+        // Load customers
+        async function loadCustomers() {
+            var tableBody = document.getElementById('customersTable');
+            tableBody.innerHTML = '<tr><td colspan="9"><div class="bo-loading"><div class="bo-loading-spinner"></div></div></td></tr>';
+
+            try {
+                var result = await CustomersService.getAll();
+                if (result.error) {
+                    tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 24px;">Veri yuklenemedi: ' + result.error.message + '</td></tr>';
+                    return;
+                }
+
+                allCustomers = result.data || [];
+                filteredCustomers = [...allCustomers];
+
+                // Apply initial sort
+                sortCustomers();
+
+                // Render table
+                renderTable();
+
+            } catch (error) {
+                console.error('Load customers error:', error);
+                tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 24px;">Bir hata olustu</td></tr>';
+            }
+        }
+
+        // Search handler
+        var searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() {
+                applyFilters();
+            }, 300);
+        }
+
+        // Apply filters
+        function applyFilters() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            var dealerFilter = document.getElementById('dealerFilter').value;
+            var statusFilter = document.getElementById('statusFilter').value;
+
+            filteredCustomers = allCustomers.filter(function(customer) {
+                // Search
+                var matchesSearch = !searchTerm ||
+                    (customer.name && customer.name.toLowerCase().includes(searchTerm)) ||
+                    (customer.phone && customer.phone.includes(searchTerm)) ||
+                    (customer.vkn && customer.vkn.includes(searchTerm)) ||
+                    (customer.email && customer.email.toLowerCase().includes(searchTerm)) ||
+                    (customer.company_name && customer.company_name.toLowerCase().includes(searchTerm));
+
+                // Dealer filter
+                var matchesDealer = !dealerFilter || customer.dealer_id === dealerFilter;
+
+                // Status filter
+                var matchesStatus = !statusFilter ||
+                    (statusFilter === 'active' && customer.is_active !== false) ||
+                    (statusFilter === 'inactive' && customer.is_active === false);
+
+                return matchesSearch && matchesDealer && matchesStatus;
+            });
+
+            currentPage = 1;
+            sortCustomers();
+            renderTable();
+        }
+
+        // Sort customers
+        function sortCustomers() {
+            filteredCustomers.sort(function(a, b) {
+                var valA, valB;
+
+                if (sortColumn === 'dealer') {
+                    valA = a.dealer ? a.dealer.name : '';
+                    valB = b.dealer ? b.dealer.name : '';
+                } else {
+                    valA = a[sortColumn];
+                    valB = b[sortColumn];
+                }
+
+                if (valA === null || valA === undefined) valA = '';
+                if (valB === null || valB === undefined) valB = '';
+
+                if (sortColumn === 'created_at') {
+                    valA = new Date(valA);
+                    valB = new Date(valB);
+                } else if (typeof valA === 'string') {
+                    valA = valA.toLowerCase();
+                    valB = valB.toLowerCase();
+                }
+
+                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        // Sort by column
+        function sortBy(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+
+            // Update UI
+            document.querySelectorAll('.bo-table th').forEach(function(th) {
+                th.classList.remove('sorted');
+            });
+            event.target.closest('th').classList.add('sorted');
+
+            sortCustomers();
+            renderTable();
+        }
+
+        // Render table
+        function renderTable() {
+            var tableBody = document.getElementById('customersTable');
+            var start = (currentPage - 1) * perPage;
+            var end = start + perPage;
+            var pageData = filteredCustomers.slice(start, end);
+
+            if (pageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9">' +
+                    '<div class="bo-empty-state">' +
+                        '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>' +
+                        '<h3>Musteri Bulunamadi</h3>' +
+                        '<p>Arama kriterlerinize uygun musteri bulunamadi.</p>' +
+                    '</div>' +
+                '</td></tr>';
+                updatePagination();
+                return;
+            }
+
+            tableBody.innerHTML = pageData.map(function(customer) {
+                var statusClass = customer.is_active !== false ? 'success' : 'error';
+                var statusText = customer.is_active !== false ? 'Aktif' : 'Pasif';
+                var createdAt = customer.created_at ? new Date(customer.created_at).toLocaleDateString('tr-TR') : '-';
+                var isSelected = selectedCustomers.includes(customer.id);
+                var dealerName = customer.dealer ? customer.dealer.name : '-';
+
+                return '<tr>' +
+                    '<td class="bo-table-checkbox"><input type="checkbox" ' + (isSelected ? 'checked' : '') + ' onchange="toggleSelect(\'' + customer.id + '\')"></td>' +
+                    '<td>' +
+                        '<div class="customer-info">' +
+                            '<span class="customer-name">' + (customer.name || '-') + '</span>' +
+                            (customer.company_name ? '<span class="customer-company">' + customer.company_name + '</span>' : '') +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' + (customer.phone || '-') + '</td>' +
+                    '<td>' + (customer.email || '-') + '</td>' +
+                    '<td>' + (customer.vkn || '-') + '</td>' +
+                    '<td><span class="dealer-badge">' + dealerName + '</span></td>' +
+                    '<td><span class="bo-badge ' + statusClass + '">' + statusText + '</span></td>' +
+                    '<td>' + createdAt + '</td>' +
+                    '<td class="bo-table-actions">' +
+                        '<button class="bo-action-btn view" onclick="viewCustomer(\'' + customer.id + '\')" title="Goruntule">' +
+                            '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                        '</button>' +
+                        '<button class="bo-action-btn edit" onclick="editCustomer(\'' + customer.id + '\')" title="Duzenle">' +
+                            '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' +
+                        '</button>' +
+                        '<button class="bo-action-btn delete" onclick="deleteCustomer(\'' + customer.id + '\')" title="Sil">' +
+                            '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>' +
+                        '</button>' +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+
+            updatePagination();
+            updateBulkActions();
+        }
+
+        // Update pagination
+        function updatePagination() {
+            var totalItems = filteredCustomers.length;
+            var totalPages = Math.ceil(totalItems / perPage);
+            var start = (currentPage - 1) * perPage + 1;
+            var end = Math.min(currentPage * perPage, totalItems);
+
+            document.getElementById('paginationInfo').textContent =
+                totalItems + ' musteriden ' + (totalItems > 0 ? start : 0) + ' - ' + end + ' arasi gosteriliyor';
+
+            var controls = document.getElementById('paginationControls');
+            var html = '';
+
+            // Previous button
+            html += '<button class="bo-pagination-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>' +
+                '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>' +
+            '</button>';
+
+            // Page numbers
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                html += '<button class="bo-pagination-btn" onclick="goToPage(1)">1</button>';
+                if (startPage > 2) {
+                    html += '<span style="padding: 0 8px;">...</span>';
+                }
+            }
+
+            for (var i = startPage; i <= endPage; i++) {
+                html += '<button class="bo-pagination-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += '<span style="padding: 0 8px;">...</span>';
+                }
+                html += '<button class="bo-pagination-btn" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
+            }
+
+            // Next button
+            html += '<button class="bo-pagination-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages || totalPages === 0 ? 'disabled' : '') + '>' +
+                '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>' +
+            '</button>';
+
+            controls.innerHTML = html;
+        }
+
+        // Go to page
+        function goToPage(page) {
+            var totalPages = Math.ceil(filteredCustomers.length / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+        }
+
+        // Change per page
+        function changePerPage() {
+            perPage = parseInt(document.getElementById('perPage').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        // Selection
+        function toggleSelect(id) {
+            var index = selectedCustomers.indexOf(id);
+            if (index === -1) {
+                selectedCustomers.push(id);
+            } else {
+                selectedCustomers.splice(index, 1);
+            }
+            updateBulkActions();
+            updateSelectAllCheckbox();
+        }
+
+        function toggleSelectAll() {
+            var selectAll = document.getElementById('selectAll');
+            var start = (currentPage - 1) * perPage;
+            var end = start + perPage;
+            var pageData = filteredCustomers.slice(start, end);
+
+            if (selectAll.checked) {
+                pageData.forEach(function(customer) {
+                    if (!selectedCustomers.includes(customer.id)) {
+                        selectedCustomers.push(customer.id);
+                    }
+                });
+            } else {
+                pageData.forEach(function(customer) {
+                    var index = selectedCustomers.indexOf(customer.id);
+                    if (index !== -1) {
+                        selectedCustomers.splice(index, 1);
+                    }
+                });
+            }
+
+            renderTable();
+        }
+
+        function updateSelectAllCheckbox() {
+            var start = (currentPage - 1) * perPage;
+            var end = start + perPage;
+            var pageData = filteredCustomers.slice(start, end);
+            var allSelected = pageData.length > 0 && pageData.every(function(c) { return selectedCustomers.includes(c.id); });
+            document.getElementById('selectAll').checked = allSelected;
+        }
+
+        function clearSelection() {
+            selectedCustomers = [];
+            document.getElementById('selectAll').checked = false;
+            renderTable();
+        }
+
+        function updateBulkActions() {
+            var bulkActions = document.getElementById('bulkActions');
+            var selectedCount = document.getElementById('selectedCount');
+
+            if (selectedCustomers.length > 0) {
+                bulkActions.classList.add('show');
+                selectedCount.textContent = selectedCustomers.length;
+            } else {
+                bulkActions.classList.remove('show');
+            }
+        }
+
+        // Bulk actions
+        async function bulkActivate() {
+            for (var i = 0; i < selectedCustomers.length; i++) {
+                await CustomersService.activate(selectedCustomers[i]);
+            }
+            showToast(selectedCustomers.length + ' musteri aktif yapildi', 'success');
+            clearSelection();
+            await loadCustomers();
+        }
+
+        async function bulkDeactivate() {
+            for (var i = 0; i < selectedCustomers.length; i++) {
+                await CustomersService.deactivate(selectedCustomers[i]);
+            }
+            showToast(selectedCustomers.length + ' musteri pasif yapildi', 'success');
+            clearSelection();
+            await loadCustomers();
+        }
+
+        function bulkDelete() {
+            pendingAction = { type: 'bulkDelete' };
+            showModal('Secili Musterileri Sil', selectedCustomers.length + ' musteri silinecek. Bu islemi geri alamazsiniz.', 'Sil');
+        }
+
+        // View customer
+        function viewCustomer(id) {
+            window.location.href = 'backoffice-musteri-detay.html?id=' + id;
+        }
+
+        // Edit customer
+        function editCustomer(id) {
+            window.location.href = 'backoffice-musteri-duzenle.html?id=' + id;
+        }
+
+        // Delete customer
+        function deleteCustomer(id) {
+            var customer = allCustomers.find(function(c) { return c.id === id; });
+            pendingAction = { type: 'delete', id: id };
+            showModal('Musteri Sil', '"' + (customer ? customer.name : 'Bu musteri') + '" silinecek. Bu islemi geri alamazsiniz.', 'Sil');
+        }
+
+        // Modal
+        function showModal(title, message, confirmText) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalConfirmBtn').textContent = confirmText;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            pendingAction = null;
+        }
+
+        async function confirmAction() {
+            if (!pendingAction) return;
+
+            if (pendingAction.type === 'delete') {
+                var result = await CustomersService.deactivate(pendingAction.id);
+                if (result.error) {
+                    showToast('Hata: ' + result.error.message, 'error');
+                } else {
+                    showToast('Musteri silindi', 'success');
+                    await loadCustomers();
+                }
+            } else if (pendingAction.type === 'bulkDelete') {
+                for (var i = 0; i < selectedCustomers.length; i++) {
+                    await CustomersService.deactivate(selectedCustomers[i]);
+                }
+                showToast(selectedCustomers.length + ' musteri silindi', 'success');
+                clearSelection();
+                await loadCustomers();
+            }
+
+            closeModal();
+        }
+
+        // Toast
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Export data
+        function exportData() {
+            var csv = 'Musteri Adi,Firma,Telefon,Email,VKN,Bayi,Durum,Kayit Tarihi\n';
+            filteredCustomers.forEach(function(c) {
+                var dealerName = c.dealer ? c.dealer.name : '';
+                csv += '"' + (c.name || '') + '","' + (c.company_name || '') + '","' + (c.phone || '') + '","' + (c.email || '') + '","' + (c.vkn || '') + '","' + dealerName + '","' + (c.is_active !== false ? 'Aktif' : 'Pasif') + '","' + (c.created_at ? new Date(c.created_at).toLocaleDateString('tr-TR') : '') + '"\n';
+            });
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'musteriler_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+
+            showToast('CSV dosyasi indirildi', 'success');
+        }
+    </script>
+</body>
+</html>

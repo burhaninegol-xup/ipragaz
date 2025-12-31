@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Siparisler - Ipragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 26px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: #666;
+			font-size: 14px;
+		}
+
+		/* Stats Grid */
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 15px;
+			margin-bottom: 25px;
+		}
+
+		.stat-card {
+			background: #fff;
+			border-radius: 14px;
+			padding: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.stat-icon {
+			width: 50px;
+			height: 50px;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.stat-icon svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.stat-icon.waiting {
+			background: #fff8e1;
+			color: #f57c00;
+		}
+
+		.stat-icon.onway {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.stat-icon.completed {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.stat-icon.cancelled {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.stat-info h3 {
+			font-size: 24px;
+			font-weight: 700;
+			color: #333;
+			margin-bottom: 2px;
+		}
+
+		.stat-info p {
+			font-size: 13px;
+			color: #888;
+		}
+
+		/* Filter Section */
+		.filter-section {
+			background: #fff;
+			border-radius: 16px;
+			padding: 20px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.filter-row {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.search-box {
+			flex: 1;
+			min-width: 250px;
+			position: relative;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 12px 16px 12px 45px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 14px;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.search-box svg {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.filter-buttons {
+			display: flex;
+			background: #f5f7fa;
+			border-radius: 10px;
+			padding: 4px;
+		}
+
+		.filter-btn {
+			padding: 10px 18px;
+			border: none;
+			background: transparent;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-weight: 500;
+		}
+
+		.filter-btn.active {
+			background: #fff;
+			color: #002c77;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		}
+
+		.filter-btn:hover:not(.active) {
+			color: #333;
+		}
+
+		.filter-btn .count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			background: #e0e0e0;
+			border-radius: 10px;
+			font-size: 11px;
+			margin-left: 6px;
+		}
+
+		.filter-btn.active .count {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.filter-btn.waiting .count {
+			background: #fff8e1;
+			color: #f57c00;
+		}
+		.filter-btn.waiting.active .count {
+			background: #ff9800;
+			color: #fff;
+		}
+
+		.filter-btn.onway .count {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+		.filter-btn.onway.active .count {
+			background: #1976d2;
+			color: #fff;
+		}
+
+		.filter-btn.completed .count {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+		.filter-btn.completed.active .count {
+			background: #4caf50;
+			color: #fff;
+		}
+
+		.filter-btn.cancelled .count {
+			background: #ffebee;
+			color: #c62828;
+		}
+		.filter-btn.cancelled.active .count {
+			background: #e53935;
+			color: #fff;
+		}
+
+		/* Date Filter */
+		.date-filter {
+			position: relative;
+		}
+
+		.date-filter select {
+			padding: 10px 35px 10px 15px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 13px;
+			color: #333;
+			background: #fff;
+			cursor: pointer;
+			appearance: none;
+		}
+
+		.date-filter select:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		.date-filter svg {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 16px;
+			height: 16px;
+			color: #666;
+			pointer-events: none;
+		}
+
+		/* Order List */
+		.order-list {
+			background: #fff;
+			border-radius: 20px;
+			padding: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.order-card {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			padding: 18px;
+			border: 1px solid #e8ecf1;
+			border-radius: 14px;
+			margin-bottom: 12px;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.order-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.order-card:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.08);
+		}
+
+		.order-icon {
+			width: 50px;
+			height: 50px;
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.order-icon svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.order-icon.waiting {
+			background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+			color: #f57c00;
+		}
+
+		.order-icon.on_the_way {
+			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+			color: #1565c0;
+		}
+
+		.order-icon.completed {
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			color: #2e7d32;
+		}
+
+		.order-icon.cancelled {
+			background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+			color: #c62828;
+		}
+
+		.order-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.order-header {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 4px;
+		}
+
+		.order-number {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.order-date {
+			font-size: 12px;
+			color: #888;
+		}
+
+		.order-customer {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 4px;
+		}
+
+		.order-products {
+			font-size: 12px;
+			color: #999;
+		}
+
+		.order-total {
+			text-align: right;
+			flex-shrink: 0;
+		}
+
+		.order-total-amount {
+			font-size: 16px;
+			font-weight: 700;
+			color: #002c77;
+			margin-bottom: 2px;
+		}
+
+		.order-total-items {
+			font-size: 11px;
+			color: #888;
+		}
+
+		/* Status Badge */
+		.order-status-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			flex-shrink: 0;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+
+		.order-status-badge svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.order-status-badge.waiting_for_assignment {
+			background: #fff8e1;
+			color: #f57c00;
+			border: 1px solid #ffe0b2;
+		}
+
+		.order-status-badge.on_the_way {
+			background: #e3f2fd;
+			color: #1565c0;
+			border: 1px solid #bbdefb;
+		}
+
+		.order-status-badge.completed {
+			background: #e8f5e9;
+			color: #2e7d32;
+			border: 1px solid #c8e6c9;
+		}
+
+		.order-status-badge.cancelled {
+			background: #ffebee;
+			color: #c62828;
+			border: 1px solid #ffcdd2;
+		}
+
+		/* Status Dropdown */
+		.order-status-dropdown {
+			position: relative;
+		}
+
+		.order-status-select {
+			padding: 8px 30px 8px 12px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 12px;
+			font-weight: 500;
+			background: #fff;
+			cursor: pointer;
+			appearance: none;
+			min-width: 140px;
+		}
+
+		.order-status-select:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		.order-status-dropdown svg {
+			position: absolute;
+			right: 10px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 14px;
+			height: 14px;
+			color: #666;
+			pointer-events: none;
+		}
+
+		.order-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			flex-shrink: 0;
+		}
+
+		.order-action:hover {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.order-action svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: #666;
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #999;
+		}
+
+		/* Pagination */
+		.pagination-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+			margin-top: 20px;
+			padding: 15px 20px;
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+		}
+
+		.pagination-info {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.pagination-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.pagination-btn {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 16px;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-btn:hover:not(:disabled) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		.pagination-pages {
+			display: flex;
+			gap: 4px;
+		}
+
+		.pagination-page {
+			min-width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-page:hover:not(.ellipsis) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-page.active {
+			background: #002c77;
+			border-color: #002c77;
+			color: #fff;
+		}
+
+		.pagination-page.ellipsis {
+			border: none;
+			cursor: default;
+			background: transparent;
+		}
+
+		/* Toast Notification */
+		.toast {
+			position: fixed;
+			bottom: 30px;
+			right: 30px;
+			padding: 16px 24px;
+			background: #333;
+			color: #fff;
+			border-radius: 12px;
+			font-size: 14px;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			display: none;
+			z-index: 1001;
+			animation: slideIn 0.3s ease;
+		}
+
+		.toast.success {
+			background: #2e7d32;
+		}
+
+		.toast.error {
+			background: #c62828;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		/* Confirm Modal */
+		.confirm-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.confirm-modal-overlay.active {
+			display: flex;
+		}
+
+		.confirm-modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 30px;
+			max-width: 400px;
+			width: 90%;
+			text-align: center;
+		}
+
+		.confirm-modal h3 {
+			font-size: 18px;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.confirm-modal p {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 25px;
+		}
+
+		.confirm-modal-actions {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.confirm-modal-btn {
+			padding: 12px 24px;
+			border: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.confirm-modal-btn.cancel {
+			background: #f5f5f5;
+			color: #666;
+		}
+
+		.confirm-modal-btn.cancel:hover {
+			background: #eee;
+		}
+
+		.confirm-modal-btn.confirm {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.confirm-modal-btn.confirm:hover {
+			background: #001d52;
+		}
+
+		.confirm-modal-btn.danger {
+			background: #e53935;
+			color: #fff;
+		}
+
+		.confirm-modal-btn.danger:hover {
+			background: #c62828;
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.stats-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+
+		@media (max-width: 768px) {
+			.stats-grid {
+				grid-template-columns: 1fr 1fr;
+			}
+
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.filter-row {
+				flex-direction: column;
+			}
+
+			.search-box {
+				width: 100%;
+			}
+
+			.filter-buttons {
+				width: 100%;
+				overflow-x: auto;
+				justify-content: flex-start;
+			}
+
+			.order-card {
+				flex-wrap: wrap;
+			}
+
+			.order-total {
+				width: 100%;
+				text-align: left;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding-top: 10px;
+				border-top: 1px solid #eee;
+				margin-top: 10px;
+			}
+
+			.order-status-badge span {
+				display: none;
+			}
+
+			.pagination-pages {
+				display: none;
+			}
+
+			.pagination-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.pagination-controls {
+				justify-content: center;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.main-content {
+				padding: 20px 15px;
+			}
+
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.page-header-left h1 {
+				font-size: 22px;
+			}
+
+			.order-card {
+				padding: 14px;
+			}
+
+			.order-icon {
+				width: 44px;
+				height: 44px;
+			}
+
+			.filter-btn {
+				padding: 8px 12px;
+				font-size: 12px;
+			}
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Siparisler</h1>
+				<p>Musterilerinizden gelen siparisleri yonetin</p>
+			</div>
+		</div>
+
+		<!-- Stats Grid -->
+		<div class="stats-grid">
+			<div class="stat-card">
+				<div class="stat-icon waiting">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+				</div>
+				<div class="stat-info">
+					<h3 id="stat-waiting">0</h3>
+					<p>Atama Bekliyor</p>
+				</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-icon onway">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+				</div>
+				<div class="stat-info">
+					<h3 id="stat-onway">0</h3>
+					<p>Dagitimda</p>
+				</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-icon completed">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+				</div>
+				<div class="stat-info">
+					<h3 id="stat-completed">0</h3>
+					<p>Teslim Edildi</p>
+				</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-icon cancelled">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
+				</div>
+				<div class="stat-info">
+					<h3 id="stat-cancelled">0</h3>
+					<p>Iptal</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- Filter Section -->
+		<div class="filter-section">
+			<div class="filter-row">
+				<div class="search-box">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+					</svg>
+					<input type="text" id="search-input" placeholder="Siparis no veya musteri adi ile ara...">
+				</div>
+				<div class="filter-buttons">
+					<button class="filter-btn active" data-filter="all">
+						Tumu
+						<span class="count" id="count-all">0</span>
+					</button>
+					<button class="filter-btn waiting" data-filter="waiting_for_assignment">
+						Bekliyor
+						<span class="count" id="count-waiting">0</span>
+					</button>
+					<button class="filter-btn onway" data-filter="on_the_way">
+						Dagitimda
+						<span class="count" id="count-onway">0</span>
+					</button>
+					<button class="filter-btn completed" data-filter="completed">
+						Teslim
+						<span class="count" id="count-completed">0</span>
+					</button>
+					<button class="filter-btn cancelled" data-filter="cancelled">
+						Iptal
+						<span class="count" id="count-cancelled">0</span>
+					</button>
+				</div>
+				<div class="date-filter">
+					<select id="date-filter">
+						<option value="all">Tum Tarihler</option>
+						<option value="today">Bugun</option>
+						<option value="yesterday">Dun</option>
+						<option value="week">Bu Hafta</option>
+						<option value="month">Bu Ay</option>
+					</select>
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+				</div>
+			</div>
+		</div>
+
+		<!-- Order List -->
+		<div class="order-list" id="order-list">
+			<div class="loading-placeholder" style="text-align: center; padding: 40px; color: #666;">
+				<div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #002c77; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+				<p>Siparisler yukleniyor...</p>
+			</div>
+		</div>
+
+		<!-- Pagination -->
+		<div class="pagination-container" id="pagination-container" style="display: none;">
+			<div class="pagination-info">
+				<span id="pagination-info-text">1-20 / 0 siparis</span>
+			</div>
+			<div class="pagination-controls">
+				<button class="pagination-btn" id="prev-page" disabled>
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+					Onceki
+				</button>
+				<div class="pagination-pages" id="pagination-pages"></div>
+				<button class="pagination-btn" id="next-page">
+					Sonraki
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+				</button>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<!-- Toast Notification -->
+	<div class="toast" id="toast"></div>
+
+	<!-- Confirm Modal -->
+	<div class="confirm-modal-overlay" id="confirm-modal">
+		<div class="confirm-modal">
+			<h3 id="confirm-title">Durum Degistir</h3>
+			<p id="confirm-message">Bu siparisi "Dagitimda" olarak guncellemek istediginize emin misiniz?</p>
+			<div class="confirm-modal-actions">
+				<button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Iptal</button>
+				<button class="confirm-modal-btn confirm" id="confirm-btn" onclick="confirmAction()">Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		// Auth kontrol
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
+		// Bayi componentlerini yukle
+		document.addEventListener('DOMContentLoaded', function() {
+			ComponentLoader.loadBayiComponents();
+		});
+
+		// Global state
+		var allOrders = [];
+		var currentDealerId = null;
+		var currentFilter = 'all';
+		var currentDateFilter = 'all';
+		var currentPage = 0;
+		var pageSize = 20;
+		var pendingAction = null;
+
+		// Status labels
+		var statusLabels = {
+			waiting_for_assignment: 'Atama Bekliyor',
+			on_the_way: 'Dagitimda',
+			completed: 'Teslim Edildi',
+			cancelled: 'Iptal'
+		};
+
+		// Status icons
+		var statusIcons = {
+			waiting_for_assignment: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
+			on_the_way: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>',
+			completed: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+			cancelled: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>'
+		};
+
+		// Toast notification
+		function showToast(message, type) {
+			var $toast = $('#toast');
+			$toast.removeClass('success error').addClass(type || '');
+			$toast.text(message).fadeIn(300);
+			setTimeout(function() {
+				$toast.fadeOut(300);
+			}, 3000);
+		}
+
+		// Confirm modal
+		function showConfirmModal(title, message, action, isDanger) {
+			pendingAction = action;
+			$('#confirm-title').text(title);
+			$('#confirm-message').text(message);
+			$('#confirm-btn').removeClass('danger').addClass(isDanger ? 'danger' : 'confirm');
+			$('#confirm-modal').addClass('active');
+		}
+
+		function closeConfirmModal() {
+			$('#confirm-modal').removeClass('active');
+			pendingAction = null;
+		}
+
+		function confirmAction() {
+			if (pendingAction) {
+				pendingAction();
+			}
+			closeConfirmModal();
+		}
+
+		// Format date
+		function formatDate(dateStr) {
+			var date = new Date(dateStr);
+			var day = date.getDate().toString().padStart(2, '0');
+			var month = (date.getMonth() + 1).toString().padStart(2, '0');
+			var year = date.getFullYear();
+			var hours = date.getHours().toString().padStart(2, '0');
+			var minutes = date.getMinutes().toString().padStart(2, '0');
+			return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+		}
+
+		// Format price
+		function formatPrice(amount) {
+			return parseFloat(amount).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}) + ' TL';
+		}
+
+		// Get date filter range
+		function getDateRange(filter) {
+			var now = new Date();
+			var start = null;
+
+			switch (filter) {
+				case 'today':
+					start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+					break;
+				case 'yesterday':
+					start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+					break;
+				case 'week':
+					start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+					break;
+				case 'month':
+					start = new Date(now.getFullYear(), now.getMonth(), 1);
+					break;
+				default:
+					return null;
+			}
+
+			return start.toISOString();
+		}
+
+		// Load orders
+		async function loadOrders() {
+			try {
+				currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+				if (!currentDealerId) {
+					$('#order-list').html('<div class="empty-state"><p>Bayi bilgisi bulunamadi. Lutfen tekrar giris yapin.</p></div>');
+					return;
+				}
+
+				// Build filters
+				var filters = {};
+				if (currentFilter !== 'all') {
+					filters.status = currentFilter;
+				}
+				var dateFrom = getDateRange(currentDateFilter);
+				if (dateFrom) {
+					filters.dateFrom = dateFrom;
+				}
+
+				const { data, error } = await OrdersService.getByDealerId(currentDealerId, filters);
+				if (error) throw new Error(error);
+
+				allOrders = data || [];
+				renderOrders();
+				updateStats();
+				updateFilterCounts();
+
+			} catch (err) {
+				console.error('Siparis yukleme hatasi:', err);
+				$('#order-list').html('<div class="empty-state"><p>Siparisler yuklenirken hata olustu</p></div>');
+			}
+		}
+
+		// Update stats
+		async function updateStats() {
+			if (!currentDealerId) return;
+
+			try {
+				const [waitingRes, onwayRes] = await Promise.all([
+					OrdersService.getWaitingCount(currentDealerId),
+					OrdersService.getOnTheWayCount(currentDealerId)
+				]);
+
+				$('#stat-waiting').text(waitingRes.data || 0);
+				$('#stat-onway').text(onwayRes.data || 0);
+
+				// Count from loaded data
+				var completedCount = allOrders.filter(o => o.status === 'completed').length;
+				var cancelledCount = allOrders.filter(o => o.status === 'cancelled').length;
+				$('#stat-completed').text(completedCount);
+				$('#stat-cancelled').text(cancelledCount);
+
+			} catch (err) {
+				console.error('Istatistik yukleme hatasi:', err);
+			}
+		}
+
+		// Update filter counts
+		function updateFilterCounts() {
+			var counts = {
+				all: allOrders.length,
+				waiting_for_assignment: 0,
+				on_the_way: 0,
+				completed: 0,
+				cancelled: 0
+			};
+
+			allOrders.forEach(function(order) {
+				if (counts[order.status] !== undefined) {
+					counts[order.status]++;
+				}
+			});
+
+			$('#count-all').text(counts.all);
+			$('#count-waiting').text(counts.waiting_for_assignment);
+			$('#count-onway').text(counts.on_the_way);
+			$('#count-completed').text(counts.completed);
+			$('#count-cancelled').text(counts.cancelled);
+		}
+
+		// Create order card
+		function createOrderCard(order) {
+			var status = order.status || 'waiting_for_assignment';
+			var statusClass = status === 'waiting_for_assignment' ? 'waiting' : status;
+			var customerName = order.customer ? order.customer.name : 'Bilinmeyen Musteri';
+			var orderNumber = order.order_number || order.id.substring(0, 8);
+
+			// Calculate total
+			var total = 0;
+			var itemCount = 0;
+			var productsSummary = '';
+			if (order.order_items && order.order_items.length > 0) {
+				itemCount = order.order_items.length;
+				order.order_items.forEach(function(item) {
+					total += parseFloat(item.total_price) || 0;
+				});
+				// First 2 products
+				var summaryItems = order.order_items.slice(0, 2).map(function(item) {
+					var productName = item.product ? item.product.name : 'Urun';
+					return item.quantity + 'x ' + productName;
+				});
+				productsSummary = summaryItems.join(', ');
+				if (order.order_items.length > 2) {
+					productsSummary += ' +' + (order.order_items.length - 2) + ' urun';
+				}
+			}
+
+			return '<div class="order-card" data-id="' + order.id + '" data-status="' + status + '" data-customer="' + customerName.toLowerCase() + '" data-order-number="' + orderNumber.toLowerCase() + '">' +
+				'<div class="order-icon ' + status + '">' + statusIcons[status] + '</div>' +
+				'<div class="order-info">' +
+					'<div class="order-header">' +
+						'<span class="order-number">#' + orderNumber + '</span>' +
+						'<span class="order-date">' + formatDate(order.created_at) + '</span>' +
+					'</div>' +
+					'<div class="order-customer">' + customerName + '</div>' +
+					'<div class="order-products">' + productsSummary + '</div>' +
+				'</div>' +
+				'<div class="order-status-badge ' + status + '">' +
+					statusIcons[status] +
+					'<span>' + statusLabels[status] + '</span>' +
+				'</div>' +
+				'<div class="order-total">' +
+					'<div class="order-total-amount">' + formatPrice(total) + '</div>' +
+					'<div class="order-total-items">' + itemCount + ' urun</div>' +
+				'</div>' +
+				'<a href="bayi-siparis-detay.html?id=' + order.id + '" class="order-action" onclick="event.stopPropagation();">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>' +
+				'</a>' +
+			'</div>';
+		}
+
+		// Render orders
+		function renderOrders() {
+			var $list = $('#order-list');
+			$list.empty();
+
+			// Apply search filter
+			var searchTerm = $('#search-input').val().toLowerCase();
+			var filteredOrders = allOrders.filter(function(order) {
+				if (searchTerm) {
+					var customerName = order.customer ? order.customer.name.toLowerCase() : '';
+					var orderNumber = (order.order_number || order.id).toLowerCase();
+					if (customerName.indexOf(searchTerm) === -1 && orderNumber.indexOf(searchTerm) === -1) {
+						return false;
+					}
+				}
+				return true;
+			});
+
+			if (filteredOrders.length === 0) {
+				$list.html('<div class="empty-state">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>' +
+					'<h3>Siparis bulunamadi</h3>' +
+					'<p>Arama kriterlerinize uygun siparis yok</p>' +
+				'</div>');
+				$('#pagination-container').hide();
+				return;
+			}
+
+			// Pagination
+			var totalPages = Math.ceil(filteredOrders.length / pageSize);
+			var start = currentPage * pageSize;
+			var end = Math.min(start + pageSize, filteredOrders.length);
+			var pageOrders = filteredOrders.slice(start, end);
+
+			pageOrders.forEach(function(order) {
+				$list.append(createOrderCard(order));
+			});
+
+			// Update pagination
+			if (filteredOrders.length > pageSize) {
+				$('#pagination-container').show();
+				$('#pagination-info-text').text((start + 1) + '-' + end + ' / ' + filteredOrders.length + ' siparis');
+				$('#prev-page').prop('disabled', currentPage === 0);
+				$('#next-page').prop('disabled', currentPage >= totalPages - 1);
+				renderPageNumbers(totalPages);
+			} else {
+				$('#pagination-container').hide();
+			}
+
+			// Card click event
+			$('.order-card').on('click', function() {
+				var orderId = $(this).data('id');
+				window.location.href = 'bayi-siparis-detay.html?id=' + orderId;
+			});
+		}
+
+		// Render page numbers
+		function renderPageNumbers(totalPages) {
+			var $pages = $('#pagination-pages');
+			$pages.empty();
+
+			var pages = [];
+			if (totalPages <= 7) {
+				for (var i = 0; i < totalPages; i++) pages.push(i);
+			} else {
+				pages = [0];
+				if (currentPage > 2) pages.push('...');
+				for (var j = Math.max(1, currentPage - 1); j <= Math.min(totalPages - 2, currentPage + 1); j++) {
+					pages.push(j);
+				}
+				if (currentPage < totalPages - 3) pages.push('...');
+				pages.push(totalPages - 1);
+			}
+
+			pages.forEach(function(p) {
+				if (p === '...') {
+					$pages.append('<span class="pagination-page ellipsis">...</span>');
+				} else {
+					var isActive = p === currentPage ? ' active' : '';
+					$pages.append('<button class="pagination-page' + isActive + '" data-page="' + p + '">' + (p + 1) + '</button>');
+				}
+			});
+		}
+
+		// Change order status
+		async function changeOrderStatus(orderId, newStatus) {
+			try {
+				var result;
+				switch (newStatus) {
+					case 'on_the_way':
+						result = await OrdersService.startDelivery(orderId);
+						break;
+					case 'completed':
+						result = await OrdersService.markDelivered(orderId);
+						break;
+					case 'cancelled':
+						result = await OrdersService.cancel(orderId);
+						break;
+					default:
+						result = await OrdersService.updateStatus(orderId, newStatus);
+				}
+
+				if (result.error) throw new Error(result.error);
+
+				showToast('Siparis durumu guncellendi', 'success');
+				loadOrders();
+
+			} catch (err) {
+				console.error('Durum guncelleme hatasi:', err);
+				showToast('Durum guncellenirken hata olustu', 'error');
+			}
+		}
+
+		// jQuery ready
+		$(document).ready(function() {
+			// Load orders
+			loadOrders();
+
+			// Filter buttons
+			$('.filter-btn').on('click', function() {
+				$('.filter-btn').removeClass('active');
+				$(this).addClass('active');
+				currentFilter = $(this).data('filter');
+				currentPage = 0;
+				loadOrders();
+			});
+
+			// Date filter
+			$('#date-filter').on('change', function() {
+				currentDateFilter = $(this).val();
+				currentPage = 0;
+				loadOrders();
+			});
+
+			// Search
+			$('#search-input').on('keyup', function() {
+				currentPage = 0;
+				renderOrders();
+			});
+
+			// Pagination
+			$('#prev-page').on('click', function() {
+				if (currentPage > 0) {
+					currentPage--;
+					renderOrders();
+				}
+			});
+
+			$('#next-page').on('click', function() {
+				currentPage++;
+				renderOrders();
+			});
+
+			$(document).on('click', '.pagination-page:not(.ellipsis)', function() {
+				currentPage = parseInt($(this).data('page'));
+				renderOrders();
+			});
+
+			// Close modal on overlay click
+			$('#confirm-modal').on('click', function(e) {
+				if (e.target === this) {
+					closeConfirmModal();
+				}
+			});
+		});
+	</script>
+</body>
+</html>

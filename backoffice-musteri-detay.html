@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musteri Detay - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bo-bg-main); min-height: 100vh; }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        .bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+        .bo-content { padding: 24px; max-width: 1200px; }
+
+        /* Page Header */
+        .bo-page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .bo-back-btn {
+            width: 40px; height: 40px; border: 1px solid var(--bo-border); background: var(--bo-bg-paper);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--bo-text-secondary); transition: all 0.2s ease; text-decoration: none;
+        }
+        .bo-back-btn:hover { border-color: var(--bo-primary); color: var(--bo-primary); }
+        .bo-back-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-page-header-content h1 { font-size: 24px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 4px; }
+        .bo-page-header-content p { font-size: 14px; color: var(--bo-text-secondary); }
+        .bo-page-header-actions { margin-left: auto; display: flex; gap: 12px; }
+
+        /* Buttons */
+        .bo-btn {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: none;
+            border-radius: 8px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer;
+            transition: all 0.2s ease; text-decoration: none;
+        }
+        .bo-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-btn-primary { background: var(--bo-primary); color: #ffffff; }
+        .bo-btn-primary:hover { background: var(--bo-primary-dark); }
+        .bo-btn-secondary { background: var(--bo-bg-paper); color: var(--bo-text-primary); border: 1px solid var(--bo-border); }
+        .bo-btn-secondary:hover { background: var(--bo-bg-main); }
+        .bo-btn-sm { padding: 6px 12px; font-size: 13px; }
+        .bo-btn-sm svg { width: 16px; height: 16px; }
+
+        /* Card */
+        .bo-card { background: var(--bo-bg-paper); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+        /* Tabs */
+        .bo-tabs { display: flex; border-bottom: 1px solid var(--bo-border); padding: 0 24px; }
+        .bo-tab {
+            padding: 16px 24px; font-size: 14px; font-weight: 500; color: var(--bo-text-secondary);
+            border: none; background: none; cursor: pointer; position: relative; transition: color 0.2s ease;
+        }
+        .bo-tab:hover { color: var(--bo-text-primary); }
+        .bo-tab.active { color: var(--bo-primary); }
+        .bo-tab.active::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+            height: 2px; background: var(--bo-primary);
+        }
+        .bo-tab-content { display: none; padding: 24px; }
+        .bo-tab-content.active { display: block; }
+
+        /* Customer Info Card */
+        .customer-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 992px) { .customer-card { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .customer-card { grid-template-columns: 1fr; } }
+        .customer-card-item { display: flex; flex-direction: column; gap: 4px; }
+        .customer-card-label { font-size: 12px; color: var(--bo-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .customer-card-value { font-size: 14px; color: var(--bo-text-primary); font-weight: 500; }
+
+        /* Badge */
+        .bo-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+        .bo-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--bo-success); }
+        .bo-badge.warning { background: rgba(245, 158, 11, 0.1); color: var(--bo-warning); }
+        .bo-badge.error { background: rgba(239, 68, 68, 0.1); color: var(--bo-error); }
+        .bo-badge.info { background: rgba(59, 130, 246, 0.1); color: var(--bo-info); }
+        .bo-badge.default { background: var(--bo-bg-main); color: var(--bo-text-secondary); }
+
+        /* Address Cards */
+        .addresses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .address-card {
+            border: 1px solid var(--bo-border); border-radius: 10px; padding: 16px;
+            position: relative; transition: all 0.2s ease;
+        }
+        .address-card:hover { border-color: var(--bo-primary); }
+        .address-card.default { border-color: var(--bo-success); background: rgba(16, 185, 129, 0.02); }
+        .address-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .address-card-title { font-size: 14px; font-weight: 600; color: var(--bo-text-primary); display: flex; align-items: center; gap: 8px; }
+        .address-card-actions { display: flex; gap: 4px; }
+        .address-card-content { font-size: 13px; color: var(--bo-text-secondary); line-height: 1.6; }
+        .address-card-location { margin-top: 8px; font-size: 12px; color: var(--bo-text-secondary); display: flex; align-items: center; gap: 4px; }
+        .address-card-location svg { width: 14px; height: 14px; }
+
+        /* Action Button */
+        .bo-action-btn {
+            width: 28px; height: 28px; border: none; background: transparent; border-radius: 6px;
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+            color: var(--bo-text-secondary); transition: all 0.2s ease;
+        }
+        .bo-action-btn:hover { background: var(--bo-bg-main); color: var(--bo-text-primary); }
+        .bo-action-btn.delete:hover { color: var(--bo-error); }
+        .bo-action-btn.success:hover { color: var(--bo-success); }
+        .bo-action-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Table */
+        .bo-table-wrapper { overflow-x: auto; }
+        .bo-table { width: 100%; border-collapse: collapse; }
+        .bo-table th, .bo-table td { padding: 12px 16px; text-align: left; font-size: 13px; }
+        .bo-table th {
+            background: var(--bo-bg-main); color: var(--bo-text-secondary); font-weight: 500;
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .bo-table td { border-bottom: 1px solid var(--bo-border); color: var(--bo-text-primary); }
+        .bo-table tr:last-child td { border-bottom: none; }
+        .bo-table tr:hover td { background: rgba(0,0,0,0.02); }
+
+        /* Empty State */
+        .bo-empty-state { text-align: center; padding: 48px 24px; }
+        .bo-empty-state svg { width: 64px; height: 64px; stroke: var(--bo-border); fill: none; stroke-width: 1.5; margin-bottom: 16px; }
+        .bo-empty-state h3 { font-size: 16px; font-weight: 500; color: var(--bo-text-primary); margin-bottom: 8px; }
+        .bo-empty-state p { font-size: 14px; color: var(--bo-text-secondary); }
+
+        /* Loading */
+        .bo-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px; }
+        .bo-loading-spinner {
+            width: 40px; height: 40px; border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary); border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Modal */
+        .bo-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center; z-index: 9998;
+        }
+        .bo-modal-overlay.show { display: flex; }
+        .bo-modal {
+            background: var(--bo-bg-paper); border-radius: 12px; padding: 24px;
+            max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;
+        }
+        .bo-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .bo-modal-header h3 { font-size: 18px; font-weight: 600; color: var(--bo-text-primary); }
+        .bo-modal-close {
+            width: 32px; height: 32px; border: none; background: var(--bo-bg-main); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .bo-modal-close svg { width: 18px; height: 18px; stroke: var(--bo-text-secondary); }
+        .bo-modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+
+        /* Form in Modal */
+        .bo-form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+        .bo-form-row.single { grid-template-columns: 1fr; }
+        .bo-form-row.triple { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 600px) { .bo-form-row, .bo-form-row.triple { grid-template-columns: 1fr; } }
+        .bo-form-group { display: flex; flex-direction: column; }
+        .bo-form-label { font-size: 13px; font-weight: 500; color: var(--bo-text-primary); margin-bottom: 6px; }
+        .bo-form-input, .bo-form-select {
+            padding: 10px 12px; border: 1px solid var(--bo-border); border-radius: 8px;
+            font-size: 14px; font-family: inherit;
+        }
+        .bo-form-input:focus, .bo-form-select:focus { outline: none; border-color: var(--bo-primary); }
+        .bo-form-select {
+            appearance: none; cursor: pointer;
+            background: var(--bo-bg-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+        }
+
+        /* Detail Item (for modals) */
+        .detail-item { margin-bottom: 12px; }
+        .detail-item-label { font-size: 12px; color: var(--bo-text-secondary); margin-bottom: 2px; }
+        .detail-item-value { font-size: 14px; color: var(--bo-text-primary); font-weight: 500; }
+
+        /* Products Table in Modal */
+        .products-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .products-table th, .products-table td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid var(--bo-border); }
+        .products-table th { background: var(--bo-bg-main); font-weight: 500; color: var(--bo-text-secondary); }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed; bottom: 24px; right: 24px; padding: 16px 20px;
+            background: var(--bo-text-primary); color: #ffffff; border-radius: 8px; font-size: 14px;
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateY(100px); opacity: 0; transition: all 0.3s ease; z-index: 9999;
+        }
+        .bo-toast.show { transform: translateY(0); opacity: 1; }
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+        .bo-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+    </style>
+</head>
+<body>
+    <div id="backoffice-sidebar"></div>
+
+    <main class="bo-main-content">
+        <div id="backoffice-header"></div>
+
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <a href="backoffice-musteri-listesi.html" class="bo-back-btn">
+                    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </a>
+                <div class="bo-page-header-content">
+                    <h1 id="customerName">Musteri Detay</h1>
+                    <p id="customerPhone">Yukleniyor...</p>
+                </div>
+                <div class="bo-page-header-actions">
+                    <a href="#" id="editBtn" class="bo-btn bo-btn-secondary">
+                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        Duzenle
+                    </a>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="bo-card" id="loadingCard">
+                <div class="bo-loading">
+                    <div class="bo-loading-spinner"></div>
+                    <p style="margin-top: 16px; color: var(--bo-text-secondary);">Musteri bilgileri yukleniyor...</p>
+                </div>
+            </div>
+
+            <!-- Content Card -->
+            <div class="bo-card" id="contentCard" style="display: none;">
+                <!-- Tabs -->
+                <div class="bo-tabs">
+                    <button class="bo-tab active" onclick="switchTab('genel')">Genel Bilgiler</button>
+                    <button class="bo-tab" onclick="switchTab('adresler')">Adresler</button>
+                    <button class="bo-tab" onclick="switchTab('siparisler')">Siparisler</button>
+                    <button class="bo-tab" onclick="switchTab('teklifler')">Teklifler</button>
+                </div>
+
+                <!-- Tab 1: Genel Bilgiler -->
+                <div class="bo-tab-content active" id="tab-genel">
+                    <div class="customer-card" id="customerCard">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 2: Adresler -->
+                <div class="bo-tab-content" id="tab-adresler">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 600;">Adresler</h3>
+                        <button class="bo-btn bo-btn-primary bo-btn-sm" onclick="openAddAddressModal()">
+                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Yeni Adres
+                        </button>
+                    </div>
+                    <div class="addresses-grid" id="addressesGrid">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 3: Siparisler -->
+                <div class="bo-tab-content" id="tab-siparisler">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Siparis Gecmisi</h3>
+                    <div class="bo-table-wrapper" id="ordersTable">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 4: Teklifler -->
+                <div class="bo-tab-content" id="tab-teklifler">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Teklif Gecmisi</h3>
+                    <div class="bo-table-wrapper" id="offersTable">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Address Modal -->
+    <div class="bo-modal-overlay" id="addressModal">
+        <div class="bo-modal">
+            <div class="bo-modal-header">
+                <h3 id="addressModalTitle">Yeni Adres Ekle</h3>
+                <button class="bo-modal-close" onclick="closeAddressModal()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="addressForm" onsubmit="saveAddress(event)">
+                <input type="hidden" id="addressId">
+                <div class="bo-form-row single">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Adres Basligi</label>
+                        <input type="text" class="bo-form-input" id="addressTitle" placeholder="Ornek: Ev, Is Yeri">
+                    </div>
+                </div>
+                <div class="bo-form-row">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Il</label>
+                        <select class="bo-form-select" id="addressCity" onchange="loadAddressDistricts()">
+                            <option value="">Il seciniz</option>
+                        </select>
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Ilce</label>
+                        <select class="bo-form-select" id="addressDistrict">
+                            <option value="">Ilce seciniz</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bo-form-row">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Mahalle</label>
+                        <input type="text" class="bo-form-input" id="addressNeighborhood" placeholder="Ornek: Ataturk Mah.">
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Cadde/Sokak</label>
+                        <input type="text" class="bo-form-input" id="addressStreet" placeholder="Ornek: Cumhuriyet Cad.">
+                    </div>
+                </div>
+                <div class="bo-form-row triple">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Bina No</label>
+                        <input type="text" class="bo-form-input" id="addressBuildingNo" placeholder="15">
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Kat</label>
+                        <input type="text" class="bo-form-input" id="addressFloor" placeholder="3">
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Daire</label>
+                        <input type="text" class="bo-form-input" id="addressApartment" placeholder="5">
+                    </div>
+                </div>
+                <div class="bo-modal-actions">
+                    <button type="button" class="bo-btn bo-btn-secondary" onclick="closeAddressModal()">Iptal</button>
+                    <button type="submit" class="bo-btn bo-btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div class="bo-modal-overlay" id="orderModal">
+        <div class="bo-modal">
+            <div class="bo-modal-header">
+                <h3>Siparis Detay</h3>
+                <button class="bo-modal-close" onclick="closeOrderModal()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="orderDetailContent">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Offer Detail Modal -->
+    <div class="bo-modal-overlay" id="offerModal">
+        <div class="bo-modal">
+            <div class="bo-modal-header">
+                <h3>Teklif Detay</h3>
+                <button class="bo-modal-close" onclick="closeOfferModal()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div id="offerDetailContent">
+                <!-- Will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="bo-modal-overlay" id="confirmModal">
+        <div class="bo-modal" style="max-width: 400px;">
+            <h3 id="confirmTitle" style="margin-bottom: 12px;">Emin misiniz?</h3>
+            <p id="confirmMessage" style="font-size: 14px; color: var(--bo-text-secondary); margin-bottom: 24px;"></p>
+            <div class="bo-modal-actions">
+                <button class="bo-btn bo-btn-secondary" onclick="closeConfirmModal()">Iptal</button>
+                <button class="bo-btn bo-btn-primary" style="background: var(--bo-error);" id="confirmBtn" onclick="confirmAction()">Sil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/customers-service.js"></script>
+    <script src="js/services/addresses-service.js"></script>
+    <script src="js/services/orders-service.js"></script>
+    <script src="js/services/offers-service.js"></script>
+    <script src="js/services/locations-service.js"></script>
+
+    <script>
+        // State
+        var customerId = null;
+        var customerData = null;
+        var addressesData = [];
+        var ordersData = [];
+        var offersData = [];
+        var pendingAction = null;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) { window.location.href = 'backoffice-login.html'; return; }
+
+            var urlParams = new URLSearchParams(window.location.search);
+            customerId = urlParams.get('id');
+            if (!customerId) { alert('Musteri ID bulunamadi'); window.location.href = 'backoffice-musteri-listesi.html'; return; }
+
+            await loadComponents();
+            if (typeof setPageName === 'function') setPageName('Musteri Detay');
+
+            document.getElementById('editBtn').href = 'backoffice-musteri-duzenle.html?id=' + customerId;
+            await loadCustomer();
+            await loadCities();
+        });
+
+        async function loadComponents() {
+            try {
+                var sidebarResponse = await fetch('components/backoffice-sidebar.html');
+                document.getElementById('backoffice-sidebar').innerHTML = await sidebarResponse.text();
+                var headerResponse = await fetch('components/backoffice-header.html');
+                document.getElementById('backoffice-header').innerHTML = await headerResponse.text();
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (error) { console.error('Component load error:', error); }
+        }
+
+        function executeScripts(container) {
+            container.querySelectorAll('script').forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.bo-tab').forEach(function(tab) { tab.classList.remove('active'); });
+            document.querySelectorAll('.bo-tab-content').forEach(function(content) { content.classList.remove('active'); });
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // Load customer
+        async function loadCustomer() {
+            try {
+                var result = await CustomersService.getById(customerId);
+                if (result.error || !result.data) {
+                    showToast('Musteri bulunamadi', 'error');
+                    setTimeout(function() { window.location.href = 'backoffice-musteri-listesi.html'; }, 1500);
+                    return;
+                }
+
+                customerData = result.data;
+                document.getElementById('customerName').textContent = customerData.name || 'Musteri';
+                document.getElementById('customerPhone').textContent = customerData.phone || '-';
+
+                renderCustomerCard();
+                await loadAddresses();
+                await loadOrders();
+                await loadOffers();
+
+                document.getElementById('loadingCard').style.display = 'none';
+                document.getElementById('contentCard').style.display = 'block';
+
+            } catch (error) { console.error('Load customer error:', error); showToast('Yukleme hatasi', 'error'); }
+        }
+
+        // Render customer card
+        function renderCustomerCard() {
+            var c = customerData;
+            var dealerName = c.dealer ? c.dealer.name : '-';
+            var statusClass = c.is_active !== false ? 'success' : 'error';
+            var statusText = c.is_active !== false ? 'Aktif' : 'Pasif';
+            var createdAt = c.created_at ? new Date(c.created_at).toLocaleDateString('tr-TR') : '-';
+
+            document.getElementById('customerCard').innerHTML =
+                '<div class="customer-card-item"><span class="customer-card-label">Ad Soyad</span><span class="customer-card-value">' + (c.name || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Telefon</span><span class="customer-card-value">' + (c.phone || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">E-posta</span><span class="customer-card-value">' + (c.email || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">VKN</span><span class="customer-card-value">' + (c.vkn || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Firma</span><span class="customer-card-value">' + (c.company_name || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Sektor</span><span class="customer-card-value">' + (c.sector || '-') + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Bayi</span><span class="customer-card-value">' + dealerName + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Durum</span><span class="bo-badge ' + statusClass + '">' + statusText + '</span></div>' +
+                '<div class="customer-card-item"><span class="customer-card-label">Kayit Tarihi</span><span class="customer-card-value">' + createdAt + '</span></div>';
+        }
+
+        // Load addresses
+        async function loadAddresses() {
+            try {
+                var result = await AddressesService.getByCustomerId(customerId);
+                addressesData = result.data || [];
+                renderAddresses();
+            } catch (error) { console.error('Load addresses error:', error); }
+        }
+
+        function renderAddresses() {
+            var grid = document.getElementById('addressesGrid');
+            if (addressesData.length === 0) {
+                grid.innerHTML = '<div class="bo-empty-state"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><h3>Adres Bulunamadi</h3><p>Bu musteriye henuz adres eklenmemis.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = addressesData.map(function(addr) {
+                var isDefault = addr.is_default;
+                var fullAddress = addr.full_address || [addr.neighborhood, addr.street, addr.building_no ? 'No:' + addr.building_no : '', addr.district, addr.city].filter(Boolean).join(', ');
+
+                return '<div class="address-card ' + (isDefault ? 'default' : '') + '">' +
+                    '<div class="address-card-header">' +
+                        '<div class="address-card-title">' + (addr.title || 'Adres') + (isDefault ? ' <span class="bo-badge success">Varsayilan</span>' : '') + '</div>' +
+                        '<div class="address-card-actions">' +
+                            (!isDefault ? '<button class="bo-action-btn success" onclick="setDefaultAddress(\'' + addr.id + '\')" title="Varsayilan Yap"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></button>' : '') +
+                            '<button class="bo-action-btn" onclick="editAddress(\'' + addr.id + '\')" title="Duzenle"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>' +
+                            '<button class="bo-action-btn delete" onclick="deleteAddress(\'' + addr.id + '\')" title="Sil"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="address-card-content">' + fullAddress + '</div>' +
+                    '<div class="address-card-location"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>' + (addr.city || '') + ', ' + (addr.district || '') + '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                var result = await OrdersService.getByCustomerId(customerId);
+                ordersData = result.data || [];
+                renderOrders();
+            } catch (error) { console.error('Load orders error:', error); }
+        }
+
+        function renderOrders() {
+            var container = document.getElementById('ordersTable');
+            if (ordersData.length === 0) {
+                container.innerHTML = '<div class="bo-empty-state"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><h3>Siparis Bulunamadi</h3><p>Bu musteriye ait siparis bulunmuyor.</p></div>';
+                return;
+            }
+
+            var statusMap = { pending: {text: 'Bekliyor', class: 'warning'}, waiting_for_assignment: {text: 'Atama Bekliyor', class: 'warning'}, on_the_way: {text: 'Dagitimda', class: 'info'}, completed: {text: 'Tamamlandi', class: 'success'}, cancelled: {text: 'Iptal', class: 'error'} };
+
+            container.innerHTML = '<table class="bo-table"><thead><tr><th>Siparis No</th><th>Tarih</th><th>Tutar</th><th>Durum</th><th>Islem</th></tr></thead><tbody>' +
+                ordersData.map(function(order) {
+                    var status = statusMap[order.status] || {text: order.status, class: 'default'};
+                    var date = order.created_at ? new Date(order.created_at).toLocaleDateString('tr-TR') : '-';
+                    var total = order.total_amount ? parseFloat(order.total_amount).toFixed(2) + ' TL' : '-';
+
+                    return '<tr><td><strong>' + (order.order_number || order.id.substring(0,8)) + '</strong></td><td>' + date + '</td><td>' + total + '</td><td><span class="bo-badge ' + status.class + '">' + status.text + '</span></td><td><button class="bo-btn bo-btn-secondary bo-btn-sm" onclick="viewOrder(\'' + order.id + '\')">Detay</button></td></tr>';
+                }).join('') +
+            '</tbody></table>';
+        }
+
+        // Load offers
+        async function loadOffers() {
+            try {
+                var result = await OffersService.getByCustomerId(customerId);
+                offersData = result.data || [];
+                renderOffers();
+            } catch (error) { console.error('Load offers error:', error); }
+        }
+
+        function renderOffers() {
+            var container = document.getElementById('offersTable');
+            if (offersData.length === 0) {
+                container.innerHTML = '<div class="bo-empty-state"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg><h3>Teklif Bulunamadi</h3><p>Bu musteriye ait teklif bulunmuyor.</p></div>';
+                return;
+            }
+
+            var statusMap = { requested: {text: 'Talep Edildi', class: 'info'}, pending: {text: 'Bekliyor', class: 'warning'}, accepted: {text: 'Kabul Edildi', class: 'success'}, rejected: {text: 'Reddedildi', class: 'error'}, cancelled: {text: 'Iptal', class: 'default'}, passive: {text: 'Pasif', class: 'default'} };
+
+            container.innerHTML = '<table class="bo-table"><thead><tr><th>Teklif ID</th><th>Tarih</th><th>Bayi</th><th>Durum</th><th>Islem</th></tr></thead><tbody>' +
+                offersData.map(function(offer) {
+                    var status = statusMap[offer.status] || {text: offer.status, class: 'default'};
+                    var date = offer.created_at ? new Date(offer.created_at).toLocaleDateString('tr-TR') : '-';
+                    var dealerName = offer.dealer ? offer.dealer.name : '-';
+
+                    return '<tr><td><strong>#' + offer.id.substring(0,8) + '</strong></td><td>' + date + '</td><td>' + dealerName + '</td><td><span class="bo-badge ' + status.class + '">' + status.text + '</span></td><td><button class="bo-btn bo-btn-secondary bo-btn-sm" onclick="viewOffer(\'' + offer.id + '\')">Detay</button></td></tr>';
+                }).join('') +
+            '</tbody></table>';
+        }
+
+        // Address functions
+        async function loadCities() {
+            var citySelect = document.getElementById('addressCity');
+            try {
+                if (typeof LocationsService !== 'undefined') {
+                    var result = await LocationsService.getCities();
+                    if (result.data) {
+                        citySelect.innerHTML = '<option value="">Il seciniz</option>';
+                        result.data.forEach(function(city) { citySelect.innerHTML += '<option value="' + city.name + '" data-id="' + city.id + '">' + city.name + '</option>'; });
+                        return;
+                    }
+                }
+            } catch (e) { console.warn('Cities load failed'); }
+            var cities = ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya'];
+            citySelect.innerHTML = '<option value="">Il seciniz</option>';
+            cities.forEach(function(city) { citySelect.innerHTML += '<option value="' + city + '">' + city + '</option>'; });
+        }
+
+        async function loadAddressDistricts() {
+            var citySelect = document.getElementById('addressCity');
+            var districtSelect = document.getElementById('addressDistrict');
+            var selectedOption = citySelect.options[citySelect.selectedIndex];
+            var cityId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+
+            districtSelect.innerHTML = '<option value="">Yukleniyor...</option>';
+            if (!citySelect.value) { districtSelect.innerHTML = '<option value="">Ilce seciniz</option>'; return; }
+
+            try {
+                if (typeof LocationsService !== 'undefined' && cityId) {
+                    var result = await LocationsService.getDistricts(cityId);
+                    if (result.data) {
+                        districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
+                        result.data.forEach(function(d) { districtSelect.innerHTML += '<option value="' + d.name + '">' + d.name + '</option>'; });
+                        return;
+                    }
+                }
+            } catch (e) { console.warn('Districts load failed'); }
+            districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
+        }
+
+        function openAddAddressModal() {
+            document.getElementById('addressModalTitle').textContent = 'Yeni Adres Ekle';
+            document.getElementById('addressId').value = '';
+            document.getElementById('addressForm').reset();
+            document.getElementById('addressModal').classList.add('show');
+        }
+
+        function editAddress(id) {
+            var addr = addressesData.find(function(a) { return a.id === id; });
+            if (!addr) return;
+
+            document.getElementById('addressModalTitle').textContent = 'Adresi Duzenle';
+            document.getElementById('addressId').value = id;
+            document.getElementById('addressTitle').value = addr.title || '';
+            document.getElementById('addressCity').value = addr.city || '';
+            loadAddressDistricts().then(function() {
+                document.getElementById('addressDistrict').value = addr.district || '';
+            });
+            document.getElementById('addressNeighborhood').value = addr.neighborhood || '';
+            document.getElementById('addressStreet').value = addr.street || '';
+            document.getElementById('addressBuildingNo').value = addr.building_no || '';
+            document.getElementById('addressFloor').value = addr.floor || '';
+            document.getElementById('addressApartment').value = addr.apartment || '';
+            document.getElementById('addressModal').classList.add('show');
+        }
+
+        function closeAddressModal() { document.getElementById('addressModal').classList.remove('show'); }
+
+        async function saveAddress(e) {
+            e.preventDefault();
+            var id = document.getElementById('addressId').value;
+            var addressData = {
+                customer_id: customerId,
+                title: document.getElementById('addressTitle').value.trim() || 'Adres',
+                city: document.getElementById('addressCity').value,
+                district: document.getElementById('addressDistrict').value,
+                neighborhood: document.getElementById('addressNeighborhood').value.trim() || null,
+                street: document.getElementById('addressStreet').value.trim() || null,
+                building_no: document.getElementById('addressBuildingNo').value.trim() || null,
+                floor: document.getElementById('addressFloor').value.trim() || null,
+                apartment: document.getElementById('addressApartment').value.trim() || null,
+                is_active: true
+            };
+
+            if (!addressData.city || !addressData.district) { showToast('Il ve Ilce secimi zorunludur', 'error'); return; }
+
+            try {
+                var result;
+                if (id) { result = await AddressesService.update(id, addressData); }
+                else {
+                    addressData.is_default = addressesData.length === 0;
+                    result = await AddressesService.create(addressData);
+                }
+
+                if (result.error) { showToast('Hata: ' + result.error.message, 'error'); return; }
+
+                showToast(id ? 'Adres guncellendi' : 'Adres eklendi', 'success');
+                closeAddressModal();
+                await loadAddresses();
+            } catch (error) { console.error('Save address error:', error); showToast('Bir hata olustu', 'error'); }
+        }
+
+        async function setDefaultAddress(id) {
+            try {
+                var result = await AddressesService.setDefault(id, customerId);
+                if (result.error) { showToast('Hata: ' + result.error.message, 'error'); return; }
+                showToast('Varsayilan adres guncellendi', 'success');
+                await loadAddresses();
+            } catch (error) { showToast('Bir hata olustu', 'error'); }
+        }
+
+        function deleteAddress(id) {
+            pendingAction = { type: 'deleteAddress', id: id };
+            document.getElementById('confirmTitle').textContent = 'Adresi Sil';
+            document.getElementById('confirmMessage').textContent = 'Bu adresi silmek istediginize emin misiniz?';
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // View Order
+        function viewOrder(id) {
+            var order = ordersData.find(function(o) { return o.id === id; });
+            if (!order) return;
+
+            var statusMap = { pending: 'Bekliyor', waiting_for_assignment: 'Atama Bekliyor', on_the_way: 'Dagitimda', completed: 'Tamamlandi', cancelled: 'Iptal' };
+            var date = order.created_at ? new Date(order.created_at).toLocaleString('tr-TR') : '-';
+            var total = order.total_amount ? parseFloat(order.total_amount).toFixed(2) + ' TL' : '-';
+
+            var html = '<div class="detail-item"><div class="detail-item-label">Siparis No</div><div class="detail-item-value">' + (order.order_number || order.id.substring(0,8)) + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Tarih</div><div class="detail-item-value">' + date + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Durum</div><div class="detail-item-value">' + (statusMap[order.status] || order.status) + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Toplam Tutar</div><div class="detail-item-value">' + total + '</div></div>';
+
+            if (order.order_items && order.order_items.length > 0) {
+                html += '<h4 style="margin-top: 20px; margin-bottom: 12px; font-size: 14px;">Urunler</h4>';
+                html += '<table class="products-table"><thead><tr><th>Urun</th><th>Adet</th><th>Birim Fiyat</th><th>Toplam</th></tr></thead><tbody>';
+                order.order_items.forEach(function(item) {
+                    var productName = item.product ? item.product.name : '-';
+                    html += '<tr><td>' + productName + '</td><td>' + item.quantity + '</td><td>' + parseFloat(item.unit_price).toFixed(2) + ' TL</td><td>' + parseFloat(item.total_price).toFixed(2) + ' TL</td></tr>';
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('orderDetailContent').innerHTML = html;
+            document.getElementById('orderModal').classList.add('show');
+        }
+
+        function closeOrderModal() { document.getElementById('orderModal').classList.remove('show'); }
+
+        // View Offer
+        function viewOffer(id) {
+            var offer = offersData.find(function(o) { return o.id === id; });
+            if (!offer) return;
+
+            var statusMap = { requested: 'Talep Edildi', pending: 'Bekliyor', accepted: 'Kabul Edildi', rejected: 'Reddedildi', cancelled: 'Iptal', passive: 'Pasif' };
+            var date = offer.created_at ? new Date(offer.created_at).toLocaleString('tr-TR') : '-';
+            var dealerName = offer.dealer ? offer.dealer.name : '-';
+
+            var html = '<div class="detail-item"><div class="detail-item-label">Teklif ID</div><div class="detail-item-value">#' + offer.id.substring(0,8) + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Tarih</div><div class="detail-item-value">' + date + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Bayi</div><div class="detail-item-value">' + dealerName + '</div></div>' +
+                '<div class="detail-item"><div class="detail-item-label">Durum</div><div class="detail-item-value">' + (statusMap[offer.status] || offer.status) + '</div></div>';
+
+            if (offer.notes) {
+                html += '<div class="detail-item"><div class="detail-item-label">Notlar</div><div class="detail-item-value">' + offer.notes + '</div></div>';
+            }
+
+            if (offer.offer_details && offer.offer_details.length > 0) {
+                html += '<h4 style="margin-top: 20px; margin-bottom: 12px; font-size: 14px;">Urun Fiyatlari</h4>';
+                html += '<table class="products-table"><thead><tr><th>Urun</th><th>Birim Fiyat</th><th>Indirim</th></tr></thead><tbody>';
+                offer.offer_details.forEach(function(detail) {
+                    var productName = detail.product ? detail.product.name : '-';
+                    var discount = detail.discount_value ? (detail.pricing_type === 'percentage' ? '%' + detail.discount_value : detail.discount_value + ' TL') : '-';
+                    html += '<tr><td>' + productName + '</td><td>' + parseFloat(detail.unit_price).toFixed(2) + ' TL</td><td>' + discount + '</td></tr>';
+                });
+                html += '</tbody></table>';
+            }
+
+            document.getElementById('offerDetailContent').innerHTML = html;
+            document.getElementById('offerModal').classList.add('show');
+        }
+
+        function closeOfferModal() { document.getElementById('offerModal').classList.remove('show'); }
+
+        // Confirm modal
+        function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('show'); pendingAction = null; }
+
+        async function confirmAction() {
+            if (!pendingAction) return;
+
+            if (pendingAction.type === 'deleteAddress') {
+                try {
+                    var result = await AddressesService.delete(pendingAction.id);
+                    if (result.error) { showToast('Hata: ' + result.error.message, 'error'); }
+                    else { showToast('Adres silindi', 'success'); await loadAddresses(); }
+                } catch (error) { showToast('Bir hata olustu', 'error'); }
+            }
+
+            closeConfirmModal();
+        }
+
+        // Toast
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+            if (type === 'success') { toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>'; }
+            else if (type === 'error') { toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>'; }
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>

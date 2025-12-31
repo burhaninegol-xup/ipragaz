@@ -162,18 +162,23 @@
         .bo-stat-icon.warning { background: var(--bo-warning); }
         .bo-stat-icon.info { background: var(--bo-info); }
 
-        /* Grid Layout */
-        .bo-grid-2 {
+        /* Grid Layout - 50/50 for dealers/customers */
+        .bo-grid-50 {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 24px;
             margin-bottom: 24px;
         }
 
-        @media (max-width: 1200px) {
-            .bo-grid-2 {
+        @media (max-width: 1024px) {
+            .bo-grid-50 {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* Activities section - centered with max-width */
+        .bo-activities-section {
+            max-width: 1200px;
         }
 
         /* Card */
@@ -280,67 +285,7 @@
             opacity: 0.7;
         }
 
-        /* Quick Actions */
-        .bo-quick-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .bo-quick-action {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--bo-bg-main);
-            border-radius: 10px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .bo-quick-action:hover {
-            background: var(--bo-border);
-            transform: translateX(4px);
-        }
-
-        .bo-quick-action-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bo-primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .bo-quick-action-icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: #ffffff;
-            fill: none;
-            stroke-width: 2;
-        }
-
-        .bo-quick-action-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--bo-text-primary);
-        }
-
-        .bo-quick-action-arrow {
-            margin-left: auto;
-            color: var(--bo-text-secondary);
-        }
-
-        .bo-quick-action-arrow svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2;
-        }
-
-        /* Recent Dealers Table */
+        /* Recent Tables */
         .bo-table-wrapper {
             overflow-x: auto;
         }
@@ -449,6 +394,378 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Mobile Card View */
+        .bo-mobile-cards {
+            display: none;
+        }
+
+        .bo-mobile-card {
+            background: var(--bo-bg-main);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .bo-mobile-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .bo-mobile-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .bo-mobile-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        .bo-mobile-card-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--bo-border);
+        }
+
+        .bo-mobile-card-row:last-child {
+            border-bottom: none;
+        }
+
+        .bo-mobile-card-label {
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-mobile-card-value {
+            color: var(--bo-text-primary);
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .bo-table-wrapper {
+                display: none;
+            }
+
+            .bo-mobile-cards {
+                display: block;
+                padding: 16px;
+            }
+
+            .bo-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .bo-stat-card {
+                padding: 16px;
+            }
+
+            .bo-stat-value {
+                font-size: 24px;
+            }
+
+            .bo-stat-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .bo-stat-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bo-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==========================================
+           COUNTDOWN TIMER - PREMIUM CARD STYLE
+           ========================================== */
+
+        .bo-countdown-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .bo-countdown-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.06),
+                0 0 0 1px rgba(227, 30, 36, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bo-countdown-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--bo-primary) 0%, #ff4444 100%);
+        }
+
+        .bo-countdown-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .bo-countdown-badge {
+            display: inline-block;
+            background: var(--bo-primary);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            animation: badge-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .bo-countdown-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin: 0;
+        }
+
+        .bo-countdown-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bo-countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-width: 100px;
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                inset 0 -2px 0 rgba(227, 30, 36, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bo-countdown-unit:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                inset 0 -2px 0 rgba(227, 30, 36, 0.2);
+        }
+
+        .bo-countdown-value {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--bo-text-primary);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 8px;
+        }
+
+        .bo-countdown-value.flip {
+            animation: flip-digit 0.6s ease;
+        }
+
+        @keyframes flip-digit {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .bo-countdown-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            color: var(--bo-text-secondary);
+            text-transform: uppercase;
+        }
+
+        .bo-countdown-separator {
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--bo-primary);
+            opacity: 0.5;
+            user-select: none;
+        }
+
+        .bo-countdown-progress-wrapper {
+            margin-top: 24px;
+        }
+
+        .bo-countdown-progress-bar {
+            height: 8px;
+            background: rgba(227, 30, 36, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .bo-countdown-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bo-primary) 0%, #ff4444 100%);
+            border-radius: 4px;
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bo-countdown-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .bo-countdown-progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .bo-countdown-progress-text .percentage {
+            font-weight: 600;
+            color: var(--bo-primary);
+            font-size: 14px;
+        }
+
+        .bo-countdown-progress-desc {
+            color: var(--bo-text-secondary);
+        }
+
+        /* Countdown Completed State */
+        .bo-countdown-completed .bo-countdown-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .bo-countdown-completed .bo-countdown-card::before {
+            background: linear-gradient(90deg, var(--bo-success) 0%, #34d399 100%);
+        }
+
+        .bo-countdown-success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: var(--bo-success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            animation: success-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes success-pop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .bo-countdown-success-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke-width: 3;
+        }
+
+        .bo-countdown-completed-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-success);
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+
+        .bo-countdown-completed-desc {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bo-countdown-card {
+                padding: 24px 16px;
+            }
+
+            .bo-countdown-display {
+                gap: 8px;
+            }
+
+            .bo-countdown-unit {
+                padding: 12px 12px;
+                min-width: 70px;
+            }
+
+            .bo-countdown-value {
+                font-size: 36px;
+            }
+
+            .bo-countdown-separator {
+                font-size: 32px;
+            }
+
+            .bo-countdown-label {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .bo-countdown-display {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .bo-countdown-unit {
+                flex: 1;
+                min-width: calc(50% - 6px);
+                padding: 12px 8px;
+            }
+
+            .bo-countdown-value {
+                font-size: 32px;
+            }
+
+            .bo-countdown-separator {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -468,6 +785,70 @@
                 <p>Sistemin genel durumunu buradan takip edebilirsiniz</p>
             </div>
 
+            <!-- Countdown Timer -->
+            <div class="bo-countdown-wrapper" id="countdown-wrapper">
+                <div class="bo-countdown-card">
+                    <div class="bo-countdown-header">
+                        <div class="bo-countdown-badge">LANSMAN GUNU</div>
+                        <h3 class="bo-countdown-title">Lansmana Kalan Sure</h3>
+                    </div>
+
+                    <div class="bo-countdown-display" role="timer" aria-live="polite" aria-atomic="true">
+                        <div class="bo-countdown-unit" aria-label="Kalan gun sayisi">
+                            <div class="bo-countdown-value" id="countdown-days">99</div>
+                            <div class="bo-countdown-label">GUN</div>
+                        </div>
+
+                        <div class="bo-countdown-separator">:</div>
+
+                        <div class="bo-countdown-unit" aria-label="Kalan saat">
+                            <div class="bo-countdown-value" id="countdown-hours">23</div>
+                            <div class="bo-countdown-label">SAAT</div>
+                        </div>
+
+                        <div class="bo-countdown-separator">:</div>
+
+                        <div class="bo-countdown-unit" aria-label="Kalan dakika">
+                            <div class="bo-countdown-value" id="countdown-minutes">59</div>
+                            <div class="bo-countdown-label">DAKIKA</div>
+                        </div>
+
+                        <div class="bo-countdown-separator">:</div>
+
+                        <div class="bo-countdown-unit" aria-label="Kalan saniye">
+                            <div class="bo-countdown-value" id="countdown-seconds">59</div>
+                            <div class="bo-countdown-label">SANIYE</div>
+                        </div>
+                    </div>
+
+                    <div class="bo-countdown-progress-wrapper">
+                        <div class="bo-countdown-progress-bar">
+                            <div class="bo-countdown-progress-fill" id="countdown-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="bo-countdown-progress-text">
+                            <span class="percentage" id="countdown-percentage">0%</span>
+                            <span class="bo-countdown-progress-desc">tamamlandi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Countdown Completed State (Hidden) -->
+            <div class="bo-countdown-wrapper bo-countdown-completed" id="countdown-completed" style="display: none;">
+                <div class="bo-countdown-card">
+                    <div class="bo-countdown-success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="bo-countdown-completed-title">Lansman Gunu Geldi!</h3>
+                    <p class="bo-countdown-completed-desc">
+                        Lansman <span id="countdown-end-date"></span> tarihinde basariyla gerceklesti.
+                    </p>
+                </div>
+            </div>
+
             <!-- Stats Cards -->
             <div class="bo-stats-grid">
                 <div class="bo-stat-card">
@@ -475,8 +856,11 @@
                         <h3>Toplam Bayi</h3>
                         <div class="bo-stat-value" id="totalDealers">-</div>
                         <div class="bo-stat-change positive" id="dealersChange">
-                            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
-                            <span>+12% bu ay</span>
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Kayitli bayi</span>
                         </div>
                     </div>
                     <div class="bo-stat-icon primary">
@@ -491,9 +875,12 @@
                     <div class="bo-stat-content">
                         <h3>Aktif Bayiler</h3>
                         <div class="bo-stat-value" id="activeDealers">-</div>
-                        <div class="bo-stat-change positive">
-                            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
-                            <span>%95 aktif</span>
+                        <div class="bo-stat-change positive" id="activeDealersRatio">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>Aktif oran</span>
                         </div>
                     </div>
                     <div class="bo-stat-icon success">
@@ -508,7 +895,7 @@
                     <div class="bo-stat-content">
                         <h3>Bekleyen Teklifler</h3>
                         <div class="bo-stat-value" id="pendingOffers">-</div>
-                        <div class="bo-stat-change warning">
+                        <div class="bo-stat-change warning" id="pendingOffersLabel">
                             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
                             <span>Onay bekliyor</span>
                         </div>
@@ -525,9 +912,12 @@
                     <div class="bo-stat-content">
                         <h3>Toplam Musteri</h3>
                         <div class="bo-stat-value" id="totalCustomers">-</div>
-                        <div class="bo-stat-change positive">
-                            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline></svg>
-                            <span>+8% bu ay</span>
+                        <div class="bo-stat-change positive" id="customersLabel">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                            <span>Kayitli musteri</span>
                         </div>
                     </div>
                     <div class="bo-stat-icon info">
@@ -541,92 +931,74 @@
                 </div>
             </div>
 
-            <!-- Grid: Activity & Quick Actions -->
-            <div class="bo-grid-2">
-                <!-- Recent Activity -->
+            <!-- Grid: Recent Dealers & Recent Customers (50/50) -->
+            <div class="bo-grid-50">
+                <!-- Recent Dealers -->
                 <div class="bo-card">
                     <div class="bo-card-header">
-                        <h2>Son Aktiviteler</h2>
-                        <a href="#" class="bo-card-header-action">Tumunu Gor</a>
+                        <h2>Son Eklenen Bayiler</h2>
+                        <a href="backoffice-bayi-listesi.html" class="bo-card-header-action">Tum Bayiler</a>
                     </div>
-                    <div class="bo-card-body">
-                        <ul class="bo-activity-list" id="activityList">
-                            <!-- Activities will be loaded here -->
-                        </ul>
+                    <div class="bo-card-body" style="padding: 0;">
+                        <div class="bo-table-wrapper">
+                            <table class="bo-table">
+                                <thead>
+                                    <tr>
+                                        <th>Bayi Adi</th>
+                                        <th>Sehir</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentDealersTable">
+                                    <!-- Dealers will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Mobile Card View -->
+                        <div class="bo-mobile-cards" id="recentDealersMobile">
+                            <!-- Mobile cards will be loaded here -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
+                <!-- Recent Customers -->
                 <div class="bo-card">
                     <div class="bo-card-header">
-                        <h2>Hizli Aksiyonlar</h2>
+                        <h2>Son Eklenen Musteriler</h2>
+                        <a href="backoffice-musteri-listesi.html" class="bo-card-header-action">Tum Musteriler</a>
                     </div>
-                    <div class="bo-card-body">
-                        <div class="bo-quick-actions">
-                            <a href="backoffice-bayi-ekle.html" class="bo-quick-action">
-                                <div class="bo-quick-action-icon">
-                                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                </div>
-                                <span class="bo-quick-action-text">Yeni Bayi Ekle</span>
-                                <span class="bo-quick-action-arrow">
-                                    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
-                            </a>
-                            <a href="backoffice-bayi-listesi.html" class="bo-quick-action">
-                                <div class="bo-quick-action-icon">
-                                    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                                </div>
-                                <span class="bo-quick-action-text">Bayi Listesi</span>
-                                <span class="bo-quick-action-arrow">
-                                    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
-                            </a>
-                            <a href="backoffice-teklifler.html" class="bo-quick-action">
-                                <div class="bo-quick-action-icon">
-                                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                                </div>
-                                <span class="bo-quick-action-text">Teklifleri Incele</span>
-                                <span class="bo-quick-action-arrow">
-                                    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
-                            </a>
-                            <a href="backoffice-raporlar.html" class="bo-quick-action">
-                                <div class="bo-quick-action-icon">
-                                    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                </div>
-                                <span class="bo-quick-action-text">Raporlari Gor</span>
-                                <span class="bo-quick-action-arrow">
-                                    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </span>
-                            </a>
+                    <div class="bo-card-body" style="padding: 0;">
+                        <div class="bo-table-wrapper">
+                            <table class="bo-table">
+                                <thead>
+                                    <tr>
+                                        <th>Musteri Adi</th>
+                                        <th>Telefon</th>
+                                        <th>Bayi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentCustomersTable">
+                                    <!-- Customers will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Mobile Card View -->
+                        <div class="bo-mobile-cards" id="recentCustomersMobile">
+                            <!-- Mobile cards will be loaded here -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Dealers -->
-            <div class="bo-card">
+            <!-- Recent Activity - At Bottom -->
+            <div class="bo-card bo-activities-section">
                 <div class="bo-card-header">
-                    <h2>Son Eklenen Bayiler</h2>
-                    <a href="backoffice-bayi-listesi.html" class="bo-card-header-action">Tum Bayiler</a>
+                    <h2>Son Aktiviteler</h2>
                 </div>
-                <div class="bo-card-body" style="padding: 0;">
-                    <div class="bo-table-wrapper">
-                        <table class="bo-table">
-                            <thead>
-                                <tr>
-                                    <th>Bayi Adi</th>
-                                    <th>Sehir</th>
-                                    <th>Telefon</th>
-                                    <th>Durum</th>
-                                    <th>Kayit Tarihi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentDealersTable">
-                                <!-- Dealers will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="bo-card-body">
+                    <ul class="bo-activity-list" id="activityList">
+                        <!-- Activities will be loaded here -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -636,8 +1008,131 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/services/dealers-service.js"></script>
+    <script src="js/services/customers-service.js"></script>
+    <script src="js/services/offers-service.js"></script>
 
     <script>
+        // ==========================================
+        // COUNTDOWN TIMER - Configuration & Logic
+        // ==========================================
+
+        var COUNTDOWN_CONFIG = {
+            // 99 gun sonrasi (dinamik)
+            targetDate: new Date(Date.now() + (99 * 24 * 60 * 60 * 1000)),
+            totalDuration: 99 * 24 * 60 * 60 * 1000,
+            startDate: new Date()
+        };
+
+        var countdownInterval = null;
+
+        // Countdown timer'i baslat
+        function initCountdown() {
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // Countdown'i guncelle
+        function updateCountdown() {
+            var now = new Date().getTime();
+            var distance = COUNTDOWN_CONFIG.targetDate - now;
+
+            // Sure bittiyse completed state'e gec
+            if (distance < 0) {
+                showCompletedState();
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+                return;
+            }
+
+            // Zaman birimlerini hesapla
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Ekrani guncelle
+            updateDigit('countdown-days', days);
+            updateDigit('countdown-hours', hours);
+            updateDigit('countdown-minutes', minutes);
+            updateDigit('countdown-seconds', seconds);
+
+            // Progress bar'i guncelle
+            updateProgress(distance);
+        }
+
+        // Tek bir rakami animasyonlu guncelle
+        function updateDigit(elementId, newValue) {
+            var element = document.getElementById(elementId);
+            if (!element) return;
+
+            var currentValue = element.textContent;
+            var formattedValue = String(newValue).padStart(2, '0');
+
+            // Sadece deger degistiyse animasyon uygula
+            if (currentValue !== formattedValue) {
+                element.classList.add('flip');
+                element.textContent = formattedValue;
+
+                setTimeout(function() {
+                    element.classList.remove('flip');
+                }, 600);
+            }
+        }
+
+        // Progress bar'i guncelle
+        function updateProgress(remainingTime) {
+            var progressBar = document.getElementById('countdown-progress');
+            var progressText = document.getElementById('countdown-percentage');
+
+            if (!progressBar || !progressText) return;
+
+            // Gecen yuzdeyi hesapla
+            var elapsed = COUNTDOWN_CONFIG.totalDuration - remainingTime;
+            var percentage = Math.min(100, Math.max(0, (elapsed / COUNTDOWN_CONFIG.totalDuration) * 100));
+
+            // Progress bar genisligini ayarla
+            progressBar.style.width = percentage.toFixed(2) + '%';
+
+            // Yuzde metnini guncelle
+            progressText.textContent = Math.round(percentage) + '%';
+
+            // Ilerlemeye gore renk degistir
+            if (percentage > 90) {
+                progressBar.style.background = 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)';
+            } else if (percentage > 75) {
+                progressBar.style.background = 'linear-gradient(90deg, #f59e0b 0%, #d97706 100%)';
+            }
+        }
+
+        // Tamamlandi durumunu goster
+        function showCompletedState() {
+            var countdownWrapper = document.getElementById('countdown-wrapper');
+            var completedWrapper = document.getElementById('countdown-completed');
+
+            if (countdownWrapper) {
+                countdownWrapper.style.display = 'none';
+            }
+
+            if (completedWrapper) {
+                completedWrapper.style.display = 'block';
+
+                // Bitis tarihini goster
+                var endDateElement = document.getElementById('countdown-end-date');
+                if (endDateElement) {
+                    endDateElement.textContent = COUNTDOWN_CONFIG.targetDate.toLocaleDateString('tr-TR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+            }
+        }
+
+        // ==========================================
+        // MAIN APP - Check auth & Initialize
+        // ==========================================
+
         // Check auth
         document.addEventListener('DOMContentLoaded', async function() {
             var adminId = sessionStorage.getItem('backoffice_admin_id');
@@ -656,6 +1151,9 @@
 
             // Load dashboard data
             await loadDashboardData();
+
+            // Initialize countdown timer
+            initCountdown();
         });
 
         // Load sidebar and header components
@@ -693,8 +1191,11 @@
         async function loadDashboardData() {
             await Promise.all([
                 loadDealerStats(),
+                loadCustomerStats(),
+                loadPendingOffers(),
                 loadRecentActivities(),
-                loadRecentDealers()
+                loadRecentDealers(),
+                loadRecentCustomers()
             ]);
         }
 
@@ -709,18 +1210,66 @@
 
                 var dealers = result.data || [];
                 var activeDealers = dealers.filter(function(d) { return d.is_active !== false; });
+                var totalCount = dealers.length;
+                var activeCount = activeDealers.length;
 
-                document.getElementById('totalDealers').textContent = dealers.length;
-                document.getElementById('activeDealers').textContent = activeDealers.length;
+                document.getElementById('totalDealers').textContent = totalCount;
+                document.getElementById('activeDealers').textContent = activeCount;
 
-                // Calculate pending offers (mock data for now)
-                document.getElementById('pendingOffers').textContent = Math.floor(Math.random() * 10) + 1;
-
-                // Calculate total customers (mock data for now)
-                document.getElementById('totalCustomers').textContent = Math.floor(dealers.length * 15);
+                // Update active ratio label
+                if (totalCount > 0) {
+                    var ratio = Math.round((activeCount / totalCount) * 100);
+                    var ratioElement = document.getElementById('activeDealersRatio');
+                    if (ratioElement) {
+                        ratioElement.querySelector('span').textContent = '%' + ratio + ' aktif';
+                    }
+                }
 
             } catch (error) {
-                console.error('Stats error:', error);
+                console.error('Dealer stats error:', error);
+            }
+        }
+
+        // Load customer statistics
+        async function loadCustomerStats() {
+            try {
+                var result = await CustomersService.getCount();
+                var count = result.data || 0;
+                document.getElementById('totalCustomers').textContent = count;
+            } catch (error) {
+                console.error('Customer stats error:', error);
+                document.getElementById('totalCustomers').textContent = '0';
+            }
+        }
+
+        // Load pending offers count (all dealers)
+        async function loadPendingOffers() {
+            try {
+                // Back office için tüm bayilerin bekleyen tekliflerini say
+                var { data, error } = await supabaseClient
+                    .from('offers')
+                    .select('status')
+                    .eq('status', 'pending');
+
+                if (error) throw error;
+
+                var pendingCount = data ? data.length : 0;
+                document.getElementById('pendingOffers').textContent = pendingCount;
+
+                // Update label based on count
+                var labelElement = document.getElementById('pendingOffersLabel');
+                if (labelElement) {
+                    if (pendingCount === 0) {
+                        labelElement.querySelector('span').textContent = 'Bekleyen yok';
+                        labelElement.classList.remove('warning');
+                        labelElement.classList.add('positive');
+                    } else {
+                        labelElement.querySelector('span').textContent = 'Onay bekliyor';
+                    }
+                }
+            } catch (error) {
+                console.error('Pending offers error:', error);
+                document.getElementById('pendingOffers').textContent = '0';
             }
         }
 
@@ -768,11 +1317,13 @@
         // Load recent dealers
         async function loadRecentDealers() {
             var tableBody = document.getElementById('recentDealersTable');
+            var mobileContainer = document.getElementById('recentDealersMobile');
 
             try {
                 var result = await DealersService.getAll();
                 if (result.error) {
-                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Veri yuklenemedi</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Veri yuklenemedi</td></tr>';
+                    mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Veri yuklenemedi</div>';
                     return;
                 }
 
@@ -786,27 +1337,109 @@
                 var recentDealers = dealers.slice(0, 5);
 
                 if (recentDealers.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Henuz bayi eklenmemis</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Henuz bayi eklenmemis</td></tr>';
+                    mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Henuz bayi eklenmemis</div>';
                     return;
                 }
 
+                // Desktop table
                 tableBody.innerHTML = recentDealers.map(function(dealer) {
                     var statusClass = dealer.is_active !== false ? 'success' : 'error';
                     var statusText = dealer.is_active !== false ? 'Aktif' : 'Pasif';
-                    var createdAt = dealer.created_at ? new Date(dealer.created_at).toLocaleDateString('tr-TR') : '-';
 
-                    return '<tr>' +
+                    return '<tr onclick="window.location.href=\'backoffice-bayi-detay.html?id=' + dealer.id + '\'" style="cursor: pointer;">' +
                         '<td><strong>' + (dealer.name || '-') + '</strong></td>' +
                         '<td>' + (dealer.city || '-') + '</td>' +
-                        '<td>' + (dealer.phone || '-') + '</td>' +
                         '<td><span class="bo-badge ' + statusClass + '">' + statusText + '</span></td>' +
-                        '<td>' + createdAt + '</td>' +
                     '</tr>';
+                }).join('');
+
+                // Mobile cards
+                mobileContainer.innerHTML = recentDealers.map(function(dealer) {
+                    var statusClass = dealer.is_active !== false ? 'success' : 'error';
+                    var statusText = dealer.is_active !== false ? 'Aktif' : 'Pasif';
+
+                    return '<div class="bo-mobile-card" onclick="window.location.href=\'backoffice-bayi-detay.html?id=' + dealer.id + '\'" style="cursor: pointer;">' +
+                        '<div class="bo-mobile-card-header">' +
+                            '<span class="bo-mobile-card-title">' + (dealer.name || '-') + '</span>' +
+                            '<span class="bo-badge ' + statusClass + '">' + statusText + '</span>' +
+                        '</div>' +
+                        '<div class="bo-mobile-card-row">' +
+                            '<span class="bo-mobile-card-label">Sehir</span>' +
+                            '<span class="bo-mobile-card-value">' + (dealer.city || '-') + '</span>' +
+                        '</div>' +
+                    '</div>';
                 }).join('');
 
             } catch (error) {
                 console.error('Recent dealers error:', error);
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Bir hata olustu</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Bir hata olustu</td></tr>';
+                mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Bir hata olustu</div>';
+            }
+        }
+
+        // Load recent customers
+        async function loadRecentCustomers() {
+            var tableBody = document.getElementById('recentCustomersTable');
+            var mobileContainer = document.getElementById('recentCustomersMobile');
+
+            try {
+                var result = await CustomersService.getAll();
+                if (result.error) {
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Veri yuklenemedi</td></tr>';
+                    mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Veri yuklenemedi</div>';
+                    return;
+                }
+
+                var customers = result.data || [];
+
+                // Sort by created_at and get last 5
+                customers.sort(function(a, b) {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+
+                var recentCustomers = customers.slice(0, 5);
+
+                if (recentCustomers.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Henuz musteri eklenmemis</td></tr>';
+                    mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Henuz musteri eklenmemis</div>';
+                    return;
+                }
+
+                // Desktop table
+                tableBody.innerHTML = recentCustomers.map(function(customer) {
+                    var dealerName = customer.dealer ? customer.dealer.name : '-';
+
+                    return '<tr onclick="window.location.href=\'backoffice-musteri-detay.html?id=' + customer.id + '\'" style="cursor: pointer;">' +
+                        '<td><strong>' + (customer.name || '-') + '</strong></td>' +
+                        '<td>' + (customer.phone || '-') + '</td>' +
+                        '<td>' + dealerName + '</td>' +
+                    '</tr>';
+                }).join('');
+
+                // Mobile cards
+                mobileContainer.innerHTML = recentCustomers.map(function(customer) {
+                    var dealerName = customer.dealer ? customer.dealer.name : '-';
+
+                    return '<div class="bo-mobile-card" onclick="window.location.href=\'backoffice-musteri-detay.html?id=' + customer.id + '\'" style="cursor: pointer;">' +
+                        '<div class="bo-mobile-card-header">' +
+                            '<span class="bo-mobile-card-title">' + (customer.name || '-') + '</span>' +
+                        '</div>' +
+                        '<div class="bo-mobile-card-row">' +
+                            '<span class="bo-mobile-card-label">Telefon</span>' +
+                            '<span class="bo-mobile-card-value">' + (customer.phone || '-') + '</span>' +
+                        '</div>' +
+                        '<div class="bo-mobile-card-row">' +
+                            '<span class="bo-mobile-card-label">Bayi</span>' +
+                            '<span class="bo-mobile-card-value">' + dealerName + '</span>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+
+            } catch (error) {
+                console.error('Recent customers error:', error);
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Bir hata olustu</td></tr>';
+                mobileContainer.innerHTML = '<div style="text-align: center; padding: 24px; color: var(--bo-text-secondary);">Bir hata olustu</div>';
             }
         }
     </script>

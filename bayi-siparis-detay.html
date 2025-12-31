@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Siparis Detay - Ipragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 900px;
+			margin: 0 auto;
+			padding: 30px 20px;
+			padding-bottom: 120px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-bottom: 25px;
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 44px;
+			height: 44px;
+			border-radius: 12px;
+			background: #fff;
+			color: #333;
+			text-decoration: none;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+			transition: all 0.2s;
+		}
+
+		.back-btn:hover {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.back-btn svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.page-title {
+			flex: 1;
+		}
+
+		.page-title h1 {
+			font-size: 22px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 2px;
+		}
+
+		.page-title p {
+			font-size: 13px;
+			color: #888;
+		}
+
+		/* Detail Cards */
+		.detail-card {
+			background: #fff;
+			border-radius: 16px;
+			padding: 24px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.detail-card-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.detail-card-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.detail-card-icon svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.detail-card-icon.status {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.detail-card-icon.customer {
+			background: #f3e5f5;
+			color: #7b1fa2;
+		}
+
+		.detail-card-icon.products {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.detail-card-icon.payment {
+			background: #fff8e1;
+			color: #f57c00;
+		}
+
+		.detail-card-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		/* Status Card */
+		.status-card {
+			background: linear-gradient(135deg, #002c77 0%, #001d52 100%);
+			color: #fff;
+		}
+
+		.status-card .detail-card-header {
+			border-bottom-color: rgba(255,255,255,0.2);
+		}
+
+		.status-card .detail-card-icon.status {
+			background: rgba(255,255,255,0.2);
+			color: #fff;
+		}
+
+		.status-card .detail-card-title {
+			color: #fff;
+		}
+
+		.status-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.status-badge-large {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			padding: 12px 20px;
+			border-radius: 12px;
+			font-size: 15px;
+			font-weight: 600;
+		}
+
+		.status-badge-large svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.status-badge-large.waiting_for_assignment {
+			background: #fff8e1;
+			color: #f57c00;
+		}
+
+		.status-badge-large.on_the_way {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.status-badge-large.completed {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.status-badge-large.cancelled {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.status-dates {
+			text-align: right;
+		}
+
+		.status-date-item {
+			font-size: 13px;
+			opacity: 0.9;
+			margin-bottom: 4px;
+		}
+
+		.status-date-item:last-child {
+			margin-bottom: 0;
+		}
+
+		.status-date-label {
+			opacity: 0.7;
+		}
+
+		/* Customer Info */
+		.customer-info-grid {
+			display: grid;
+			gap: 15px;
+		}
+
+		.customer-info-item {
+			display: flex;
+			align-items: flex-start;
+			gap: 12px;
+		}
+
+		.customer-info-icon {
+			width: 36px;
+			height: 36px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #666;
+			flex-shrink: 0;
+		}
+
+		.customer-info-icon svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.customer-info-content {
+			flex: 1;
+		}
+
+		.customer-info-label {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 2px;
+		}
+
+		.customer-info-value {
+			font-size: 15px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		.customer-info-value a {
+			color: #002c77;
+			text-decoration: none;
+		}
+
+		.customer-info-value a:hover {
+			text-decoration: underline;
+		}
+
+		.call-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 16px;
+			background: #e8f5e9;
+			color: #2e7d32;
+			border-radius: 8px;
+			text-decoration: none;
+			font-size: 13px;
+			font-weight: 500;
+			transition: all 0.2s;
+		}
+
+		.call-btn:hover {
+			background: #c8e6c9;
+		}
+
+		.call-btn svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		/* Product Items */
+		.product-list {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.product-item {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 15px;
+			background: #f8f9fa;
+			border-radius: 12px;
+		}
+
+		.product-image {
+			width: 60px;
+			height: 60px;
+			border-radius: 10px;
+			background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			flex-shrink: 0;
+		}
+
+		.product-image svg {
+			width: 28px;
+			height: 28px;
+		}
+
+		.product-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.product-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+		}
+
+		.product-quantity {
+			font-size: 13px;
+			color: #666;
+		}
+
+		.product-price {
+			text-align: right;
+			flex-shrink: 0;
+		}
+
+		.product-unit-price {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 2px;
+		}
+
+		.product-total-price {
+			font-size: 16px;
+			font-weight: 700;
+			color: #002c77;
+		}
+
+		/* Payment Summary */
+		.payment-summary {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.payment-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-size: 14px;
+		}
+
+		.payment-row.total {
+			padding-top: 15px;
+			border-top: 2px solid #eee;
+			font-size: 18px;
+			font-weight: 700;
+		}
+
+		.payment-label {
+			color: #666;
+		}
+
+		.payment-row.total .payment-label {
+			color: #333;
+		}
+
+		.payment-value {
+			color: #333;
+			font-weight: 500;
+		}
+
+		.payment-row.total .payment-value {
+			color: #002c77;
+		}
+
+		/* Notes Section */
+		.order-notes {
+			margin-top: 15px;
+			padding-top: 15px;
+			border-top: 1px solid #eee;
+		}
+
+		.notes-label {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 6px;
+		}
+
+		.notes-text {
+			font-size: 14px;
+			color: #333;
+			line-height: 1.5;
+			background: #f8f9fa;
+			padding: 12px;
+			border-radius: 8px;
+		}
+
+		/* Fixed Action Bar */
+		.action-bar {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: #fff;
+			padding: 20px;
+			box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+			z-index: 100;
+		}
+
+		.action-bar-inner {
+			max-width: 900px;
+			margin: 0 auto;
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
+
+		.action-btn {
+			flex: 1;
+			min-width: 120px;
+			padding: 14px 20px;
+			border: none;
+			border-radius: 12px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+		}
+
+		.action-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.action-btn.cancel {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.action-btn.cancel:hover {
+			background: #ffcdd2;
+		}
+
+		.action-btn.start {
+			background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+			color: #fff;
+		}
+
+		.action-btn.start:hover {
+			box-shadow: 0 4px 15px rgba(21,101,192,0.4);
+		}
+
+		.action-btn.complete {
+			background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+			color: #fff;
+		}
+
+		.action-btn.complete:hover {
+			box-shadow: 0 4px 15px rgba(46,125,50,0.4);
+		}
+
+		.action-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		/* Toast Notification */
+		.toast {
+			position: fixed;
+			bottom: 100px;
+			right: 30px;
+			padding: 16px 24px;
+			background: #333;
+			color: #fff;
+			border-radius: 12px;
+			font-size: 14px;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			display: none;
+			z-index: 1001;
+			animation: slideIn 0.3s ease;
+		}
+
+		.toast.success {
+			background: #2e7d32;
+		}
+
+		.toast.error {
+			background: #c62828;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		/* Confirm Modal */
+		.confirm-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.confirm-modal-overlay.active {
+			display: flex;
+		}
+
+		.confirm-modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 30px;
+			max-width: 400px;
+			width: 90%;
+			text-align: center;
+		}
+
+		.confirm-modal h3 {
+			font-size: 18px;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.confirm-modal p {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 25px;
+		}
+
+		.confirm-modal-actions {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.confirm-modal-btn {
+			padding: 12px 24px;
+			border: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.confirm-modal-btn.cancel {
+			background: #f5f5f5;
+			color: #666;
+		}
+
+		.confirm-modal-btn.cancel:hover {
+			background: #eee;
+		}
+
+		.confirm-modal-btn.confirm {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.confirm-modal-btn.confirm:hover {
+			background: #001d52;
+		}
+
+		.confirm-modal-btn.danger {
+			background: #e53935;
+			color: #fff;
+		}
+
+		.confirm-modal-btn.danger:hover {
+			background: #c62828;
+		}
+
+		/* Loading State */
+		.loading-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.loading-state .spinner {
+			width: 50px;
+			height: 50px;
+			border: 3px solid #f3f3f3;
+			border-top: 3px solid #002c77;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 20px;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Error State */
+		.error-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.error-state svg {
+			width: 80px;
+			height: 80px;
+			color: #c62828;
+			margin-bottom: 20px;
+		}
+
+		.error-state h3 {
+			font-size: 18px;
+			color: #333;
+			margin-bottom: 10px;
+		}
+
+		.error-state p {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 20px;
+		}
+
+		.error-state a {
+			color: #002c77;
+			text-decoration: none;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.main-content {
+				padding: 20px 15px;
+				padding-bottom: 150px;
+			}
+
+			.page-header {
+				flex-wrap: wrap;
+			}
+
+			.status-row {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.status-dates {
+				text-align: left;
+			}
+
+			.product-item {
+				flex-wrap: wrap;
+			}
+
+			.product-price {
+				width: 100%;
+				text-align: left;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding-top: 10px;
+				margin-top: 10px;
+				border-top: 1px solid #e0e0e0;
+			}
+
+			.product-unit-price {
+				margin-bottom: 0;
+			}
+
+			.action-bar-inner {
+				flex-direction: column;
+			}
+
+			.action-btn {
+				min-width: auto;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.page-title h1 {
+				font-size: 18px;
+			}
+
+			.detail-card {
+				padding: 18px;
+			}
+
+			.product-image {
+				width: 50px;
+				height: 50px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Loading State -->
+		<div id="loading-state" class="loading-state">
+			<div class="spinner"></div>
+			<p>Siparis yukleniyor...</p>
+		</div>
+
+		<!-- Error State -->
+		<div id="error-state" class="error-state" style="display: none;">
+			<svg viewBox="0 0 24 24" fill="currentColor">
+				<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+			</svg>
+			<h3>Siparis Bulunamadi</h3>
+			<p>Aradiginiz siparis mevcut degil veya erisim yetkiniz yok.</p>
+			<a href="bayi-siparis-listesi.html">Siparislere Don</a>
+		</div>
+
+		<!-- Order Detail Content -->
+		<div id="order-content" style="display: none;">
+			<!-- Page Header -->
+			<div class="page-header">
+				<a href="bayi-siparis-listesi.html" class="back-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+					</svg>
+				</a>
+				<div class="page-title">
+					<h1 id="order-number-title">Siparis #---</h1>
+					<p id="order-date-subtitle">---</p>
+				</div>
+			</div>
+
+			<!-- Status Card -->
+			<div class="detail-card status-card">
+				<div class="detail-card-header">
+					<div class="detail-card-icon status">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Siparis Durumu</span>
+				</div>
+				<div class="status-row">
+					<div class="status-badge-large" id="status-badge">
+						<svg viewBox="0 0 24 24" fill="currentColor"></svg>
+						<span>---</span>
+					</div>
+					<div class="status-dates">
+						<div class="status-date-item">
+							<span class="status-date-label">Siparis:</span>
+							<span id="order-created-date">---</span>
+						</div>
+						<div class="status-date-item">
+							<span class="status-date-label">Son Guncelleme:</span>
+							<span id="order-updated-date">---</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Customer Info Card -->
+			<div class="detail-card">
+				<div class="detail-card-header">
+					<div class="detail-card-icon customer">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Musteri Bilgileri</span>
+				</div>
+				<div class="customer-info-grid">
+					<div class="customer-info-item">
+						<div class="customer-info-icon">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+							</svg>
+						</div>
+						<div class="customer-info-content">
+							<div class="customer-info-label">Musteri Adi</div>
+							<div class="customer-info-value" id="customer-name">---</div>
+						</div>
+					</div>
+					<div class="customer-info-item">
+						<div class="customer-info-icon">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+							</svg>
+						</div>
+						<div class="customer-info-content">
+							<div class="customer-info-label">Telefon</div>
+							<div class="customer-info-value">
+								<span id="customer-phone">---</span>
+								<a href="#" class="call-btn" id="call-btn" style="margin-left: 10px;">
+									<svg viewBox="0 0 24 24" fill="currentColor">
+										<path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+									</svg>
+									Ara
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="customer-info-item">
+						<div class="customer-info-icon">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+							</svg>
+						</div>
+						<div class="customer-info-content">
+							<div class="customer-info-label">Teslimat Adresi</div>
+							<div class="customer-info-value" id="customer-address">---</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Products Card -->
+			<div class="detail-card">
+				<div class="detail-card-header">
+					<div class="detail-card-icon products">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Siparis Kalemleri</span>
+				</div>
+				<div class="product-list" id="product-list">
+					<!-- Products will be rendered here -->
+				</div>
+			</div>
+
+			<!-- Payment Summary Card -->
+			<div class="detail-card">
+				<div class="detail-card-header">
+					<div class="detail-card-icon payment">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Odeme Ozeti</span>
+				</div>
+				<div class="payment-summary">
+					<div class="payment-row">
+						<span class="payment-label">Ara Toplam</span>
+						<span class="payment-value" id="subtotal">0,00 TL</span>
+					</div>
+					<div class="payment-row" id="discount-row" style="display: none;">
+						<span class="payment-label">Indirim</span>
+						<span class="payment-value" id="discount">-0,00 TL</span>
+					</div>
+					<div class="payment-row total">
+						<span class="payment-label">Toplam</span>
+						<span class="payment-value" id="total">0,00 TL</span>
+					</div>
+				</div>
+				<div class="order-notes" id="notes-section" style="display: none;">
+					<div class="notes-label">Siparis Notu</div>
+					<div class="notes-text" id="order-notes">---</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<!-- Fixed Action Bar -->
+	<div class="action-bar" id="action-bar" style="display: none;">
+		<div class="action-bar-inner">
+			<button class="action-btn cancel" id="btn-cancel">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+				</svg>
+				Iptal Et
+			</button>
+			<button class="action-btn start" id="btn-start">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+				</svg>
+				Dagitima Cikar
+			</button>
+			<button class="action-btn complete" id="btn-complete">
+				<svg viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+				</svg>
+				Teslim Edildi
+			</button>
+		</div>
+	</div>
+
+	<!-- Toast Notification -->
+	<div class="toast" id="toast"></div>
+
+	<!-- Confirm Modal -->
+	<div class="confirm-modal-overlay" id="confirm-modal">
+		<div class="confirm-modal">
+			<h3 id="confirm-title">Durum Degistir</h3>
+			<p id="confirm-message">Bu islemi gerceklestirmek istediginize emin misiniz?</p>
+			<div class="confirm-modal-actions">
+				<button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Vazgec</button>
+				<button class="confirm-modal-btn confirm" id="confirm-btn" onclick="confirmAction()">Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		// Auth kontrol
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
+		// Bayi componentlerini yukle
+		document.addEventListener('DOMContentLoaded', function() {
+			ComponentLoader.loadBayiComponents();
+		});
+
+		// Global state
+		var orderId = null;
+		var orderData = null;
+		var pendingAction = null;
+
+		// Status labels
+		var statusLabels = {
+			waiting_for_assignment: 'Atama Bekliyor',
+			on_the_way: 'Dagitimda',
+			completed: 'Teslim Edildi',
+			cancelled: 'Iptal Edildi'
+		};
+
+		// Status icons
+		var statusIcons = {
+			waiting_for_assignment: '<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>',
+			on_the_way: '<path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>',
+			completed: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>',
+			cancelled: '<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>'
+		};
+
+		// Toast notification
+		function showToast(message, type) {
+			var $toast = $('#toast');
+			$toast.removeClass('success error').addClass(type || '');
+			$toast.text(message).fadeIn(300);
+			setTimeout(function() {
+				$toast.fadeOut(300);
+			}, 3000);
+		}
+
+		// Confirm modal
+		function showConfirmModal(title, message, action, isDanger) {
+			pendingAction = action;
+			$('#confirm-title').text(title);
+			$('#confirm-message').text(message);
+			$('#confirm-btn').removeClass('danger confirm').addClass(isDanger ? 'danger' : 'confirm');
+			$('#confirm-modal').addClass('active');
+		}
+
+		function closeConfirmModal() {
+			$('#confirm-modal').removeClass('active');
+			pendingAction = null;
+		}
+
+		function confirmAction() {
+			if (pendingAction) {
+				pendingAction();
+			}
+			closeConfirmModal();
+		}
+
+		// Format date
+		function formatDate(dateStr) {
+			if (!dateStr) return '---';
+			var date = new Date(dateStr);
+			var day = date.getDate().toString().padStart(2, '0');
+			var month = (date.getMonth() + 1).toString().padStart(2, '0');
+			var year = date.getFullYear();
+			var hours = date.getHours().toString().padStart(2, '0');
+			var minutes = date.getMinutes().toString().padStart(2, '0');
+			return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+		}
+
+		// Format price
+		function formatPrice(amount) {
+			return parseFloat(amount || 0).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}) + ' TL';
+		}
+
+		// Get order ID from URL
+		function getOrderIdFromUrl() {
+			var params = new URLSearchParams(window.location.search);
+			return params.get('id');
+		}
+
+		// Load order detail
+		async function loadOrderDetail() {
+			orderId = getOrderIdFromUrl();
+
+			if (!orderId) {
+				showError();
+				return;
+			}
+
+			try {
+				const { data, error } = await OrdersService.getById(orderId);
+
+				if (error || !data) {
+					showError();
+					return;
+				}
+
+				orderData = data;
+				renderOrderDetail();
+
+			} catch (err) {
+				console.error('Siparis yukleme hatasi:', err);
+				showError();
+			}
+		}
+
+		// Show error state
+		function showError() {
+			$('#loading-state').hide();
+			$('#order-content').hide();
+			$('#action-bar').hide();
+			$('#error-state').show();
+		}
+
+		// Render order detail
+		function renderOrderDetail() {
+			$('#loading-state').hide();
+			$('#error-state').hide();
+			$('#order-content').show();
+
+			var order = orderData;
+			var status = order.status || 'waiting_for_assignment';
+			var orderNumber = order.order_number || order.id.substring(0, 8);
+
+			// Page title
+			$('#order-number-title').text('Siparis #' + orderNumber);
+			$('#order-date-subtitle').text(formatDate(order.created_at));
+
+			// Status badge
+			$('#status-badge').attr('class', 'status-badge-large ' + status);
+			$('#status-badge svg').html(statusIcons[status]);
+			$('#status-badge span').text(statusLabels[status]);
+
+			// Status dates
+			$('#order-created-date').text(formatDate(order.created_at));
+			$('#order-updated-date').text(formatDate(order.updated_at));
+
+			// Customer info
+			if (order.customer) {
+				$('#customer-name').text(order.customer.name || '---');
+				$('#customer-phone').text(order.customer.phone || '---');
+				$('#call-btn').attr('href', 'tel:' + (order.customer.phone || ''));
+			}
+
+			// Address
+			var address = '---';
+			if (order.delivery_address) {
+				address = order.delivery_address.full_address || '---';
+				if (order.delivery_address.district) {
+					address = order.delivery_address.district + ', ' + address;
+				}
+				if (order.delivery_address.city) {
+					address = address + ' - ' + order.delivery_address.city;
+				}
+			}
+			$('#customer-address').text(address);
+
+			// Products
+			var $productList = $('#product-list');
+			$productList.empty();
+
+			var subtotal = 0;
+			if (order.order_items && order.order_items.length > 0) {
+				order.order_items.forEach(function(item) {
+					var productName = item.product ? item.product.name : 'Urun';
+					var unitPrice = parseFloat(item.unit_price) || 0;
+					var totalPrice = parseFloat(item.total_price) || 0;
+					subtotal += totalPrice;
+
+					var productHtml = '<div class="product-item">' +
+						'<div class="product-image">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor">' +
+								'<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>' +
+							'</svg>' +
+						'</div>' +
+						'<div class="product-info">' +
+							'<div class="product-name">' + productName + '</div>' +
+							'<div class="product-quantity">' + item.quantity + ' adet</div>' +
+						'</div>' +
+						'<div class="product-price">' +
+							'<div class="product-unit-price">Birim: ' + formatPrice(unitPrice) + '</div>' +
+							'<div class="product-total-price">' + formatPrice(totalPrice) + '</div>' +
+						'</div>' +
+					'</div>';
+
+					$productList.append(productHtml);
+				});
+			}
+
+			// Payment summary
+			$('#subtotal').text(formatPrice(subtotal));
+			$('#total').text(formatPrice(order.total_amount || subtotal));
+
+			// Notes
+			if (order.notes) {
+				$('#notes-section').show();
+				$('#order-notes').text(order.notes);
+			}
+
+			// Update action buttons based on status
+			updateActionButtons(status);
+		}
+
+		// Update action buttons based on status
+		function updateActionButtons(status) {
+			var $actionBar = $('#action-bar');
+			var $btnCancel = $('#btn-cancel');
+			var $btnStart = $('#btn-start');
+			var $btnComplete = $('#btn-complete');
+
+			// Reset all buttons
+			$btnCancel.hide();
+			$btnStart.hide();
+			$btnComplete.hide();
+
+			switch (status) {
+				case 'waiting_for_assignment':
+					$btnCancel.show();
+					$btnStart.show();
+					$actionBar.show();
+					break;
+				case 'on_the_way':
+					$btnCancel.show();
+					$btnComplete.show();
+					$actionBar.show();
+					break;
+				case 'completed':
+				case 'cancelled':
+					$actionBar.hide();
+					break;
+				default:
+					$actionBar.hide();
+			}
+		}
+
+		// Change status
+		async function changeStatus(newStatus) {
+			try {
+				var result;
+				switch (newStatus) {
+					case 'on_the_way':
+						result = await OrdersService.startDelivery(orderId);
+						break;
+					case 'completed':
+						result = await OrdersService.markDelivered(orderId);
+						break;
+					case 'cancelled':
+						result = await OrdersService.cancel(orderId);
+						break;
+					default:
+						result = await OrdersService.updateStatus(orderId, newStatus);
+				}
+
+				if (result.error) throw new Error(result.error);
+
+				showToast('Siparis durumu guncellendi', 'success');
+
+				// Reload order detail
+				loadOrderDetail();
+
+			} catch (err) {
+				console.error('Durum guncelleme hatasi:', err);
+				showToast('Durum guncellenirken hata olustu', 'error');
+			}
+		}
+
+		// jQuery ready
+		$(document).ready(function() {
+			// Load order
+			loadOrderDetail();
+
+			// Cancel button
+			$('#btn-cancel').on('click', function() {
+				showConfirmModal(
+					'Siparisi Iptal Et',
+					'Bu siparisi iptal etmek istediginize emin misiniz? Bu islem geri alinamaz.',
+					function() {
+						changeStatus('cancelled');
+					},
+					true
+				);
+			});
+
+			// Start delivery button
+			$('#btn-start').on('click', function() {
+				showConfirmModal(
+					'Dagitima Cikar',
+					'Bu siparisi "Dagitimda" olarak guncellemek istediginize emin misiniz?',
+					function() {
+						changeStatus('on_the_way');
+					},
+					false
+				);
+			});
+
+			// Complete button
+			$('#btn-complete').on('click', function() {
+				showConfirmModal(
+					'Teslim Edildi',
+					'Bu siparisi "Teslim Edildi" olarak isaretle istediginize emin misiniz?',
+					function() {
+						changeStatus('completed');
+					},
+					false
+				);
+			});
+
+			// Close modal on overlay click
+			$('#confirm-modal').on('click', function(e) {
+				if (e.target === this) {
+					closeConfirmModal();
+				}
+			});
+		});
+	</script>
+</body>
+</html>

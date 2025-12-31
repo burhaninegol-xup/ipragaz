@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeni Musteri Ekle - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-sidebar-bg: #1a1a1a;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bo-bg-main);
+            min-height: 100vh;
+        }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed {
+            margin-left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-content {
+            padding: 24px;
+            max-width: 900px;
+        }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bo-back-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--bo-border);
+            background: var(--bo-bg-paper);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .bo-back-btn:hover {
+            border-color: var(--bo-primary);
+            color: var(--bo-primary);
+        }
+
+        .bo-back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-page-header-content h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .bo-page-header-content p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        /* Card */
+        .bo-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Form */
+        .bo-form-section {
+            padding: 24px;
+            border-bottom: 1px solid var(--bo-border);
+        }
+
+        .bo-form-section:last-child {
+            border-bottom: none;
+        }
+
+        .bo-form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bo-form-section-title svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--bo-primary);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bo-form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .bo-form-row.triple {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        @media (max-width: 768px) {
+            .bo-form-row,
+            .bo-form-row.triple {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bo-form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .bo-form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bo-form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--bo-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .bo-form-label .required {
+            color: var(--bo-error);
+            margin-left: 2px;
+        }
+
+        .bo-form-input,
+        .bo-form-select,
+        .bo-form-textarea {
+            padding: 12px 14px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-paper);
+            transition: all 0.2s ease;
+        }
+
+        .bo-form-input:focus,
+        .bo-form-select:focus,
+        .bo-form-textarea:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+            box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+        }
+
+        .bo-form-input::placeholder,
+        .bo-form-textarea::placeholder {
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-form-input.error,
+        .bo-form-select.error,
+        .bo-form-textarea.error {
+            border-color: var(--bo-error);
+        }
+
+        .bo-form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .bo-form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        .bo-form-error {
+            font-size: 12px;
+            color: var(--bo-error);
+            margin-top: 6px;
+            display: none;
+        }
+
+        .bo-form-error.show {
+            display: block;
+        }
+
+        .bo-form-hint {
+            font-size: 12px;
+            color: var(--bo-text-secondary);
+            margin-top: 6px;
+        }
+
+        /* Checkbox */
+        .bo-form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .bo-form-checkbox input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--bo-primary);
+            cursor: pointer;
+        }
+
+        .bo-form-checkbox span {
+            font-size: 14px;
+            color: var(--bo-text-primary);
+        }
+
+        /* Address Toggle */
+        .address-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bo-bg-main);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .address-toggle input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--bo-primary);
+            cursor: pointer;
+        }
+
+        .address-toggle label {
+            font-size: 14px;
+            color: var(--bo-text-primary);
+            cursor: pointer;
+        }
+
+        .address-toggle label span {
+            font-size: 13px;
+            color: var(--bo-text-secondary);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .address-fields {
+            display: none;
+        }
+
+        .address-fields.show {
+            display: block;
+        }
+
+        /* Sticky Footer */
+        .bo-form-footer {
+            position: fixed;
+            bottom: 0;
+            left: var(--bo-sidebar-width);
+            right: 0;
+            background: var(--bo-bg-paper);
+            border-top: 1px solid var(--bo-border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            z-index: 100;
+            transition: left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed ~ .bo-form-footer,
+        .sidebar-collapsed .bo-form-footer {
+            left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .bo-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-btn-primary {
+            background: var(--bo-primary);
+            color: #ffffff;
+        }
+
+        .bo-btn-primary:hover {
+            background: var(--bo-primary-dark);
+        }
+
+        .bo-btn-primary:disabled {
+            background: var(--bo-text-secondary);
+            cursor: not-allowed;
+        }
+
+        .bo-btn-secondary {
+            background: var(--bo-bg-paper);
+            color: var(--bo-text-primary);
+            border: 1px solid var(--bo-border);
+        }
+
+        .bo-btn-secondary:hover {
+            background: var(--bo-bg-main);
+        }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 100px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .bo-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+
+        .bo-toast svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="backoffice-sidebar"></div>
+
+    <!-- Main Content -->
+    <main class="bo-main-content">
+        <!-- Header -->
+        <div id="backoffice-header"></div>
+
+        <!-- Page Content -->
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <a href="backoffice-musteri-listesi.html" class="bo-back-btn">
+                    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </a>
+                <div class="bo-page-header-content">
+                    <h1>Yeni Musteri Ekle</h1>
+                    <p>Sisteme yeni musteri kaydi olusturun</p>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bo-card">
+                <form id="customerForm" onsubmit="handleSubmit(event)">
+                    <!-- Temel Bilgiler -->
+                    <div class="bo-form-section">
+                        <div class="bo-form-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            Temel Bilgiler
+                        </div>
+
+                        <div class="bo-form-row">
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">Musteri Adi <span class="required">*</span></label>
+                                <input type="text" class="bo-form-input" id="name" name="name" placeholder="Ornek: Ahmet Yilmaz" required>
+                                <span class="bo-form-error" id="name-error">Musteri adi zorunludur</span>
+                            </div>
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">Telefon <span class="required">*</span></label>
+                                <input type="tel" class="bo-form-input" id="phone" name="phone" placeholder="Ornek: 05XX XXX XX XX" required>
+                                <span class="bo-form-error" id="phone-error">Telefon numarasi zorunludur</span>
+                            </div>
+                        </div>
+
+                        <div class="bo-form-row">
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">E-posta</label>
+                                <input type="email" class="bo-form-input" id="email" name="email" placeholder="Ornek: musteri@email.com">
+                                <span class="bo-form-error" id="email-error">Gecerli bir e-posta giriniz</span>
+                            </div>
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">VKN (Vergi Kimlik No)</label>
+                                <input type="text" class="bo-form-input" id="vkn" name="vkn" placeholder="10 haneli VKN">
+                                <span class="bo-form-hint">Kurumsal musteriler icin zorunlu</span>
+                                <span class="bo-form-error" id="vkn-error">VKN 10 veya 11 haneli olmali</span>
+                            </div>
+                        </div>
+
+                        <div class="bo-form-row">
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">Firma Adi</label>
+                                <input type="text" class="bo-form-input" id="company_name" name="company_name" placeholder="Ornek: ABC Turizm Ltd. Sti.">
+                            </div>
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">Sektor</label>
+                                <select class="bo-form-select" id="sector" name="sector">
+                                    <option value="">Sektor seciniz</option>
+                                    <option value="restaurant">Restoran / Lokanta</option>
+                                    <option value="hotel">Otel / Konaklama</option>
+                                    <option value="cafe">Kafe / Pastane</option>
+                                    <option value="manufacturing">Uretim / Imalat</option>
+                                    <option value="healthcare">Saglik</option>
+                                    <option value="education">Egitim</option>
+                                    <option value="retail">Perakende</option>
+                                    <option value="construction">Insaat</option>
+                                    <option value="agriculture">Tarim</option>
+                                    <option value="other">Diger</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bayi Secimi -->
+                    <div class="bo-form-section">
+                        <div class="bo-form-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                            Bayi Atamasi
+                        </div>
+
+                        <div class="bo-form-row single">
+                            <div class="bo-form-group">
+                                <label class="bo-form-label">Bayi</label>
+                                <select class="bo-form-select" id="dealer_id" name="dealer_id">
+                                    <option value="">Bayi seciniz (opsiyonel)</option>
+                                </select>
+                                <span class="bo-form-hint">Musterinin bagli olacagi bayiyi secin</span>
+                            </div>
+                        </div>
+
+                        <div class="bo-form-row single">
+                            <div class="bo-form-group">
+                                <label class="bo-form-checkbox">
+                                    <input type="checkbox" id="is_active" name="is_active" checked>
+                                    <span>Musteri aktif olarak olusturulsun</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Adres Bilgileri -->
+                    <div class="bo-form-section">
+                        <div class="bo-form-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Adres Bilgileri
+                        </div>
+
+                        <div class="address-toggle">
+                            <input type="checkbox" id="add_address" onchange="toggleAddressFields()">
+                            <label for="add_address">
+                                Adres bilgisi ekle
+                                <span>Musterinin ilk adresini simdi ekleyebilirsiniz</span>
+                            </label>
+                        </div>
+
+                        <div class="address-fields" id="addressFields">
+                            <div class="bo-form-row">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Adres Basligi</label>
+                                    <input type="text" class="bo-form-input" id="address_title" name="address_title" placeholder="Ornek: Ev, Is Yeri">
+                                </div>
+                            </div>
+
+                            <div class="bo-form-row">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Il</label>
+                                    <select class="bo-form-select" id="city" name="city" onchange="loadDistricts()">
+                                        <option value="">Il seciniz</option>
+                                    </select>
+                                </div>
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Ilce</label>
+                                    <select class="bo-form-select" id="district" name="district">
+                                        <option value="">Ilce seciniz</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="bo-form-row">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Mahalle</label>
+                                    <input type="text" class="bo-form-input" id="neighborhood" name="neighborhood" placeholder="Ornek: Ataturk Mahallesi">
+                                </div>
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Cadde/Sokak</label>
+                                    <input type="text" class="bo-form-input" id="street" name="street" placeholder="Ornek: Cumhuriyet Caddesi">
+                                </div>
+                            </div>
+
+                            <div class="bo-form-row triple">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Bina No</label>
+                                    <input type="text" class="bo-form-input" id="building_no" name="building_no" placeholder="Ornek: 15">
+                                </div>
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Kat</label>
+                                    <input type="text" class="bo-form-input" id="floor" name="floor" placeholder="Ornek: 3">
+                                </div>
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Daire</label>
+                                    <input type="text" class="bo-form-input" id="apartment" name="apartment" placeholder="Ornek: 5">
+                                </div>
+                            </div>
+
+                            <div class="bo-form-row single">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-checkbox">
+                                        <input type="checkbox" id="is_default_address" name="is_default_address" checked>
+                                        <span>Bu adresi varsayilan olarak ayarla</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sticky Footer -->
+    <div class="bo-form-footer">
+        <a href="backoffice-musteri-listesi.html" class="bo-btn bo-btn-secondary">Iptal</a>
+        <button type="submit" form="customerForm" class="bo-btn bo-btn-primary" id="submitBtn">
+            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span id="submitBtnText">Kaydet</span>
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/customers-service.js"></script>
+    <script src="js/services/dealers-service.js"></script>
+    <script src="js/services/addresses-service.js"></script>
+    <script src="js/services/locations-service.js"></script>
+
+    <script>
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            await loadComponents();
+
+            if (typeof setPageName === 'function') {
+                setPageName('Yeni Musteri Ekle');
+            }
+
+            await loadDealers();
+            await loadCities();
+        });
+
+        // Load components
+        async function loadComponents() {
+            try {
+                var sidebarResponse = await fetch('components/backoffice-sidebar.html');
+                var sidebarHtml = await sidebarResponse.text();
+                document.getElementById('backoffice-sidebar').innerHTML = sidebarHtml;
+
+                var headerResponse = await fetch('components/backoffice-header.html');
+                var headerHtml = await headerResponse.text();
+                document.getElementById('backoffice-header').innerHTML = headerHtml;
+
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (error) {
+                console.error('Component load error:', error);
+            }
+        }
+
+        function executeScripts(container) {
+            var scripts = container.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Load dealers
+        async function loadDealers() {
+            var dealerSelect = document.getElementById('dealer_id');
+            dealerSelect.innerHTML = '<option value="">Yukleniyor...</option>';
+
+            try {
+                var result = await DealersService.getAll();
+                if (!result.error && result.data) {
+                    dealerSelect.innerHTML = '<option value="">Bayi seciniz (opsiyonel)</option>';
+                    result.data.forEach(function(dealer) {
+                        if (dealer.is_active !== false) {
+                            dealerSelect.innerHTML += '<option value="' + dealer.id + '">' + (dealer.name || '-') + ' (' + (dealer.city || '-') + ')</option>';
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Load dealers error:', error);
+                dealerSelect.innerHTML = '<option value="">Bayi seciniz (opsiyonel)</option>';
+            }
+        }
+
+        // Load cities
+        async function loadCities() {
+            var citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">Yukleniyor...</option>';
+
+            try {
+                if (typeof LocationsService !== 'undefined') {
+                    var result = await LocationsService.getCities();
+                    if (result.data) {
+                        citySelect.innerHTML = '<option value="">Il seciniz</option>';
+                        result.data.forEach(function(city) {
+                            citySelect.innerHTML += '<option value="' + city.name + '" data-id="' + city.id + '">' + city.name + '</option>';
+                        });
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('LocationsService not available');
+            }
+
+            // Fallback
+            var cities = ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep', 'Mersin', 'Kayseri'];
+            citySelect.innerHTML = '<option value="">Il seciniz</option>';
+            cities.forEach(function(city) {
+                citySelect.innerHTML += '<option value="' + city + '">' + city + '</option>';
+            });
+        }
+
+        // Load districts
+        async function loadDistricts() {
+            var citySelect = document.getElementById('city');
+            var districtSelect = document.getElementById('district');
+            var selectedOption = citySelect.options[citySelect.selectedIndex];
+            var cityId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+
+            districtSelect.innerHTML = '<option value="">Yukleniyor...</option>';
+
+            if (!citySelect.value) {
+                districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
+                return;
+            }
+
+            try {
+                if (typeof LocationsService !== 'undefined' && cityId) {
+                    var result = await LocationsService.getDistricts(cityId);
+                    if (result.data) {
+                        districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
+                        result.data.forEach(function(district) {
+                            districtSelect.innerHTML += '<option value="' + district.name + '">' + district.name + '</option>';
+                        });
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn('Districts not available');
+            }
+
+            districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
+        }
+
+        // Toggle address fields
+        function toggleAddressFields() {
+            var checkbox = document.getElementById('add_address');
+            var fields = document.getElementById('addressFields');
+
+            if (checkbox.checked) {
+                fields.classList.add('show');
+            } else {
+                fields.classList.remove('show');
+            }
+        }
+
+        // Validate form
+        function validateForm() {
+            var isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll('.bo-form-error').forEach(function(el) {
+                el.classList.remove('show');
+            });
+            document.querySelectorAll('.bo-form-input, .bo-form-select').forEach(function(el) {
+                el.classList.remove('error');
+            });
+
+            // Required fields
+            var name = document.getElementById('name');
+            var phone = document.getElementById('phone');
+
+            if (!name.value.trim()) {
+                name.classList.add('error');
+                document.getElementById('name-error').classList.add('show');
+                isValid = false;
+            }
+
+            if (!phone.value.trim()) {
+                phone.classList.add('error');
+                document.getElementById('phone-error').classList.add('show');
+                isValid = false;
+            }
+
+            // Email validation
+            var email = document.getElementById('email');
+            if (email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                email.classList.add('error');
+                document.getElementById('email-error').classList.add('show');
+                isValid = false;
+            }
+
+            // VKN validation (if provided)
+            var vkn = document.getElementById('vkn');
+            if (vkn.value && !/^\d{10,11}$/.test(vkn.value.trim())) {
+                vkn.classList.add('error');
+                document.getElementById('vkn-error').classList.add('show');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Handle form submit
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                showToast('Lutfen tum zorunlu alanlari doldurun', 'error');
+                return;
+            }
+
+            var submitBtn = document.getElementById('submitBtn');
+            var submitBtnText = document.getElementById('submitBtnText');
+
+            // Show loading
+            submitBtn.disabled = true;
+            submitBtnText.textContent = 'Kaydediliyor...';
+
+            try {
+                // Customer data
+                var customerData = {
+                    name: document.getElementById('name').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    email: document.getElementById('email').value.trim() || null,
+                    vkn: document.getElementById('vkn').value.trim() || null,
+                    company_name: document.getElementById('company_name').value.trim() || null,
+                    sector: document.getElementById('sector').value || null,
+                    dealer_id: document.getElementById('dealer_id').value || null,
+                    is_active: document.getElementById('is_active').checked
+                };
+
+                // Check phone uniqueness
+                var phoneCheck = await CustomersService.getByPhone(customerData.phone);
+                if (phoneCheck.data) {
+                    showToast('Bu telefon numarasi zaten kayitli', 'error');
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = 'Kaydet';
+                    return;
+                }
+
+                // Check VKN uniqueness (if provided)
+                if (customerData.vkn) {
+                    var vknCheck = await CustomersService.getByVkn(customerData.vkn);
+                    if (vknCheck.data) {
+                        showToast('Bu VKN zaten kayitli', 'error');
+                        submitBtn.disabled = false;
+                        submitBtnText.textContent = 'Kaydet';
+                        return;
+                    }
+                }
+
+                // Create customer
+                var result = await CustomersService.create(customerData);
+
+                if (result.error) {
+                    showToast('Hata: ' + result.error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtnText.textContent = 'Kaydet';
+                    return;
+                }
+
+                // Add address if enabled
+                var addAddress = document.getElementById('add_address').checked;
+                if (addAddress && result.data && result.data.id) {
+                    var city = document.getElementById('city').value;
+                    var district = document.getElementById('district').value;
+
+                    if (city && district) {
+                        var addressData = {
+                            customer_id: result.data.id,
+                            title: document.getElementById('address_title').value.trim() || 'Varsayilan Adres',
+                            city: city,
+                            district: district,
+                            neighborhood: document.getElementById('neighborhood').value.trim() || null,
+                            street: document.getElementById('street').value.trim() || null,
+                            building_no: document.getElementById('building_no').value.trim() || null,
+                            floor: document.getElementById('floor').value.trim() || null,
+                            apartment: document.getElementById('apartment').value.trim() || null,
+                            is_default: document.getElementById('is_default_address').checked,
+                            is_active: true
+                        };
+
+                        try {
+                            await AddressesService.create(addressData);
+                        } catch (addrError) {
+                            console.warn('Adres kayit hatasi:', addrError);
+                        }
+                    }
+                }
+
+                showToast('Musteri basariyla eklendi', 'success');
+
+                // Redirect after short delay
+                setTimeout(function() {
+                    window.location.href = 'backoffice-musteri-listesi.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Submit error:', error);
+                showToast('Bir hata olustu', 'error');
+                submitBtn.disabled = false;
+                submitBtnText.textContent = 'Kaydet';
+            }
+        }
+
+        // Toast
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
