@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Teklif Genişletme Talepleri - İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 26px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: #666;
+			font-size: 14px;
+		}
+
+		/* Request List */
+		.request-list {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.request-card {
+			background: #fff;
+			border-radius: 16px;
+			padding: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			transition: box-shadow 0.2s;
+		}
+
+		.request-card:hover {
+			box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+		}
+
+		.request-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 15px;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.customer-info h3 {
+			font-size: 16px;
+			color: #1a1a2e;
+			font-weight: 600;
+			margin-bottom: 4px;
+		}
+
+		.customer-info .vkn {
+			font-size: 12px;
+			color: #888;
+		}
+
+		.request-date {
+			font-size: 12px;
+			color: #888;
+			background: #f5f7fa;
+			padding: 6px 12px;
+			border-radius: 20px;
+		}
+
+		.request-body {
+			display: flex;
+			gap: 20px;
+			margin-bottom: 15px;
+			flex-wrap: wrap;
+		}
+
+		.branch-box {
+			flex: 1;
+			min-width: 200px;
+			background: #f8fafe;
+			border-radius: 12px;
+			padding: 15px;
+		}
+
+		.branch-box.source {
+			border-left: 3px solid #002c77;
+		}
+
+		.branch-box.target {
+			border-left: 3px solid #4caf50;
+		}
+
+		.branch-box .label {
+			font-size: 11px;
+			color: #888;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 6px;
+		}
+
+		.branch-box .name {
+			font-size: 14px;
+			color: #333;
+			font-weight: 500;
+			margin-bottom: 4px;
+		}
+
+		.branch-box .address {
+			font-size: 12px;
+			color: #666;
+		}
+
+		.arrow-icon {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			flex-shrink: 0;
+		}
+
+		.arrow-icon svg {
+			width: 24px;
+			height: 24px;
+			fill: #ccc;
+		}
+
+		.request-actions {
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			padding: 10px 20px;
+			border: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-approve {
+			background: #4caf50;
+			color: #fff;
+		}
+
+		.btn-approve:hover {
+			background: #43a047;
+		}
+
+		.btn-reject {
+			background: #f5f5f5;
+			color: #666;
+		}
+
+		.btn-reject:hover {
+			background: #e53935;
+			color: #fff;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			fill: #e0e0e0;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: #333;
+			margin-bottom: 8px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #888;
+		}
+
+		/* Modal */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+		}
+
+		.modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 25px;
+			width: 90%;
+			max-width: 500px;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+		}
+
+		.modal h3 {
+			font-size: 18px;
+			color: #1a1a2e;
+			margin-bottom: 15px;
+		}
+
+		.modal textarea {
+			width: 100%;
+			padding: 12px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			min-height: 100px;
+			resize: vertical;
+			margin-bottom: 15px;
+		}
+
+		.modal textarea:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		.modal-actions {
+			display: flex;
+			gap: 10px;
+			justify-content: flex-end;
+		}
+
+		.btn-cancel {
+			background: #f5f5f5;
+			color: #666;
+		}
+
+		.btn-cancel:hover {
+			background: #e0e0e0;
+		}
+
+		/* Loading */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255,255,255,0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 9999;
+		}
+
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #e0e0e0;
+			border-top-color: #002c77;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.request-body {
+				flex-direction: column;
+			}
+
+			.arrow-icon {
+				transform: rotate(90deg);
+				width: 100%;
+			}
+
+			.branch-box {
+				min-width: 100%;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+	<div id="bayi-mobile-sidebar"></div>
+
+	<div class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Teklif Genişletme Talepleri</h1>
+				<p>Müşterilerinizin başka şubelere teklif genişletme taleplerini yönetin</p>
+			</div>
+		</div>
+
+		<!-- Request List -->
+		<div class="request-list" id="request-list">
+			<!-- Requests will be loaded here -->
+		</div>
+	</div>
+
+	<!-- Approve Modal -->
+	<div class="modal-overlay" id="approve-modal">
+		<div class="modal">
+			<h3>Talebi Onayla</h3>
+			<p style="font-size: 14px; color: #666; margin-bottom: 15px;">Bu teklif talep edilen şubeye de uygulanacaktır.</p>
+			<textarea id="approve-notes" placeholder="Not ekleyin (opsiyonel)..."></textarea>
+			<div class="modal-actions">
+				<button class="btn btn-cancel" id="approve-cancel">İptal</button>
+				<button class="btn btn-approve" id="approve-confirm">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+					Onayla
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Reject Modal -->
+	<div class="modal-overlay" id="reject-modal">
+		<div class="modal">
+			<h3>Talebi Reddet</h3>
+			<p style="font-size: 14px; color: #666; margin-bottom: 15px;">Bu teklif genişletme talebi reddedilecektir.</p>
+			<textarea id="reject-notes" placeholder="Red nedenini yazın..."></textarea>
+			<div class="modal-actions">
+				<button class="btn btn-cancel" id="reject-cancel">İptal</button>
+				<button class="btn btn-reject" id="reject-confirm" style="background: #e53935; color: #fff;">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+					Reddet
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Loading Overlay -->
+	<div class="loading-overlay" id="loading-overlay" style="display: none;">
+		<div class="loading-spinner"></div>
+	</div>
+
+	<script src="./js/lib/jquery-3.6.0.min.js"></script>
+	<script src="./js/config/supabase-config.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/components/component-loader.js"></script>
+	<script>
+		$(document).ready(async function() {
+			// Load components
+			ComponentLoader.loadBayiComponents();
+
+			var currentDealerId = null;
+			var selectedRequestId = null;
+
+			// Loading helpers
+			function showLoading() {
+				$('#loading-overlay').show();
+			}
+
+			function hideLoading() {
+				$('#loading-overlay').hide();
+			}
+
+			// Format date
+			function formatDate(dateString) {
+				var date = new Date(dateString);
+				return date.toLocaleDateString('tr-TR', {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit'
+				});
+			}
+
+			// Create request card
+			function createRequestCard(request) {
+				var customer = request.original_offer?.customer || {};
+				var sourceBranch = request.original_offer?.source_branch || {};
+				var targetBranch = request.requested_branch || {};
+
+				var customerName = customer.name || 'Müşteri';
+				if (customer.company_name) customerName += ' - ' + customer.company_name;
+
+				var sourceName = sourceBranch.branch_name || [sourceBranch.district, sourceBranch.city].filter(Boolean).join(', ') || 'Kaynak Şube';
+				var targetName = targetBranch.branch_name || [targetBranch.district, targetBranch.city].filter(Boolean).join(', ') || 'Hedef Şube';
+
+				return '<div class="request-card" data-id="' + request.id + '">' +
+					'<div class="request-header">' +
+						'<div class="customer-info">' +
+							'<h3>' + customerName + '</h3>' +
+							'<div class="vkn">VKN: ' + (customer.vkn || '-') + '</div>' +
+						'</div>' +
+						'<div class="request-date">' + formatDate(request.created_at) + '</div>' +
+					'</div>' +
+					'<div class="request-body">' +
+						'<div class="branch-box source">' +
+							'<div class="label">Mevcut Teklif Şubesi</div>' +
+							'<div class="name">' + sourceName + '</div>' +
+							'<div class="address">' + (sourceBranch.full_address || '') + '</div>' +
+						'</div>' +
+						'<div class="arrow-icon">' +
+							'<svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>' +
+						'</div>' +
+						'<div class="branch-box target">' +
+							'<div class="label">Talep Edilen Şube</div>' +
+							'<div class="name">' + targetName + '</div>' +
+							'<div class="address">' + (targetBranch.full_address || '') + '</div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="request-actions">' +
+						'<button class="btn btn-reject" onclick="openRejectModal(\'' + request.id + '\')">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>' +
+							'Reddet' +
+						'</button>' +
+						'<button class="btn btn-approve" onclick="openApproveModal(\'' + request.id + '\')">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' +
+							'Onayla' +
+						'</button>' +
+					'</div>' +
+				'</div>';
+			}
+
+			// Load requests
+			async function loadRequests() {
+				showLoading();
+				try {
+					currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+					if (!currentDealerId) {
+						hideLoading();
+						$('#request-list').html('<div class="empty-state"><p>Bayi bilgisi bulunamadi</p></div>');
+						return;
+					}
+
+					const { data: requests, error } = await OffersService.getPendingExtensionRequests(currentDealerId);
+
+					if (error) throw new Error(error);
+
+					hideLoading();
+
+					if (!requests || requests.length === 0) {
+						$('#request-list').html(
+							'<div class="empty-state">' +
+								'<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>' +
+								'<h3>Bekleyen Talep Yok</h3>' +
+								'<p>Şu anda onay bekleyen teklif genişletme talebi bulunmuyor</p>' +
+							'</div>'
+						);
+						return;
+					}
+
+					var html = '';
+					requests.forEach(function(request) {
+						html += createRequestCard(request);
+					});
+					$('#request-list').html(html);
+
+				} catch (err) {
+					hideLoading();
+					console.error('Talep yukleme hatasi:', err);
+					$('#request-list').html('<div class="empty-state"><p>Talepler yuklenirken hata olustu</p></div>');
+				}
+			}
+
+			// Modal functions
+			window.openApproveModal = function(requestId) {
+				selectedRequestId = requestId;
+				$('#approve-notes').val('');
+				$('#approve-modal').addClass('active');
+			};
+
+			window.openRejectModal = function(requestId) {
+				selectedRequestId = requestId;
+				$('#reject-notes').val('');
+				$('#reject-modal').addClass('active');
+			};
+
+			// Modal close
+			$('#approve-cancel').on('click', function() {
+				$('#approve-modal').removeClass('active');
+				selectedRequestId = null;
+			});
+
+			$('#reject-cancel').on('click', function() {
+				$('#reject-modal').removeClass('active');
+				selectedRequestId = null;
+			});
+
+			// Approve action
+			$('#approve-confirm').on('click', async function() {
+				if (!selectedRequestId) return;
+
+				showLoading();
+				$('#approve-modal').removeClass('active');
+
+				try {
+					var notes = $('#approve-notes').val().trim();
+					const { data, error } = await OffersService.approveExtensionRequest(selectedRequestId, notes);
+
+					if (error) throw new Error(error);
+
+					// Reload list
+					loadRequests();
+				} catch (err) {
+					hideLoading();
+					alert('Onaylama sirasinda hata olustu: ' + err.message);
+				}
+
+				selectedRequestId = null;
+			});
+
+			// Reject action
+			$('#reject-confirm').on('click', async function() {
+				if (!selectedRequestId) return;
+
+				showLoading();
+				$('#reject-modal').removeClass('active');
+
+				try {
+					var notes = $('#reject-notes').val().trim();
+					const { data, error } = await OffersService.rejectExtensionRequest(selectedRequestId, notes);
+
+					if (error) throw new Error(error);
+
+					// Reload list
+					loadRequests();
+				} catch (err) {
+					hideLoading();
+					alert('Reddetme sirasinda hata olustu: ' + err.message);
+				}
+
+				selectedRequestId = null;
+			});
+
+			// Initial load
+			loadRequests();
+		});
+	</script>
+</body>
+</html>

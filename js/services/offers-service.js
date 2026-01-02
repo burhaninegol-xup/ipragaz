@@ -607,6 +607,7 @@ const OffersService = {
                     created_at,
                     updated_at,
                     notes,
+                    customer_branch_id,
                     customer:customers(
                         id,
                         vkn,
@@ -698,6 +699,469 @@ const OffersService = {
             return { data: counts, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getOffersCountByStatus');
+        }
+    },
+
+    // ==========================================
+    // SUBE BAZLI TEKLIF METODLARI
+    // ==========================================
+
+    /**
+     * Belirli bir sube icin kabul edilmis teklifi getir
+     * Siparis verirken fiyat kontrolu icin kullanilir
+     */
+    async getAcceptedOfferForBranch(dealerId, customerId, branchId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    branch:customer_branches(id, branch_name, city, district),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('dealer_id', dealerId)
+                .eq('customer_id', customerId)
+                .eq('customer_branch_id', branchId)
+                .eq('status', 'accepted')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (error) throw error;
+            return { data: data || null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getAcceptedOfferForBranch');
+        }
+    },
+
+    /**
+     * Musterinin belirli bir subesi icin tum teklifleri getir
+     */
+    async getByBranchId(customerId, branchId, filters = {}) {
+        try {
+            let query = supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code, city, district, phone),
+                    branch:customer_branches(id, branch_name),
+                    offer_details(
+                        id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .eq('customer_branch_id', branchId);
+
+            if (filters.status) {
+                query = query.eq('status', filters.status);
+            }
+
+            query = query.order('created_at', { ascending: false });
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getByBranchId');
+        }
+    },
+
+    /**
+     * Bayinin sorumluluk alanindaki musteri subelerini getir
+     * Teklif olusturma ekraninda sube listesi icin
+     */
+    async getCustomerBranchesInDealerCoverage(dealerId, customerId) {
+        try {
+            // 1. Bayinin kapsadigi district'leri al
+            const { data: coverageAreas, error: coverageError } = await supabaseClient
+                .from('dealer_coverage_areas')
+                .select('district_id')
+                .eq('dealer_id', dealerId);
+
+            if (coverageError) throw coverageError;
+
+            const districtIds = coverageAreas.map(c => c.district_id);
+
+            if (districtIds.length === 0) {
+                return { data: [], error: null };
+            }
+
+            // 2. Musterinin bu district'lerdeki subelerini al
+            const { data: branches, error: branchesError } = await supabaseClient
+                .from('customer_branches')
+                .select('*')
+                .eq('customer_id', customerId)
+                .eq('is_active', true)
+                .in('district_id', districtIds)
+                .order('is_default', { ascending: false });
+
+            if (branchesError) throw branchesError;
+            return { data: branches || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getCustomerBranchesInDealerCoverage');
+        }
+    },
+
+    // ==========================================
+    // TEKLIF GENISLETME TALEPLERI
+    // ==========================================
+
+    /**
+     * Teklif genisletme talebi olustur
+     * Musteri mevcut teklifi baska subesine uygulatmak istediginde
+     */
+    async createExtensionRequest(originalOfferId, requestedBranchId, requestedByUserId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offer_extension_requests')
+                .insert([{
+                    original_offer_id: originalOfferId,
+                    requested_branch_id: requestedBranchId,
+                    requested_by_user_id: requestedByUserId,
+                    status: 'pending'
+                }])
+                .select(`
+                    *,
+                    original_offer:offers(id, dealer_id, customer_id, status),
+                    requested_branch:customer_branches(id, branch_name, city, district)
+                `)
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.createExtensionRequest');
+        }
+    },
+
+    /**
+     * Bayinin bekleyen genisletme taleplerini getir
+     */
+    async getPendingExtensionRequests(dealerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offer_extension_requests')
+                .select(`
+                    *,
+                    original_offer:offers!inner(
+                        id,
+                        dealer_id,
+                        customer_id,
+                        status,
+                        customer:customers(id, name, company_name, vkn),
+                        source_branch:customer_branches(id, branch_name, city, district),
+                        offer_details(
+                            id,
+                            unit_price,
+                            product:products(id, code, name)
+                        )
+                    ),
+                    requested_branch:customer_branches(id, branch_name, city, district, full_address)
+                `)
+                .eq('original_offer.dealer_id', dealerId)
+                .eq('status', 'pending')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getPendingExtensionRequests');
+        }
+    },
+
+    /**
+     * Genisletme talebini onayla
+     * Yeni bir teklif olusturur ve talebi gunceller
+     */
+    async approveExtensionRequest(requestId, dealerNotes = null) {
+        try {
+            // 1. Talep bilgilerini al
+            const { data: request, error: requestError } = await supabaseClient
+                .from('offer_extension_requests')
+                .select(`
+                    *,
+                    original_offer:offers(
+                        id,
+                        dealer_id,
+                        customer_id,
+                        notes,
+                        offer_details(
+                            product_id,
+                            unit_price,
+                            pricing_type,
+                            discount_value,
+                            commitment_quantity,
+                            this_month_quantity,
+                            last_month_quantity
+                        )
+                    )
+                `)
+                .eq('id', requestId)
+                .single();
+
+            if (requestError) throw requestError;
+            if (!request) throw new Error('Talep bulunamadi');
+
+            const originalOffer = request.original_offer;
+
+            // 2. Yeni teklif olustur (ayni fiyatlarla)
+            const newOfferData = {
+                dealer_id: originalOffer.dealer_id,
+                customer_id: originalOffer.customer_id,
+                customer_branch_id: request.requested_branch_id,
+                parent_offer_id: originalOffer.id,
+                status: 'accepted', // Bayi onayladiği icin direkt accepted
+                notes: dealerNotes || 'Genisletme ile olusturuldu'
+            };
+
+            const { data: newOffer, error: offerError } = await supabaseClient
+                .from('offers')
+                .insert([newOfferData])
+                .select()
+                .single();
+
+            if (offerError) throw offerError;
+
+            // 3. Teklif detaylarini kopyala
+            if (originalOffer.offer_details && originalOffer.offer_details.length > 0) {
+                const newDetails = originalOffer.offer_details.map(d => ({
+                    offer_id: newOffer.id,
+                    product_id: d.product_id,
+                    unit_price: d.unit_price,
+                    pricing_type: d.pricing_type,
+                    discount_value: d.discount_value,
+                    commitment_quantity: d.commitment_quantity,
+                    this_month_quantity: d.this_month_quantity,
+                    last_month_quantity: d.last_month_quantity
+                }));
+
+                const { error: detailsError } = await supabaseClient
+                    .from('offer_details')
+                    .insert(newDetails);
+
+                if (detailsError) throw detailsError;
+            }
+
+            // 4. Talebi guncelle
+            const { error: updateError } = await supabaseClient
+                .from('offer_extension_requests')
+                .update({
+                    status: 'approved',
+                    approved_offer_id: newOffer.id,
+                    dealer_notes: dealerNotes,
+                    dealer_response_at: new Date().toISOString()
+                })
+                .eq('id', requestId);
+
+            if (updateError) throw updateError;
+
+            return { data: { request, newOffer }, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.approveExtensionRequest');
+        }
+    },
+
+    /**
+     * Genisletme talebini reddet
+     */
+    async rejectExtensionRequest(requestId, dealerNotes = null) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offer_extension_requests')
+                .update({
+                    status: 'rejected',
+                    dealer_notes: dealerNotes,
+                    dealer_response_at: new Date().toISOString()
+                })
+                .eq('id', requestId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.rejectExtensionRequest');
+        }
+    },
+
+    /**
+     * Musterinin genisletme taleplerini getir
+     */
+    async getExtensionRequestsByCustomer(customerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offer_extension_requests')
+                .select(`
+                    *,
+                    original_offer:offers!inner(
+                        id,
+                        customer_id,
+                        dealer:dealers(id, name),
+                        source_branch:customer_branches(id, branch_name)
+                    ),
+                    requested_branch:customer_branches(id, branch_name, city, district)
+                `)
+                .eq('original_offer.customer_id', customerId)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getExtensionRequestsByCustomer');
+        }
+    },
+
+    /**
+     * Bekleyen genisletme talebi sayisini getir (bayi bildirimi icin)
+     */
+    async getPendingExtensionRequestsCount(dealerId) {
+        try {
+            const { count, error } = await supabaseClient
+                .from('offer_extension_requests')
+                .select('id, original_offer:offers!inner(dealer_id)', { count: 'exact', head: true })
+                .eq('original_offer.dealer_id', dealerId)
+                .eq('status', 'pending');
+
+            if (error) throw error;
+            return { data: count || 0, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getPendingExtensionRequestsCount');
+        }
+    },
+
+    // ==========================================
+    // SUBE BAZLI FIYAT KONTROLU
+    // ==========================================
+
+    /**
+     * Sube icin gecerli fiyatlari getir
+     * Siparis verirken sube bazli fiyat kontrolu icin kullanilir
+     * @param {string} dealerId - Bayi ID
+     * @param {string} customerId - Musteri ID
+     * @param {string} branchId - Sube ID
+     * @returns {Object} - { hasValidOffer, prices: { productId: unitPrice } }
+     */
+    async getValidPricesForBranch(dealerId, customerId, branchId) {
+        try {
+            // Bu sube icin gecerli teklif var mi?
+            const { data: offer, error } = await this.getAcceptedOfferForBranch(dealerId, customerId, branchId);
+
+            if (error) throw error;
+
+            if (!offer) {
+                return {
+                    data: {
+                        hasValidOffer: false,
+                        prices: {},
+                        message: 'Bu sube icin gecerli teklif bulunamadi'
+                    },
+                    error: null
+                };
+            }
+
+            // Teklifteki fiyatlari map olarak dondur
+            const prices = {};
+            (offer.offer_details || []).forEach(function(detail) {
+                if (detail.product_id) {
+                    prices[detail.product_id] = {
+                        unit_price: detail.unit_price,
+                        pricing_type: detail.pricing_type,
+                        discount_value: detail.discount_value,
+                        commitment_quantity: detail.commitment_quantity
+                    };
+                }
+            });
+
+            return {
+                data: {
+                    hasValidOffer: true,
+                    offerId: offer.id,
+                    branchId: branchId,
+                    prices: prices
+                },
+                error: null
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getValidPricesForBranch');
+        }
+    },
+
+    /**
+     * Sepet urunlerinin fiyatlarini sube teklifine gore dogrula
+     * @param {string} dealerId - Bayi ID
+     * @param {string} customerId - Musteri ID
+     * @param {string} branchId - Sube ID
+     * @param {Array} cartItems - Sepet urunleri [{productId, quantity, unitPrice}]
+     * @returns {Object} - { isValid, invalidItems, validPrices }
+     */
+    async validateCartPricesForBranch(dealerId, customerId, branchId, cartItems) {
+        try {
+            const { data: priceData, error } = await this.getValidPricesForBranch(dealerId, customerId, branchId);
+
+            if (error) throw error;
+
+            if (!priceData.hasValidOffer) {
+                return {
+                    data: {
+                        isValid: false,
+                        message: priceData.message,
+                        invalidItems: cartItems.map(item => item.productId)
+                    },
+                    error: null
+                };
+            }
+
+            const invalidItems = [];
+            const validPrices = {};
+
+            cartItems.forEach(function(item) {
+                const offerPrice = priceData.prices[item.productId];
+
+                if (!offerPrice) {
+                    // Bu urun teklifte yok
+                    invalidItems.push({
+                        productId: item.productId,
+                        reason: 'Urun teklifte bulunamadi'
+                    });
+                } else {
+                    // Fiyat uyumlu mu kontrol et
+                    validPrices[item.productId] = offerPrice.unit_price;
+
+                    if (Math.abs(item.unitPrice - offerPrice.unit_price) > 0.01) {
+                        invalidItems.push({
+                            productId: item.productId,
+                            reason: 'Fiyat uyusmuyor',
+                            cartPrice: item.unitPrice,
+                            offerPrice: offerPrice.unit_price
+                        });
+                    }
+                }
+            });
+
+            return {
+                data: {
+                    isValid: invalidItems.length === 0,
+                    offerId: priceData.offerId,
+                    branchId: branchId,
+                    invalidItems: invalidItems,
+                    validPrices: validPrices
+                },
+                error: null
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.validateCartPricesForBranch');
         }
     }
 };

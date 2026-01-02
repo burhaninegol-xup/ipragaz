@@ -144,6 +144,123 @@ const BranchesService = {
         if (branchData.city) parts.push(branchData.city);
 
         return parts.join(' ');
+    },
+
+    // ==========================================
+    // BAYI COVERAGE KONTROLLERI
+    // ==========================================
+
+    /**
+     * Sube, bayinin sorumluluk alaninda mi?
+     * @param {string} dealerId - Bayi ID
+     * @param {string} branchId - Sube ID
+     * @returns {boolean}
+     */
+    async isBranchInDealerCoverage(dealerId, branchId) {
+        try {
+            // 1. Subenin district_id'sini al
+            const { data: branch, error: branchError } = await supabaseClient
+                .from('customer_branches')
+                .select('district_id')
+                .eq('id', branchId)
+                .single();
+
+            if (branchError) throw branchError;
+            if (!branch || !branch.district_id) {
+                return { data: false, error: null };
+            }
+
+            // 2. Bayi bu district'i kapsiyor mu?
+            const { data: coverage, error: coverageError } = await supabaseClient
+                .from('dealer_districts')
+                .select('id')
+                .eq('dealer_id', dealerId)
+                .eq('district_id', branch.district_id)
+                .maybeSingle();
+
+            if (coverageError) throw coverageError;
+
+            return { data: coverage !== null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'BranchesService.isBranchInDealerCoverage');
+        }
+    },
+
+    /**
+     * Musterinin bayinin sorumluluk alanindaki subelerini getir
+     * @param {string} customerId - Musteri ID
+     * @param {string} dealerId - Bayi ID
+     */
+    async getByCustomerIdInDealerCoverage(customerId, dealerId) {
+        try {
+            // 1. Bayinin kapsadigi district'leri al
+            const { data: coverageAreas, error: coverageError } = await supabaseClient
+                .from('dealer_districts')
+                .select('district_id')
+                .eq('dealer_id', dealerId);
+
+            if (coverageError) throw coverageError;
+
+            const districtIds = (coverageAreas || []).map(c => c.district_id);
+
+            if (districtIds.length === 0) {
+                return { data: [], error: null };
+            }
+
+            // 2. Musterinin bu district'lerdeki subelerini al
+            const { data: branches, error: branchesError } = await supabaseClient
+                .from('customer_branches')
+                .select('*')
+                .eq('customer_id', customerId)
+                .eq('is_active', true)
+                .in('district_id', districtIds)
+                .order('is_default', { ascending: false })
+                .order('created_at', { ascending: false });
+
+            if (branchesError) throw branchesError;
+            return { data: branches || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'BranchesService.getByCustomerIdInDealerCoverage');
+        }
+    },
+
+    /**
+     * Musterinin bayinin sorumluluk alaninda OLMAYAN subelerini getir
+     * (Bilgilendirme amacli - teklif genisletme ekraninda gri/disabled gosterilir)
+     */
+    async getByCustomerIdOutsideDealerCoverage(customerId, dealerId) {
+        try {
+            // 1. Bayinin kapsadigi district'leri al
+            const { data: coverageAreas, error: coverageError } = await supabaseClient
+                .from('dealer_districts')
+                .select('district_id')
+                .eq('dealer_id', dealerId);
+
+            if (coverageError) throw coverageError;
+
+            const districtIds = (coverageAreas || []).map(c => c.district_id);
+
+            // 2. Musterinin bu district'lerin DISINDAKI subelerini al
+            let query = supabaseClient
+                .from('customer_branches')
+                .select('*')
+                .eq('customer_id', customerId)
+                .eq('is_active', true);
+
+            if (districtIds.length > 0) {
+                // NOT IN - bu district'lerin disinda
+                query = query.not('district_id', 'in', `(${districtIds.join(',')})`);
+            }
+
+            query = query.order('created_at', { ascending: false });
+
+            const { data: branches, error: branchesError } = await query;
+
+            if (branchesError) throw branchesError;
+            return { data: branches || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'BranchesService.getByCustomerIdOutsideDealerCoverage');
+        }
     }
 };
 

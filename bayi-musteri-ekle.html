@@ -340,6 +340,63 @@
 			color: #c62828;
 		}
 
+		/* Branch Selector */
+		.branch-selector {
+			background: #f8fafe;
+			border: 1px solid #e3f2fd;
+			border-radius: 12px;
+			padding: 18px;
+			margin-top: 15px;
+			display: none;
+		}
+
+		.branch-selector.visible {
+			display: block;
+		}
+
+		.branch-selector .selector-label {
+			font-size: 12px;
+			color: #666;
+			margin-bottom: 10px;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+
+		.branch-selector .selector-label svg {
+			width: 16px;
+			height: 16px;
+			fill: #666;
+		}
+
+		.branch-selector select {
+			width: 100%;
+			padding: 12px 15px;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			font-size: 14px;
+			color: #333;
+			background: #fff;
+			cursor: pointer;
+			transition: border-color 0.2s;
+		}
+
+		.branch-selector select:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		.branch-selector select:disabled {
+			background: #f5f5f5;
+			cursor: not-allowed;
+		}
+
+		.branch-selector .no-branches {
+			color: #999;
+			font-size: 13px;
+			font-style: italic;
+		}
+
 		/* Products Section */
 		.products-form {
 			display: none;
@@ -2503,6 +2560,22 @@
 				<div class="info-label">Resmi Ünvan</div>
 				<div class="info-value" id="customer-name"></div>
 			</div>
+
+			<!-- Branch Selector -->
+			<div class="branch-selector" id="branch-selector">
+				<div class="selector-label">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+					</svg>
+					Teklif Verilecek Şube
+				</div>
+				<select id="branch-select">
+					<option value="">Şube seçiniz...</option>
+				</select>
+				<div class="no-branches" id="no-branches-message" style="display: none;">
+					Bu müşterinin sorumluluk alanınızdaki şubesi bulunmuyor.
+				</div>
+			</div>
 		</div>
 
 		<!-- Products Form Section -->
@@ -2789,6 +2862,8 @@
 			var isLoading = false;
 			var messageSubscription = null;
 			var currentUserType = 'dealer';
+			var selectedBranchId = null; // Secili sube ID
+			var customerBranches = []; // Musterinin bayi coverage'indaki subeleri
 
 			// Loading overlay
 			function showLoading(text) {
@@ -2816,6 +2891,56 @@
 				$('#error-toast').fadeIn(300);
 				setTimeout(function() { $('#error-toast').fadeOut(300); }, 4000);
 			}
+
+			// Musterinin bayi coverage'indaki subelerini yukle
+			async function loadCustomerBranches(customerId) {
+				try {
+					const { data: branches, error } = await BranchesService.getByCustomerIdInDealerCoverage(customerId, currentDealerId);
+
+					if (error) {
+						console.error('Sube yukleme hatasi:', error);
+						return;
+					}
+
+					customerBranches = branches || [];
+					var $select = $('#branch-select');
+					$select.empty().append('<option value="">Şube seçiniz...</option>');
+
+					if (customerBranches.length === 0) {
+						$('#branch-selector').addClass('visible');
+						$select.hide();
+						$('#no-branches-message').show();
+						return;
+					}
+
+					customerBranches.forEach(function(branch) {
+						var label = branch.branch_name || branch.full_address || 'Şube';
+						if (branch.is_default) label += ' (Varsayılan)';
+						$select.append('<option value="' + branch.id + '">' + label + '</option>');
+					});
+
+					$select.show();
+					$('#no-branches-message').hide();
+					$('#branch-selector').addClass('visible');
+
+					// Varsayilan subeyi sec
+					var defaultBranch = customerBranches.find(function(b) { return b.is_default; });
+					if (defaultBranch) {
+						$select.val(defaultBranch.id);
+						selectedBranchId = defaultBranch.id;
+					} else if (customerBranches.length === 1) {
+						$select.val(customerBranches[0].id);
+						selectedBranchId = customerBranches[0].id;
+					}
+				} catch (err) {
+					console.error('Sube yukleme hatasi:', err);
+				}
+			}
+
+			// Sube secimi degistiginde
+			$('#branch-select').on('change', function() {
+				selectedBranchId = $(this).val() || null;
+			});
 
 			// Sayfa yüklendiğinde ürünleri ve bayi bilgisini al
 			async function initPage() {
@@ -2915,6 +3040,15 @@
 					currentCustomer = offer.customer;
 					currentVkn = offer.customer.vkn;
 					isEditMode = true;
+
+					// Musterinin bayi coverage'indaki subelerini yukle
+					await loadCustomerBranches(offer.customer.id);
+
+					// Mevcut teklifin sube bilgisini sec
+					if (offer.customer_branch_id && customerBranches.length > 0) {
+						$('#branch-select').val(offer.customer_branch_id);
+						selectedBranchId = offer.customer_branch_id;
+					}
 
 					// Chat'i baslat
 					initializeChat();
@@ -3069,6 +3203,9 @@
 						currentCustomer = customer;
 						isEditMode = true;
 
+						// Musterinin bayi coverage'indaki subelerini yukle
+						await loadCustomerBranches(customer.id);
+
 						// Bu bayi-müşteri için en son teklifi çek (tüm durumlar dahil)
 						const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
 
@@ -3184,6 +3321,11 @@
 						// Yeni müşteri
 						currentCustomer = null;
 						isEditMode = false;
+
+						// Yeni musterinin henuz subesi yok - sube seciciyi gizle
+						$('#branch-selector').removeClass('visible');
+						selectedBranchId = null;
+						customerBranches = [];
 
 						$('#customer-info-box').removeClass('error').addClass('visible');
 						$('#customer-name').text('YENİ MÜŞTERİ - Şirket Ünvanı (VKN: ' + vkn + ')');
@@ -3752,10 +3894,18 @@
 							}
 						} else {
 							// Yeni teklif oluştur
+							// Sube secimi kontrolu
+							if (!selectedBranchId && customerBranches.length > 0) {
+								hideLoading();
+								showError('Lütfen teklif verilecek şubeyi seçiniz.');
+								return;
+							}
+
 							const saveAsAccepted = $('#save-as-accepted').is(':checked');
 							const offerData = {
 								dealer_id: currentDealerId,
 								customer_id: customerId,
+								customer_branch_id: selectedBranchId || null,
 								status: saveAsAccepted ? 'accepted' : 'pending',
 								notes: 'Bayi panelinden oluşturuldu'
 							};

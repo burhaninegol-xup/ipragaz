@@ -627,6 +627,7 @@
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script>
 		// Staff kullanicilar icin owner-only elementleri gizle
 		(function() {
@@ -660,41 +661,162 @@
 
 		var currentCustomerId = null;
 		var currentDealerId = null;
+		var currentOffer = null;
+		var currentUserId = null;
 
-		// Fiyatları Supabase'den yükle
+		// Fiyatları Supabase'den yükle (offers + offer_details tablosundan)
 		async function loadPrices() {
-			var customerId = sessionStorage.getItem('customer_id');
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			var dealerId = sessionStorage.getItem('dealer_id');
+			var branchId = sessionStorage.getItem('isyerim_branch_id') || sessionStorage.getItem('selected_address_id');
+
+			// DEBUG
+			console.log('=== loadPrices DEBUG ===');
+			console.log('customerId:', customerId);
+			console.log('dealerId:', dealerId);
+			console.log('branchId:', branchId);
+
 			if (!customerId) {
+				console.log('❌ customerId yok, showWithdrawnState çağrılıyor');
 				showWithdrawnState();
 				return;
 			}
 
 			currentCustomerId = customerId;
 
+			// Bayi secilmemisse uyari goster
+			if (!dealerId) {
+				showWithdrawnState();
+				return;
+			}
+
+			currentDealerId = dealerId;
+
+			// Sube secilmemisse uyari goster
+			if (!branchId) {
+				priceListEl.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Lütfen önce bir şube seçin.</p></div>';
+				return;
+			}
+
 			try {
-				const { data: prices, error } = await CustomerPricesService.getByCustomerId(customerId);
+				// Bu bayi + sube icin accepted teklif var mi?
+				const { data: offer, error } = await OffersService.getAcceptedOfferForBranch(dealerId, customerId, branchId);
 
 				if (error) throw new Error(error);
 
-				// Aktif fiyat var mı kontrol et
-				var activePrices = prices ? prices.filter(p => p.is_active) : [];
-
-				if (activePrices.length === 0) {
+				if (!offer || !offer.offer_details || offer.offer_details.length === 0) {
 					showWithdrawnState();
+					// Genisletme icin teklif bilgisini yukle
+					loadExtensionInfo(dealerId, customerId, branchId);
 					return;
 				}
 
-				// Dealer ID'yi sakla
-				if (activePrices[0].dealer_id) {
-					currentDealerId = activePrices[0].dealer_id;
-					sessionStorage.setItem('dealer_id', currentDealerId);
-				}
+				// Teklifi sakla
+				currentOffer = offer;
+
+				// offer_details'tan fiyatlari renderPrices formatina cevir
+				var activePrices = offer.offer_details.map(function(detail) {
+					return {
+						id: detail.id,
+						dealer_id: dealerId,
+						customer_id: customerId,
+						product_id: detail.product?.id,
+						unit_price: detail.unit_price,
+						pricing_type: detail.pricing_type,
+						discount_value: detail.discount_value,
+						is_active: true,
+						product: detail.product
+					};
+				});
 
 				// Fiyatları render et
 				renderPrices(activePrices);
+
+				// Teklif ve sube bilgisini yukle (branch extension icin)
+				loadOfferAndBranchInfo();
 			} catch (err) {
 				console.error('Fiyat yükleme hatası:', err);
 				priceListEl.innerHTML = '<div style="text-align: center; padding: 40px; color: #e31e24;"><p>Fiyatlar yüklenirken hata oluştu</p></div>';
+			}
+		}
+
+		// Bu sube icin teklif yoksa, baska subede teklif var mi kontrol et (genisletme icin)
+		async function loadExtensionInfo(dealerId, customerId, currentBranchId) {
+			try {
+				// Bu bayi icin musterinin herhangi bir subesinde accepted teklif var mi?
+				const { data: offers, error } = await OffersService.getByCustomerId(customerId, { status: 'accepted' });
+
+				if (error) throw new Error(error);
+
+				// Bu bayi icin baska subede teklif var mi?
+				var otherBranchOffer = (offers || []).find(function(o) {
+					return o.dealer_id === dealerId && o.customer_branch_id && o.customer_branch_id !== currentBranchId;
+				});
+
+				if (otherBranchOffer) {
+					// Genisletme onerisi goster
+					var branchName = otherBranchOffer.customer_branch?.branch_name || 'başka şube';
+					showExtensionSuggestion(otherBranchOffer, branchName, currentBranchId);
+				}
+			} catch (err) {
+				console.error('Extension info yükleme hatası:', err);
+			}
+		}
+
+		// Genisletme onerisi goster
+		function showExtensionSuggestion(existingOffer, existingBranchName, targetBranchId) {
+			var suggestionHtml = '<div style="margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #002c77;">' +
+				'<p style="margin: 0 0 10px 0; font-weight: 600; color: #002c77;">💡 Bu bayiden başka şubenizde teklif var!</p>' +
+				'<p style="margin: 0 0 15px 0; color: #666;">"' + existingBranchName + '" şubesindeki teklifi bu şubeye de uygulatmak için talep oluşturabilirsiniz.</p>' +
+				'<button onclick="requestExtension(\'' + existingOffer.id + '\', \'' + targetBranchId + '\')" class="btn-request-extension" style="background: #002c77; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Genişletme Talep Et</button>' +
+			'</div>';
+
+			// Empty state'in altina ekle
+			var emptyStateEl = document.querySelector('.empty-state-card');
+			if (emptyStateEl) {
+				emptyStateEl.insertAdjacentHTML('afterend', suggestionHtml);
+			}
+		}
+
+		// Genisletme talebi olustur
+		async function requestExtension(offerId, targetBranchId) {
+			try {
+				var userId = sessionStorage.getItem('isyerim_user_id');
+				const { data, error } = await OffersService.createExtensionRequest(offerId, targetBranchId, userId);
+
+				if (error) throw new Error(error);
+
+				alert('Genişletme talebiniz başarıyla oluşturuldu! Bayi onayından sonra fiyatlar bu şube için de geçerli olacak.');
+				location.reload();
+			} catch (err) {
+				console.error('Extension request hatası:', err);
+				alert('Talep oluşturulurken hata: ' + err.message);
+			}
+		}
+
+		// Musterinin aktif teklifini ve sube bilgisini yukle
+		async function loadOfferAndBranchInfo() {
+			if (!currentCustomerId || !currentDealerId) return;
+
+			currentUserId = sessionStorage.getItem('isyerim_user_id');
+
+			try {
+				// Aktif teklifi bul
+				const { data: offers, error: offersError } = await OffersService.getByCustomerId(currentCustomerId, { status: 'accepted' });
+
+				if (offersError) throw new Error(offersError);
+
+				// Bu bayi icin accepted teklif var mi?
+				var acceptedOffer = (offers || []).find(function(o) {
+					return o.dealer_id === currentDealerId && o.status === 'accepted';
+				});
+
+				if (acceptedOffer) {
+					currentOffer = acceptedOffer;
+				}
+
+			} catch (err) {
+				console.error('Teklif yukleme hatasi:', err);
 			}
 		}
 

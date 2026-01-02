@@ -417,6 +417,21 @@
 			color: #888;
 		}
 
+		.customer-branch {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 11px;
+			color: #666;
+			margin-top: 2px;
+		}
+
+		.customer-branch svg {
+			width: 12px;
+			height: 12px;
+			fill: #999;
+		}
+
 		/* Warning Badge with Tooltip */
 		.customer-warning {
 			position: relative;
@@ -1414,7 +1429,9 @@
 							offer_id: offer.id,
 							offer_status: offer.status,
 							offer_created_at: offer.created_at,
-							customer_prices: offer.offer_details
+							customer_prices: offer.offer_details,
+							customer_branch_id: offer.customer_branch_id,
+							customer_branch: offer.customer_branch
 						};
 					});
 
@@ -1514,9 +1531,18 @@
 			function createCustomerCard(customer) {
 				var offerStatus = customer.offer_status || 'pending';
 
+				// Sube bilgisi
+				var branchHtml = '';
+				if (customer.customer_branch) {
+					var branchName = customer.customer_branch.branch_name || '';
+					var branchLocation = [customer.customer_branch.district, customer.customer_branch.city].filter(Boolean).join(', ');
+					var branchLabel = branchName || branchLocation || 'Şube';
+					branchHtml = '<div class="customer-branch"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span>' + branchLabel + '</span></div>';
+				}
+
 				return '<div class="customer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-offer-id="' + customer.offer_id + '" data-status="' + offerStatus + '">' +
 					'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
-					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div></div>' +
+					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div>' + branchHtml + '</div>' +
 					getStatusBadge(offerStatus) +
 					'<a href="bayi-musteri-ekle.html?offer_id=' + customer.offer_id + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
 				'</div>';
