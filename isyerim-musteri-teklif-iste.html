@@ -110,6 +110,12 @@
 			transform: translateY(-2px);
 		}
 
+		.product-card.selected {
+			border-color: #e31e24;
+			background: #fff5f5;
+			box-shadow: 0 0 0 2px rgba(227, 30, 36, 0.2);
+		}
+
 		.product-image {
 			height: 100px;
 			display: flex;
@@ -1848,6 +1854,16 @@
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
+		// Rol kontrolu - sadece owner erisebilir
+		(function() {
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+			if (userRole !== 'owner') {
+				alert('Bu sayfaya erisim yetkiniz bulunmamaktadir.');
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+				return;
+			}
+		})();
+
 		// Global degiskenler
 		var products = [];
 		var currentCustomer = null;
@@ -2456,10 +2472,17 @@
 
 			inputs.forEach(function(input) {
 				var value = parseInt(input.value) || 0;
+				var productCard = input.closest('.product-card');
+
 				if (value > 0) {
 					count++;
 					var productId = input.getAttribute('data-product-id');
 					selectedProducts[productId] = value;
+					// Secili gorunumu ekle
+					if (productCard) productCard.classList.add('selected');
+				} else {
+					// Secili gorunumu kaldir
+					if (productCard) productCard.classList.remove('selected');
 				}
 			});
 

@@ -323,6 +323,16 @@
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
+		// Rol kontrolu - sadece owner erisebilir
+		(function() {
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+			if (userRole !== 'owner') {
+				alert('Bu sayfaya erisim yetkiniz bulunmamaktadir.');
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+				return;
+			}
+		})();
+
 		// Global degiskenler
 		var currentCustomer = null;
 		var customerId = null;

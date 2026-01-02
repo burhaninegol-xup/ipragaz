@@ -545,8 +545,8 @@
 			</p>
 		</div>
 
-		<!-- Withdraw Button -->
-		<button class="btn-withdraw" id="btnWithdraw">Tekliften Çekil</button>
+		<!-- Withdraw Button (sadece owner gorebilir) -->
+		<button class="btn-withdraw owner-only" id="btnWithdraw">Tekliften Çekil</button>
 
 		<!-- No Offer State (Hidden by default) -->
 		<div class="no-offer-state" id="noOfferState">
@@ -628,6 +628,20 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script>
+		// Staff kullanicilar icin owner-only elementleri gizle
+		(function() {
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+			if (userRole !== 'owner') {
+				// DOM yuklendikten sonra gizle
+				document.addEventListener('DOMContentLoaded', function() {
+					var ownerOnlyItems = document.querySelectorAll('.owner-only');
+					ownerOnlyItems.forEach(function(item) {
+						item.style.display = 'none';
+					});
+				});
+			}
+		})();
+
 		// DOM elementleri
 		var infoBanner = document.querySelector('.info-banner');
 		var priceListEl = document.getElementById('priceList');

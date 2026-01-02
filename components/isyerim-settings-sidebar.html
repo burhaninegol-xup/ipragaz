@@ -269,6 +269,20 @@
 				</svg>
 			</a>
 		</li>
+		<li class="sidebar-menu-item owner-only">
+			<a href="isyerim-musteri-teklif-iste.html" class="sidebar-menu-link" data-page="teklif-iste">
+				<svg class="sidebar-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+					<polyline points="14 2 14 8 20 8"/>
+					<line x1="12" y1="18" x2="12" y2="12"/>
+					<line x1="9" y1="15" x2="15" y2="15"/>
+				</svg>
+				<span class="sidebar-menu-text">Teklif Iste</span>
+				<svg class="sidebar-menu-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M9 18l6-6-6-6"/>
+				</svg>
+			</a>
+		</li>
 		<li class="sidebar-menu-item">
 			<a href="isyerim-musteri-bize-ulasin.html" class="sidebar-menu-link" data-page="bize-ulasin">
 				<svg class="sidebar-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -326,14 +340,14 @@
 function initSettingsSidebar(activePage) {
 	// Kullanici bilgilerini yukle
 	var userName = sessionStorage.getItem('isyerim_user_name') || sessionStorage.getItem('isyerim_customer_name') || 'Kullanici';
-	var userPhone = sessionStorage.getItem('isyerim_phone') || '0000000000';
+	var userId = sessionStorage.getItem('isyerim_user_id') || sessionStorage.getItem('isyerim_customer_id') || '';
 	var userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
 
 	var nameElement = document.getElementById('sidebarUserName');
 	var phoneElement = document.getElementById('sidebarUserPhone');
 
 	if (nameElement) nameElement.textContent = userName;
-	if (phoneElement) phoneElement.textContent = userPhone;
+	if (phoneElement) phoneElement.textContent = userId;
 
 	// Staff kullanicilar icin owner-only menuleri gizle
 	if (userRole !== 'owner') {
