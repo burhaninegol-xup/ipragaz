@@ -16,7 +16,7 @@
 		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 25px; }
 
 		/* Search */
-		.search-box { margin-bottom: 20px; }
+		.search-box { flex: 1; min-width: 0; }
 		.search-input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; }
 		.search-input:focus { outline: none; border-color: #e31e24; }
 
@@ -30,8 +30,8 @@
 		.tab.active .tab-count.empty { color: #e31e24; opacity: 0.6; }
 
 		/* Filter Row */
-		.filter-row { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-		.branch-filter-wrapper { position: relative; }
+		.filter-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+		.branch-filter-wrapper { position: relative; min-width: 200px; }
 		.branch-filter-btn {
 			display: flex; align-items: center; gap: 8px;
 			padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px;
@@ -138,7 +138,8 @@
 		}
 		@media (max-width: 600px) {
 			.filter-row { flex-direction: column; align-items: stretch; }
-			.branch-filter-wrapper { width: 100%; }
+			.search-box { width: 100%; }
+			.branch-filter-wrapper { width: 100%; min-width: auto; }
 			.branch-filter-btn { width: 100%; justify-content: center; }
 			.branch-dropdown { left: 0; right: 0; min-width: auto; }
 			/* Responsive Offer Card */
@@ -157,22 +158,11 @@
 			<div class="settings-content">
 				<h1 class="content-title">Tekliflerim</h1>
 
-				<!-- Search -->
-				<div class="search-box">
-					<input type="text" class="search-input" id="searchInput" placeholder="Teklif ara (bayi adi, urun adi...)" oninput="filterOffers()">
-				</div>
-
-				<!-- Tabs -->
-				<div class="tabs">
-					<div class="tab active" data-status="all" onclick="switchTab('all')">Tumunu Gor <span class="tab-count" id="count-all">(0)</span></div>
-					<div class="tab" data-status="requested" onclick="switchTab('requested')">Talep Edildi <span class="tab-count" id="count-requested">(0)</span></div>
-					<div class="tab" data-status="pending" onclick="switchTab('pending')">Inceleniyor <span class="tab-count" id="count-pending">(0)</span></div>
-					<div class="tab" data-status="accepted" onclick="switchTab('accepted')">Onaylandi <span class="tab-count" id="count-accepted">(0)</span></div>
-					<div class="tab" data-status="closed" onclick="switchTab('closed')">Kapali <span class="tab-count" id="count-closed">(0)</span></div>
-				</div>
-
-				<!-- Filter Row: Branch -->
+				<!-- Filter Row: Search + Branch -->
 				<div class="filter-row">
+					<div class="search-box">
+						<input type="text" class="search-input" id="searchInput" placeholder="Teklif ara (bayi adi, urun adi...)" oninput="filterOffers()">
+					</div>
 					<div class="branch-filter-wrapper">
 						<button type="button" class="branch-filter-btn" onclick="toggleBranchDropdown()">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -197,6 +187,15 @@
 							</div>
 						</div>
 					</div>
+				</div>
+
+				<!-- Tabs -->
+				<div class="tabs">
+					<div class="tab active" data-status="all" onclick="switchTab('all')">Tumunu Gor <span class="tab-count" id="count-all">(0)</span></div>
+					<div class="tab" data-status="requested" onclick="switchTab('requested')">Talep Edildi <span class="tab-count" id="count-requested">(0)</span></div>
+					<div class="tab" data-status="pending" onclick="switchTab('pending')">Inceleniyor <span class="tab-count" id="count-pending">(0)</span></div>
+					<div class="tab" data-status="accepted" onclick="switchTab('accepted')">Onaylandi <span class="tab-count" id="count-accepted">(0)</span></div>
+					<div class="tab" data-status="closed" onclick="switchTab('closed')">Kapali <span class="tab-count" id="count-closed">(0)</span></div>
 				</div>
 
 				<!-- Offers List -->
