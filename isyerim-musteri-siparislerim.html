@@ -105,6 +105,64 @@
 		.confirm-btn.confirm { background: #e31e24; color: #fff; }
 		.confirm-btn.confirm:hover { background: #c91a1f; }
 
+		/* New Order Card Design */
+		.order-card-new { display: flex; gap: 16px; padding: 20px; border: 1px solid #e8ecf1; border-radius: 12px; margin-bottom: 12px; background: #fff; transition: all 0.2s ease; }
+		.order-card-new:hover { border-color: #e31e24; box-shadow: 0 4px 16px rgba(227, 30, 36, 0.1); }
+		.order-card-left { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+		.order-card-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; min-width: 150px; gap: 12px; }
+		.order-branch-name { font-size: 15px; font-weight: 600; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+		.order-dealer-name { font-size: 14px; color: #666; display: flex; align-items: center; gap: 6px; }
+		.order-dealer-name svg { width: 14px; height: 14px; color: #999; flex-shrink: 0; }
+		.order-amount { font-size: 20px; font-weight: 700; color: #e31e24; margin: 4px 0; }
+		.order-meta-info { font-size: 13px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+		.order-meta-info svg { width: 14px; height: 14px; color: #999; }
+		.order-item-count { font-size: 12px; color: #666; padding: 4px 10px; background: #f5f7fa; border-radius: 6px; }
+		.status-badge-new { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+		.status-badge-new svg { width: 14px; height: 14px; }
+		.status-badge-new.pending { background: #fff8e6; color: #f5a623; border: 1px solid #ffe0b2; }
+		.status-badge-new.confirmed { background: #e6f4ff; color: #1890ff; border: 1px solid #bbdefb; }
+		.status-badge-new.delivered { background: #e6ffe6; color: #28a745; border: 1px solid #c8e6c9; }
+		.status-badge-new.cancelled { background: #ffe6e6; color: #e31e24; border: 1px solid #ffcdd2; }
+
+		/* Branch Filter */
+		.filter-row { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+		.date-filter { margin-bottom: 0; flex: 1; min-width: 250px; }
+		.branch-filter-wrapper { position: relative; }
+		.branch-filter-btn {
+			display: flex; align-items: center; gap: 8px;
+			padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px;
+			background: #fafafa; cursor: pointer; font-family: inherit; font-size: 14px; color: #333;
+			transition: all 0.2s;
+		}
+		.branch-filter-btn:hover { border-color: #e31e24; }
+		.branch-filter-btn svg { width: 18px; height: 18px; color: #e31e24; }
+		.branch-count-badge {
+			background: #e31e24; color: #fff; font-size: 11px; font-weight: 600;
+			padding: 2px 6px; border-radius: 10px; min-width: 20px; text-align: center;
+		}
+		.branch-dropdown {
+			position: absolute; top: calc(100% + 5px); right: 0; min-width: 280px;
+			background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 100;
+			display: none; max-height: 300px; overflow: hidden;
+		}
+		.branch-dropdown.active { display: block; }
+		.branch-dropdown-header {
+			padding: 12px 15px; border-bottom: 1px solid #e0e0e0; background: #f9f9f9;
+		}
+		.branch-dropdown-list { max-height: 220px; overflow-y: auto; padding: 8px 0; }
+		.branch-checkbox-item {
+			display: flex; align-items: center; gap: 10px;
+			padding: 10px 15px; cursor: pointer; transition: background 0.2s;
+		}
+		.branch-checkbox-item:hover { background: #f5f5f5; }
+		.branch-checkbox-item input[type="checkbox"] {
+			width: 18px; height: 18px; accent-color: #e31e24; cursor: pointer;
+		}
+		.branch-checkbox-item span { font-size: 14px; color: #333; }
+		.branch-checkbox-item.select-all { font-weight: 600; }
+		.branch-checkbox-item.select-all span { color: #e31e24; }
+
 		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
 		@media (max-width: 600px) {
 			.tabs { overflow-x: auto; }
@@ -112,7 +170,17 @@
 			.order-header { flex-direction: column; gap: 10px; }
 			.order-actions { justify-content: stretch; }
 			.order-actions button { flex: 1; }
-			.date-filter { flex-wrap: wrap; }
+			.filter-row { flex-direction: column; align-items: stretch; }
+			.date-filter { min-width: auto; }
+			.branch-filter-wrapper { width: 100%; }
+			.branch-filter-btn { width: 100%; justify-content: center; }
+			.branch-dropdown { left: 0; right: 0; min-width: auto; }
+			/* Responsive Order Card */
+			.order-card-new { flex-direction: column; gap: 12px; padding: 16px; }
+			.order-card-right { flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-width: auto; }
+			.order-amount { font-size: 18px; }
+			.status-badge-new { padding: 6px 10px; font-size: 11px; }
+			.btn-detail { padding: 10px 16px; font-size: 13px; }
 		}
 	</style>
 </head>
@@ -136,16 +204,42 @@
 						<svg style="width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
 						Rutin Siparisler
 					</div>
-					<div class="tab" data-status="delivered" onclick="switchTab('delivered')">Tamamlanan</div>
 					<div class="tab active" data-status="ongoing" onclick="switchTab('ongoing')">Devam Eden</div>
+					<div class="tab" data-status="delivered" onclick="switchTab('delivered')">Tamamlanan</div>
 					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">Iptal/Teslim Edilemedi</div>
 				</div>
 
-				<!-- Date Filter -->
-				<div class="date-filter">
-					<input type="date" class="date-input" id="dateFrom" onchange="filterOrders()">
-					<span class="date-separator">-</span>
-					<input type="date" class="date-input" id="dateTo" onchange="filterOrders()">
+				<!-- Filter Row: Date + Branch -->
+				<div class="filter-row" id="filterRow">
+					<div class="date-filter">
+						<input type="date" class="date-input" id="dateFrom" onchange="filterOrders()">
+						<span class="date-separator">-</span>
+						<input type="date" class="date-input" id="dateTo" onchange="filterOrders()">
+					</div>
+					<div class="branch-filter-wrapper">
+						<button type="button" class="branch-filter-btn" onclick="toggleBranchDropdown()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+								<circle cx="12" cy="10" r="3"/>
+							</svg>
+							<span id="branchFilterLabel">Tum Subeler</span>
+							<span class="branch-count-badge" id="branchCountBadge">0</span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#666">
+								<polyline points="6 9 12 15 18 9"/>
+							</svg>
+						</button>
+						<div class="branch-dropdown" id="branchDropdown">
+							<div class="branch-dropdown-header">
+								<label class="branch-checkbox-item select-all">
+									<input type="checkbox" id="selectAllBranches" onchange="toggleAllBranches()">
+									<span>Tumunu Sec</span>
+								</label>
+							</div>
+							<div class="branch-dropdown-list" id="branchList">
+								<!-- Dinamik olarak doldurulacak -->
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<!-- Orders List -->
@@ -194,11 +288,15 @@
 		var cancelOrderId = null;
 		var recurringActionId = null;
 
+		// Sube filtresi icin
+		var allBranches = [];
+		var selectedBranchIds = [];
+
 		// Durum mapping
 		var statusMap = {
-			'pending': { text: 'Siparisin Hazirlaniyor', class: 'pending' },
-			'confirmed': { text: 'Siparisiniz Yolda', class: 'confirmed' },
-			'delivered': { text: 'Teslim Edildi', class: 'delivered' },
+			'waiting_for_assignment': { text: 'Siparis Olusturuldu', class: 'pending' },
+			'on_the_way': { text: 'Dagitimda', class: 'confirmed' },
+			'completed': { text: 'Teslim Edildi', class: 'delivered' },
 			'cancelled': { text: 'Iptal Edildi', class: 'cancelled' }
 		};
 
@@ -223,8 +321,20 @@
 			document.getElementById('dateTo').value = formatDateForInput(today);
 			document.getElementById('dateFrom').value = formatDateForInput(thirtyDaysAgo);
 
+			// Sube filtresini yukle
+			await loadBranchFilter();
+
 			// Siparisleri yukle
 			await loadOrders();
+
+			// Dropdown disina tiklaninca kapat
+			document.addEventListener('click', function(e) {
+				var dropdown = document.getElementById('branchDropdown');
+				var btn = document.querySelector('.branch-filter-btn');
+				if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+					dropdown.classList.remove('active');
+				}
+			});
 		});
 
 		function formatDateForInput(date) {
@@ -276,10 +386,10 @@
 
 			// Rutin siparişler tabı için özel işlem
 			if (tab === 'recurring') {
-				document.querySelector('.date-filter').style.display = 'none';
+				document.getElementById('filterRow').style.display = 'none';
 				loadRecurringOrders();
 			} else {
-				document.querySelector('.date-filter').style.display = 'flex';
+				document.getElementById('filterRow').style.display = 'flex';
 				filterOrders();
 			}
 		}
@@ -292,22 +402,32 @@
 			var filtered = allOrders.filter(function(order) {
 				// Tab filtresi
 				if (currentTab === 'ongoing') {
-					if (order.status !== 'pending' && order.status !== 'confirmed') return false;
+					// waiting_for_assignment: Siparis olusturuldu, bayi atamasi bekleniyor
+					// on_the_way: Dagitimda
+					if (order.status !== 'waiting_for_assignment' && order.status !== 'on_the_way') return false;
 				} else if (currentTab === 'delivered') {
-					if (order.status !== 'delivered') return false;
+					if (order.status !== 'completed') return false;
 				} else if (currentTab === 'cancelled') {
 					if (order.status !== 'cancelled') return false;
+				}
+
+				// Sube filtresi (tumu secili degilse uygula)
+				if (selectedBranchIds.length > 0 && selectedBranchIds.length < allBranches.length) {
+					if (!selectedBranchIds.includes(order.customer_branch_id)) {
+						return false;
+					}
 				}
 
 				// Arama filtresi
 				if (searchTerm) {
 					var orderNumber = (order.order_number || '').toLowerCase();
 					var dealerName = (order.dealer?.name || '').toLowerCase();
+					var branchName = (order.branch?.branch_name || '').toLowerCase();
 					var productNames = (order.order_items || []).map(function(item) {
 						return (item.product?.name || '').toLowerCase();
 					}).join(' ');
 
-					if (!orderNumber.includes(searchTerm) && !dealerName.includes(searchTerm) && !productNames.includes(searchTerm)) {
+					if (!orderNumber.includes(searchTerm) && !dealerName.includes(searchTerm) && !productNames.includes(searchTerm) && !branchName.includes(searchTerm)) {
 						return false;
 					}
 				}
@@ -331,6 +451,136 @@
 			renderOrders(filtered);
 		}
 
+		// ============================================
+		// SUBE FILTRESI FONKSIYONLARI
+		// ============================================
+
+		async function loadBranchFilter() {
+			try {
+				if (userRole === 'owner') {
+					// Owner - tum subeleri getir
+					var result = await BranchesService.getByCustomerId(customerId);
+					allBranches = result.data || [];
+				} else {
+					// Staff - yetkili subeleri getir
+					var result = await CustomerUsersService.getBranches(userId);
+					allBranches = result.data || [];
+				}
+
+				renderBranchDropdown();
+
+				// Varsayilan: tum subeler secili
+				selectAllBranches();
+			} catch (err) {
+				console.error('Sube listesi yukleme hatasi:', err);
+			}
+		}
+
+		function renderBranchDropdown() {
+			var listContainer = document.getElementById('branchList');
+
+			if (allBranches.length === 0) {
+				listContainer.innerHTML = '<div style="padding:15px;color:#888;text-align:center">Sube bulunamadi</div>';
+				return;
+			}
+
+			var html = '';
+			allBranches.forEach(function(branch) {
+				var branchId = branch.id;
+				var branchName = branch.branch_name || branch.address_name || 'Sube';
+				html += '<label class="branch-checkbox-item">';
+				html += '<input type="checkbox" value="' + branchId + '" onchange="onBranchSelectionChange(\'' + branchId + '\')">';
+				html += '<span>' + branchName + '</span>';
+				html += '</label>';
+			});
+
+			listContainer.innerHTML = html;
+		}
+
+		function toggleBranchDropdown() {
+			var dropdown = document.getElementById('branchDropdown');
+			dropdown.classList.toggle('active');
+		}
+
+		function onBranchSelectionChange(branchId) {
+			var checkbox = document.querySelector('#branchList input[value="' + branchId + '"]');
+
+			if (checkbox.checked) {
+				if (!selectedBranchIds.includes(branchId)) {
+					selectedBranchIds.push(branchId);
+				}
+			} else {
+				selectedBranchIds = selectedBranchIds.filter(function(id) { return id !== branchId; });
+			}
+
+			updateSelectAllCheckbox();
+			updateBranchFilterLabel();
+			filterOrders();
+		}
+
+		function toggleAllBranches() {
+			var selectAllCheckbox = document.getElementById('selectAllBranches');
+			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
+
+			if (selectAllCheckbox.checked) {
+				// Tumunu sec
+				selectedBranchIds = allBranches.map(function(b) { return b.id; });
+				checkboxes.forEach(function(cb) { cb.checked = true; });
+			} else {
+				// Tumunu kaldir
+				selectedBranchIds = [];
+				checkboxes.forEach(function(cb) { cb.checked = false; });
+			}
+
+			updateBranchFilterLabel();
+			filterOrders();
+		}
+
+		function selectAllBranches() {
+			selectedBranchIds = allBranches.map(function(b) { return b.id; });
+
+			// Checkboxlari isaretle
+			var selectAllCheckbox = document.getElementById('selectAllBranches');
+			if (selectAllCheckbox) selectAllCheckbox.checked = true;
+
+			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
+			checkboxes.forEach(function(cb) { cb.checked = true; });
+
+			updateBranchFilterLabel();
+		}
+
+		function updateSelectAllCheckbox() {
+			var selectAllCheckbox = document.getElementById('selectAllBranches');
+			if (selectedBranchIds.length === allBranches.length) {
+				selectAllCheckbox.checked = true;
+				selectAllCheckbox.indeterminate = false;
+			} else if (selectedBranchIds.length === 0) {
+				selectAllCheckbox.checked = false;
+				selectAllCheckbox.indeterminate = false;
+			} else {
+				selectAllCheckbox.checked = false;
+				selectAllCheckbox.indeterminate = true;
+			}
+		}
+
+		function updateBranchFilterLabel() {
+			var label = document.getElementById('branchFilterLabel');
+			var badge = document.getElementById('branchCountBadge');
+
+			badge.textContent = selectedBranchIds.length;
+
+			if (selectedBranchIds.length === 0) {
+				label.textContent = 'Sube Secin';
+			} else if (selectedBranchIds.length === allBranches.length) {
+				label.textContent = 'Tum Subeler';
+			} else if (selectedBranchIds.length === 1) {
+				var branch = allBranches.find(function(b) { return b.id === selectedBranchIds[0]; });
+				label.textContent = branch ? (branch.branch_name || branch.address_name) : '1 Sube';
+			} else {
+				label.textContent = selectedBranchIds.length + ' Sube';
+			}
+		}
+
 		function renderOrders(orders) {
 			var listContainer = document.getElementById('ordersList');
 
@@ -346,37 +596,49 @@
 				var dateStr = orderDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
 				var timeStr = orderDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-				// Urun ozeti
-				var productSummary = (order.order_items || []).map(function(item) {
-					return item.quantity + 'x ' + (item.product?.name || 'Urun');
-				}).join(', ');
+				// Sube ve bayi bilgileri
+				var branchName = order.branch?.branch_name || 'Varsayilan Adres';
+				var dealerName = order.dealer?.name || 'Bayi';
 
-				html += '<div class="order-card">';
-				html += '<div class="order-header">';
-				html += '<div class="order-status">';
-				html += '<div class="status-icon ' + status.class + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
-				if (order.status === 'pending') {
-					html += '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>';
-				} else if (order.status === 'confirmed') {
-					html += '<path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>';
-				} else if (order.status === 'delivered') {
-					html += '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+				// Urun sayisi
+				var itemCount = (order.order_items || []).reduce(function(sum, item) {
+					return sum + (item.quantity || 0);
+				}, 0);
+
+				// Tutar formatlama
+				var amount = parseFloat(order.total_amount || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+				// Status icon
+				var statusIcon = '';
+				if (order.status === 'waiting_for_assignment') {
+					statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+				} else if (order.status === 'on_the_way') {
+					statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>';
+				} else if (order.status === 'completed') {
+					statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
 				} else {
-					html += '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+					statusIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
 				}
-				html += '</svg></div>';
-				html += '<span class="status-text ' + status.class + '">' + status.text + '</span>';
-				var branchName = order.branch?.branch_name ? ' (' + order.branch.branch_name + ')' : '';
-				html += '<span class="order-meta">' + (order.dealer?.name || 'Bayi') + branchName + ' - ' + dateStr + ' ' + timeStr + '</span>';
+
+				html += '<div class="order-card-new" onclick="goToDetail(\'' + order.id + '\')" style="cursor: pointer;">';
+
+				// Sol taraf - Bilgiler
+				html += '<div class="order-card-left">';
+				html += '<div class="order-branch-name">' + branchName + '</div>';
+				html += '<div class="order-dealer-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>' + dealerName + '</div>';
+				html += '<div class="order-amount">' + amount + ' TL</div>';
+				html += '<div class="order-meta-info">';
+				html += '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ' + dateStr + ' ' + timeStr + '</span>';
+				html += '<span class="order-item-count">' + itemCount + ' urun</span>';
 				html += '</div>';
 				html += '</div>';
-				html += '<div class="order-products">' + (productSummary || 'Urun bilgisi yok') + '</div>';
-				html += '<div class="order-actions">';
-				if (order.status === 'pending' || order.status === 'confirmed') {
-					html += '<button class="btn-cancel" onclick="openCancelModal(\'' + order.id + '\')">Siparisi Iptal Et</button>';
-				}
-				html += '<button class="btn-detail" onclick="goToDetail(\'' + order.id + '\')">Siparis Detayi</button>';
+
+				// Sag taraf - Durum ve Buton
+				html += '<div class="order-card-right">';
+				html += '<span class="status-badge-new ' + status.class + '">' + statusIcon + status.text + '</span>';
+				html += '<button class="btn-detail" onclick="event.stopPropagation(); goToDetail(\'' + order.id + '\')">Siparis Detayi</button>';
 				html += '</div>';
+
 				html += '</div>';
 			});
 

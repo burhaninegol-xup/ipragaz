@@ -680,12 +680,14 @@ const ComponentLoader = {
     /**
      * Kayitli secili adresi yukle
      * Staff kullanicilar icin yetki kontrolu yapar
+     * Owner kullanicilar icin secili sube yoksa ilk subeyi otomatik secer
      */
     async loadSelectedAddress() {
         var savedId = sessionStorage.getItem('selected_address_id');
         var savedName = sessionStorage.getItem('selected_address_name');
         var userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
         var userId = sessionStorage.getItem('isyerim_user_id');
+        var customerId = sessionStorage.getItem('isyerim_customer_id');
         var branchChanged = false;
 
         // Staff kullanici icin yetki kontrolu
@@ -712,6 +714,26 @@ const ComponentLoader = {
                 }
             } catch (e) {
                 console.warn('Staff sube yetki kontrolu hatasi:', e);
+            }
+        }
+        // Owner kullanici icin varsayilan sube atama
+        else if (userRole === 'owner' && customerId && !savedId && typeof BranchesService !== 'undefined') {
+            try {
+                var result = await BranchesService.getByCustomerId(customerId);
+
+                if (!result.error && result.data && result.data.length > 0) {
+                    var firstBranch = result.data[0];
+                    savedId = firstBranch.id;
+                    savedName = firstBranch.branch_name;
+
+                    // SessionStorage'i guncelle
+                    sessionStorage.setItem('selected_address_id', savedId);
+                    sessionStorage.setItem('selected_address_name', savedName);
+                    branchChanged = true;
+                    console.log('Owner icin varsayilan sube atandi:', savedName);
+                }
+            } catch (e) {
+                console.warn('Owner sube yukleme hatasi:', e);
             }
         }
 

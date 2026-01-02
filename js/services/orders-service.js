@@ -107,6 +107,7 @@ const OrdersService = {
                 .select(`
                     *,
                     dealer:dealers(id, name, phone, city, district),
+                    branch:customer_branches(id, branch_name),
                     order_items(
                         id,
                         quantity,
@@ -140,7 +141,8 @@ const OrdersService = {
                 .from('orders')
                 .select(`
                     *,
-                    dealer:dealers(id, name),
+                    dealer:dealers(id, name, phone, city, district),
+                    branch:customer_branches(id, branch_name),
                     order_items(
                         id,
                         quantity,
@@ -151,7 +153,7 @@ const OrdersService = {
                     )
                 `)
                 .eq('customer_id', customerId)
-                .in('branch_id', branchIds)
+                .in('customer_branch_id', branchIds)
                 .order('created_at', { ascending: false })
                 .limit(limit);
 

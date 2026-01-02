@@ -1422,12 +1422,16 @@
 				var selectedTime = document.querySelector('input[name="deliveryTime"]:checked');
 				var deliveryTime = selectedTime ? selectedTime.value : null;
 
+				// Sube ID'sini al
+				var branchId = sessionStorage.getItem('selected_address_id') || null;
+
 				// Teslimat bilgileri
 				var deliveryInfo = {
 					date: selectedDeliveryDate,
 					time: deliveryTime,
 					paymentMethod: payment.value,
-					notes: orderNote || null
+					notes: orderNote || null,
+					branchId: branchId
 				};
 
 				// Demo müşteri ID (gerçek uygulamada login'den alınacak)

@@ -325,6 +325,7 @@ const CartService = {
         const orderData = {
             customer_id: customerId,
             dealer_id: dealerId,
+            customer_branch_id: deliveryInfo.branchId || null,
             total_amount: this.getTotal(),
             total_points: this.getTotalPoints(),
             delivery_address: deliveryInfo.address || null,

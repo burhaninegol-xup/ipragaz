@@ -1361,6 +1361,99 @@
 			margin: 0;
 		}
 
+		/* Offer Countdown Section - Two boxes side by side */
+		.offer-countdown-wrapper {
+			display: flex;
+			gap: 15px;
+			align-items: stretch;
+		}
+
+		.offer-countdown-wrapper .btn-repeat-order {
+			flex: 1;
+		}
+
+		.btn-offer-countdown {
+			display: none;
+			flex: 1;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 25px;
+			background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+			border: none;
+			border-radius: 16px;
+			color: #fff;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+			text-decoration: none;
+		}
+
+		.btn-offer-countdown.visible {
+			display: flex;
+		}
+
+		.btn-offer-countdown:hover {
+			transform: scale(1.02);
+			box-shadow: 0 6px 25px rgba(227, 30, 36, 0.4);
+		}
+
+		.btn-offer-countdown-content {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.btn-offer-countdown-icon {
+			width: 48px;
+			height: 48px;
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.btn-offer-countdown-icon svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		.btn-offer-countdown-text {
+			text-align: left;
+		}
+
+		.btn-offer-countdown-text h3 {
+			font-size: 16px;
+			font-weight: 600;
+			margin: 0 0 4px 0;
+		}
+
+		.btn-offer-countdown-text p {
+			font-size: 13px;
+			margin: 0;
+			opacity: 0.9;
+		}
+
+		.countdown-timer {
+			font-size: 18px;
+			font-weight: 700;
+			background: rgba(255, 255, 255, 0.2);
+			padding: 8px 16px;
+			border-radius: 10px;
+		}
+
+		.btn-offer-countdown-arrow svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		/* Responsive: Mobile - stack vertically */
+		@media (max-width: 768px) {
+			.offer-countdown-wrapper {
+				flex-direction: column;
+			}
+		}
+
 		/* Repeat Order Mobile Bottom Sheet */
 		@media (max-width: 768px) {
 			.repeat-order-overlay {
@@ -1505,28 +1598,47 @@
 		</div>
 	</section>
 
-	<!-- Repeat Last Order Section -->
+	<!-- Repeat Last Order Section + Offer Countdown -->
 	<section class="repeat-order-section" id="repeatOrderSection">
 		<div class="container">
-			<button class="btn-repeat-order" id="btnRepeatOrder" onclick="openRepeatOrderModal()">
-				<div class="btn-repeat-order-content">
-					<div class="btn-repeat-order-icon">
+			<div class="offer-countdown-wrapper">
+				<!-- Offer Countdown Button (hidden by default) -->
+				<a href="isyerim-musteri-teklif-iste.html" class="btn-offer-countdown" id="btnOfferCountdown">
+					<div class="btn-offer-countdown-content">
+						<div class="btn-offer-countdown-icon">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+								<polyline points="12 6 12 12 16 14"/>
+							</svg>
+						</div>
+						<div class="btn-offer-countdown-text">
+							<h3>Teklif Onay Bekliyor</h3>
+							<p>Teklifinizi onaylamaniz bekleniyor</p>
+						</div>
+					</div>
+					<div class="countdown-timer" id="countdownTimer">--:--</div>
+				</a>
+				<!-- Repeat Order Button -->
+				<button class="btn-repeat-order" id="btnRepeatOrder" onclick="openRepeatOrderModal()">
+					<div class="btn-repeat-order-content">
+						<div class="btn-repeat-order-icon">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M23 4v6h-6"/>
+								<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+							</svg>
+						</div>
+						<div class="btn-repeat-order-text">
+							<h3>Son Siparisimi Tekrarla</h3>
+							<p id="repeatOrderDescription">Son siparisini tek tikla tekrarlayiniz</p>
+						</div>
+					</div>
+					<div class="btn-repeat-order-arrow">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M23 4v6h-6"/>
-							<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+							<path d="M9 18l6-6-6-6"/>
 						</svg>
 					</div>
-					<div class="btn-repeat-order-text">
-						<h3>Son Siparisimi Tekrarla</h3>
-						<p id="repeatOrderDescription">Son siparisini tek tikla tekrarlayiniz</p>
-					</div>
-				</div>
-				<div class="btn-repeat-order-arrow">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M9 18l6-6-6-6"/>
-					</svg>
-				</div>
-			</button>
+				</button>
+			</div>
 		</div>
 	</section>
 
@@ -1739,6 +1851,7 @@
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
@@ -2015,6 +2128,9 @@
 
 			// Son siparisi yukle (buton icin)
 			loadLastOrder();
+
+			// Pending teklif countdown kontrolu (sadece owner icin)
+			loadPendingOfferCountdown();
 		});
 
 		// Sepet güncellendiğinde badge'i güncelle
@@ -2328,6 +2444,105 @@
 				console.error('Siparis duzenleme hatasi:', err);
 				alert('Siparis duzenlenirken bir hata olustu. Lutfen tekrar deneyin.');
 			}
+		}
+
+		// =============================================
+		// PENDING OFFER COUNTDOWN FUNCTIONALITY
+		// =============================================
+		var countdownInterval = null;
+		var pendingOffer = null;
+
+		// Pending teklif kontrolu ve countdown baslatma
+		async function loadPendingOfferCountdown() {
+			// Sadece owner kullanicilar icin
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+			if (userRole !== 'owner') {
+				console.log('Countdown: Kullanici owner degil, gosterilmiyor');
+				return;
+			}
+
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) {
+				console.log('Countdown: Musteri ID bulunamadi');
+				return;
+			}
+
+			try {
+				// Pending teklifleri getir
+				const { data: offers, error } = await OffersService.getByCustomerId(customerId, { status: 'pending' });
+
+				if (error) {
+					console.error('Pending teklif yukleme hatasi:', error);
+					return;
+				}
+
+				if (offers && offers.length > 0) {
+					// En son pending teklifi al
+					pendingOffer = offers[0];
+					console.log('Pending teklif bulundu:', pendingOffer);
+
+					// price_updated_at varsa onu kullan, yoksa created_at
+					var startTime = pendingOffer.price_updated_at || pendingOffer.created_at;
+					if (!startTime) {
+						console.log('Countdown: Baslangic zamani bulunamadi');
+						return;
+					}
+
+					// 24 saat sonrasini hesapla (deadline)
+					var startDate = new Date(startTime);
+					var deadline = new Date(startDate.getTime() + (24 * 60 * 60 * 1000));
+
+					// Countdown kutusunu goster
+					var countdownBtn = document.getElementById('btnOfferCountdown');
+					countdownBtn.classList.add('visible');
+
+					// Section'i da goster (eger son siparis yoksa bile)
+					document.getElementById('repeatOrderSection').classList.add('visible');
+
+					// Countdown'i baslat
+					startCountdown(deadline);
+				} else {
+					console.log('Pending teklif bulunamadi');
+				}
+			} catch (err) {
+				console.error('Pending teklif yukleme exception:', err);
+			}
+		}
+
+		// Countdown baslat
+		function startCountdown(deadline) {
+			// Hemen bir kere guncelle
+			updateCountdownDisplay(deadline);
+
+			// Her saniye guncelle
+			countdownInterval = setInterval(function() {
+				updateCountdownDisplay(deadline);
+			}, 1000);
+		}
+
+		// Countdown gostergesini guncelle
+		function updateCountdownDisplay(deadline) {
+			var now = new Date().getTime();
+			var timeLeft = deadline.getTime() - now;
+
+			var timerElement = document.getElementById('countdownTimer');
+			var countdownBtn = document.getElementById('btnOfferCountdown');
+
+			if (timeLeft <= 0) {
+				// Sure doldu
+				timerElement.textContent = 'Sure doldu!';
+				timerElement.style.background = 'rgba(255, 0, 0, 0.3)';
+				clearInterval(countdownInterval);
+				return;
+			}
+
+			// Saat ve dakika hesapla
+			var hours = Math.floor(timeLeft / (1000 * 60 * 60));
+			var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+			// Format: "23 saat 12 dk"
+			var displayText = hours + ' saat ' + minutes + ' dk';
+			timerElement.textContent = displayText;
 		}
 	</script>
 </body>

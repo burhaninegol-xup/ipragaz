@@ -662,8 +662,8 @@
 				}
 
 				// SessionStorage'a sube bilgisi kaydet (header'da gosterilecek)
-				sessionStorage.setItem('selected_branch_id', result.data.id);
-				sessionStorage.setItem('selected_branch_name', result.data.branch_name);
+				sessionStorage.setItem('selected_address_id', result.data.id);
+				sessionStorage.setItem('selected_address_name', result.data.branch_name);
 
 				// Tam adres olustur ve kaydet (Mahalle, Sokak, Ilce, Il)
 				var addressParts = [];
@@ -672,7 +672,7 @@
 				if (districtName) addressParts.push(districtName);
 				if (cityName) addressParts.push(cityName);
 				var fullAddress = addressParts.join(', ');
-				sessionStorage.setItem('selected_branch_address', fullAddress);
+				sessionStorage.setItem('selected_address', fullAddress);
 
 				// SessionStorage'a il ve ilçe bilgisi kaydet (bayi seçimi için)
 				sessionStorage.setItem('isyerim_user_city', cityName);
