@@ -697,6 +697,381 @@
 			background: #fff5f5;
 		}
 
+		/* Rutin Sipariş Section */
+		.routine-order-section {
+			background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%);
+			border: 2px solid #e31e24;
+			border-radius: 16px;
+			padding: 24px;
+			margin: 20px 24px;
+			position: relative;
+		}
+
+		.routine-badge {
+			position: absolute;
+			top: -1px;
+			right: 20px;
+			background: #e31e24;
+			color: white;
+			padding: 4px 12px;
+			border-radius: 0 0 8px 8px;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+
+		.routine-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 12px;
+		}
+
+		.routine-icon {
+			width: 28px;
+			height: 28px;
+			color: #e31e24;
+		}
+
+		.routine-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.routine-desc {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 20px;
+			line-height: 1.5;
+		}
+
+		.routine-toggle-container {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			padding: 16px;
+			background: #fff;
+			border-radius: 12px;
+			margin-bottom: 16px;
+		}
+
+		/* Toggle Switch */
+		.routine-toggle {
+			position: relative;
+			display: inline-block;
+			width: 52px;
+			height: 28px;
+			flex-shrink: 0;
+		}
+
+		.routine-toggle input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.toggle-slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #ccc;
+			transition: 0.3s;
+			border-radius: 28px;
+		}
+
+		.toggle-slider:before {
+			position: absolute;
+			content: "";
+			height: 22px;
+			width: 22px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: 0.3s;
+			border-radius: 50%;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+		}
+
+		.routine-toggle input:checked + .toggle-slider {
+			background-color: #e31e24;
+		}
+
+		.routine-toggle input:checked + .toggle-slider:before {
+			transform: translateX(24px);
+		}
+
+		.routine-toggle-info {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.routine-toggle-title {
+			font-size: 15px;
+			font-weight: 500;
+			color: #333;
+		}
+
+		.routine-toggle-desc {
+			font-size: 13px;
+			color: #888;
+		}
+
+		.btn-routine {
+			width: 100%;
+			padding: 14px;
+			background: #e31e24;
+			color: white;
+			border: none;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-routine:hover {
+			background: #c41a1f;
+		}
+
+		.btn-routine:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+		}
+
+		/* Rutin Sipariş Onay Modal */
+		.routine-confirm-modal {
+			background: #fff;
+			border-radius: 20px;
+			width: 100%;
+			max-width: 480px;
+			max-height: 90vh;
+			overflow-y: auto;
+			animation: modalSlideUp 0.3s ease-out;
+		}
+
+		@keyframes modalSlideUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.routine-modal-header {
+			text-align: center;
+			padding: 30px 24px 20px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.routine-modal-icon {
+			width: 64px;
+			height: 64px;
+			margin: 0 auto 16px;
+			background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.routine-modal-icon svg {
+			width: 32px;
+			height: 32px;
+			color: #e31e24;
+			animation: rotateIcon 2s linear infinite;
+		}
+
+		@keyframes rotateIcon {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		.routine-modal-header h2 {
+			font-size: 20px;
+			font-weight: 600;
+			color: #333;
+			margin: 0;
+		}
+
+		.routine-modal-body {
+			padding: 24px;
+		}
+
+		.routine-summary-card {
+			background: #f8f8f8;
+			border-radius: 12px;
+			padding: 20px;
+			margin-bottom: 20px;
+		}
+
+		.routine-summary-title {
+			font-size: 13px;
+			font-weight: 600;
+			color: #888;
+			text-transform: uppercase;
+			margin-bottom: 12px;
+		}
+
+		.routine-summary-products {
+			font-size: 15px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 16px;
+			line-height: 1.5;
+		}
+
+		.routine-summary-schedule,
+		.routine-summary-address {
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+			font-size: 14px;
+			color: #666;
+			margin-top: 10px;
+		}
+
+		.routine-summary-schedule svg,
+		.routine-summary-address svg {
+			width: 18px;
+			height: 18px;
+			flex-shrink: 0;
+			color: #e31e24;
+		}
+
+		.routine-info-card {
+			background: #FFF8E1;
+			border: 1px solid #FFE082;
+			border-radius: 12px;
+			padding: 16px;
+		}
+
+		.routine-info-title {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 14px;
+			font-weight: 600;
+			color: #F57C00;
+			margin-bottom: 12px;
+		}
+
+		.routine-info-title svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.routine-info-card ul {
+			margin: 0;
+			padding-left: 24px;
+			font-size: 13px;
+			color: #666;
+			line-height: 1.8;
+		}
+
+		.routine-first-date {
+			margin-top: 12px;
+			padding-top: 12px;
+			border-top: 1px dashed #FFE082;
+			font-size: 14px;
+			color: #333;
+		}
+
+		.routine-first-date strong {
+			color: #e31e24;
+		}
+
+		.routine-modal-footer {
+			padding: 20px 24px 24px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+
+		.btn-routine-confirm {
+			width: 100%;
+			padding: 16px;
+			background: #e31e24;
+			color: white;
+			border: none;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-routine-confirm:hover {
+			background: #c41a1f;
+		}
+
+		.btn-routine-confirm:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+		}
+
+		.btn-routine-cancel {
+			width: 100%;
+			padding: 14px;
+			background: #fff;
+			color: #666;
+			border: 2px solid #eee;
+			border-radius: 30px;
+			font-size: 15px;
+			font-weight: 500;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn-routine-cancel:hover {
+			border-color: #e31e24;
+			color: #e31e24;
+		}
+
+		/* Rutin sipariş başarı durumu */
+		.routine-success-message {
+			display: none;
+			text-align: center;
+			padding: 20px;
+			background: #E8F5E9;
+			border: 1px solid #A5D6A7;
+			border-radius: 12px;
+			margin: 20px 24px;
+		}
+
+		.routine-success-message.show {
+			display: block;
+		}
+
+		.routine-success-message svg {
+			width: 48px;
+			height: 48px;
+			color: #4CAF50;
+			margin-bottom: 12px;
+		}
+
+		.routine-success-message h4 {
+			font-size: 16px;
+			font-weight: 600;
+			color: #2E7D32;
+			margin-bottom: 8px;
+		}
+
+		.routine-success-message p {
+			font-size: 14px;
+			color: #666;
+		}
+
 		/* Responsive */
 		@media (max-width: 900px) {
 			.stepper-container {
@@ -825,6 +1200,45 @@
 				</div>
 			</div>
 
+			<!-- Rutin Sipariş Önerisi -->
+			<div class="routine-order-section" id="routineOrderSection">
+				<span class="routine-badge">Yeni</span>
+				<div class="routine-header">
+					<svg class="routine-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M23 4v6h-6"/>
+						<path d="M1 20v-6h6"/>
+						<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+					</svg>
+					<h3 class="routine-title">Rutin Sipariş</h3>
+				</div>
+				<p class="routine-desc">Bu siparişi her hafta aynı gün ve saatte otomatik tekrarlayın. Düzenli ihtiyaçlarınız için idealdir.</p>
+
+				<div class="routine-toggle-container">
+					<label class="routine-toggle">
+						<input type="checkbox" id="routineCheckbox">
+						<span class="toggle-slider"></span>
+					</label>
+					<div class="routine-toggle-info">
+						<span class="routine-toggle-title">Her hafta aynı siparişi tekrarla</span>
+						<span class="routine-toggle-desc" id="routineScheduleText">Teslimat günü ve saati otomatik belirlenecek</span>
+					</div>
+				</div>
+
+				<button class="btn-routine" id="btnCreateRoutine" disabled>
+					Rutin Sipariş Oluştur
+				</button>
+			</div>
+
+			<!-- Rutin Sipariş Başarı Mesajı -->
+			<div class="routine-success-message" id="routineSuccessMessage">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+					<polyline points="22 4 12 14.01 9 11.01"/>
+				</svg>
+				<h4>Rutin Sipariş Oluşturuldu!</h4>
+				<p>Siparişiniz her hafta otomatik olarak tekrarlanacak. Siparişlerim sayfasından yönetebilirsiniz.</p>
+			</div>
+
 			<!-- Order Details -->
 			<div class="order-details">
 				<h3 class="details-title">Sipariş Detayları</h3>
@@ -852,7 +1266,7 @@
 				<!-- Address Row -->
 				<div class="address-row">
 					<div class="address-box">
-						<div class="address-box-label">Teslimat Adresi</div>
+						<div class="address-box-label">Teslimat Subesi</div>
 						<div class="address-box-value">Burhan - BARBAROS MAH. 3004. CD. BİNA NO:12 DAİRE:1 K:2 Ataşehir/İstanbul</div>
 					</div>
 					<div class="address-box">
@@ -924,6 +1338,75 @@
 		</div>
 	</div>
 
+	<!-- Rutin Sipariş Onay Modal -->
+	<div class="modal-overlay" id="routineConfirmModal">
+		<div class="routine-confirm-modal">
+			<div class="routine-modal-header">
+				<div class="routine-modal-icon">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M23 4v6h-6"/>
+						<path d="M1 20v-6h6"/>
+						<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+					</svg>
+				</div>
+				<h2>Haftalık Rutin Sipariş</h2>
+			</div>
+
+			<div class="routine-modal-body">
+				<!-- Özet Kartı -->
+				<div class="routine-summary-card">
+					<div class="routine-summary-title">Sipariş Özeti</div>
+					<div class="routine-summary-products" id="routineSummaryProducts">
+						<!-- Dinamik: 2x İpragaz 12kg LPG Tüpü -->
+					</div>
+					<div class="routine-summary-schedule">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+							<line x1="16" y1="2" x2="16" y2="6"/>
+							<line x1="8" y1="2" x2="8" y2="6"/>
+							<line x1="3" y1="10" x2="21" y2="10"/>
+						</svg>
+						<span id="routineSummarySchedule">Her Cuma 12:00-15:00</span>
+					</div>
+					<div class="routine-summary-address">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+							<circle cx="12" cy="10" r="3"/>
+						</svg>
+						<span id="routineSummaryAddress">Teslimat adresi</span>
+					</div>
+				</div>
+
+				<!-- Bilgi Kartı -->
+				<div class="routine-info-card">
+					<div class="routine-info-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="12" y1="16" x2="12" y2="12"/>
+							<line x1="12" y1="8" x2="12.01" y2="8"/>
+						</svg>
+						Önemli Bilgiler
+					</div>
+					<ul>
+						<li>Her hafta otomatik sipariş oluşturulur</li>
+						<li>Sipariş öncesi bildirim alırsınız</li>
+						<li>İstediğiniz zaman iptal edebilirsiniz</li>
+					</ul>
+					<div class="routine-first-date">
+						İlk sipariş: <strong id="routineFirstDate">-</strong>
+					</div>
+				</div>
+			</div>
+
+			<div class="routine-modal-footer">
+				<button class="btn-routine-confirm" id="btnRoutineConfirm">
+					Rutin Siparişi Onayla
+				</button>
+				<button class="btn-routine-cancel" id="btnRoutineCancel">Vazgeç</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Component Loader -->
 	<script src="./js/component-loader.js"></script>
 
@@ -938,7 +1421,8 @@
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/cart-service.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/recurring-orders-service.js"></script>
 
 	<script>
 		// Global değişkenler
@@ -979,12 +1463,15 @@
 				// Sipariş detaylarını güncelle
 				updateOrderDetailsUI(currentOrder);
 
+				// Rutin sipariş section'ını initialize et
+				initRoutineSection();
+
 				// Ürünleri order_items'dan al
 				if (currentOrder.order_items && currentOrder.order_items.length > 0) {
 					orderProducts = currentOrder.order_items.map(function(item) {
 						var product = item.product || {};
 						return {
-							id: item.product_id,
+							id: item.product_id || product.id,
 							name: product.name || 'Ürün',
 							quantity: item.quantity,
 							unitPrice: item.unit_price,
@@ -1247,6 +1734,196 @@
 				document.body.style.overflow = '';
 			}
 		});
+
+		// ============================================
+		// RUTİN SİPARİŞ FONKSİYONLARI
+		// ============================================
+
+		var routineCheckbox = document.getElementById('routineCheckbox');
+		var btnCreateRoutine = document.getElementById('btnCreateRoutine');
+		var routineOrderSection = document.getElementById('routineOrderSection');
+		var routineSuccessMessage = document.getElementById('routineSuccessMessage');
+		var routineConfirmModal = document.getElementById('routineConfirmModal');
+		var btnRoutineConfirm = document.getElementById('btnRoutineConfirm');
+		var btnRoutineCancel = document.getElementById('btnRoutineCancel');
+
+		// Toggle checkbox - butonu aktif/pasif yap
+		routineCheckbox.addEventListener('change', function() {
+			btnCreateRoutine.disabled = !this.checked;
+			if (this.checked && currentOrder) {
+				updateRoutineScheduleText();
+			}
+		});
+
+		// Rutin sipariş zamanlama metnini güncelle
+		function updateRoutineScheduleText() {
+			if (!currentOrder) return;
+
+			var scheduleText = document.getElementById('routineScheduleText');
+			var dayName = getDayName(currentOrder.delivery_date);
+			var timeSlot = currentOrder.delivery_time || '';
+
+			if (dayName && timeSlot) {
+				scheduleText.textContent = 'Her ' + dayName + ' ' + timeSlot;
+			} else if (dayName) {
+				scheduleText.textContent = 'Her ' + dayName;
+			}
+		}
+
+		// Gün adını al
+		function getDayName(dateStr) {
+			if (!dateStr) return '';
+			var date = new Date(dateStr);
+			var days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+			return days[date.getDay()];
+		}
+
+		// Bir sonraki sipariş tarihini hesapla
+		function calculateNextOrderDate(deliveryDate) {
+			var date = new Date(deliveryDate);
+			var targetDay = date.getDay();
+			var today = new Date();
+
+			var daysUntilNext = targetDay - today.getDay();
+			if (daysUntilNext <= 0) {
+				daysUntilNext += 7;
+			}
+
+			var nextDate = new Date(today);
+			nextDate.setDate(today.getDate() + daysUntilNext);
+			return nextDate.toISOString().split('T')[0];
+		}
+
+		// Tarihi formatla
+		function formatDateTurkish(dateStr) {
+			var date = new Date(dateStr);
+			var aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+			var gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+			return date.getDate() + ' ' + aylar[date.getMonth()] + ' ' + date.getFullYear() + ' ' + gunler[date.getDay()];
+		}
+
+		// "Rutin Sipariş Oluştur" butonuna tıklandığında modal aç
+		btnCreateRoutine.addEventListener('click', function() {
+			if (!currentOrder || orderProducts.length === 0) {
+				alert('Sipariş bilgisi bulunamadı.');
+				return;
+			}
+			openRoutineConfirmModal();
+		});
+
+		// Rutin sipariş onay modalını aç
+		function openRoutineConfirmModal() {
+			// Ürünleri modal'a doldur
+			var productsText = orderProducts.map(function(p) {
+				return p.quantity + 'x ' + p.name;
+			}).join('<br>');
+			document.getElementById('routineSummaryProducts').innerHTML = productsText;
+
+			// Zamanlama
+			var dayName = getDayName(currentOrder.delivery_date);
+			var timeSlot = currentOrder.delivery_time || '';
+			document.getElementById('routineSummarySchedule').textContent = 'Her ' + dayName + ' ' + timeSlot;
+
+			// Adres
+			var address = currentOrder.delivery_address || 'Teslimat adresi';
+			document.getElementById('routineSummaryAddress').textContent = address;
+
+			// İlk sipariş tarihi
+			var nextDate = calculateNextOrderDate(currentOrder.delivery_date);
+			document.getElementById('routineFirstDate').textContent = formatDateTurkish(nextDate);
+
+			// Modal aç
+			routineConfirmModal.classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+
+		// Rutin sipariş modalını kapat
+		function closeRoutineConfirmModal() {
+			routineConfirmModal.classList.remove('active');
+			document.body.style.overflow = '';
+		}
+
+		// Vazgeç butonu
+		btnRoutineCancel.addEventListener('click', closeRoutineConfirmModal);
+
+		// Modal dışına tıklama
+		routineConfirmModal.addEventListener('click', function(e) {
+			if (e.target === routineConfirmModal) {
+				closeRoutineConfirmModal();
+			}
+		});
+
+		// Rutin siparişi onayla
+		btnRoutineConfirm.addEventListener('click', async function() {
+			if (!currentOrder) {
+				alert('Sipariş bilgisi bulunamadı.');
+				return;
+			}
+
+			// Butonu devre dışı bırak
+			btnRoutineConfirm.disabled = true;
+			btnRoutineConfirm.textContent = 'Oluşturuluyor...';
+
+			try {
+				var deliveryDate = new Date(currentOrder.delivery_date);
+				var dayOfWeek = deliveryDate.getDay();
+				var nextOrderDate = calculateNextOrderDate(currentOrder.delivery_date);
+
+				var recurringData = {
+					customer_id: sessionStorage.getItem('isyerim_customer_id'),
+					dealer_id: currentOrder.dealer_id,
+					customer_branch_id: currentOrder.customer_branch_id || sessionStorage.getItem('selected_address_id'),
+					day_of_week: dayOfWeek,
+					delivery_time: currentOrder.delivery_time,
+					payment_method: currentOrder.payment_method,
+					notes: currentOrder.notes,
+					next_order_date: nextOrderDate
+				};
+
+				var items = orderProducts.map(function(p) {
+					return {
+						product_id: p.id,
+						quantity: p.quantity
+					};
+				}).filter(function(item) {
+					return item.product_id != null;
+				});
+
+				var result = await RecurringOrdersService.create(recurringData, items);
+
+				if (result.error) {
+					console.error('Rutin sipariş oluşturma hatası:', result.error);
+					alert('Rutin sipariş oluşturulurken bir hata oluştu: ' + (result.error.message || 'Bilinmeyen hata'));
+					btnRoutineConfirm.disabled = false;
+					btnRoutineConfirm.textContent = 'Rutin Siparişi Onayla';
+					return;
+				}
+
+				// Başarılı
+				closeRoutineConfirmModal();
+
+				// Rutin sipariş section'ı gizle, başarı mesajını göster
+				routineOrderSection.style.display = 'none';
+				routineSuccessMessage.classList.add('show');
+
+			} catch (error) {
+				console.error('Rutin sipariş oluşturma hatası:', error);
+				alert('Rutin sipariş oluşturulurken bir hata oluştu.');
+				btnRoutineConfirm.disabled = false;
+				btnRoutineConfirm.textContent = 'Rutin Siparişi Onayla';
+			}
+		});
+
+		// Sayfa yüklendiğinde rutin sipariş schedule text'ini güncelle
+		function initRoutineSection() {
+			if (currentOrder) {
+				updateRoutineScheduleText();
+			}
+		}
+
+		// ============================================
+		// İPTAL FONKSİYONLARI
+		// ============================================
 
 		// Confirm cancel - Supabase entegrasyonlu
 		confirmCancelBtn.addEventListener('click', async function() {

@@ -611,6 +611,128 @@
 			background: #c62828;
 		}
 
+		/* Timeline Styles */
+		.detail-card-icon.timeline {
+			background: #ede7f6;
+			color: #5e35b1;
+		}
+
+		.timeline-container {
+			position: relative;
+			padding-left: 20px;
+		}
+
+		.timeline-container::before {
+			content: '';
+			position: absolute;
+			left: 8px;
+			top: 8px;
+			bottom: 8px;
+			width: 2px;
+			background: #e0e0e0;
+		}
+
+		.timeline-item {
+			position: relative;
+			padding-bottom: 24px;
+			padding-left: 20px;
+		}
+
+		.timeline-item:last-child {
+			padding-bottom: 0;
+		}
+
+		.timeline-dot {
+			position: absolute;
+			left: -16px;
+			top: 4px;
+			width: 16px;
+			height: 16px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 3px solid #fff;
+			box-shadow: 0 0 0 2px #e0e0e0;
+		}
+
+		.timeline-dot.waiting_for_assignment {
+			background: #f57c00;
+			box-shadow: 0 0 0 2px #f57c00;
+		}
+
+		.timeline-dot.on_the_way {
+			background: #1565c0;
+			box-shadow: 0 0 0 2px #1565c0;
+		}
+
+		.timeline-dot.completed {
+			background: #2e7d32;
+			box-shadow: 0 0 0 2px #2e7d32;
+		}
+
+		.timeline-dot.cancelled {
+			background: #c62828;
+			box-shadow: 0 0 0 2px #c62828;
+		}
+
+		.timeline-content {
+			background: #f8f9fa;
+			border-radius: 12px;
+			padding: 16px;
+		}
+
+		.timeline-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 8px;
+		}
+
+		.timeline-status {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.timeline-date {
+			font-size: 12px;
+			color: #888;
+			white-space: nowrap;
+		}
+
+		.timeline-details {
+			font-size: 13px;
+			color: #666;
+		}
+
+		.timeline-changed-by {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			margin-top: 8px;
+			font-size: 12px;
+			color: #888;
+		}
+
+		.timeline-changed-by svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.timeline-empty {
+			text-align: center;
+			padding: 30px 20px;
+			color: #888;
+		}
+
+		.timeline-empty svg {
+			width: 48px;
+			height: 48px;
+			margin-bottom: 12px;
+			opacity: 0.5;
+		}
+
 		/* Loading State */
 		.loading-state {
 			text-align: center;
@@ -839,7 +961,7 @@
 							</svg>
 						</div>
 						<div class="customer-info-content">
-							<div class="customer-info-label">Teslimat Adresi</div>
+							<div class="customer-info-label">Teslimat Subesi</div>
 							<div class="customer-info-value" id="customer-address">---</div>
 						</div>
 					</div>
@@ -888,6 +1010,27 @@
 				<div class="order-notes" id="notes-section" style="display: none;">
 					<div class="notes-label">Siparis Notu</div>
 					<div class="notes-text" id="order-notes">---</div>
+				</div>
+			</div>
+
+			<!-- Timeline Card -->
+			<div class="detail-card">
+				<div class="detail-card-header">
+					<div class="detail-card-icon timeline">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Siparis Gecmisi</span>
+				</div>
+				<div class="timeline-container" id="timeline-container">
+					<!-- Timeline items will be rendered here -->
+					<div class="timeline-empty" id="timeline-empty" style="display: none;">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+						</svg>
+						<p>Henuz gecmis kaydı yok</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -973,6 +1116,20 @@
 			cancelled: '<path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>'
 		};
 
+		// Changed by type labels
+		var changedByTypeLabels = {
+			customer: 'Musteri',
+			dealer: 'Bayi',
+			system: 'Sistem'
+		};
+
+		// Changed by type icons
+		var changedByTypeIcons = {
+			customer: '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>',
+			dealer: '<path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>',
+			system: '<path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>'
+		};
+
 		// Toast notification
 		function showToast(message, type) {
 			var $toast = $('#toast');
@@ -1040,15 +1197,22 @@
 			}
 
 			try {
-				const { data, error } = await OrdersService.getById(orderId);
+				// Paralel cagri - her ikisi ayni anda baslar
+				const [orderResult, historyResult] = await Promise.all([
+					OrdersService.getById(orderId),
+					OrdersService.getStatusHistory(orderId)
+				]);
 
-				if (error || !data) {
+				if (orderResult.error || !orderResult.data) {
 					showError();
 					return;
 				}
 
-				orderData = data;
+				orderData = orderResult.data;
 				renderOrderDetail();
+
+				// Timeline zaten yuklendi, direkt render et
+				renderTimeline(historyResult.data || []);
 
 			} catch (err) {
 				console.error('Siparis yukleme hatasi:', err);
@@ -1185,22 +1349,83 @@
 			}
 		}
 
+		// Load timeline data
+		async function loadTimeline() {
+			if (!orderId) return;
+
+			try {
+				const { data, error } = await OrdersService.getStatusHistory(orderId);
+
+				if (error) {
+					console.error('Timeline yukleme hatasi:', error);
+					return;
+				}
+
+				renderTimeline(data || []);
+			} catch (err) {
+				console.error('Timeline yukleme hatasi:', err);
+			}
+		}
+
+		// Render timeline
+		function renderTimeline(history) {
+			var $container = $('#timeline-container');
+			var $empty = $('#timeline-empty');
+
+			// Remove existing items (except empty state)
+			$container.find('.timeline-item').remove();
+
+			if (!history || history.length === 0) {
+				$empty.show();
+				return;
+			}
+
+			$empty.hide();
+
+			history.forEach(function(item, index) {
+				var status = item.new_status || 'waiting_for_assignment';
+				var statusLabel = statusLabels[status] || status;
+				var changedByType = item.changed_by_type || 'system';
+				var changedByLabel = changedByTypeLabels[changedByType] || changedByType;
+				var changedByIcon = changedByTypeIcons[changedByType] || changedByTypeIcons.system;
+				var notes = item.notes || '';
+
+				var timelineHtml = '<div class="timeline-item">' +
+					'<div class="timeline-dot ' + status + '"></div>' +
+					'<div class="timeline-content">' +
+						'<div class="timeline-header">' +
+							'<span class="timeline-status">' + statusLabel + '</span>' +
+							'<span class="timeline-date">' + formatDate(item.created_at) + '</span>' +
+						'</div>' +
+						(notes ? '<div class="timeline-details">' + notes + '</div>' : '') +
+						'<div class="timeline-changed-by">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor">' + changedByIcon + '</svg>' +
+							'<span>' + changedByLabel + ' tarafindan</span>' +
+						'</div>' +
+					'</div>' +
+				'</div>';
+
+				$container.append(timelineHtml);
+			});
+		}
+
 		// Change status
 		async function changeStatus(newStatus) {
 			try {
+				var dealerId = sessionStorage.getItem('dealer_id');
 				var result;
 				switch (newStatus) {
 					case 'on_the_way':
-						result = await OrdersService.startDelivery(orderId);
+						result = await OrdersService.startDelivery(orderId, dealerId);
 						break;
 					case 'completed':
-						result = await OrdersService.markDelivered(orderId);
+						result = await OrdersService.markDelivered(orderId, dealerId);
 						break;
 					case 'cancelled':
-						result = await OrdersService.cancel(orderId);
+						result = await OrdersService.cancel(orderId, 'dealer', dealerId);
 						break;
 					default:
-						result = await OrdersService.updateStatus(orderId, newStatus);
+						result = await OrdersService.updateStatus(orderId, newStatus, 'dealer', dealerId);
 				}
 
 				if (result.error) throw new Error(result.error);

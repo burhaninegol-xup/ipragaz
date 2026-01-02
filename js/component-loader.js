@@ -37,7 +37,7 @@ const ComponentLoader = {
         ]);
 
         // Componentler yuklendikten sonra event'leri bagla
-        this.initializeComponents();
+        await this.initializeComponents();
 
         // Mevcut bayiyi yukle
         loadCurrentDealer();
@@ -46,7 +46,7 @@ const ComponentLoader = {
     /**
      * Component event'lerini bagla
      */
-    initializeComponents() {
+    async initializeComponents() {
         // Profile dropdown toggle
         const profileBtn = document.getElementById('profileBtn');
         const profileDropdown = document.getElementById('profileDropdown');
@@ -108,8 +108,8 @@ const ComponentLoader = {
         // Kullanici adini yukle
         this.loadUserName();
 
-        // Adres modal'i baslat
-        this.initAddressModal();
+        // Adres modal'i baslat (staff icin yetki kontrolu dahil)
+        await this.initAddressModal();
 
         // cartUpdated event'ini dinle
         window.addEventListener('cartUpdated', () => {
@@ -644,9 +644,9 @@ const ComponentLoader = {
     /**
      * Adres modal fonksiyonlarini baslat
      */
-    initAddressModal() {
-        // Secili adresi yukle
-        this.loadSelectedAddress();
+    async initAddressModal() {
+        // Secili adresi yukle (staff kullanici icin yetki kontrolu dahil)
+        await this.loadSelectedAddress();
 
         // Header user location'a click event ekle
         var headerUserLocation = document.querySelector('.header-user-location');
@@ -660,14 +660,52 @@ const ComponentLoader = {
 
     /**
      * Kayitli secili adresi yukle
+     * Staff kullanicilar icin yetki kontrolu yapar
      */
-    loadSelectedAddress() {
+    async loadSelectedAddress() {
         var savedId = sessionStorage.getItem('selected_address_id');
         var savedName = sessionStorage.getItem('selected_address_name');
+        var userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
+        var userId = sessionStorage.getItem('isyerim_user_id');
+        var branchChanged = false;
+
+        // Staff kullanici icin yetki kontrolu
+        if (userRole === 'staff' && userId && typeof CustomerUsersService !== 'undefined') {
+            try {
+                var result = await CustomerUsersService.getBranches(userId);
+
+                if (!result.error && result.data && result.data.length > 0) {
+                    var authorizedBranches = result.data;
+                    var authorizedIds = authorizedBranches.map(function(b) { return b.id; });
+
+                    // Secili sube yetkili mi kontrol et
+                    if (!savedId || authorizedIds.indexOf(savedId) === -1) {
+                        // Yetkisiz veya secim yok - ilk yetkili subeyi sec
+                        var firstBranch = authorizedBranches[0];
+                        savedId = firstBranch.id;
+                        savedName = firstBranch.branch_name;
+
+                        // SessionStorage'i guncelle
+                        sessionStorage.setItem('selected_address_id', savedId);
+                        sessionStorage.setItem('selected_address_name', savedName);
+                        branchChanged = true;
+                    }
+                }
+            } catch (e) {
+                console.warn('Staff sube yetki kontrolu hatasi:', e);
+            }
+        }
+
+        // Header'i guncelle
         if (savedId && savedName) {
             var locationSpan = document.getElementById('headerUserLocation');
             if (locationSpan) {
                 locationSpan.textContent = savedName;
+            }
+
+            // Sube degistiyse veya ilk yukleme ise bayiyi degerlendir
+            if (branchChanged) {
+                await evaluateDealerForBranch(savedId);
             }
         }
     },
@@ -1071,6 +1109,9 @@ var selectedAddressName = sessionStorage.getItem('selected_address_name') || nul
 // Adres Modal Ac
 window.openAddressModal = async function() {
     var customerId = sessionStorage.getItem('isyerim_customer_id');
+    var userId = sessionStorage.getItem('isyerim_user_id');
+    var userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
+
     if (!customerId) {
         window.location.href = 'isyerim-musteri-login.html';
         return;
@@ -1090,28 +1131,46 @@ window.openAddressModal = async function() {
         listContainer.innerHTML = '<div class="address-empty">Yukleniyor...</div>';
     }
 
-    // AddressesService kontrolu
-    if (typeof AddressesService === 'undefined') {
+    var addresses = [];
+    var result;
+
+    // Staff kullanicilar icin sadece yetkili subeleri goster
+    if (userRole === 'staff' && userId && typeof CustomerUsersService !== 'undefined') {
+        result = await CustomerUsersService.getBranches(userId);
+        if (!result.error && result.data) {
+            addresses = result.data;
+        }
+    } else {
+        // Owner veya fallback - tum subeleri goster
+        if (typeof AddressesService === 'undefined') {
+            if (listContainer) {
+                listContainer.innerHTML = '<div class="address-empty">Sube servisi yuklenemedi</div>';
+            }
+            return;
+        }
+        result = await AddressesService.getByCustomerId(customerId);
+        if (!result.error && result.data) {
+            addresses = result.data;
+        }
+    }
+
+    if (result && result.error) {
         if (listContainer) {
-            listContainer.innerHTML = '<div class="address-empty">Adres servisi yuklenemedi</div>';
+            listContainer.innerHTML = '<div class="address-empty">Subeler yuklenemedi</div>';
         }
         return;
     }
-
-    var result = await AddressesService.getByCustomerId(customerId);
-
-    if (result.error) {
-        if (listContainer) {
-            listContainer.innerHTML = '<div class="address-empty">Adresler yuklenemedi</div>';
-        }
-        return;
-    }
-
-    var addresses = result.data || [];
 
     if (addresses.length === 0) {
         if (listContainer) {
-            listContainer.innerHTML = '<div class="address-empty">Henuz kayitli adresiniz yok.<br><a href="isyerim-musteri-adreslerim.html">Adres eklemek icin tiklayin</a></div>';
+            var emptyMessage = 'Henuz kayitli subeniz yok.';
+            // Staff kullanicilar icin farkli mesaj
+            if (userRole === 'staff') {
+                emptyMessage = 'Yetkili oldugunuz sube bulunmuyor.<br>Lutfen yonetici ile iletisime gecin.';
+            } else {
+                emptyMessage += '<br><a href="isyerim-musteri-adreslerim.html">Sube eklemek icin tiklayin</a>';
+            }
+            listContainer.innerHTML = '<div class="address-empty">' + emptyMessage + '</div>';
         }
         return;
     }
@@ -1119,17 +1178,17 @@ window.openAddressModal = async function() {
     var html = '';
     addresses.forEach(function(addr) {
         var isSelected = addr.id === selectedAddressId || (addr.is_default && !selectedAddressId);
-        var escapedName = addr.address_name.replace(/'/g, "\\'");
+        var escapedName = addr.branch_name.replace(/'/g, "\\'");
         html += '<div class="address-modal-item' + (isSelected ? ' selected' : '') + '" data-id="' + addr.id + '" data-name="' + escapedName + '">';
         html += '<div class="address-radio"><div class="address-radio-inner"></div></div>';
         html += '<div class="address-modal-info">';
-        html += '<div class="address-modal-name">' + addr.address_name + '</div>';
+        html += '<div class="address-modal-name">' + addr.branch_name + '</div>';
         html += '<div class="address-modal-full">' + (addr.full_address || addr.district + ', ' + addr.city) + '</div>';
         html += '</div></div>';
 
         if (isSelected) {
             selectedAddressId = addr.id;
-            selectedAddressName = addr.address_name;
+            selectedAddressName = addr.branch_name;
         }
     });
 
@@ -1181,7 +1240,7 @@ window.selectModalAddress = function(addressId, addressName) {
 };
 
 // Adres Secimini Onayla
-window.confirmAddressSelection = function() {
+window.confirmAddressSelection = async function() {
     if (!selectedAddressId || !selectedAddressName) return;
 
     sessionStorage.setItem('selected_address_id', selectedAddressId);
@@ -1191,6 +1250,14 @@ window.confirmAddressSelection = function() {
     if (locationSpan) {
         locationSpan.textContent = selectedAddressName;
     }
+
+    // Sube degisti - bayiyi yeniden degerlendir
+    await evaluateDealerForBranch(selectedAddressId);
+
+    // Sube degisikligi event'i dispatch et (diger sayfalar dinleyebilir)
+    window.dispatchEvent(new CustomEvent('branchChanged', {
+        detail: { branchId: selectedAddressId }
+    }));
 
     window.closeAddressModal();
 };
@@ -1453,16 +1520,135 @@ window.confirmDealerSelection = async function() {
     }
 };
 
+// ============================================
+// SUBE-BAYI OTOMATIK ESLESTIRME FONKSIYONLARI
+// ============================================
+
+// Bayi secimini temizle
+function clearDealerSelection() {
+    currentDealerId = null;
+    currentDealerName = null;
+    sessionStorage.removeItem('isyerim_dealer_id');
+    sessionStorage.removeItem('isyerim_dealer_name');
+
+    // Veritabaninda da temizle
+    var customerId = sessionStorage.getItem('isyerim_customer_id');
+    if (customerId && typeof CustomersService !== 'undefined') {
+        CustomersService.update(customerId, { dealer_id: null });
+    }
+}
+
+// Tek bayiyi otomatik sec
+async function autoSelectDealer(dealer, customerId) {
+    currentDealerId = dealer.id;
+    currentDealerName = dealer.name;
+
+    // SessionStorage guncelle
+    sessionStorage.setItem('isyerim_dealer_id', dealer.id);
+    sessionStorage.setItem('isyerim_dealer_name', dealer.name);
+
+    // Veritabani guncelle
+    await CustomersService.update(customerId, { dealer_id: dealer.id });
+
+    // UI guncelle
+    updateDealerButton(dealer.name);
+}
+
+// Sube secildiginde uygun bayileri degerlendir
+async function evaluateDealerForBranch(branchId) {
+    if (!branchId) return;
+
+    var customerId = sessionStorage.getItem('isyerim_customer_id');
+    if (!customerId) return;
+
+    // Servislerin yuklenmesini bekle
+    if (typeof BranchesService === 'undefined' || typeof DealersService === 'undefined') {
+        setTimeout(function() { evaluateDealerForBranch(branchId); }, 500);
+        return;
+    }
+
+    try {
+        // 1. Sube bilgilerini al
+        var branchResult = await BranchesService.getById(branchId);
+        if (!branchResult.data) {
+            updateDealerButton(null, 'no-dealers');
+            return;
+        }
+
+        var branch = branchResult.data;
+        var city = branch.city;
+        var district = branch.district;
+        var districtId = branch.district_id;
+
+        // UUID'den isim cekme (gerekirse)
+        if ((!city || !district) && (branch.city_id || branch.district_id)) {
+            if (branch.city_id && !city) {
+                var cityResult = await supabaseClient.from('cities').select('name').eq('id', branch.city_id).single();
+                if (cityResult.data) city = cityResult.data.name;
+            }
+            if (branch.district_id && !district) {
+                var districtResult = await supabaseClient.from('districts').select('name').eq('id', branch.district_id).single();
+                if (districtResult.data) district = districtResult.data.name;
+                districtId = branch.district_id;
+            }
+        }
+
+        if (!city || !district) {
+            clearDealerSelection();
+            updateDealerButton(null, 'no-dealers');
+            return;
+        }
+
+        // 2. District ID'yi bul (micropazar icin)
+        if (!districtId) {
+            var districtLookup = await supabaseClient
+                .from('districts')
+                .select('id')
+                .ilike('name', district)
+                .single();
+            districtId = districtLookup.data ? districtLookup.data.id : null;
+        }
+
+        // 3. Eslesen bayileri al
+        var dealersResult = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
+        var dealers = dealersResult.data || [];
+
+        // 4. Sonuca gore islem yap
+        if (dealers.length === 0) {
+            // Bayi yok - temizle ve "Bayi Yok" goster
+            clearDealerSelection();
+            updateDealerButton(null, 'no-dealers');
+        } else if (dealers.length === 1) {
+            // Tek bayi - otomatik sec
+            await autoSelectDealer(dealers[0], customerId);
+        } else {
+            // Birden fazla bayi - temizle ve "Bayi Seciniz" goster
+            clearDealerSelection();
+            updateDealerButton(null, 'select');
+        }
+    } catch (err) {
+        console.error('Bayi degerlendirme hatasi:', err);
+    }
+}
+
 // Header'daki bayi butonunu guncelle
-function updateDealerButton(dealerName) {
+// state: 'no-dealers' = Bayi Yok, 'select' veya undefined = Bayi Seciniz
+function updateDealerButton(dealerName, state) {
     var btn = document.getElementById('dealerSelectBtn');
     var nameEl = document.getElementById('selectedDealerName');
 
     if (btn && nameEl) {
         if (dealerName) {
-            btn.classList.remove('empty');
+            // Bayi secili
+            btn.classList.remove('empty', 'no-dealer');
             nameEl.textContent = dealerName;
+        } else if (state === 'no-dealers') {
+            // Hic bayi yok
+            btn.classList.add('empty', 'no-dealer');
+            nameEl.textContent = 'Bayi Yok';
         } else {
+            // Birden fazla bayi var, secim bekliyor
+            btn.classList.remove('no-dealer');
             btn.classList.add('empty');
             nameEl.textContent = 'Bayi Seciniz';
         }
@@ -1472,8 +1658,16 @@ function updateDealerButton(dealerName) {
 // Mevcut bayiyi yukle (sayfa acildiginda)
 async function loadCurrentDealer() {
     var customerId = sessionStorage.getItem('isyerim_customer_id');
+    var branchId = sessionStorage.getItem('selected_address_id');
     if (!customerId) return;
 
+    // Secili sube varsa, subeye gore bayi degerlendir
+    if (branchId) {
+        await evaluateDealerForBranch(branchId);
+        return;
+    }
+
+    // Sube secilmemis - eski davranisi koru
     // sessionStorage'da varsa direkt goster
     var savedDealerName = sessionStorage.getItem('isyerim_dealer_name');
     if (savedDealerName) {

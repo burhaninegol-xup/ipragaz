@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Adreslerim - Ipragaz IsYerim</title>
+	<title>Subelerim - Ipragaz IsYerim</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<style>
@@ -96,16 +96,16 @@
 		<div class="settings-layout">
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
-				<h1 class="content-title">Adreslerim</h1>
+				<h1 class="content-title">Subelerim</h1>
 				<div id="addresses-container">
-					<div class="loading">Adresler yukleniyor...</div>
+					<div class="loading">Subeler yukleniyor...</div>
 				</div>
 				<button class="add-address-btn" onclick="openAddressPanel('add')">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<line x1="12" y1="5" x2="12" y2="19"/>
 						<line x1="5" y1="12" x2="19" y2="12"/>
 					</svg>
-					Yeni Adres Ekle
+					Yeni Sube Ekle
 				</button>
 			</div>
 		</div>
@@ -116,7 +116,7 @@
 	<div class="panel-overlay" id="panelOverlay" onclick="closeAddressPanel()"></div>
 	<div class="slide-panel" id="addressPanel">
 		<div class="panel-header">
-			<h2 class="panel-title" id="panelTitle">Adres Ekle</h2>
+			<h2 class="panel-title" id="panelTitle">Sube Ekle</h2>
 			<button class="panel-close" onclick="closeAddressPanel()">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<line x1="18" y1="6" x2="6" y2="18"/>
@@ -167,11 +167,17 @@
 				</div>
 				<div class="form-group">
 					<label class="form-label">Adres Tarifi</label>
-					<input type="text" class="form-input" id="addressDescription" placeholder="Adres tarifi giriniz">
+					<input type="text" class="form-input" id="branchDescription" placeholder="Adres tarifi giriniz">
 				</div>
 				<div class="form-group">
-					<label class="form-label">Adres Ismi *</label>
-					<input type="text" class="form-input" id="addressName" placeholder="Ornegin: Ev, Is, vb." required>
+					<label class="form-label">Sube Adi *</label>
+					<input type="text" class="form-input" id="branchName" placeholder="Ornegin: Merkez, Depo, vb." required>
+				</div>
+				<div class="form-group">
+					<label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+						<input type="checkbox" id="isMerkez" style="width: 18px; height: 18px; accent-color: #e31e24;">
+						<span class="form-label" style="margin: 0;">Merkez Sube</span>
+					</label>
 				</div>
 			</form>
 		</div>
@@ -189,8 +195,8 @@
 				<line x1="10" y1="11" x2="10" y2="17"/>
 				<line x1="14" y1="11" x2="14" y2="17"/>
 			</svg>
-			<h3 class="confirm-title">Adresi Sil</h3>
-			<p class="confirm-text">Bu adresi silmek istediginizden emin misiniz? Bu islem geri alinamaz.</p>
+			<h3 class="confirm-title">Subeyi Sil</h3>
+			<p class="confirm-text">Bu subeyi silmek istediginizden emin misiniz? Bu islem geri alinamaz.</p>
 			<div class="confirm-buttons">
 				<button class="confirm-btn cancel" onclick="closeDeleteModal()">Iptal</button>
 				<button class="confirm-btn delete" onclick="confirmDelete()">Sil</button>
@@ -200,7 +206,7 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/locations-service.js"></script>
@@ -212,7 +218,16 @@
 
 		document.addEventListener('DOMContentLoaded', async function() {
 			customerId = sessionStorage.getItem('isyerim_customer_id');
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+
 			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+
+			// Sadece owner kullanicilar bu sayfaya erisebilir
+			if (userRole !== 'owner') {
+				alert('Bu sayfaya erisim yetkiniz bulunmuyor.');
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+				return;
+			}
 
 			try {
 				var response = await fetch('./components/isyerim-settings-sidebar.html');
@@ -225,22 +240,22 @@
 			await loadAddresses();
 		});
 
-		// Adresleri yukle
+		// Subeleri yukle
 		async function loadAddresses() {
 			var container = document.getElementById('addresses-container');
-			container.innerHTML = '<div class="loading">Adresler yukleniyor...</div>';
+			container.innerHTML = '<div class="loading">Subeler yukleniyor...</div>';
 
-			var result = await AddressesService.getByCustomerId(customerId);
+			var result = await BranchesService.getByCustomerId(customerId);
 
 			if (result.error) {
-				container.innerHTML = '<div class="loading">Adresler yuklenirken hata olustu</div>';
+				container.innerHTML = '<div class="loading">Subeler yuklenirken hata olustu</div>';
 				return;
 			}
 
 			var addresses = result.data || [];
 
 			if (addresses.length === 0) {
-				container.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p class="empty-text">Henuz kayitli adresiniz bulunmuyor</p><p class="empty-subtext">Yeni adres ekleyerek baslayabilirsiniz</p></div>';
+				container.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p class="empty-text">Henuz kayitli subeniz bulunmuyor</p><p class="empty-subtext">Yeni sube ekleyerek baslayabilirsiniz</p></div>';
 				return;
 			}
 
@@ -248,13 +263,13 @@
 			addresses.forEach(function(addr) {
 				html += '<div class="address-card' + (addr.is_default ? ' default' : '') + '">';
 				html += '<div class="address-header">';
-				html += '<span class="address-name">' + addr.address_name;
-				if (addr.is_default) html += ' <span class="default-badge">Varsayilan</span>';
+				html += '<span class="address-name">' + addr.branch_name;
+				if (addr.is_default) html += ' <span class="default-badge">Merkez</span>';
 				html += '</span>';
 				html += '<div class="address-actions">';
 				html += '<button class="address-action" onclick="openAddressPanel(\'edit\', \'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
 				if (!addr.is_default) {
-					html += '<button class="address-action" onclick="setDefaultAddress(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Varsayilan Yap</button>';
+					html += '<button class="address-action" onclick="setDefaultAddress(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Merkez Yap</button>';
 				}
 				html += '<button class="address-action" onclick="openDeleteModal(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
 				html += '</div></div>';
@@ -382,11 +397,11 @@
 			document.body.style.overflow = 'hidden';
 
 			if (mode === 'edit' && addressId) {
-				document.getElementById('panelTitle').textContent = 'Adres Duzenle';
+				document.getElementById('panelTitle').textContent = 'Sube Duzenle';
 				currentAddressId = addressId;
 				loadAddressData(addressId);
 			} else {
-				document.getElementById('panelTitle').textContent = 'Adres Ekle';
+				document.getElementById('panelTitle').textContent = 'Sube Ekle';
 				currentAddressId = null;
 				clearForm();
 			}
@@ -405,10 +420,11 @@
 			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
 			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
 			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			document.getElementById('isMerkez').checked = false;
 		}
 
 		async function loadAddressData(addressId) {
-			var result = await AddressesService.getById(addressId);
+			var result = await BranchesService.getById(addressId);
 			if (result.error || !result.data) return;
 
 			var addr = result.data;
@@ -439,13 +455,14 @@
 			document.getElementById('buildingNo').value = addr.building_no || '';
 			document.getElementById('floor').value = addr.floor || '';
 			document.getElementById('apartment').value = addr.apartment || '';
-			document.getElementById('addressDescription').value = addr.address_description || '';
-			document.getElementById('addressName').value = addr.address_name || '';
+			document.getElementById('branchDescription').value = addr.branch_description || '';
+			document.getElementById('branchName').value = addr.branch_name || '';
+			document.getElementById('isMerkez').checked = addr.is_default || false;
 		}
 
-		// Adres kaydet
+		// Sube kaydet
 		async function saveAddress() {
-			var addressName = document.getElementById('addressName').value.trim();
+			var branchName = document.getElementById('branchName').value.trim();
 			var cityId = document.getElementById('citySelect').value;
 			var districtId = document.getElementById('districtSelect').value;
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
@@ -457,14 +474,17 @@
 			var neighborhoodName = getSelectedOptionName('neighborhoodSelect');
 			var streetName = getSelectedOptionName('streetSelect');
 
-			if (!addressName || !cityId || !districtId) {
+			if (!branchName || !cityId || !districtId) {
 				alert('Lutfen zorunlu alanlari doldurun');
 				return;
 			}
 
-			var addressData = {
+			var isMerkez = document.getElementById('isMerkez').checked;
+
+			var branchData = {
 				customer_id: customerId,
-				address_name: addressName,
+				branch_name: branchName,
+				is_default: isMerkez,
 				// Yeni FK kolonlari
 				city_id: cityId || null,
 				district_id: districtId || null,
@@ -479,18 +499,18 @@
 				building_no: document.getElementById('buildingNo').value.trim() || null,
 				floor: document.getElementById('floor').value.trim() || null,
 				apartment: document.getElementById('apartment').value.trim() || null,
-				address_description: document.getElementById('addressDescription').value.trim() || null
+				branch_description: document.getElementById('branchDescription').value.trim() || null
 			};
 
 			var result;
 			if (currentAddressId) {
-				result = await AddressesService.update(currentAddressId, addressData);
+				result = await BranchesService.update(currentAddressId, branchData);
 			} else {
-				result = await AddressesService.create(addressData);
+				result = await BranchesService.create(branchData);
 			}
 
 			if (result.error) {
-				alert('Adres kaydedilemedi: ' + result.error.message);
+				alert('Sube kaydedilemedi: ' + result.error.message);
 				return;
 			}
 
@@ -498,11 +518,11 @@
 			await loadAddresses();
 		}
 
-		// Varsayilan adres yap
+		// Varsayilan sube yap
 		async function setDefaultAddress(addressId) {
-			var result = await AddressesService.setDefault(addressId, customerId);
+			var result = await BranchesService.setDefault(addressId, customerId);
 			if (result.error) {
-				alert('Varsayilan adres ayarlanamadi');
+				alert('Merkez sube ayarlanamadi');
 				return;
 			}
 			await loadAddresses();
@@ -522,9 +542,9 @@
 		async function confirmDelete() {
 			if (!deleteAddressId) return;
 
-			var result = await AddressesService.delete(deleteAddressId);
+			var result = await BranchesService.delete(deleteAddressId);
 			if (result.error) {
-				alert('Adres silinemedi');
+				alert('Sube silinemedi');
 				closeDeleteModal();
 				return;
 			}

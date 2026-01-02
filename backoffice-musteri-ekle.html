@@ -262,8 +262,8 @@
             color: var(--bo-text-primary);
         }
 
-        /* Address Toggle */
-        .address-toggle {
+        /* Branch Toggle */
+        .branch-toggle {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -273,31 +273,31 @@
             margin-bottom: 20px;
         }
 
-        .address-toggle input {
+        .branch-toggle input {
             width: 20px;
             height: 20px;
             accent-color: var(--bo-primary);
             cursor: pointer;
         }
 
-        .address-toggle label {
+        .branch-toggle label {
             font-size: 14px;
             color: var(--bo-text-primary);
             cursor: pointer;
         }
 
-        .address-toggle label span {
+        .branch-toggle label span {
             font-size: 13px;
             color: var(--bo-text-secondary);
             display: block;
             margin-top: 4px;
         }
 
-        .address-fields {
+        .branch-fields {
             display: none;
         }
 
-        .address-fields.show {
+        .branch-fields.show {
             display: block;
         }
 
@@ -531,26 +531,26 @@
                         </div>
                     </div>
 
-                    <!-- Adres Bilgileri -->
+                    <!-- Sube Bilgileri -->
                     <div class="bo-form-section">
                         <div class="bo-form-section-title">
                             <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                            Adres Bilgileri
+                            Sube Bilgileri
                         </div>
 
-                        <div class="address-toggle">
-                            <input type="checkbox" id="add_address" onchange="toggleAddressFields()">
-                            <label for="add_address">
-                                Adres bilgisi ekle
-                                <span>Musterinin ilk adresini simdi ekleyebilirsiniz</span>
+                        <div class="branch-toggle">
+                            <input type="checkbox" id="add_branch" onchange="toggleBranchFields()">
+                            <label for="add_branch">
+                                Sube bilgisi ekle
+                                <span>Musterinin ilk subesini simdi ekleyebilirsiniz</span>
                             </label>
                         </div>
 
-                        <div class="address-fields" id="addressFields">
+                        <div class="branch-fields" id="branchFields">
                             <div class="bo-form-row">
                                 <div class="bo-form-group">
-                                    <label class="bo-form-label">Adres Basligi</label>
-                                    <input type="text" class="bo-form-input" id="address_title" name="address_title" placeholder="Ornek: Ev, Is Yeri">
+                                    <label class="bo-form-label">Sube Adi</label>
+                                    <input type="text" class="bo-form-input" id="branch_title" name="branch_title" placeholder="Ornek: Merkez, Depo" value="Merkez">
                                 </div>
                             </div>
 
@@ -598,8 +598,8 @@
                             <div class="bo-form-row single">
                                 <div class="bo-form-group">
                                     <label class="bo-form-checkbox">
-                                        <input type="checkbox" id="is_default_address" name="is_default_address" checked>
-                                        <span>Bu adresi varsayilan olarak ayarla</span>
+                                        <input type="checkbox" id="is_default_branch" name="is_default_branch" checked>
+                                        <span>Bu subeyi varsayilan olarak ayarla</span>
                                     </label>
                                 </div>
                             </div>
@@ -630,7 +630,7 @@
     <script src="js/supabase-client.js"></script>
     <script src="js/services/customers-service.js"></script>
     <script src="js/services/dealers-service.js"></script>
-    <script src="js/services/addresses-service.js"></script>
+    <script src="js/services/branches-service.js"></script>
     <script src="js/services/locations-service.js"></script>
 
     <script>
@@ -760,10 +760,10 @@
             districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
         }
 
-        // Toggle address fields
-        function toggleAddressFields() {
-            var checkbox = document.getElementById('add_address');
-            var fields = document.getElementById('addressFields');
+        // Toggle branch fields
+        function toggleBranchFields() {
+            var checkbox = document.getElementById('add_branch');
+            var fields = document.getElementById('branchFields');
 
             if (checkbox.checked) {
                 fields.classList.add('show');
@@ -878,16 +878,16 @@
                     return;
                 }
 
-                // Add address if enabled
-                var addAddress = document.getElementById('add_address').checked;
-                if (addAddress && result.data && result.data.id) {
+                // Add branch if enabled
+                var addBranch = document.getElementById('add_branch').checked;
+                if (addBranch && result.data && result.data.id) {
                     var city = document.getElementById('city').value;
                     var district = document.getElementById('district').value;
 
                     if (city && district) {
-                        var addressData = {
+                        var branchData = {
                             customer_id: result.data.id,
-                            title: document.getElementById('address_title').value.trim() || 'Varsayilan Adres',
+                            branch_name: document.getElementById('branch_title').value.trim() || 'Merkez',
                             city: city,
                             district: district,
                             neighborhood: document.getElementById('neighborhood').value.trim() || null,
@@ -895,14 +895,14 @@
                             building_no: document.getElementById('building_no').value.trim() || null,
                             floor: document.getElementById('floor').value.trim() || null,
                             apartment: document.getElementById('apartment').value.trim() || null,
-                            is_default: document.getElementById('is_default_address').checked,
+                            is_default: document.getElementById('is_default_branch').checked,
                             is_active: true
                         };
 
                         try {
-                            await AddressesService.create(addressData);
-                        } catch (addrError) {
-                            console.warn('Adres kayit hatasi:', addrError);
+                            await BranchesService.create(branchData);
+                        } catch (branchError) {
+                            console.warn('Sube kayit hatasi:', branchError);
                         }
                     }
                 }

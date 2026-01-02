@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kullanicilar - Ipragaz IsYerim</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body { font-family: 'Poppins', sans-serif; background: #f5f5f5; color: #333; }
+		a { text-decoration: none; color: inherit; }
+		.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
+		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
+		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+
+		/* User List */
+		.users-list { display: flex; flex-direction: column; gap: 15px; }
+		.user-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; position: relative; }
+		.user-card.owner { border-color: #e31e24; border-width: 2px; }
+		.user-card.inactive { opacity: 0.6; background: #f9f9f9; }
+		.user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+		.user-name { font-size: 16px; font-weight: 600; color: #333; display: flex; align-items: center; gap: 10px; }
+		.owner-badge { background: #e31e24; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+		.staff-badge { background: #4a90d9; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+		.inactive-badge { background: #999; color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+		.user-actions { display: flex; gap: 15px; }
+		.user-action { color: #e31e24; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 5px; background: none; border: none; font-family: inherit; }
+		.user-action:hover { text-decoration: underline; }
+		.user-action:disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
+		.user-action svg { width: 16px; height: 16px; }
+		.user-info { display: flex; gap: 20px; flex-wrap: wrap; }
+		.user-info-item { font-size: 14px; color: #666; display: flex; align-items: center; gap: 6px; }
+		.user-info-item svg { width: 16px; height: 16px; color: #999; }
+
+		/* Add New User Button */
+		.add-user-btn { width: 100%; background: #e31e24; color: #fff; border: none; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 20px; font-family: inherit; transition: background 0.3s; }
+		.add-user-btn:hover { background: #c91a1f; }
+		.add-user-btn svg { width: 20px; height: 20px; }
+
+		/* Empty State */
+		.empty-state { text-align: center; padding: 60px 20px; }
+		.empty-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #ccc; }
+		.empty-text { font-size: 16px; color: #666; margin-bottom: 10px; }
+		.empty-subtext { font-size: 14px; color: #999; }
+
+		/* Slide Panel */
+		.panel-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+		.panel-overlay.active { opacity: 1; visibility: visible; }
+		.slide-panel { position: fixed; top: 0; right: -450px; width: 450px; max-width: 100%; height: 100%; background: #fff; z-index: 1001; transition: right 0.3s ease; display: flex; flex-direction: column; }
+		.slide-panel.active { right: 0; }
+		.panel-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #eee; }
+		.panel-title { font-size: 18px; font-weight: 600; color: #333; }
+		.panel-close { background: none; border: none; cursor: pointer; padding: 5px; color: #666; }
+		.panel-close svg { width: 24px; height: 24px; }
+		.panel-body { flex: 1; overflow-y: auto; padding: 20px; }
+		.panel-footer { padding: 20px; border-top: 1px solid #eee; }
+
+		/* Form Styles */
+		.form-group { margin-bottom: 20px; }
+		.form-label { display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px; }
+		.form-input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.3s; }
+		.form-input:focus { outline: none; border-color: #e31e24; }
+		.save-btn { width: 100%; background: #e31e24; color: #fff; border: none; border-radius: 8px; padding: 15px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.3s; }
+		.save-btn:hover { background: #c91a1f; }
+		.save-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+		/* Toggle Switch */
+		.toggle-group { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+		.toggle-label { font-size: 14px; color: #333; }
+		.toggle-switch { position: relative; width: 50px; height: 26px; }
+		.toggle-switch input { opacity: 0; width: 0; height: 0; }
+		.toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: 0.3s; border-radius: 26px; }
+		.toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
+		.toggle-switch input:checked + .toggle-slider { background-color: #e31e24; }
+		.toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+
+		/* Branch Permissions */
+		.permissions-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+		.permissions-title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 15px; }
+		.permissions-list { display: flex; flex-direction: column; gap: 10px; }
+		.permission-item { display: flex; align-items: center; gap: 10px; padding: 12px; background: #f9f9f9; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+		.permission-item:hover { background: #f0f0f0; }
+		.permission-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e31e24; cursor: pointer; }
+		.permission-item label { flex: 1; font-size: 14px; color: #333; cursor: pointer; }
+		.permission-item .branch-badge { font-size: 11px; padding: 2px 6px; border-radius: 3px; background: #e31e24; color: #fff; }
+
+		/* Loading */
+		.loading { text-align: center; padding: 40px; color: #666; }
+
+		/* Delete Confirmation Modal */
+		.confirm-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+		.confirm-modal.active { display: flex; }
+		.confirm-box { background: #fff; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; text-align: center; }
+		.confirm-icon { width: 60px; height: 60px; margin: 0 auto 20px; color: #e31e24; }
+		.confirm-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+		.confirm-text { font-size: 14px; color: #666; margin-bottom: 25px; }
+		.confirm-buttons { display: flex; gap: 15px; }
+		.confirm-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border: none; transition: background 0.3s; }
+		.confirm-btn.cancel { background: #f0f0f0; color: #333; }
+		.confirm-btn.cancel:hover { background: #e0e0e0; }
+		.confirm-btn.delete { background: #e31e24; color: #fff; }
+		.confirm-btn.delete:hover { background: #c91a1f; }
+
+		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+		@media (max-width: 480px) {
+			.slide-panel { width: 100%; right: -100%; }
+			.user-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+			.user-actions { margin-top: 5px; }
+			.user-info { flex-direction: column; gap: 8px; }
+		}
+	</style>
+</head>
+<body>
+	<div id="isyerim-top-bar"></div>
+	<div id="isyerim-header"></div>
+	<div class="container">
+		<div class="settings-layout">
+			<div id="isyerim-settings-sidebar"></div>
+			<div class="settings-content">
+				<h1 class="content-title">Kullanicilar</h1>
+				<div id="users-container">
+					<div class="loading">Kullanicilar yukleniyor...</div>
+				</div>
+				<button class="add-user-btn" onclick="openUserPanel('add')">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="12" y1="5" x2="12" y2="19"/>
+						<line x1="5" y1="12" x2="19" y2="12"/>
+					</svg>
+					Yeni Kullanici Ekle
+				</button>
+			</div>
+		</div>
+	</div>
+	<div id="isyerim-footer"></div>
+
+	<!-- User Add/Edit Panel -->
+	<div class="panel-overlay" id="panelOverlay" onclick="closeUserPanel()"></div>
+	<div class="slide-panel" id="userPanel">
+		<div class="panel-header">
+			<h2 class="panel-title" id="panelTitle">Kullanici Ekle</h2>
+			<button class="panel-close" onclick="closeUserPanel()">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="18" y1="6" x2="6" y2="18"/>
+					<line x1="6" y1="6" x2="18" y2="18"/>
+				</svg>
+			</button>
+		</div>
+		<div class="panel-body">
+			<form id="userForm">
+				<input type="hidden" id="userId">
+				<div class="form-group">
+					<label class="form-label">Ad Soyad *</label>
+					<input type="text" class="form-input" id="userName" placeholder="Kullanici adi" required>
+				</div>
+				<div class="form-group">
+					<label class="form-label">Telefon Numarasi *</label>
+					<input type="tel" class="form-input" id="userPhone" placeholder="5XX XXX XX XX" maxlength="10" required>
+				</div>
+				<div class="toggle-group" id="activeToggleGroup">
+					<span class="toggle-label">Aktif</span>
+					<label class="toggle-switch">
+						<input type="checkbox" id="userActive" checked>
+						<span class="toggle-slider"></span>
+					</label>
+				</div>
+
+				<!-- Branch Permissions (only for staff) -->
+				<div class="permissions-section" id="permissionsSection" style="display: none;">
+					<h3 class="permissions-title">Sube Yetkileri</h3>
+					<p style="font-size: 13px; color: #666; margin-bottom: 15px;">Bu kullanicinin siparis verebilecegi subeleri secin:</p>
+					<div class="permissions-list" id="branchesList">
+						<div class="loading">Subeler yukleniyor...</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="panel-footer">
+			<button class="save-btn" onclick="saveUser()">Kaydet</button>
+		</div>
+	</div>
+
+	<!-- Delete Confirmation Modal -->
+	<div class="confirm-modal" id="deleteModal">
+		<div class="confirm-box">
+			<svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M3 6h18"/>
+				<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+				<line x1="10" y1="11" x2="10" y2="17"/>
+				<line x1="14" y1="11" x2="14" y2="17"/>
+			</svg>
+			<h3 class="confirm-title">Kullaniciyi Sil</h3>
+			<p class="confirm-text">Bu kullaniciyi silmek istediginizden emin misiniz? Bu islem geri alinamaz.</p>
+			<div class="confirm-buttons">
+				<button class="confirm-btn cancel" onclick="closeDeleteModal()">Iptal</button>
+				<button class="confirm-btn delete" onclick="confirmDelete()">Sil</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		var customerId = null;
+		var currentUserId = null;
+		var deleteUserId = null;
+		var allBranches = [];
+		var isEditMode = false;
+		var editingUserRole = null;
+
+		document.addEventListener('DOMContentLoaded', async function() {
+			customerId = sessionStorage.getItem('isyerim_customer_id');
+			var userRole = sessionStorage.getItem('isyerim_user_role');
+
+			// Sadece owner kullanicilar bu sayfaya erisebilir
+			if (!customerId) {
+				window.location.href = 'isyerim-musteri-login.html';
+				return;
+			}
+
+			if (userRole !== 'owner') {
+				alert('Bu sayfaya erisim yetkiniz bulunmuyor.');
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+				return;
+			}
+
+			try {
+				var response = await fetch('./components/isyerim-settings-sidebar.html');
+				var html = await response.text();
+				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('kullanicilar'); }, 100);
+			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+
+			// Subeleri yukle (yetki secimi icin)
+			await loadBranches();
+			await loadUsers();
+		});
+
+		// Subeleri yukle
+		async function loadBranches() {
+			var result = await BranchesService.getByCustomerId(customerId);
+			if (!result.error && result.data) {
+				allBranches = result.data;
+			}
+		}
+
+		// Kullanicilari yukle
+		async function loadUsers() {
+			var container = document.getElementById('users-container');
+			container.innerHTML = '<div class="loading">Kullanicilar yukleniyor...</div>';
+
+			var result = await CustomerUsersService.getByCustomerId(customerId);
+
+			if (result.error) {
+				container.innerHTML = '<div class="loading">Kullanicilar yuklenirken hata olustu</div>';
+				return;
+			}
+
+			var users = result.data || [];
+
+			if (users.length === 0) {
+				container.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><p class="empty-text">Henuz kayitli kullanici bulunmuyor</p><p class="empty-subtext">Yeni kullanici ekleyerek baslayabilirsiniz</p></div>';
+				return;
+			}
+
+			var html = '<div class="users-list">';
+			users.forEach(function(user) {
+				var isOwner = user.role === 'owner';
+				var isActive = user.is_active;
+
+				html += '<div class="user-card' + (isOwner ? ' owner' : '') + (!isActive ? ' inactive' : '') + '">';
+				html += '<div class="user-header">';
+				html += '<span class="user-name">' + user.name;
+				if (isOwner) {
+					html += ' <span class="owner-badge">Ana Kullanici</span>';
+				} else {
+					html += ' <span class="staff-badge">Alt Kullanici</span>';
+				}
+				if (!isActive) {
+					html += ' <span class="inactive-badge">Pasif</span>';
+				}
+				html += '</span>';
+				html += '<div class="user-actions">';
+				html += '<button class="user-action" onclick="openUserPanel(\'edit\', \'' + user.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
+				if (!isOwner) {
+					html += '<button class="user-action" onclick="openDeleteModal(\'' + user.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
+				}
+				html += '</div></div>';
+				html += '<div class="user-info">';
+				html += '<span class="user-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ' + formatPhone(user.phone) + '</span>';
+				if (!isOwner) {
+					html += '<span class="user-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + (user.branch_count || 0) + ' sube yetkisi</span>';
+				}
+				html += '</div>';
+				html += '</div>';
+			});
+			html += '</div>';
+
+			container.innerHTML = html;
+		}
+
+		// Telefon formatla
+		function formatPhone(phone) {
+			if (!phone) return '-';
+			return '0' + phone.substring(0, 3) + ' ' + phone.substring(3, 6) + ' ' + phone.substring(6, 8) + ' ' + phone.substring(8, 10);
+		}
+
+		// Panel ac/kapat
+		function openUserPanel(mode, userId) {
+			document.getElementById('panelOverlay').classList.add('active');
+			document.getElementById('userPanel').classList.add('active');
+			document.body.style.overflow = 'hidden';
+
+			isEditMode = mode === 'edit';
+
+			if (isEditMode && userId) {
+				document.getElementById('panelTitle').textContent = 'Kullanici Duzenle';
+				currentUserId = userId;
+				loadUserData(userId);
+			} else {
+				document.getElementById('panelTitle').textContent = 'Kullanici Ekle';
+				currentUserId = null;
+				editingUserRole = null;
+				clearForm();
+				// Yeni kullanici eklerkenyetki secimi goster
+				document.getElementById('permissionsSection').style.display = 'block';
+				renderBranchCheckboxes([]);
+			}
+		}
+
+		function closeUserPanel() {
+			document.getElementById('panelOverlay').classList.remove('active');
+			document.getElementById('userPanel').classList.remove('active');
+			document.body.style.overflow = '';
+			clearForm();
+		}
+
+		function clearForm() {
+			document.getElementById('userForm').reset();
+			document.getElementById('userId').value = '';
+			document.getElementById('userActive').checked = true;
+			document.getElementById('permissionsSection').style.display = 'none';
+			editingUserRole = null;
+		}
+
+		async function loadUserData(userId) {
+			var result = await CustomerUsersService.getById(userId);
+			if (result.error || !result.data) return;
+
+			var user = result.data;
+			editingUserRole = user.role;
+
+			document.getElementById('userName').value = user.name || '';
+			document.getElementById('userPhone').value = user.phone || '';
+			document.getElementById('userActive').checked = user.is_active;
+
+			// Owner ise yetki secimi gosterme
+			if (user.role === 'owner') {
+				document.getElementById('permissionsSection').style.display = 'none';
+				document.getElementById('activeToggleGroup').style.display = 'none'; // Owner pasif yapilamaz
+			} else {
+				document.getElementById('permissionsSection').style.display = 'block';
+				document.getElementById('activeToggleGroup').style.display = 'flex';
+
+				// Mevcut yetkileri al
+				var branchResult = await CustomerUsersService.getBranchIds(userId);
+				var authorizedBranchIds = branchResult.data || [];
+				renderBranchCheckboxes(authorizedBranchIds);
+			}
+		}
+
+		// Sube checkboxlarini render et
+		function renderBranchCheckboxes(authorizedBranchIds) {
+			var container = document.getElementById('branchesList');
+
+			if (allBranches.length === 0) {
+				container.innerHTML = '<p style="font-size: 14px; color: #666; text-align: center;">Henuz sube bulunmuyor</p>';
+				return;
+			}
+
+			var html = '';
+			allBranches.forEach(function(branch) {
+				var isChecked = authorizedBranchIds.includes(branch.id);
+				html += '<label class="permission-item">';
+				html += '<input type="checkbox" name="branchPermission" value="' + branch.id + '"' + (isChecked ? ' checked' : '') + '>';
+				html += '<label>' + branch.branch_name + '</label>';
+				if (branch.is_default) {
+					html += '<span class="branch-badge">Merkez</span>';
+				}
+				html += '</label>';
+			});
+
+			container.innerHTML = html;
+		}
+
+		// Kullanici kaydet
+		async function saveUser() {
+			var userName = document.getElementById('userName').value.trim();
+			var userPhone = document.getElementById('userPhone').value.trim().replace(/\D/g, '');
+			var userActive = document.getElementById('userActive').checked;
+
+			if (!userName) {
+				alert('Lutfen kullanici adini girin');
+				return;
+			}
+
+			if (!userPhone || userPhone.length !== 10) {
+				alert('Lutfen gecerli bir telefon numarasi girin (10 hane)');
+				return;
+			}
+
+			// Secili subeleri al
+			var selectedBranches = [];
+			var checkboxes = document.querySelectorAll('input[name="branchPermission"]:checked');
+			checkboxes.forEach(function(cb) {
+				selectedBranches.push(cb.value);
+			});
+
+			var saveBtn = document.querySelector('.save-btn');
+			saveBtn.disabled = true;
+			saveBtn.textContent = 'Kaydediliyor...';
+
+			try {
+				var result;
+
+				if (currentUserId) {
+					// Guncelleme
+					result = await CustomerUsersService.update(currentUserId, {
+						name: userName,
+						phone: userPhone,
+						is_active: userActive
+					});
+
+					if (result.error) {
+						alert('Kullanici guncellenemedi: ' + result.error.message);
+						saveBtn.disabled = false;
+						saveBtn.textContent = 'Kaydet';
+						return;
+					}
+
+					// Eger staff ise yetkileri guncelle
+					if (editingUserRole === 'staff') {
+						await CustomerUsersService.updateBranchPermissions(currentUserId, selectedBranches);
+					}
+				} else {
+					// Yeni kullanici
+					result = await CustomerUsersService.create({
+						customer_id: customerId,
+						name: userName,
+						phone: userPhone,
+						role: 'staff',
+						is_active: userActive
+					});
+
+					if (result.error) {
+						alert('Kullanici eklenemedi: ' + result.error.message);
+						saveBtn.disabled = false;
+						saveBtn.textContent = 'Kaydet';
+						return;
+					}
+
+					// Yetkileri ekle
+					if (result.data && selectedBranches.length > 0) {
+						await CustomerUsersService.updateBranchPermissions(result.data.id, selectedBranches);
+					}
+				}
+
+				closeUserPanel();
+				await loadUsers();
+			} catch (error) {
+				console.error('Kayit hatasi:', error);
+				alert('Bir hata olustu. Lutfen tekrar deneyin.');
+			}
+
+			saveBtn.disabled = false;
+			saveBtn.textContent = 'Kaydet';
+		}
+
+		// Silme modali
+		function openDeleteModal(userId) {
+			deleteUserId = userId;
+			document.getElementById('deleteModal').classList.add('active');
+		}
+
+		function closeDeleteModal() {
+			deleteUserId = null;
+			document.getElementById('deleteModal').classList.remove('active');
+		}
+
+		async function confirmDelete() {
+			if (!deleteUserId) return;
+
+			var result = await CustomerUsersService.delete(deleteUserId);
+			if (result.error) {
+				alert('Kullanici silinemedi: ' + result.error.message);
+				closeDeleteModal();
+				return;
+			}
+
+			closeDeleteModal();
+			await loadUsers();
+		}
+	</script>
+</body>
+</html>

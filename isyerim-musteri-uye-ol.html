@@ -503,8 +503,9 @@
 	<script src="./js/supabase-client.js"></script>
 	<!-- Service Dosyaları -->
 	<script src="./js/services/customers-service.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
 	<!-- Component Loader -->
 	<script src="./js/component-loader.js"></script>
 
@@ -602,19 +603,40 @@
 				var result = await CustomersService.create(customerData);
 
 				if (result.error) {
-					console.error('Kayıt hatası:', result.error);
-					alert('Kayıt sırasında bir hata oluştu: ' + (result.error.message || result.error));
+					console.error('Kayit hatasi:', result.error);
+					alert('Kayit sirasinda bir hata olustu: ' + (result.error.message || result.error));
 					submitBtn.disabled = false;
 					submitBtn.textContent = 'Devam';
 					return;
 				}
 
-				// Başarılı - customer_id ve adını kaydet
-				sessionStorage.setItem('isyerim_customer_id', result.data.id);
-				sessionStorage.setItem('isyerim_customer_name', result.data.name || customerData.name);
+				var customer = result.data;
+
+				// Musteri icin owner kullanici olustur
+				var ownerResult = await CustomerUsersService.createOwner(
+					customer.id,
+					customerData.name,
+					phone
+				);
+
+				// Basarili - customer ve user bilgilerini kaydet
+				sessionStorage.setItem('isyerim_customer_id', customer.id);
+				sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || customerData.name);
+
+				// Owner kullanici olusturulduysa bilgilerini kaydet
+				if (ownerResult.data) {
+					sessionStorage.setItem('isyerim_user_id', ownerResult.data.id);
+					sessionStorage.setItem('isyerim_user_role', 'owner');
+					sessionStorage.setItem('isyerim_user_name', customerData.name);
+				} else {
+					// Fallback - owner olmadan devam et
+					sessionStorage.setItem('isyerim_user_role', 'owner');
+					sessionStorage.setItem('isyerim_user_name', customerData.name);
+				}
+
 				sessionStorage.setItem('isNewUser', 'false');
 
-				// Güvenlik sorularına yönlendir
+				// Guvenlik sorularina yonlendir
 				window.location.href = 'isyerim-musteri-sorular.html';
 
 			} catch (error) {

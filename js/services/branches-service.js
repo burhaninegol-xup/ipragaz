@@ -1,16 +1,16 @@
 /**
- * Addresses Service
- * Müşteri adresleri CRUD işlemleri
+ * Branches Service
+ * Musteri subeleri CRUD islemleri
  */
 
-const AddressesService = {
+const BranchesService = {
     /**
-     * Müşterinin tüm adreslerini getir
+     * Musterinin tum subelerini getir
      */
     async getByCustomerId(customerId) {
         try {
             const { data, error } = await supabaseClient
-                .from('customer_addresses')
+                .from('customer_branches')
                 .select('*')
                 .eq('customer_id', customerId)
                 .eq('is_active', true)
@@ -20,17 +20,17 @@ const AddressesService = {
             if (error) throw error;
             return { data, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.getByCustomerId');
+            return handleSupabaseError(error, 'BranchesService.getByCustomerId');
         }
     },
 
     /**
-     * ID ile adres getir
+     * ID ile sube getir
      */
     async getById(id) {
         try {
             const { data, error } = await supabaseClient
-                .from('customer_addresses')
+                .from('customer_branches')
                 .select('*')
                 .eq('id', id)
                 .single();
@@ -38,43 +38,43 @@ const AddressesService = {
             if (error) throw error;
             return { data, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.getById');
+            return handleSupabaseError(error, 'BranchesService.getById');
         }
     },
 
     /**
-     * Yeni adres oluştur
+     * Yeni sube olustur
      */
-    async create(addressData) {
+    async create(branchData) {
         try {
-            // Tam adresi oluştur
-            addressData.full_address = this.buildFullAddress(addressData);
+            // Tam adresi olustur
+            branchData.full_address = this.buildFullAddress(branchData);
 
             const { data, error } = await supabaseClient
-                .from('customer_addresses')
-                .insert([addressData])
+                .from('customer_branches')
+                .insert([branchData])
                 .select()
                 .single();
 
             if (error) throw error;
             return { data, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.create');
+            return handleSupabaseError(error, 'BranchesService.create');
         }
     },
 
     /**
-     * Adres güncelle
+     * Sube guncelle
      */
-    async update(id, addressData) {
+    async update(id, branchData) {
         try {
-            // Tam adresi güncelle
-            addressData.full_address = this.buildFullAddress(addressData);
-            addressData.updated_at = new Date().toISOString();
+            // Tam adresi guncelle
+            branchData.full_address = this.buildFullAddress(branchData);
+            branchData.updated_at = new Date().toISOString();
 
             const { data, error } = await supabaseClient
-                .from('customer_addresses')
-                .update(addressData)
+                .from('customer_branches')
+                .update(branchData)
                 .eq('id', id)
                 .select()
                 .single();
@@ -82,41 +82,41 @@ const AddressesService = {
             if (error) throw error;
             return { data, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.update');
+            return handleSupabaseError(error, 'BranchesService.update');
         }
     },
 
     /**
-     * Adres sil (hard delete)
+     * Sube sil (hard delete)
      */
     async delete(id) {
         try {
             const { error } = await supabaseClient
-                .from('customer_addresses')
+                .from('customer_branches')
                 .delete()
                 .eq('id', id);
 
             if (error) throw error;
             return { data: { success: true }, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.delete');
+            return handleSupabaseError(error, 'BranchesService.delete');
         }
     },
 
     /**
-     * Varsayılan adres olarak ayarla
+     * Varsayilan sube olarak ayarla
      */
     async setDefault(id, customerId) {
         try {
-            // Önce tüm adreslerin default'unu kaldır
+            // Once tum subelerin default'unu kaldir
             await supabaseClient
-                .from('customer_addresses')
+                .from('customer_branches')
                 .update({ is_default: false })
                 .eq('customer_id', customerId);
 
-            // Seçilen adresi default yap
+            // Secilen subeyi default yap
             const { data, error } = await supabaseClient
-                .from('customer_addresses')
+                .from('customer_branches')
                 .update({ is_default: true })
                 .eq('id', id)
                 .select()
@@ -125,27 +125,30 @@ const AddressesService = {
             if (error) throw error;
             return { data, error: null };
         } catch (error) {
-            return handleSupabaseError(error, 'AddressesService.setDefault');
+            return handleSupabaseError(error, 'BranchesService.setDefault');
         }
     },
 
     /**
-     * Tam adres metnini oluştur
+     * Tam adres metnini olustur
      */
-    buildFullAddress(addressData) {
+    buildFullAddress(branchData) {
         var parts = [];
 
-        if (addressData.neighborhood) parts.push(addressData.neighborhood);
-        if (addressData.street) parts.push(addressData.street);
-        if (addressData.building_no) parts.push('BİNA NO:' + addressData.building_no);
-        if (addressData.floor) parts.push('KAT:' + addressData.floor);
-        if (addressData.apartment) parts.push('DAİRE:' + addressData.apartment);
-        if (addressData.district) parts.push(addressData.district);
-        if (addressData.city) parts.push(addressData.city);
+        if (branchData.neighborhood) parts.push(branchData.neighborhood);
+        if (branchData.street) parts.push(branchData.street);
+        if (branchData.building_no) parts.push('BINA NO:' + branchData.building_no);
+        if (branchData.floor) parts.push('KAT:' + branchData.floor);
+        if (branchData.apartment) parts.push('DAIRE:' + branchData.apartment);
+        if (branchData.district) parts.push(branchData.district);
+        if (branchData.city) parts.push(branchData.city);
 
         return parts.join(' ');
     }
 };
 
-// Global erişim
-window.AddressesService = AddressesService;
+// Global erisim
+window.BranchesService = BranchesService;
+
+// Geriye uyumluluk icin AddressesService alias
+window.AddressesService = BranchesService;

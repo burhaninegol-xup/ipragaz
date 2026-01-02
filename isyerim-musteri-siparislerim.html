@@ -64,6 +64,33 @@
 		/* Loading */
 		.loading { text-align: center; padding: 40px; color: #666; }
 
+		/* Recurring Order Card */
+		.recurring-card { border: 2px solid #e31e24; border-radius: 12px; padding: 20px; background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%); position: relative; }
+		.recurring-status-badge { position: absolute; top: -1px; right: 20px; padding: 4px 12px; border-radius: 0 0 8px 8px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+		.recurring-status-badge.active { background: #4CAF50; color: white; }
+		.recurring-status-badge.paused { background: #FF9800; color: white; }
+		.recurring-status-badge.cancelled { background: #9E9E9E; color: white; }
+		.recurring-status-badge svg { width: 12px; height: 12px; }
+		@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+		.recurring-status-badge.active svg { animation: spin 2s linear infinite; }
+		.recurring-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; margin-top: 10px; }
+		.recurring-icon { width: 28px; height: 28px; color: #e31e24; }
+		.recurring-schedule { font-size: 16px; font-weight: 600; color: #333; }
+		.recurring-products { font-size: 14px; color: #555; margin-bottom: 16px; line-height: 1.6; }
+		.recurring-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+		.recurring-info-item { font-size: 13px; }
+		.recurring-info-label { color: #888; }
+		.recurring-info-value { color: #333; font-weight: 500; }
+		.recurring-info-value.highlight { color: #e31e24; }
+		.recurring-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+		.btn-recurring { padding: 10px 20px; border-radius: 25px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+		.btn-recurring-pause { border: 1px solid #FF9800; color: #FF9800; background: #fff; }
+		.btn-recurring-pause:hover { background: #FFF3E0; }
+		.btn-recurring-resume { border: 1px solid #4CAF50; color: #4CAF50; background: #fff; }
+		.btn-recurring-resume:hover { background: #E8F5E9; }
+		.btn-recurring-cancel { border: 1px solid #e31e24; color: #e31e24; background: #fff; }
+		.btn-recurring-cancel:hover { background: #FFF5F5; }
+
 		/* Confirm Modal */
 		.confirm-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
 		.confirm-modal.active { display: flex; }
@@ -105,6 +132,10 @@
 
 				<!-- Tabs -->
 				<div class="tabs">
+					<div class="tab" data-status="recurring" onclick="switchTab('recurring')">
+						<svg style="width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+						Rutin Siparisler
+					</div>
 					<div class="tab" data-status="delivered" onclick="switchTab('delivered')">Tamamlanan</div>
 					<div class="tab active" data-status="ongoing" onclick="switchTab('ongoing')">Devam Eden</div>
 					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">Iptal/Teslim Edilemedi</div>
@@ -146,15 +177,21 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/orders-service.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/recurring-orders-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		var customerId = null;
+		var userId = null;
+		var userRole = null;
 		var allOrders = [];
+		var allRecurringOrders = [];
 		var currentTab = 'ongoing';
 		var cancelOrderId = null;
+		var recurringActionId = null;
 
 		// Durum mapping
 		var statusMap = {
@@ -166,6 +203,9 @@
 
 		document.addEventListener('DOMContentLoaded', async function() {
 			customerId = sessionStorage.getItem('isyerim_customer_id');
+			userId = sessionStorage.getItem('isyerim_user_id');
+			userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
+
 			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
 
 			// Sidebar yukle
@@ -194,7 +234,24 @@
 			var listContainer = document.getElementById('ordersList');
 			listContainer.innerHTML = '<div class="loading">Siparisler yukleniyor...</div>';
 
-			var result = await OrdersService.getByCustomerId(customerId);
+			var result;
+
+			// Staff kullanicilar icin sadece yetkili subelerin siparislerini getir
+			if (userRole === 'staff' && userId) {
+				// Yetkili sube ID'lerini al
+				var branchResult = await CustomerUsersService.getBranchIds(userId);
+				var authorizedBranchIds = branchResult.data || [];
+
+				if (authorizedBranchIds.length === 0) {
+					listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Yetkili oldugunuz sube bulunmuyor</p><p class="empty-subtext">Lutfen yonetici ile iletisime gecin</p></div>';
+					return;
+				}
+
+				result = await OrdersService.getByCustomerAndBranches(customerId, authorizedBranchIds);
+			} else {
+				// Owner - tum siparisleri getir
+				result = await OrdersService.getByCustomerId(customerId);
+			}
 
 			if (result.error) {
 				listContainer.innerHTML = '<div class="loading">Siparisler yuklenirken hata olustu</div>';
@@ -216,7 +273,14 @@
 				}
 			});
 
-			filterOrders();
+			// Rutin siparişler tabı için özel işlem
+			if (tab === 'recurring') {
+				document.querySelector('.date-filter').style.display = 'none';
+				loadRecurringOrders();
+			} else {
+				document.querySelector('.date-filter').style.display = 'flex';
+				filterOrders();
+			}
 		}
 
 		function filterOrders() {
@@ -301,7 +365,8 @@
 				}
 				html += '</svg></div>';
 				html += '<span class="status-text ' + status.class + '">' + status.text + '</span>';
-				html += '<span class="order-meta">' + (order.dealer?.name || 'Bayi') + ' - ' + dateStr + ' ' + timeStr + '</span>';
+				var branchName = order.branch?.branch_name ? ' (' + order.branch.branch_name + ')' : '';
+				html += '<span class="order-meta">' + (order.dealer?.name || 'Bayi') + branchName + ' - ' + dateStr + ' ' + timeStr + '</span>';
 				html += '</div>';
 				html += '</div>';
 				html += '<div class="order-products">' + (productSummary || 'Urun bilgisi yok') + '</div>';
@@ -341,6 +406,132 @@
 			} else {
 				closeCancelModal();
 				await loadOrders();
+			}
+		}
+
+		// ============================================
+		// RUTİN SİPARİŞ FONKSİYONLARI
+		// ============================================
+
+		var dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
+
+		async function loadRecurringOrders() {
+			var listContainer = document.getElementById('ordersList');
+			listContainer.innerHTML = '<div class="loading">Rutin siparisler yukleniyor...</div>';
+
+			var result = await RecurringOrdersService.getByCustomerId(customerId);
+
+			if (result.error) {
+				listContainer.innerHTML = '<div class="loading">Rutin siparisler yuklenirken hata olustu</div>';
+				return;
+			}
+
+			allRecurringOrders = result.data || [];
+			renderRecurringOrders(allRecurringOrders);
+		}
+
+		function renderRecurringOrders(orders) {
+			var listContainer = document.getElementById('ordersList');
+
+			if (orders.length === 0) {
+				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><p class="empty-text">Rutin siparisiniz bulunmuyor</p><p class="empty-subtext">Siparis verdikten sonra rutin siparis olusturabilirsiniz</p></div>';
+				return;
+			}
+
+			var html = '';
+			orders.forEach(function(order) {
+				var dayName = dayNames[order.day_of_week] || '';
+				var schedule = 'Her ' + dayName;
+				if (order.delivery_time) {
+					schedule += ' ' + order.delivery_time;
+				}
+
+				// Ürünler
+				var productSummary = (order.items || []).map(function(item) {
+					return item.quantity + 'x ' + (item.product?.name || 'Urun');
+				}).join(', ');
+
+				// Status badge
+				var statusClass = order.status;
+				var statusText = order.status === 'active' ? 'AKTİF' : (order.status === 'paused' ? 'DURAKLATILDI' : 'İPTAL');
+
+				// Bir sonraki sipariş tarihi
+				var nextOrderDate = order.next_order_date ? formatDateTurkish(order.next_order_date) : '-';
+
+				// Oluşturulma tarihi
+				var createdDate = order.created_at ? formatDateTurkish(order.created_at.split('T')[0]) : '-';
+
+				html += '<div class="recurring-card">';
+				html += '<div class="recurring-status-badge ' + statusClass + '">';
+				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+				html += statusText;
+				html += '</div>';
+
+				html += '<div class="recurring-card-header">';
+				html += '<svg class="recurring-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+				html += '<span class="recurring-schedule">' + schedule + '</span>';
+				html += '</div>';
+
+				html += '<div class="recurring-products">' + (productSummary || 'Urun bilgisi yok') + '</div>';
+
+				html += '<div class="recurring-info">';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Bayi:</span> <span class="recurring-info-value">' + (order.dealer?.name || '-') + '</span></div>';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Bir sonraki:</span> <span class="recurring-info-value highlight">' + nextOrderDate + '</span></div>';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Baslangic:</span> <span class="recurring-info-value">' + createdDate + '</span></div>';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Toplam siparis:</span> <span class="recurring-info-value">' + (order.total_orders_created || 0) + '</span></div>';
+				html += '</div>';
+
+				html += '<div class="recurring-actions">';
+				if (order.status === 'active') {
+					html += '<button class="btn-recurring btn-recurring-pause" onclick="pauseRecurring(\'' + order.id + '\')">Duraklat</button>';
+				} else if (order.status === 'paused') {
+					html += '<button class="btn-recurring btn-recurring-resume" onclick="resumeRecurring(\'' + order.id + '\')">Devam Ettir</button>';
+				}
+				if (order.status !== 'cancelled') {
+					html += '<button class="btn-recurring btn-recurring-cancel" onclick="cancelRecurring(\'' + order.id + '\')">Iptal Et</button>';
+				}
+				html += '</div>';
+
+				html += '</div>';
+			});
+
+			listContainer.innerHTML = html;
+		}
+
+		function formatDateTurkish(dateStr) {
+			var date = new Date(dateStr);
+			var aylar = ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
+			return date.getDate() + ' ' + aylar[date.getMonth()] + ' ' + date.getFullYear();
+		}
+
+		async function pauseRecurring(id) {
+			if (!confirm('Bu rutin siparisi duraklatmak istediginizden emin misiniz?')) return;
+
+			var result = await RecurringOrdersService.updateStatus(id, 'paused');
+			if (result.error) {
+				alert('Rutin siparis durdurulamadi');
+			} else {
+				loadRecurringOrders();
+			}
+		}
+
+		async function resumeRecurring(id) {
+			var result = await RecurringOrdersService.updateStatus(id, 'active');
+			if (result.error) {
+				alert('Rutin siparis devam ettirilemedi');
+			} else {
+				loadRecurringOrders();
+			}
+		}
+
+		async function cancelRecurring(id) {
+			if (!confirm('Bu rutin siparisi iptal etmek istediginizden emin misiniz? Bu islem geri alinamaz.')) return;
+
+			var result = await RecurringOrdersService.updateStatus(id, 'cancelled');
+			if (result.error) {
+				alert('Rutin siparis iptal edilemedi');
+			} else {
+				loadRecurringOrders();
 			}
 		}
 	</script>

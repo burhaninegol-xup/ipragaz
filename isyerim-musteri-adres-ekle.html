@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Adres Ekle - İpragaz</title>
+	<title>Sube Ekle - Ipragaz</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<style>
@@ -336,9 +336,9 @@
 				</div>
 
 				<!-- Title -->
-				<h1 class="card-title">Adres Bilgileri</h1>
+				<h1 class="card-title">Sube Bilgileri</h1>
 				<p class="card-subtitle">
-					<span class="checkmark">&#10003;</span> Hesabınız oluşturuldu! Teslimat adresinizi ekleyerek başlayalım.
+					<span class="checkmark">&#10003;</span> Hesabiniz olusturuldu! Merkez subenizi ekleyerek baslayalim.
 				</p>
 			</div>
 
@@ -396,15 +396,15 @@
 					<!-- Adres Tarifi -->
 					<div class="form-group">
 						<label class="form-label">Adres Tarifi</label>
-						<textarea class="form-textarea" id="addressDescription" placeholder="Örn: Yeşil kapılı apartman, 2. blok"></textarea>
-						<span class="field-hint">Kurye için yönlendirici bilgiler</span>
+						<textarea class="form-textarea" id="branchDescription" placeholder="Orn: Yesil kapili apartman, 2. blok"></textarea>
+						<span class="field-hint">Kurye icin yonlendirici bilgiler</span>
 					</div>
 
-					<!-- Adres İsmi -->
+					<!-- Sube Adi -->
 					<div class="form-group">
-						<label class="form-label">Adres İsmi <span class="required">*</span></label>
-						<input type="text" class="form-input" id="addressName" placeholder="Örn: İş, Ev, Depo" required>
-						<span class="field-hint">Bu adresi kolayca tanımanız için</span>
+						<label class="form-label">Sube Adi <span class="required">*</span></label>
+						<input type="text" class="form-input" id="branchName" value="Merkez" required>
+						<span class="field-hint">Ilk subeniz otomatik olarak Merkez olarak kaydedilir</span>
 					</div>
 				</form>
 			</div>
@@ -424,7 +424,7 @@
 	<!-- Scripts -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/locations-service.js"></script>
 
 	<script>
@@ -594,7 +594,7 @@
 			e.preventDefault();
 
 			var btn = this;
-			var addressName = document.getElementById('addressName').value.trim();
+			var branchName = document.getElementById('branchName').value.trim();
 			var cityId = document.getElementById('citySelect').value;
 			var districtId = document.getElementById('districtSelect').value;
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
@@ -607,9 +607,9 @@
 			var streetName = getSelectedOptionName('streetSelect');
 
 			// Validation
-			if (!addressName) {
-				alert('Lütfen adres ismi giriniz.');
-				document.getElementById('addressName').focus();
+			if (!branchName) {
+				alert('Lutfen sube adi giriniz.');
+				document.getElementById('branchName').focus();
 				return;
 			}
 
@@ -630,40 +630,49 @@
 			btn.innerHTML = '<div class="spinner"></div> Kaydediliyor...';
 
 			try {
-				var addressData = {
+				var branchData = {
 					customer_id: customerId,
-					address_name: addressName,
-					// Yeni FK kolonları
+					branch_name: branchName,
+					// Yeni FK kolonlari
 					city_id: cityId || null,
 					district_id: districtId || null,
 					neighborhood_id: neighborhoodId || null,
 					street_id: streetId || null,
-					// Eski VARCHAR kolonları (backward compatibility ve display için)
+					// Eski VARCHAR kolonlari (backward compatibility ve display icin)
 					city: cityName || null,
 					district: districtName || null,
 					neighborhood: neighborhoodName || null,
 					street: streetName || null,
-					// Diğer alanlar
+					// Diger alanlar
 					building_no: document.getElementById('buildingNo').value.trim() || null,
 					floor: document.getElementById('floor').value.trim() || null,
 					apartment: document.getElementById('apartment').value.trim() || null,
-					address_description: document.getElementById('addressDescription').value.trim() || null,
-					is_default: true // İlk adres varsayılan olsun
+					branch_description: document.getElementById('branchDescription').value.trim() || null,
+					is_default: true // Ilk sube varsayilan olsun
 				};
 
-				var result = await AddressesService.create(addressData);
+				var result = await BranchesService.create(branchData);
 
 				if (result.error) {
-					console.error('Adres kaydedilemedi:', result.error);
-					alert('Adres kaydedilemedi. Lütfen tekrar deneyiniz.');
+					console.error('Sube kaydedilemedi:', result.error);
+					alert('Sube kaydedilemedi. Lutfen tekrar deneyiniz.');
 					btn.disabled = false;
 					btn.innerHTML = 'Kaydet ve Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 					return;
 				}
 
-				// SessionStorage'a adres bilgisi kaydet (header'da gösterilecek)
-				sessionStorage.setItem('selected_address_id', result.data.id);
-				sessionStorage.setItem('selected_address_name', result.data.address_name);
+				// SessionStorage'a sube bilgisi kaydet (header'da gosterilecek)
+				sessionStorage.setItem('selected_branch_id', result.data.id);
+				sessionStorage.setItem('selected_branch_name', result.data.branch_name);
+
+				// Tam adres olustur ve kaydet (Mahalle, Sokak, Ilce, Il)
+				var addressParts = [];
+				if (neighborhoodName) addressParts.push(neighborhoodName);
+				if (streetName) addressParts.push(streetName);
+				if (districtName) addressParts.push(districtName);
+				if (cityName) addressParts.push(cityName);
+				var fullAddress = addressParts.join(', ');
+				sessionStorage.setItem('selected_branch_address', fullAddress);
 
 				// SessionStorage'a il ve ilçe bilgisi kaydet (bayi seçimi için)
 				sessionStorage.setItem('isyerim_user_city', cityName);

@@ -575,10 +575,10 @@
 				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>' +
 				'</div>' +
 				'<h3 class="empty-title">Bölgenizde Bayi Bulunamadı</h3>' +
-				'<p class="empty-text">' + (message || 'Maalesef ' + userDistrict + ', ' + userCity + ' bölgesinde aktif bayi bulunmamaktadır. Farklı bir adres ekleyerek tekrar deneyebilirsiniz.') + '</p>' +
-				'<button class="btn-secondary" onclick="goToAddressPage()">' +
+				'<p class="empty-text">' + (message || 'Maalesef ' + userDistrict + ', ' + userCity + ' bolgesinde aktif bayi bulunmamaktadir. Farkli bir sube ekleyerek tekrar deneyebilirsiniz.') + '</p>' +
+				'<button class="btn-secondary" onclick="goToBranchPage()">' +
 				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
-				'Farklı Adres Ekle' +
+				'Farkli Sube Ekle' +
 				'</button>' +
 				'</div>';
 		}
@@ -599,8 +599,8 @@
 			document.getElementById('submitBtn').disabled = false;
 		}
 
-		// Adres sayfasına git
-		function goToAddressPage() {
+		// Sube sayfasina git
+		function goToBranchPage() {
 			window.location.href = 'isyerim-musteri-adres-ekle.html';
 		}
 

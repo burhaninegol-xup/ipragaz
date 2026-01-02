@@ -1057,7 +1057,8 @@
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/cart-service.js"></script>
-	<script src="./js/services/addresses-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
 
 	<script>
 		// Global değişkenler
@@ -1094,13 +1095,71 @@
 			document.getElementById('orderTotalPoints').textContent = '★ ' + totalPoints + ' Puan';
 		}
 
-		// Bayileri Supabase'den yükle
+		// Bayileri Supabase'den yükle (seçili şubenin il/ilçesine göre filtrelenmiş)
 		async function loadDealers() {
 			var bayiListContainer = document.getElementById('bayiList');
 			bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Bayiler yükleniyor...</div>';
 
 			try {
-				var result = await DealersService.getAll();
+				// Seçili şube ID'sini al
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+
+				console.log('Seçili şube ID:', selectedBranchId);
+
+				if (!selectedBranchId) {
+					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Lütfen önce bir şube seçin.</div>';
+					return;
+				}
+
+				// Şube bilgilerini getir
+				var branchResult = await BranchesService.getById(selectedBranchId);
+				console.log('Şube verisi:', branchResult.data);
+
+				if (!branchResult.data) {
+					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #e31e24;">Şube bilgisi bulunamadı.</div>';
+					return;
+				}
+
+				var branch = branchResult.data;
+				var city = branch.city;
+				var district = branch.district;
+				var districtId = branch.district_id;
+
+				// Eğer city/district VARCHAR alanları boşsa ama UUID'ler varsa, isimleri çek
+				if ((!city || !district) && (branch.city_id || branch.district_id)) {
+					console.log('VARCHAR alanlar boş, UUID ile isim çekiliyor...');
+
+					if (branch.city_id && !city) {
+						var cityResult = await supabaseClient
+							.from('cities')
+							.select('name')
+							.eq('id', branch.city_id)
+							.single();
+						if (cityResult.data) city = cityResult.data.name;
+					}
+
+					if (branch.district_id && !district) {
+						var districtResult = await supabaseClient
+							.from('districts')
+							.select('name')
+							.eq('id', branch.district_id)
+							.single();
+						if (districtResult.data) district = districtResult.data.name;
+						districtId = branch.district_id;
+					}
+				}
+
+				console.log('Filtreleme parametreleri:', { city: city, district: district, districtId: districtId });
+
+				if (!city || !district) {
+					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #e31e24;">Şube adres bilgisi eksik. Lütfen şube adresini güncelleyin.</div>';
+					return;
+				}
+
+				// Micropazar filtrelemesi ile bayileri getir
+				var result = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
+
+				console.log('Filtrelenmiş bayiler:', result.data ? result.data.length : 0, 'adet');
 
 				if (result.error) {
 					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #e31e24;">Bayiler yüklenirken hata oluştu.</div>';
@@ -1111,7 +1170,8 @@
 				dealersList = result.data || [];
 
 				if (dealersList.length === 0) {
-					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Kayıtlı bayi bulunamadı.</div>';
+					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">' +
+						city + ' / ' + district + ' bölgesinde hizmet veren bayi bulunamadı.</div>';
 					return;
 				}
 
@@ -1398,6 +1458,33 @@
 				submitBtn.disabled = false;
 				submitBtn.innerHTML = 'Sipariş Ver <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 			}
+		});
+
+		// Sube degisikligini dinle (header'dan sube degistiginde)
+		window.addEventListener('branchChanged', function(event) {
+			console.log('Sube degisti, bayiler yeniden yukleniyor...');
+
+			// Mevcut bayi secimini temizle
+			bayiSelect.value = '';
+			bayiSelectorText.textContent = 'Bayi Seciniz';
+			bayiSelectorText.classList.add('placeholder');
+
+			// Teslimat secimini sifirla
+			deliverySelect.value = '';
+			deliverySelectorText.textContent = 'Teslimat Tarihi ve Saati Seçiniz';
+			deliverySelectorText.classList.add('placeholder');
+			deliverySelector.classList.add('disabled');
+			document.getElementById('deliveryNotice').classList.remove('active');
+
+			// Saat secimini sifirla
+			var timeRadios = document.querySelectorAll('input[name="deliveryTime"]');
+			timeRadios.forEach(function(radio) {
+				radio.checked = false;
+			});
+			selectedDeliveryDate = null;
+
+			// Bayileri yeniden yukle
+			loadDealers();
 		});
 	</script>
 </body>

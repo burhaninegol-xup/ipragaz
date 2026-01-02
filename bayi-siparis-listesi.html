@@ -52,70 +52,6 @@
 			font-size: 14px;
 		}
 
-		/* Stats Grid */
-		.stats-grid {
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			gap: 15px;
-			margin-bottom: 25px;
-		}
-
-		.stat-card {
-			background: #fff;
-			border-radius: 14px;
-			padding: 20px;
-			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-			display: flex;
-			align-items: center;
-			gap: 15px;
-		}
-
-		.stat-icon {
-			width: 50px;
-			height: 50px;
-			border-radius: 12px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-
-		.stat-icon svg {
-			width: 24px;
-			height: 24px;
-		}
-
-		.stat-icon.waiting {
-			background: #fff8e1;
-			color: #f57c00;
-		}
-
-		.stat-icon.onway {
-			background: #e3f2fd;
-			color: #1565c0;
-		}
-
-		.stat-icon.completed {
-			background: #e8f5e9;
-			color: #2e7d32;
-		}
-
-		.stat-icon.cancelled {
-			background: #ffebee;
-			color: #c62828;
-		}
-
-		.stat-info h3 {
-			font-size: 24px;
-			font-weight: 700;
-			color: #333;
-			margin-bottom: 2px;
-		}
-
-		.stat-info p {
-			font-size: 13px;
-			color: #888;
-		}
-
 		/* Filter Section */
 		.filter-section {
 			background: #fff;
@@ -719,17 +655,7 @@
 		}
 
 		/* Responsive */
-		@media (max-width: 1024px) {
-			.stats-grid {
-				grid-template-columns: repeat(2, 1fr);
-			}
-		}
-
 		@media (max-width: 768px) {
-			.stats-grid {
-				grid-template-columns: 1fr 1fr;
-			}
-
 			.page-header {
 				flex-direction: column;
 				align-items: flex-start;
@@ -787,10 +713,6 @@
 				padding: 20px 15px;
 			}
 
-			.stats-grid {
-				grid-template-columns: 1fr;
-			}
-
 			.page-header-left h1 {
 				font-size: 22px;
 			}
@@ -813,6 +735,156 @@
 		@keyframes spin {
 			to { transform: rotate(360deg); }
 		}
+
+		/* Rutin Sipariş Kartları */
+		.recurring-card {
+			border: 2px solid #e31e24;
+			border-radius: 14px;
+			padding: 18px;
+			margin-bottom: 12px;
+			background: linear-gradient(135deg, #FFF5F5 0%, #FFEBEE 100%);
+			position: relative;
+		}
+
+		.recurring-card:hover {
+			box-shadow: 0 4px 15px rgba(227,30,36,0.15);
+		}
+
+		.recurring-status-badge {
+			position: absolute;
+			top: -1px;
+			right: 20px;
+			padding: 4px 12px;
+			border-radius: 0 0 8px 8px;
+			font-size: 10px;
+			font-weight: 600;
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			text-transform: uppercase;
+		}
+
+		.recurring-status-badge.active {
+			background: #4CAF50;
+			color: white;
+		}
+
+		.recurring-status-badge.paused {
+			background: #FF9800;
+			color: white;
+		}
+
+		.recurring-status-badge.cancelled {
+			background: #9E9E9E;
+			color: white;
+		}
+
+		.recurring-status-badge svg {
+			width: 12px;
+			height: 12px;
+		}
+
+		@keyframes spinIcon {
+			from { transform: rotate(0deg); }
+			to { transform: rotate(360deg); }
+		}
+
+		.recurring-status-badge.active svg {
+			animation: spinIcon 2s linear infinite;
+		}
+
+		.recurring-card-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 12px;
+			margin-top: 8px;
+		}
+
+		.recurring-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #e31e24;
+		}
+
+		.recurring-icon svg {
+			width: 22px;
+			height: 22px;
+		}
+
+		.recurring-customer {
+			flex: 1;
+		}
+
+		.recurring-customer-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.recurring-schedule {
+			font-size: 13px;
+			color: #e31e24;
+			font-weight: 500;
+		}
+
+		.recurring-products {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 12px;
+			padding-left: 52px;
+		}
+
+		.recurring-info-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 12px;
+			padding-left: 52px;
+			margin-bottom: 12px;
+		}
+
+		.recurring-info-item {
+			font-size: 12px;
+		}
+
+		.recurring-info-label {
+			color: #888;
+			display: block;
+		}
+
+		.recurring-info-value {
+			color: #333;
+			font-weight: 500;
+		}
+
+		.recurring-info-value.highlight {
+			color: #e31e24;
+		}
+
+		.filter-btn.recurring .count {
+			background: #FFEBEE;
+			color: #e31e24;
+		}
+
+		.filter-btn.recurring.active .count {
+			background: #e31e24;
+			color: #fff;
+		}
+
+		@media (max-width: 768px) {
+			.recurring-info-grid {
+				grid-template-columns: 1fr 1fr;
+				padding-left: 0;
+			}
+			.recurring-products {
+				padding-left: 0;
+			}
+		}
 	</style>
 </head>
 
@@ -827,46 +899,6 @@
 			<div class="page-header-left">
 				<h1>Siparisler</h1>
 				<p>Musterilerinizden gelen siparisleri yonetin</p>
-			</div>
-		</div>
-
-		<!-- Stats Grid -->
-		<div class="stats-grid">
-			<div class="stat-card">
-				<div class="stat-icon waiting">
-					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-				</div>
-				<div class="stat-info">
-					<h3 id="stat-waiting">0</h3>
-					<p>Atama Bekliyor</p>
-				</div>
-			</div>
-			<div class="stat-card">
-				<div class="stat-icon onway">
-					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
-				</div>
-				<div class="stat-info">
-					<h3 id="stat-onway">0</h3>
-					<p>Dagitimda</p>
-				</div>
-			</div>
-			<div class="stat-card">
-				<div class="stat-icon completed">
-					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-				</div>
-				<div class="stat-info">
-					<h3 id="stat-completed">0</h3>
-					<p>Teslim Edildi</p>
-				</div>
-			</div>
-			<div class="stat-card">
-				<div class="stat-icon cancelled">
-					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>
-				</div>
-				<div class="stat-info">
-					<h3 id="stat-cancelled">0</h3>
-					<p>Iptal</p>
-				</div>
 			</div>
 		</div>
 
@@ -899,6 +931,13 @@
 					<button class="filter-btn cancelled" data-filter="cancelled">
 						Iptal
 						<span class="count" id="count-cancelled">0</span>
+					</button>
+					<button class="filter-btn recurring" data-filter="recurring">
+						<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right: 4px;">
+							<path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
+						</svg>
+						Rutin
+						<span class="count" id="count-recurring">0</span>
 					</button>
 				</div>
 				<div class="date-filter">
@@ -963,6 +1002,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/recurring-orders-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
@@ -978,12 +1018,30 @@
 
 		// Global state
 		var allOrders = [];
+		var allRecurringOrders = [];
 		var currentDealerId = null;
 		var currentFilter = 'all';
 		var currentDateFilter = 'all';
 		var currentPage = 0;
 		var pageSize = 20;
 		var pendingAction = null;
+
+		// URL parametrelerini oku ve filtreleri uygula
+		function applyUrlFilters() {
+			var params = new URLSearchParams(window.location.search);
+
+			// Status parametresi
+			var statusParam = params.get('status');
+			if (statusParam && ['waiting_for_assignment', 'on_the_way', 'completed', 'cancelled'].includes(statusParam)) {
+				currentFilter = statusParam;
+			}
+
+			// Date parametresi
+			var dateParam = params.get('date');
+			if (dateParam && ['today', 'yesterday', 'week', 'month'].includes(dateParam)) {
+				currentDateFilter = dateParam;
+			}
+		}
 
 		// Status labels
 		var statusLabels = {
@@ -1054,26 +1112,31 @@
 		// Get date filter range
 		function getDateRange(filter) {
 			var now = new Date();
-			var start = null;
+			var result = { from: null, to: null };
 
 			switch (filter) {
 				case 'today':
-					start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+					result.from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+					result.to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 					break;
 				case 'yesterday':
-					start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+					result.from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+					result.to = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 					break;
 				case 'week':
-					start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+					result.from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
 					break;
 				case 'month':
-					start = new Date(now.getFullYear(), now.getMonth(), 1);
+					result.from = new Date(now.getFullYear(), now.getMonth(), 1);
 					break;
 				default:
 					return null;
 			}
 
-			return start.toISOString();
+			return {
+				from: result.from ? result.from.toISOString() : null,
+				to: result.to ? result.to.toISOString() : null
+			};
 		}
 
 		// Load orders
@@ -1090,9 +1153,10 @@
 				if (currentFilter !== 'all') {
 					filters.status = currentFilter;
 				}
-				var dateFrom = getDateRange(currentDateFilter);
-				if (dateFrom) {
-					filters.dateFrom = dateFrom;
+				var dateRange = getDateRange(currentDateFilter);
+				if (dateRange) {
+					if (dateRange.from) filters.dateFrom = dateRange.from;
+					if (dateRange.to) filters.dateTo = dateRange.to;
 				}
 
 				const { data, error } = await OrdersService.getByDealerId(currentDealerId, filters);
@@ -1100,36 +1164,11 @@
 
 				allOrders = data || [];
 				renderOrders();
-				updateStats();
 				updateFilterCounts();
 
 			} catch (err) {
 				console.error('Siparis yukleme hatasi:', err);
 				$('#order-list').html('<div class="empty-state"><p>Siparisler yuklenirken hata olustu</p></div>');
-			}
-		}
-
-		// Update stats
-		async function updateStats() {
-			if (!currentDealerId) return;
-
-			try {
-				const [waitingRes, onwayRes] = await Promise.all([
-					OrdersService.getWaitingCount(currentDealerId),
-					OrdersService.getOnTheWayCount(currentDealerId)
-				]);
-
-				$('#stat-waiting').text(waitingRes.data || 0);
-				$('#stat-onway').text(onwayRes.data || 0);
-
-				// Count from loaded data
-				var completedCount = allOrders.filter(o => o.status === 'completed').length;
-				var cancelledCount = allOrders.filter(o => o.status === 'cancelled').length;
-				$('#stat-completed').text(completedCount);
-				$('#stat-cancelled').text(cancelledCount);
-
-			} catch (err) {
-				console.error('Istatistik yukleme hatasi:', err);
 			}
 		}
 
@@ -1320,10 +1359,183 @@
 			}
 		}
 
+		// Load recurring orders count for badge
+		async function loadRecurringOrdersCount() {
+			try {
+				var dealerId = sessionStorage.getItem('bayi_dealer_id');
+				console.log('Rutin siparisler icin dealer ID:', dealerId);
+
+				if (!dealerId) {
+					console.warn('Dealer ID bulunamadi');
+					return;
+				}
+
+				const { data, error } = await RecurringOrdersService.getByDealerId(dealerId);
+				console.log('Rutin siparisler sonucu:', { data, error });
+
+				if (error) {
+					console.error('Rutin siparis yukleme hatasi:', error);
+					return;
+				}
+
+				if (data) {
+					allRecurringOrders = data;
+					$('#count-recurring').text(data.length);
+				}
+			} catch (err) {
+				console.error('Rutin siparis sayisi yukleme hatasi:', err);
+			}
+		}
+
+		// Load recurring orders
+		async function loadRecurringOrders() {
+			try {
+				currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+				console.log('loadRecurringOrders - dealer ID:', currentDealerId);
+
+				if (!currentDealerId) {
+					$('#order-list').html('<div class="empty-state"><p>Bayi bilgisi bulunamadi. Lutfen tekrar giris yapin.</p></div>');
+					return;
+				}
+
+				const { data, error } = await RecurringOrdersService.getByDealerId(currentDealerId);
+				console.log('loadRecurringOrders sonucu:', { data, error });
+
+				if (error) {
+					console.error('Rutin siparis yukleme hatasi:', error);
+					$('#order-list').html('<div class="empty-state"><p>Rutin siparisler yuklenirken hata: ' + (error.message || error) + '</p></div>');
+					return;
+				}
+
+				allRecurringOrders = data || [];
+				$('#count-recurring').text(allRecurringOrders.length);
+				renderRecurringOrders();
+
+			} catch (err) {
+				console.error('Rutin siparis yukleme exception:', err);
+				$('#order-list').html('<div class="empty-state"><p>Hata olustu</p></div>');
+			}
+		}
+
+		// Create recurring order card
+		function createRecurringOrderCard(recurringOrder) {
+			var status = recurringOrder.status || 'active';
+			var customerName = recurringOrder.customer ? recurringOrder.customer.name : 'Bilinmeyen Musteri';
+			var customerPhone = recurringOrder.customer ? recurringOrder.customer.phone : '';
+			var dayName = RecurringOrdersService.getDayName(recurringOrder.day_of_week);
+			var deliveryTime = recurringOrder.delivery_time || '';
+
+			// Products summary
+			var productsSummary = '';
+			if (recurringOrder.items && recurringOrder.items.length > 0) {
+				var productNames = recurringOrder.items.map(function(item) {
+					var productName = item.product ? item.product.name : 'Urun';
+					return item.quantity + 'x ' + productName;
+				});
+				productsSummary = productNames.join(', ');
+			}
+
+			// Status info
+			var statusInfo = RecurringOrdersService.getStatusInfo(status);
+			var statusIcon = status === 'active' ?
+				'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>' :
+				status === 'paused' ?
+				'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>' :
+				'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>';
+
+			// Format next order date
+			var nextDateFormatted = '-';
+			if (recurringOrder.next_order_date) {
+				var nextDate = new Date(recurringOrder.next_order_date);
+				nextDateFormatted = nextDate.toLocaleDateString('tr-TR');
+			}
+
+			return '<div class="recurring-card" data-id="' + recurringOrder.id + '">' +
+				'<div class="recurring-status-badge ' + status + '">' +
+					statusIcon +
+					'<span>' + statusInfo.text + '</span>' +
+				'</div>' +
+				'<div class="recurring-card-header">' +
+					'<div class="recurring-icon">' +
+						'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>' +
+					'</div>' +
+					'<div class="recurring-customer">' +
+						'<div class="recurring-customer-name">' + customerName + '</div>' +
+						'<div class="recurring-schedule">Her ' + dayName + (deliveryTime ? ' ' + deliveryTime : '') + '</div>' +
+					'</div>' +
+				'</div>' +
+				'<div class="recurring-products">' + productsSummary + '</div>' +
+				'<div class="recurring-info-grid">' +
+					'<div class="recurring-info-item">' +
+						'<span class="recurring-info-label">Sonraki Siparis</span>' +
+						'<span class="recurring-info-value highlight">' + nextDateFormatted + '</span>' +
+					'</div>' +
+					'<div class="recurring-info-item">' +
+						'<span class="recurring-info-label">Toplam Siparis</span>' +
+						'<span class="recurring-info-value">' + (recurringOrder.total_orders_created || 0) + ' adet</span>' +
+					'</div>' +
+					'<div class="recurring-info-item">' +
+						'<span class="recurring-info-label">Telefon</span>' +
+						'<span class="recurring-info-value">' + (customerPhone || '-') + '</span>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+		}
+
+		// Render recurring orders
+		function renderRecurringOrders() {
+			var $list = $('#order-list');
+			$list.empty();
+
+			// Apply search filter
+			var searchTerm = $('#search-input').val().toLowerCase();
+			var filteredOrders = allRecurringOrders.filter(function(order) {
+				if (searchTerm) {
+					var customerName = order.customer ? order.customer.name.toLowerCase() : '';
+					if (customerName.indexOf(searchTerm) === -1) {
+						return false;
+					}
+				}
+				return true;
+			});
+
+			if (filteredOrders.length === 0) {
+				$list.html('<div class="empty-state">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>' +
+					'<h3>Rutin siparis bulunamadi</h3>' +
+					'<p>Henuz musterileriniz tarafindan tanimlanan rutin siparis yok</p>' +
+				'</div>');
+				$('#pagination-container').hide();
+				return;
+			}
+
+			filteredOrders.forEach(function(order) {
+				$list.append(createRecurringOrderCard(order));
+			});
+
+			// Hide pagination for recurring orders
+			$('#pagination-container').hide();
+		}
+
 		// jQuery ready
 		$(document).ready(function() {
+			// URL parametrelerinden filtreleri uygula
+			applyUrlFilters();
+
+			// UI elementlerini guncelle
+			if (currentFilter !== 'all') {
+				$('.filter-btn').removeClass('active');
+				$('.filter-btn[data-filter="' + currentFilter + '"]').addClass('active');
+			}
+			if (currentDateFilter !== 'all') {
+				$('#date-filter').val(currentDateFilter);
+			}
+
 			// Load orders
 			loadOrders();
+
+			// Load recurring orders count
+			loadRecurringOrdersCount();
 
 			// Filter buttons
 			$('.filter-btn').on('click', function() {
@@ -1331,7 +1543,14 @@
 				$(this).addClass('active');
 				currentFilter = $(this).data('filter');
 				currentPage = 0;
-				loadOrders();
+
+				if (currentFilter === 'recurring') {
+					// Rutin siparişler sekmesi
+					loadRecurringOrders();
+				} else {
+					// Normal siparişler
+					loadOrders();
+				}
 			});
 
 			// Date filter
@@ -1344,7 +1563,11 @@
 			// Search
 			$('#search-input').on('keyup', function() {
 				currentPage = 0;
-				renderOrders();
+				if (currentFilter === 'recurring') {
+					renderRecurringOrders();
+				} else {
+					renderOrders();
+				}
 			});
 
 			// Pagination

@@ -304,6 +304,7 @@
 	<script src="./js/supabase-client.js"></script>
 	<!-- Service Dosyaları -->
 	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
 
 	<script>
 		// Get phone from URL or sessionStorage
@@ -422,23 +423,83 @@
 			submitBtn.textContent = 'Kontrol ediliyor...';
 
 			try {
-				// Supabase'den telefon numarası ile müşteri kontrolü yap
-				var result = await CustomersService.getByPhone(phone);
+				// Supabase'den telefon numarası ile kullanici kontrolu yap
+				var userResult = await CustomerUsersService.getByPhone(phone);
 
-				if (result.data) {
-					// Kullanıcı mevcut - customer_id ve adını kaydet, anasayfaya yönlendir
-					sessionStorage.setItem('isyerim_customer_id', result.data.id);
-					sessionStorage.setItem('isyerim_customer_name', result.data.name || 'Müşteri');
+				if (userResult.data) {
+					// Kullanici bulundu - session bilgilerini kaydet
+					var user = userResult.data;
+					var customer = user.customer;
+
+					// Musterinin aktif olup olmadigini kontrol et
+					if (!customer || !customer.is_active) {
+						alert('Hesabiniz aktif degil. Lutfen bayi ile iletisime gecin.');
+						submitBtn.disabled = false;
+						submitBtn.textContent = 'Devam';
+						return;
+					}
+
+					// Kullanici bilgilerini kaydet
+					sessionStorage.setItem('isyerim_customer_id', user.customer_id);
+					sessionStorage.setItem('isyerim_user_id', user.id);
+					sessionStorage.setItem('isyerim_user_role', user.role);
+					sessionStorage.setItem('isyerim_user_name', user.name);
+					sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
 					sessionStorage.setItem('isNewUser', 'false');
+
 					window.location.href = 'isyerim-musteri-anasayfa.html';
 				} else {
-					// Yeni kullanıcı - üye ol sayfasına yönlendir
-					sessionStorage.setItem('isNewUser', 'true');
-					window.location.href = 'isyerim-musteri-uye-ol.html';
+					// Kullanici bulunamadi - eski sistemdeki musteriye bakalim
+					var customerResult = await CustomersService.getByPhone(phone);
+
+					if (customerResult.data) {
+						// Musteri var ama kullanicisi yok - owner olustur ve giris yap
+						var customer = customerResult.data;
+
+						// Musterinin aktif olup olmadigini kontrol et
+						if (!customer.is_active) {
+							alert('Hesabiniz aktif degil. Lutfen bayi ile iletisime gecin.');
+							submitBtn.disabled = false;
+							submitBtn.textContent = 'Devam';
+							return;
+						}
+
+						// Owner kullanici olustur
+						var ownerResult = await CustomerUsersService.createOwner(
+							customer.id,
+							customer.name,
+							customer.phone
+						);
+
+						if (ownerResult.data) {
+							// Olusturulan owner ile giris yap
+							sessionStorage.setItem('isyerim_customer_id', customer.id);
+							sessionStorage.setItem('isyerim_user_id', ownerResult.data.id);
+							sessionStorage.setItem('isyerim_user_role', 'owner');
+							sessionStorage.setItem('isyerim_user_name', customer.name);
+							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isNewUser', 'false');
+
+							window.location.href = 'isyerim-musteri-anasayfa.html';
+						} else {
+							// Owner olusturulamadi - yine de giris yap (eski akis)
+							sessionStorage.setItem('isyerim_customer_id', customer.id);
+							sessionStorage.setItem('isyerim_user_role', 'owner');
+							sessionStorage.setItem('isyerim_user_name', customer.name);
+							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isNewUser', 'false');
+
+							window.location.href = 'isyerim-musteri-anasayfa.html';
+						}
+					} else {
+						// Yeni kullanici - uye ol sayfasina yonlendir
+						sessionStorage.setItem('isNewUser', 'true');
+						window.location.href = 'isyerim-musteri-uye-ol.html';
+					}
 				}
 			} catch (error) {
-				console.error('Müşteri kontrolü hatası:', error);
-				// Hata durumunda yeni kullanıcı gibi davran
+				console.error('Kullanici kontrolu hatasi:', error);
+				// Hata durumunda yeni kullanici gibi davran
 				sessionStorage.setItem('isNewUser', 'true');
 				window.location.href = 'isyerim-musteri-uye-ol.html';
 			}

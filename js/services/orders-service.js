@@ -106,7 +106,7 @@ const OrdersService = {
                 .from('orders')
                 .select(`
                     *,
-                    dealer:dealers(id, name),
+                    dealer:dealers(id, name, phone, city, district),
                     order_items(
                         id,
                         quantity,
@@ -124,6 +124,41 @@ const OrdersService = {
             return { data, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OrdersService.getByCustomerId');
+        }
+    },
+
+    /**
+     * Musteri siparislerini sube bazli getir (staff kullanicilar icin)
+     */
+    async getByCustomerAndBranches(customerId, branchIds, limit = 50) {
+        try {
+            if (!branchIds || branchIds.length === 0) {
+                return { data: [], error: null };
+            }
+
+            const { data, error } = await supabaseClient
+                .from('orders')
+                .select(`
+                    *,
+                    dealer:dealers(id, name),
+                    order_items(
+                        id,
+                        quantity,
+                        unit_price,
+                        total_price,
+                        points,
+                        product:products(id, code, name, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .in('branch_id', branchIds)
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OrdersService.getByCustomerAndBranches');
         }
     },
 
@@ -177,18 +212,34 @@ const OrdersService = {
     },
 
     /**
-     * Sipariş durumunu güncelle
+     * Sipariş durumunu güncelle (timeline kaydı ile)
      */
-    async updateStatus(orderId, status) {
+    async updateStatus(orderId, newStatus, changedByType = 'system', changedById = null, notes = null) {
         try {
+            // Önce mevcut durumu al
+            const { data: currentOrder, error: fetchError } = await supabaseClient
+                .from('orders')
+                .select('status')
+                .eq('id', orderId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            const oldStatus = currentOrder.status;
+
+            // Durumu güncelle
             const { data, error } = await supabaseClient
                 .from('orders')
-                .update({ status })
+                .update({ status: newStatus })
                 .eq('id', orderId)
                 .select()
                 .single();
 
             if (error) throw error;
+
+            // Timeline kaydı oluştur
+            await this.logStatusChange(orderId, oldStatus, newStatus, changedByType, changedById, notes);
+
             return { data, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OrdersService.updateStatus');
@@ -217,22 +268,22 @@ const OrdersService = {
     /**
      * Sipariş iptal et
      */
-    async cancel(orderId) {
-        return this.updateStatus(orderId, 'cancelled');
+    async cancel(orderId, cancelledByType = 'customer', cancelledById = null) {
+        return this.updateStatus(orderId, 'cancelled', cancelledByType, cancelledById, 'Sipariş iptal edildi');
     },
 
     /**
      * Sipariş dagitima cikar (on_the_way)
      */
-    async startDelivery(orderId) {
-        return this.updateStatus(orderId, 'on_the_way');
+    async startDelivery(orderId, dealerId = null) {
+        return this.updateStatus(orderId, 'on_the_way', 'dealer', dealerId, 'Dağıtıma çıkarıldı');
     },
 
     /**
      * Sipariş teslim edildi (completed)
      */
-    async markDelivered(orderId) {
-        return this.updateStatus(orderId, 'completed');
+    async markDelivered(orderId, dealerId = null) {
+        return this.updateStatus(orderId, 'completed', 'dealer', dealerId, 'Teslim edildi');
     },
 
     /**
@@ -268,6 +319,42 @@ const OrdersService = {
             return { data: count, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OrdersService.getOnTheWayCount');
+        }
+    },
+
+    /**
+     * Teslim edilen siparis sayisi (completed)
+     */
+    async getCompletedCount(dealerId) {
+        try {
+            const { count, error } = await supabaseClient
+                .from('orders')
+                .select('id', { count: 'exact' })
+                .eq('dealer_id', dealerId)
+                .eq('status', 'completed');
+
+            if (error) throw error;
+            return { data: count, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OrdersService.getCompletedCount');
+        }
+    },
+
+    /**
+     * Iptal edilen siparis sayisi (cancelled)
+     */
+    async getCancelledCount(dealerId) {
+        try {
+            const { count, error } = await supabaseClient
+                .from('orders')
+                .select('id', { count: 'exact' })
+                .eq('dealer_id', dealerId)
+                .eq('status', 'cancelled');
+
+            if (error) throw error;
+            return { data: count, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OrdersService.getCancelledCount');
         }
     },
 
@@ -332,6 +419,58 @@ const OrdersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OrdersService.getSalesStats');
         }
+    },
+
+    /**
+     * Sipariş durum geçmişini getir (timeline)
+     */
+    async getStatusHistory(orderId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('order_status_history')
+                .select('*')
+                .eq('order_id', orderId)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OrdersService.getStatusHistory');
+        }
+    },
+
+    /**
+     * Durum değişikliğini kaydet (timeline log)
+     */
+    async logStatusChange(orderId, oldStatus, newStatus, changedByType = 'system', changedById = null, notes = null) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('order_status_history')
+                .insert([{
+                    order_id: orderId,
+                    old_status: oldStatus,
+                    new_status: newStatus,
+                    changed_by_type: changedByType,
+                    changed_by_id: changedById,
+                    notes: notes
+                }])
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            // Timeline hatası sipariş işlemini engellemesin
+            console.error('Timeline kayıt hatası:', error);
+            return { data: null, error };
+        }
+    },
+
+    /**
+     * Sipariş oluşturulduğunda ilk timeline kaydını oluştur
+     */
+    async logOrderCreated(orderId, customerId) {
+        return this.logStatusChange(orderId, null, 'waiting_for_assignment', 'customer', customerId, 'Sipariş oluşturuldu');
     }
 };
 

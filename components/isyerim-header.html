@@ -871,6 +871,11 @@
 		border-style: dashed;
 		color: #999;
 	}
+	.header-dealer-select.no-dealer {
+		opacity: 0.6;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
 	.header-dealer-select .dealer-icon {
 		width: 18px;
 		height: 18px;
@@ -1155,7 +1160,7 @@
 			<div class="header-user-location">
 				<span class="user-name" id="headerUserName">Kullanici</span>
 				<span>:</span>
-				<span id="headerUserLocation">Adres Seciniz</span>
+				<span id="headerUserLocation">Sube Seciniz</span>
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
 				</svg>
@@ -1257,7 +1262,7 @@
 <!-- Address Selection Modal -->
 <div class="address-modal-overlay" id="addressModalOverlay" onclick="closeAddressModal(event)">
 	<div class="address-modal" onclick="event.stopPropagation()">
-		<h3 class="address-modal-title">Adreslerim</h3>
+		<h3 class="address-modal-title">Subelerim</h3>
 		<div class="address-modal-list" id="addressModalList">
 			<div class="address-empty">Yukleniyor...</div>
 		</div>

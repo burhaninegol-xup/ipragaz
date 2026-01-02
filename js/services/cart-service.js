@@ -332,7 +332,7 @@ const CartService = {
             delivery_time: deliveryInfo.time || null,
             payment_method: deliveryInfo.paymentMethod || 'cash',
             notes: deliveryInfo.notes || null,
-            status: 'pending'
+            status: 'waiting_for_assignment'
         };
 
         const orderItems = cart.items.map(item => ({
@@ -345,7 +345,9 @@ const CartService = {
 
         const result = await OrdersService.create(orderData, orderItems);
 
-        if (!result.error) {
+        if (!result.error && result.data) {
+            // Timeline'a ilk kaydı ekle
+            await OrdersService.logOrderCreated(result.data.id, customerId);
             await this.clearCart();
         }
 

@@ -18,11 +18,68 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 70px;
+		height: 54px;
+	}
+
+	.header__logo {
+		display: flex;
+		align-items: center;
+	}
+
+	.header__logo a {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		text-decoration: none;
+	}
+
+	/* Gradient divider */
+	.header__logo a::after {
+		content: '';
+		display: block;
+		width: 1px;
+		height: 32px;
+		background: linear-gradient(
+			to bottom,
+			rgba(0, 44, 119, 0) 0%,
+			rgba(0, 44, 119, 0.3) 50%,
+			rgba(0, 44, 119, 0) 100%
+		);
 	}
 
 	.header__logo img {
-		height: 40px;
+		height: 44px;
+	}
+
+	.header__app-title {
+		font-size: 15px;
+		font-weight: 600;
+		color: #002c77;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 480px) {
+		.header__wrapper {
+			height: 50px;
+		}
+		.header__logo img {
+			height: 38px;
+		}
+		.header__logo a::after {
+			height: 26px;
+		}
+		.header__app-title {
+			font-size: 13px;
+		}
+	}
+
+	@media (max-width: 360px) {
+		.header__app-title,
+		.header__logo a::after {
+			display: none;
+		}
 	}
 
 	.bayi-header-nav {
@@ -409,6 +466,7 @@
 			<div class="header__logo">
 				<a href="bayi-anasayfa.html">
 					<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
+					<span class="header__app-title">Bayi Uygulamasi</span>
 				</a>
 			</div>
 
