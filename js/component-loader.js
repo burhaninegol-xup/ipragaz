@@ -47,6 +47,25 @@ const ComponentLoader = {
      * Component event'lerini bagla
      */
     async initializeComponents() {
+        // Profil dropdown'da kullanici bilgilerini goster
+        var userName = sessionStorage.getItem('isyerim_user_name') || sessionStorage.getItem('isyerim_customer_name') || 'Kullanici';
+        var userId = sessionStorage.getItem('isyerim_user_id') || sessionStorage.getItem('isyerim_customer_id') || '';
+
+        var profileNameEl = document.getElementById('profileUserName');
+        var profileUuidEl = document.getElementById('profileUserUuid');
+
+        if (profileNameEl) profileNameEl.textContent = userName;
+        if (profileUuidEl) profileUuidEl.textContent = userId;
+
+        // Staff kullanicilar icin owner-only menu itemlari gizle
+        var userRole = sessionStorage.getItem('isyerim_user_role');
+        if (userRole !== 'owner') {
+            var ownerOnlyItems = document.querySelectorAll('.owner-only');
+            ownerOnlyItems.forEach(function(item) {
+                item.style.display = 'none';
+            });
+        }
+
         // Profile dropdown toggle
         const profileBtn = document.getElementById('profileBtn');
         const profileDropdown = document.getElementById('profileDropdown');
@@ -614,18 +633,18 @@ const ComponentLoader = {
      * Kullanici adini sessionStorage'dan yukle ve goster
      */
     loadUserName() {
-        var customerName = sessionStorage.getItem('isyerim_customer_name');
+        var userName = sessionStorage.getItem('isyerim_user_name') || sessionStorage.getItem('isyerim_customer_name') || 'Kullanici';
 
         // Profile dropdown'daki ismi guncelle
         var profileNameEl = document.getElementById('profileUserName');
-        if (profileNameEl && customerName) {
-            profileNameEl.textContent = customerName;
+        if (profileNameEl && userName) {
+            profileNameEl.textContent = userName;
         }
 
         // Header'daki kullanici adini da guncelle
         var headerUserNameEl = document.getElementById('headerUserName');
-        if (headerUserNameEl && customerName) {
-            headerUserNameEl.textContent = customerName;
+        if (headerUserNameEl && userName) {
+            headerUserNameEl.textContent = userName;
         }
     },
 

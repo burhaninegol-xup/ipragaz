@@ -14,7 +14,7 @@ const CustomerUsersService = {
             .from('customer_users')
             .select(`
                 *,
-                customer:customers(id, name, company_name, phone, email, dealer_id, is_active)
+                customer:customers(id, name, company_name, phone, email, dealer_id, is_active, tabela_unvani)
             `)
             .eq('phone', phone)
             .eq('is_active', true)
@@ -33,7 +33,7 @@ const CustomerUsersService = {
             .from('customer_users')
             .select(`
                 *,
-                customer:customers(id, name, company_name, phone, email, dealer_id, is_active)
+                customer:customers(id, name, company_name, phone, email, dealer_id, is_active, tabela_unvani)
             `)
             .eq('id', id)
             .single();

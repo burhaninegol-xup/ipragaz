@@ -829,10 +829,20 @@
 		height: 20px;
 		color: #fff;
 	}
+	.profile-info {
+		display: flex;
+		flex-direction: column;
+	}
 	.profile-name {
 		font-size: 14px;
 		font-weight: 600;
 		color: #333;
+	}
+	.profile-uuid {
+		font-size: 9px;
+		color: #999;
+		word-break: break-all;
+		margin-top: 2px;
 	}
 	@media (max-width: 768px) {
 		.header .container {
@@ -1220,16 +1230,12 @@
 								<circle cx="12" cy="7" r="4"/>
 							</svg>
 						</div>
-						<span class="profile-name" id="profileUserName">Kullanici</span>
+						<div class="profile-info">
+							<span class="profile-name" id="profileUserName">Kullanici</span>
+							<span class="profile-uuid" id="profileUserUuid"></span>
+						</div>
 					</div>
-					<a href="isyerim-musteri-bayi-fiyatlari.html" class="profile-dropdown-item">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<line x1="12" y1="1" x2="12" y2="23"/>
-							<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-						</svg>
-						Bayi Fiyatlari
-					</a>
-					<a href="isyerim-musteri-bilgileri-guncelle.html" class="profile-dropdown-item owner-only">
+					<a href="isyerim-musteri-siparislerim.html" class="profile-dropdown-item">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<circle cx="12" cy="12" r="3"/>
 							<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1581,6 +1587,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Wait a bit for other scripts to load
 	setTimeout(() => NotificationUI.init(), 500);
 	setTimeout(() => DealerUI.init(), 600);
+
+	// Profil dropdown'da kullanici bilgilerini goster
+	var userName = sessionStorage.getItem('isyerim_user_name') || sessionStorage.getItem('isyerim_customer_name') || 'Kullanici';
+	var userId = sessionStorage.getItem('isyerim_user_id') || sessionStorage.getItem('isyerim_customer_id') || '';
+
+	var profileNameEl = document.getElementById('profileUserName');
+	var profileUuidEl = document.getElementById('profileUserUuid');
+
+	if (profileNameEl) profileNameEl.textContent = userName;
+	if (profileUuidEl) profileUuidEl.textContent = userId;
 
 	// Staff kullanicilar icin owner-only menu itemlari gizle
 	var userRole = sessionStorage.getItem('isyerim_user_role');

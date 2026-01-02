@@ -445,6 +445,7 @@
 					sessionStorage.setItem('isyerim_user_role', user.role);
 					sessionStorage.setItem('isyerim_user_name', user.name);
 					sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+					sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 					sessionStorage.setItem('isNewUser', 'false');
 
 					window.location.href = 'isyerim-musteri-anasayfa.html';
@@ -478,15 +479,18 @@
 							sessionStorage.setItem('isyerim_user_role', 'owner');
 							sessionStorage.setItem('isyerim_user_name', customer.name);
 							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 							sessionStorage.setItem('isNewUser', 'false');
 
 							window.location.href = 'isyerim-musteri-anasayfa.html';
 						} else {
 							// Owner olusturulamadi - yine de giris yap (eski akis)
 							sessionStorage.setItem('isyerim_customer_id', customer.id);
+							sessionStorage.setItem('isyerim_user_id', customer.id); // Owner icin customer.id kullan
 							sessionStorage.setItem('isyerim_user_role', 'owner');
 							sessionStorage.setItem('isyerim_user_name', customer.name);
 							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 							sessionStorage.setItem('isNewUser', 'false');
 
 							window.location.href = 'isyerim-musteri-anasayfa.html';
