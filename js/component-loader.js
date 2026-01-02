@@ -1300,6 +1300,13 @@ window.confirmAddressSelection = async function() {
         detail: { branchId: selectedAddressId }
     }));
 
+    // Sube degisikliginde teklif iste sayfasindan teklifler listesine yonlendir
+    var currentPage = window.location.pathname.split('/').pop();
+    if (currentPage === 'isyerim-musteri-teklif-iste.html') {
+        window.location.href = 'isyerim-musteri-teklifler.html';
+        return;
+    }
+
     window.closeAddressModal();
 };
 

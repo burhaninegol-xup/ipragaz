@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tekliflerim - Ipragaz IsYerim</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body { font-family: 'Poppins', sans-serif; background: #f5f5f5; color: #333; }
+		a { text-decoration: none; color: inherit; }
+		.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
+		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
+		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 25px; }
+
+		/* Search */
+		.search-box { margin-bottom: 20px; }
+		.search-input { width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: inherit; }
+		.search-input:focus { outline: none; border-color: #e31e24; }
+
+		/* Tabs */
+		.tabs { display: flex; border-bottom: 1px solid #e0e0e0; margin-bottom: 20px; overflow-x: auto; }
+		.tab { padding: 12px 20px; font-size: 14px; font-weight: 500; color: #666; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+		.tab:hover { color: #e31e24; }
+		.tab.active { color: #e31e24; border-bottom-color: #e31e24; }
+		.tab-count { font-weight: 500; margin-left: 4px; }
+		.tab-count.empty { opacity: 0.5; color: #aaa; }
+		.tab.active .tab-count.empty { color: #e31e24; opacity: 0.6; }
+
+		/* Filter Row */
+		.filter-row { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+		.branch-filter-wrapper { position: relative; }
+		.branch-filter-btn {
+			display: flex; align-items: center; gap: 8px;
+			padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px;
+			background: #fafafa; cursor: pointer; font-family: inherit; font-size: 14px; color: #333;
+			transition: all 0.2s;
+		}
+		.branch-filter-btn:hover { border-color: #e31e24; }
+		.branch-filter-btn svg { width: 18px; height: 18px; color: #e31e24; }
+		.branch-count-badge {
+			background: #e31e24; color: #fff; font-size: 11px; font-weight: 600;
+			padding: 2px 6px; border-radius: 10px; min-width: 20px; text-align: center;
+		}
+		.branch-dropdown {
+			position: absolute; top: calc(100% + 5px); right: 0; min-width: 280px;
+			background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 100;
+			display: none; max-height: 300px; overflow: hidden;
+		}
+		.branch-dropdown.active { display: block; }
+		.branch-dropdown-header { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; background: #f9f9f9; }
+		.branch-dropdown-list { max-height: 220px; overflow-y: auto; padding: 8px 0; }
+		.branch-checkbox-item {
+			display: flex; align-items: center; gap: 10px;
+			padding: 10px 15px; cursor: pointer; transition: background 0.2s;
+		}
+		.branch-checkbox-item:hover { background: #f5f5f5; }
+		.branch-checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e31e24; cursor: pointer; }
+		.branch-checkbox-item span { font-size: 14px; color: #333; }
+		.branch-checkbox-item.select-all { font-weight: 600; }
+		.branch-checkbox-item.select-all span { color: #e31e24; }
+
+		/* Offers List */
+		.offers-list { display: flex; flex-direction: column; gap: 12px; }
+
+		/* Offer Card */
+		.offer-card {
+			display: flex; gap: 16px; padding: 20px;
+			border: 1px solid #e8ecf1; border-radius: 12px;
+			background: #fff; transition: all 0.2s ease; cursor: pointer;
+		}
+		.offer-card:hover { border-color: #e31e24; box-shadow: 0 4px 16px rgba(227, 30, 36, 0.1); }
+		.offer-card-left { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+		.offer-card-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; min-width: 140px; gap: 12px; }
+
+		.offer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+		.offer-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f5f7fa; color: #e31e24; flex-shrink: 0; }
+		.offer-icon svg { width: 20px; height: 20px; }
+		.offer-number { font-size: 15px; font-weight: 600; color: #333; }
+		.offer-date { font-size: 12px; color: #999; margin-left: auto; }
+
+		.offer-branch { font-size: 14px; color: #333; display: flex; align-items: center; gap: 6px; }
+		.offer-branch svg { width: 14px; height: 14px; color: #e31e24; flex-shrink: 0; }
+
+		.offer-products { font-size: 13px; color: #666; display: flex; align-items: center; gap: 6px; }
+		.offer-products svg { width: 14px; height: 14px; color: #999; flex-shrink: 0; }
+
+		.offer-dealer { font-size: 13px; color: #666; display: flex; align-items: center; gap: 6px; }
+		.offer-dealer svg { width: 14px; height: 14px; color: #999; flex-shrink: 0; }
+
+		.offer-item-count { font-size: 12px; color: #666; padding: 4px 10px; background: #f5f7fa; border-radius: 6px; }
+
+		/* Status Badges */
+		.offer-status-badge {
+			display: inline-flex; align-items: center; gap: 6px;
+			padding: 8px 14px; border-radius: 8px;
+			font-size: 12px; font-weight: 600; white-space: nowrap;
+		}
+		.offer-status-badge svg { width: 14px; height: 14px; }
+
+		/* Requested - Mavi */
+		.offer-status-badge.requested { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+		/* Pending - Turuncu */
+		.offer-status-badge.pending { background: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; }
+		/* Accepted - Yesil */
+		.offer-status-badge.accepted { background: #E8F5E9; color: #2E7D32; border: 1px solid #81C784; }
+		/* Passive - Acik Gri */
+		.offer-status-badge.passive { background: #FAFAFA; color: #757575; border: 1px solid #E0E0E0; }
+		/* Rejected - Gri */
+		.offer-status-badge.rejected { background: #F5F5F5; color: #616161; border: 1px solid #BDBDBD; }
+		/* Cancelled - Kirmizi */
+		.offer-status-badge.cancelled { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+
+		.offer-arrow { color: #ccc; transition: color 0.2s; }
+		.offer-card:hover .offer-arrow { color: #e31e24; }
+		.offer-arrow svg { width: 20px; height: 20px; }
+
+		/* Empty State */
+		.empty-state { text-align: center; padding: 60px 20px; }
+		.empty-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #ccc; }
+		.empty-text { font-size: 16px; color: #666; margin-bottom: 10px; }
+		.empty-subtext { font-size: 14px; color: #999; margin-bottom: 20px; }
+		.btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #e31e24; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+		.btn-primary:hover { background: #c91a1f; }
+		.btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #f5f5f5; color: #333; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.2s; }
+		.btn-secondary:hover { background: #e0e0e0; }
+
+		/* Loading */
+		.loading { text-align: center; padding: 40px; color: #666; }
+
+		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+		@media (max-width: 768px) {
+			.tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+			.tab { padding: 12px 15px; font-size: 13px; }
+		}
+		@media (max-width: 600px) {
+			.filter-row { flex-direction: column; align-items: stretch; }
+			.branch-filter-wrapper { width: 100%; }
+			.branch-filter-btn { width: 100%; justify-content: center; }
+			.branch-dropdown { left: 0; right: 0; min-width: auto; }
+			/* Responsive Offer Card */
+			.offer-card { flex-direction: column; gap: 12px; padding: 16px; }
+			.offer-card-right { flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-width: auto; }
+			.offer-status-badge { padding: 6px 10px; font-size: 11px; }
+		}
+	</style>
+</head>
+<body>
+	<div id="isyerim-top-bar"></div>
+	<div id="isyerim-header"></div>
+	<div class="container">
+		<div class="settings-layout">
+			<div id="isyerim-settings-sidebar"></div>
+			<div class="settings-content">
+				<h1 class="content-title">Tekliflerim</h1>
+
+				<!-- Search -->
+				<div class="search-box">
+					<input type="text" class="search-input" id="searchInput" placeholder="Teklif ara (bayi adi, urun adi...)" oninput="filterOffers()">
+				</div>
+
+				<!-- Tabs -->
+				<div class="tabs">
+					<div class="tab active" data-status="all" onclick="switchTab('all')">Tumunu Gor <span class="tab-count" id="count-all">(0)</span></div>
+					<div class="tab" data-status="requested" onclick="switchTab('requested')">Talep Edildi <span class="tab-count" id="count-requested">(0)</span></div>
+					<div class="tab" data-status="pending" onclick="switchTab('pending')">Inceleniyor <span class="tab-count" id="count-pending">(0)</span></div>
+					<div class="tab" data-status="accepted" onclick="switchTab('accepted')">Onaylandi <span class="tab-count" id="count-accepted">(0)</span></div>
+					<div class="tab" data-status="closed" onclick="switchTab('closed')">Kapali <span class="tab-count" id="count-closed">(0)</span></div>
+				</div>
+
+				<!-- Filter Row: Branch -->
+				<div class="filter-row">
+					<div class="branch-filter-wrapper">
+						<button type="button" class="branch-filter-btn" onclick="toggleBranchDropdown()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+								<circle cx="12" cy="10" r="3"/>
+							</svg>
+							<span id="branchFilterLabel">Tum Subeler</span>
+							<span class="branch-count-badge" id="branchCountBadge">0</span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#666">
+								<polyline points="6 9 12 15 18 9"/>
+							</svg>
+						</button>
+						<div class="branch-dropdown" id="branchDropdown">
+							<div class="branch-dropdown-header">
+								<label class="branch-checkbox-item select-all">
+									<input type="checkbox" id="selectAllBranches" onchange="toggleAllBranches()">
+									<span>Tumunu Sec</span>
+								</label>
+							</div>
+							<div class="branch-dropdown-list" id="branchList">
+								<!-- Dinamik olarak doldurulacak -->
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Offers List -->
+				<div id="offersList" class="offers-list">
+					<div class="loading">Teklifler yukleniyor...</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="isyerim-footer"></div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script src="./js/components/settings-sidebar.js"></script>
+	<script>
+		var customerId = null;
+		var userId = null;
+		var userRole = null;
+		var allOffers = [];
+		var currentTab = 'all';
+
+		// Sube filtresi icin
+		var allBranches = [];
+		var selectedBranchIds = [];
+
+		// Durum mapping
+		var statusMap = {
+			'requested': { text: 'Talep Edildi', class: 'requested', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>' },
+			'pending': { text: 'Inceleniyor', class: 'pending', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+			'accepted': { text: 'Onaylandi', class: 'accepted', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' },
+			'passive': { text: 'Pasif', class: 'passive', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>' },
+			'rejected': { text: 'Reddedildi', class: 'rejected', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' },
+			'cancelled': { text: 'Iptal Edildi', class: 'cancelled', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' }
+		};
+
+		document.addEventListener('DOMContentLoaded', async function() {
+			customerId = sessionStorage.getItem('isyerim_customer_id');
+			userId = sessionStorage.getItem('isyerim_user_id');
+			userRole = sessionStorage.getItem('isyerim_user_role') || 'owner';
+
+			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+
+			// Sidebar yukle
+			try {
+				var response = await fetch('./components/isyerim-settings-sidebar.html');
+				var html = await response.text();
+				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('tekliflerim'); }, 100);
+			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+
+			// Sube filtresini yukle
+			await loadBranchFilter();
+
+			// Teklifleri yukle
+			await loadOffers();
+
+			// Dropdown disina tiklaninca kapat
+			document.addEventListener('click', function(e) {
+				var dropdown = document.getElementById('branchDropdown');
+				var btn = document.querySelector('.branch-filter-btn');
+				if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
+					dropdown.classList.remove('active');
+				}
+			});
+		});
+
+		async function loadOffers() {
+			var listContainer = document.getElementById('offersList');
+			listContainer.innerHTML = '<div class="loading">Teklifler yukleniyor...</div>';
+
+			try {
+				var result = await OffersService.getByCustomerId(customerId);
+
+				if (result.error) {
+					listContainer.innerHTML = '<div class="loading">Teklifler yuklenirken hata olustu</div>';
+					return;
+				}
+
+				allOffers = result.data || [];
+				updateTabCounts();
+				filterOffers();
+			} catch (err) {
+				console.error('Teklif yukleme hatasi:', err);
+				listContainer.innerHTML = '<div class="loading">Teklifler yuklenirken hata olustu</div>';
+			}
+		}
+
+		function switchTab(tab) {
+			currentTab = tab;
+
+			// Tab aktiflik
+			document.querySelectorAll('.tab').forEach(function(t) {
+				t.classList.remove('active');
+				if (t.dataset.status === tab) {
+					t.classList.add('active');
+				}
+			});
+
+			filterOffers();
+		}
+
+		function filterOffers() {
+			var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+			var filtered = allOffers.filter(function(offer) {
+				// Tab filtresi
+				if (currentTab === 'all') {
+					// Tum teklifler
+				} else if (currentTab === 'closed') {
+					// Kapali: rejected, cancelled, passive
+					if (!['rejected', 'cancelled', 'passive'].includes(offer.status)) return false;
+				} else {
+					// Spesifik durum
+					if (offer.status !== currentTab) return false;
+				}
+
+				// Sube filtresi (tumu secili degilse uygula)
+				if (selectedBranchIds.length > 0 && selectedBranchIds.length < allBranches.length) {
+					// Eger teklif belirli bir subeye aitse
+					if (offer.customer_branch_id) {
+						if (!selectedBranchIds.includes(offer.customer_branch_id)) {
+							return false;
+						}
+					}
+					// customer_branch_id null ise "Tum Subeler" teklifi - her zaman goster
+				}
+
+				// Arama filtresi
+				if (searchTerm) {
+					var dealerName = (offer.dealer?.name || '').toLowerCase();
+					var branchName = (offer.customer_branch?.branch_name || 'Tum Subeler').toLowerCase();
+					var productNames = (offer.offer_details || []).map(function(item) {
+						return (item.product?.name || '').toLowerCase();
+					}).join(' ');
+
+					if (!dealerName.includes(searchTerm) && !branchName.includes(searchTerm) && !productNames.includes(searchTerm)) {
+						return false;
+					}
+				}
+
+				return true;
+			});
+
+			renderOffers(filtered);
+		}
+
+		function renderOffers(offers) {
+			var listContainer = document.getElementById('offersList');
+
+			if (offers.length === 0) {
+				var emptyMessage = currentTab === 'all'
+					? 'Henuz teklifiniz bulunmuyor'
+					: 'Bu kategoride teklif bulunamadi';
+
+				listContainer.innerHTML = '<div class="empty-state">' +
+					'<svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+					'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+					'<polyline points="14 2 14 8 20 8"/>' +
+					'<line x1="16" y1="13" x2="8" y2="13"/>' +
+					'<line x1="16" y1="17" x2="8" y2="17"/>' +
+					'</svg>' +
+					'<p class="empty-text">' + emptyMessage + '</p>' +
+					'<p class="empty-subtext">Teklif almak icin "Teklif Iste" sayfasini ziyaret edebilirsiniz</p>' +
+					'<button class="btn-primary" onclick="window.location.href=\'isyerim-musteri-teklif-iste.html\'">' +
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+					'Teklif Iste' +
+					'</button>' +
+					'</div>';
+				return;
+			}
+
+			var html = '';
+			offers.forEach(function(offer) {
+				var status = statusMap[offer.status] || { text: offer.status, class: 'pending', icon: '' };
+				var branchName = offer.customer_branch ? (offer.customer_branch.branch_name || offer.customer_branch.district || 'Sube') : 'Tum Subeler';
+				var dealerName = offer.dealer ? offer.dealer.name : 'Bayi Atanmadi';
+				var createdAt = new Date(offer.created_at);
+				var dateStr = createdAt.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+				var timeStr = createdAt.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+				// Urun ozeti
+				var productCount = (offer.offer_details || []).length;
+				var productSummary = '';
+				if (offer.offer_details && offer.offer_details.length > 0) {
+					var firstTwo = offer.offer_details.slice(0, 2).map(function(d) {
+						return d.product ? d.product.name : 'Urun';
+					});
+					productSummary = firstTwo.join(', ');
+					if (offer.offer_details.length > 2) {
+						productSummary += ' +' + (offer.offer_details.length - 2) + ' urun';
+					}
+				}
+
+				html += '<div class="offer-card" onclick="goToOfferDetail(\'' + offer.id + '\')">';
+				html += '<div class="offer-card-left">';
+
+				// Header: Icon + Number + Date
+				html += '<div class="offer-header">';
+				html += '<div class="offer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>';
+				html += '<span class="offer-number">Teklif #' + (offer.id || '').substring(0, 8).toUpperCase() + '</span>';
+				html += '<span class="offer-date">' + dateStr + ' ' + timeStr + '</span>';
+				html += '</div>';
+
+				// Branch
+				html += '<div class="offer-branch">';
+				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+				html += branchName;
+				html += '</div>';
+
+				// Products
+				if (productSummary) {
+					html += '<div class="offer-products">';
+					html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>';
+					html += productSummary;
+					html += '</div>';
+				}
+
+				// Dealer
+				html += '<div class="offer-dealer">';
+				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+				html += dealerName;
+				html += '</div>';
+
+				html += '</div>'; // card-left
+
+				html += '<div class="offer-card-right">';
+				html += '<span class="offer-status-badge ' + status.class + '">' + status.icon + status.text + '</span>';
+				html += '<div style="display:flex;align-items:center;gap:12px">';
+				html += '<span class="offer-item-count">' + productCount + ' urun</span>';
+				html += '<span class="offer-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>';
+				html += '</div>';
+				html += '</div>'; // card-right
+
+				html += '</div>'; // offer-card
+			});
+
+			listContainer.innerHTML = html;
+		}
+
+		function goToOfferDetail(offerId) {
+			// Teklif detay sayfasina yonlendir
+			// Secili subeyi ayarla (varsa)
+			var offer = allOffers.find(function(o) { return o.id === offerId; });
+			if (offer && offer.customer_branch_id) {
+				sessionStorage.setItem('selected_address_id', offer.customer_branch_id);
+			}
+			window.location.href = 'isyerim-musteri-teklif-iste.html';
+		}
+
+		// ============================================
+		// SUBE FILTRESI FONKSIYONLARI
+		// ============================================
+
+		async function loadBranchFilter() {
+			try {
+				if (userRole === 'owner') {
+					var result = await BranchesService.getByCustomerId(customerId);
+					allBranches = result.data || [];
+				} else {
+					var result = await CustomerUsersService.getBranches(userId);
+					allBranches = result.data || [];
+				}
+
+				renderBranchDropdown();
+				selectAllBranches();
+			} catch (err) {
+				console.error('Sube listesi yukleme hatasi:', err);
+			}
+		}
+
+		function renderBranchDropdown() {
+			var listContainer = document.getElementById('branchList');
+
+			if (allBranches.length === 0) {
+				listContainer.innerHTML = '<div style="padding:15px;color:#888;text-align:center">Sube bulunamadi</div>';
+				return;
+			}
+
+			var html = '';
+			allBranches.forEach(function(branch) {
+				var branchId = branch.id;
+				var branchName = branch.branch_name || branch.address_name || 'Sube';
+				html += '<label class="branch-checkbox-item">';
+				html += '<input type="checkbox" value="' + branchId + '" onchange="onBranchSelectionChange(\'' + branchId + '\')">';
+				html += '<span>' + branchName + '</span>';
+				html += '</label>';
+			});
+
+			listContainer.innerHTML = html;
+		}
+
+		function toggleBranchDropdown() {
+			var dropdown = document.getElementById('branchDropdown');
+			dropdown.classList.toggle('active');
+		}
+
+		function toggleAllBranches() {
+			var selectAll = document.getElementById('selectAllBranches');
+			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
+
+			checkboxes.forEach(function(cb) {
+				cb.checked = selectAll.checked;
+			});
+
+			if (selectAll.checked) {
+				selectedBranchIds = allBranches.map(function(b) { return b.id; });
+			} else {
+				selectedBranchIds = [];
+			}
+
+			updateBranchFilterLabel();
+			filterOffers();
+		}
+
+		function selectAllBranches() {
+			document.getElementById('selectAllBranches').checked = true;
+			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
+			checkboxes.forEach(function(cb) { cb.checked = true; });
+			selectedBranchIds = allBranches.map(function(b) { return b.id; });
+			updateBranchFilterLabel();
+		}
+
+		function onBranchSelectionChange(branchId) {
+			var checkbox = document.querySelector('#branchList input[value="' + branchId + '"]');
+
+			if (checkbox.checked) {
+				if (!selectedBranchIds.includes(branchId)) {
+					selectedBranchIds.push(branchId);
+				}
+			} else {
+				selectedBranchIds = selectedBranchIds.filter(function(id) { return id !== branchId; });
+			}
+
+			// Tumunu Sec checkbox'ini guncelle
+			var selectAll = document.getElementById('selectAllBranches');
+			selectAll.checked = selectedBranchIds.length === allBranches.length;
+
+			updateBranchFilterLabel();
+			filterOffers();
+		}
+
+		function updateBranchFilterLabel() {
+			var label = document.getElementById('branchFilterLabel');
+			var badge = document.getElementById('branchCountBadge');
+
+			if (selectedBranchIds.length === 0 || selectedBranchIds.length === allBranches.length) {
+				label.textContent = 'Tum Subeler';
+				badge.textContent = allBranches.length;
+			} else if (selectedBranchIds.length === 1) {
+				var branch = allBranches.find(function(b) { return b.id === selectedBranchIds[0]; });
+				label.textContent = branch ? (branch.branch_name || 'Sube') : 'Sube';
+				badge.textContent = '1';
+			} else {
+				label.textContent = selectedBranchIds.length + ' Sube';
+				badge.textContent = selectedBranchIds.length;
+			}
+		}
+
+		// ============================================
+		// TAB SAYILARI
+		// ============================================
+
+		function updateTabCounts() {
+			var counts = {
+				'all': allOffers.length,
+				'requested': allOffers.filter(function(o) { return o.status === 'requested'; }).length,
+				'pending': allOffers.filter(function(o) { return o.status === 'pending'; }).length,
+				'accepted': allOffers.filter(function(o) { return o.status === 'accepted'; }).length,
+				'closed': allOffers.filter(function(o) { return ['rejected', 'cancelled', 'passive'].includes(o.status); }).length
+			};
+
+			// Her tab icin sayiyi guncelle
+			Object.keys(counts).forEach(function(key) {
+				var countEl = document.getElementById('count-' + key);
+				if (countEl) {
+					countEl.textContent = '(' + counts[key] + ')';
+					// Sifir ise soluk goster
+					if (counts[key] === 0) {
+						countEl.classList.add('empty');
+					} else {
+						countEl.classList.remove('empty');
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>

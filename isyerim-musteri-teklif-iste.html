@@ -2096,6 +2096,7 @@
 	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/dealer-districts-service.js"></script>
 	<script src="./js/services/messages-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
@@ -2680,13 +2681,37 @@
 			document.getElementById('submitSection').style.display = 'grid';
 		}
 
-		// Bayileri yukle
+		// Bayileri yukle - secili subenin ilcesine hizmet verenler
 		async function loadDealers() {
 			try {
+				// 1. Secili subeyi al
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+				console.log('[loadDealers] selectedBranchId:', selectedBranchId);
+
+				if (selectedBranchId) {
+					// 2. Subenin district_id'sini al
+					const { data: branch, error: branchError } = await BranchesService.getById(selectedBranchId);
+					console.log('[loadDealers] branch:', branch);
+					console.log('[loadDealers] branch.district_id:', branch ? branch.district_id : 'N/A');
+					console.log('[loadDealers] branch.district:', branch ? branch.district : 'N/A');
+
+					if (!branchError && branch && branch.district_id) {
+						// 3. Bu ilceye hizmet veren bayileri al
+						const { data: dealers, error } = await DealerDistrictsService.getDealersByDistrictId(branch.district_id);
+						console.log('[loadDealers] dealers for district_id ' + branch.district_id + ':', dealers);
+
+						if (!error) {
+							renderDealerList(dealers || []);
+							return;
+						}
+					}
+				}
+
+				// 4. Fallback: Sube secili degilse veya district_id yoksa tum bayileri goster
 				const { data, error } = await DealersService.getAll();
 				if (error) throw new Error(error);
-
 				renderDealerList(data || []);
+
 			} catch (err) {
 				console.error('Bayi yukleme hatasi:', err);
 				document.getElementById('dealerList').innerHTML =
@@ -2699,7 +2724,7 @@
 			var list = document.getElementById('dealerList');
 
 			if (dealers.length === 0) {
-				list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p>Sistemde kayitli bayi bulunamadi.</p></div>';
+				list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;"><p>Bu bolgeye hizmet veren bayi bulunamadi.</p></div>';
 				return;
 			}
 
