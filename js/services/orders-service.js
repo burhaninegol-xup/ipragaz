@@ -242,9 +242,30 @@ const OrdersService = {
             // Timeline kaydı oluştur
             await this.logStatusChange(orderId, oldStatus, newStatus, changedByType, changedById, notes);
 
+            // Siparis tamamlandiysa puan ver
+            if (newStatus === 'completed' && oldStatus !== 'completed') {
+                await this.awardPointsForCompletedOrder(orderId);
+            }
+
             return { data, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'OrdersService.updateStatus');
+        }
+    },
+
+    /**
+     * Tamamlanan siparis icin puan ver
+     * @param {string} orderId - Siparis ID
+     */
+    async awardPointsForCompletedOrder(orderId) {
+        try {
+            // PointsService varsa kullan
+            if (typeof PointsService !== 'undefined' && PointsService.awardPointsForOrder) {
+                await PointsService.awardPointsForOrder(orderId);
+            }
+        } catch (error) {
+            // Puan hatasi siparis islemini engellemesin
+            console.error('Puan verme hatasi:', error);
         }
     },
 

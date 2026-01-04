@@ -49,21 +49,13 @@ const CustomerUsersService = {
     async getByCustomerId(customerId) {
         const { data, error } = await supabaseClient
             .from('customer_users')
-            .select('*')
+            .select(`
+                *,
+                customer_user_branches(id, branch_id)
+            `)
             .eq('customer_id', customerId)
             .order('role', { ascending: true }) // owner once
             .order('created_at', { ascending: true });
-
-        // Her kullanici icin yetki sayisini hesapla
-        if (data && data.length > 0) {
-            for (let user of data) {
-                const { count } = await supabaseClient
-                    .from('customer_user_branches')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('customer_user_id', user.id);
-                user.branch_count = count || 0;
-            }
-        }
 
         return { data, error };
     },
@@ -125,7 +117,7 @@ const CustomerUsersService = {
         if (userData.name !== undefined) updateData.name = userData.name;
         if (userData.phone !== undefined) updateData.phone = userData.phone;
         if (userData.is_active !== undefined) updateData.is_active = userData.is_active;
-        // role degistirilemez (owner/staff)
+        if (userData.role !== undefined) updateData.role = userData.role;
 
         const { data, error } = await supabaseClient
             .from('customer_users')

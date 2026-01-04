@@ -206,6 +206,89 @@
         .bo-toast.success { background: var(--bo-success); }
         .bo-toast.error { background: var(--bo-error); }
         .bo-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Users Grid */
+        .users-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .user-card {
+            border: 1px solid var(--bo-border); border-radius: 10px; padding: 16px;
+            transition: all 0.2s ease; background: var(--bo-bg-paper);
+        }
+        .user-card:hover { border-color: var(--bo-primary); }
+        .user-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+        .user-card-info { flex: 1; }
+        .user-card-name { font-size: 14px; font-weight: 600; color: var(--bo-text-primary); }
+        .user-card-phone { font-size: 13px; color: var(--bo-text-secondary); margin-top: 2px; }
+        .user-card-actions { display: flex; gap: 4px; }
+        .user-card-badges { display: flex; gap: 8px; margin-bottom: 10px; }
+        .user-card-branches { font-size: 12px; color: var(--bo-text-secondary); display: flex; align-items: center; gap: 6px; }
+
+        /* Permissions Section */
+        .permissions-section {
+            margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--bo-border);
+        }
+        .permissions-section h4 {
+            font-size: 14px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 8px;
+        }
+        .permissions-hint {
+            font-size: 12px; color: var(--bo-text-secondary); margin-bottom: 12px;
+        }
+        .branch-checkboxes { display: flex; flex-direction: column; gap: 8px; }
+        .branch-checkbox-item {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            background: var(--bo-bg-main); border-radius: 8px; cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .branch-checkbox-item:hover { background: #eee; }
+        .branch-checkbox-item input[type="checkbox"] {
+            width: 18px; height: 18px; accent-color: var(--bo-primary); cursor: pointer;
+        }
+        .branch-checkbox-item span { font-size: 14px; color: var(--bo-text-primary); }
+
+        /* Points Summary Cards */
+        .points-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        @media (max-width: 768px) {
+            .points-summary-grid { grid-template-columns: 1fr; }
+        }
+        .points-summary-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--bo-bg-main);
+            border-radius: 10px;
+            border: 1px solid var(--bo-border);
+        }
+        .points-summary-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .points-summary-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        .points-summary-content {
+            flex: 1;
+        }
+        .points-summary-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--bo-text-primary);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .points-summary-label {
+            font-size: 13px;
+            color: var(--bo-text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -246,8 +329,10 @@
                 <div class="bo-tabs">
                     <button class="bo-tab active" onclick="switchTab('genel')">Genel Bilgiler</button>
                     <button class="bo-tab" onclick="switchTab('subeler')">Subeler</button>
+                    <button class="bo-tab" onclick="switchTab('kullanicilar')">Kullanicilar</button>
                     <button class="bo-tab" onclick="switchTab('siparisler')">Siparisler</button>
                     <button class="bo-tab" onclick="switchTab('teklifler')">Teklifler</button>
+                    <button class="bo-tab" onclick="switchTab('puanlar')">Puanlar</button>
                 </div>
 
                 <!-- Tab 1: Genel Bilgiler -->
@@ -271,7 +356,21 @@
                     </div>
                 </div>
 
-                <!-- Tab 3: Siparisler -->
+                <!-- Tab 3: Kullanicilar -->
+                <div class="bo-tab-content" id="tab-kullanicilar">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 600;">Kullanicilar</h3>
+                        <button class="bo-btn bo-btn-primary bo-btn-sm" onclick="openUserModal()">
+                            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                            Yeni Kullanici
+                        </button>
+                    </div>
+                    <div class="users-grid" id="usersGrid">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 4: Siparisler -->
                 <div class="bo-tab-content" id="tab-siparisler">
                     <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Siparis Gecmisi</h3>
                     <div class="bo-table-wrapper" id="ordersTable">
@@ -283,6 +382,55 @@
                 <div class="bo-tab-content" id="tab-teklifler">
                     <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Teklif Gecmisi</h3>
                     <div class="bo-table-wrapper" id="offersTable">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tab 5: Puanlar -->
+                <div class="bo-tab-content" id="tab-puanlar">
+                    <!-- Points Summary Cards -->
+                    <div class="points-summary-grid" id="pointsSummary">
+                        <div class="points-summary-card">
+                            <div class="points-summary-icon" style="background: rgba(227, 30, 36, 0.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#e31e24" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </div>
+                            <div class="points-summary-content">
+                                <div class="points-summary-value" id="pointsTotal">0</div>
+                                <div class="points-summary-label">Toplam Puan</div>
+                            </div>
+                        </div>
+                        <div class="points-summary-card">
+                            <div class="points-summary-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                            </div>
+                            <div class="points-summary-content">
+                                <div class="points-summary-value" id="pointsOrderCount">0</div>
+                                <div class="points-summary-label">Siparis Sayisi</div>
+                            </div>
+                        </div>
+                        <div class="points-summary-card">
+                            <div class="points-summary-icon" style="background: rgba(16, 185, 129, 0.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <div class="points-summary-content">
+                                <div class="points-summary-value" id="pointsAvg">0</div>
+                                <div class="points-summary-label">Ort. Puan/Siparis</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Points History -->
+                    <h3 style="font-size: 16px; font-weight: 600; margin: 24px 0 20px;">Puan Gecmisi</h3>
+                    <div class="bo-table-wrapper" id="pointsTable">
                         <!-- Will be populated by JS -->
                     </div>
                 </div>
@@ -345,6 +493,16 @@
                         <input type="text" class="bo-form-input" id="branchApartment" placeholder="5">
                     </div>
                 </div>
+                <div class="bo-form-row single">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Puan Toplama Tercihi</label>
+                        <select class="bo-form-select" id="branchPointsMode">
+                            <option value="customer">Ana Musteri Hesabinda</option>
+                            <option value="branch">Bu Subede</option>
+                        </select>
+                        <span class="bo-form-hint">Bu subeden verilen siparislerin puanlari nerede toplanacak?</span>
+                    </div>
+                </div>
                 <div class="bo-modal-actions">
                     <button type="button" class="bo-btn bo-btn-secondary" onclick="closeBranchModal()">Iptal</button>
                     <button type="submit" class="bo-btn bo-btn-primary">Kaydet</button>
@@ -383,6 +541,58 @@
         </div>
     </div>
 
+    <!-- User Modal -->
+    <div class="bo-modal-overlay" id="userModal">
+        <div class="bo-modal" style="max-width: 500px;">
+            <div class="bo-modal-header">
+                <h3 id="userModalTitle">Yeni Kullanici Ekle</h3>
+                <button class="bo-modal-close" onclick="closeUserModal()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="userForm" onsubmit="saveUser(event)">
+                <input type="hidden" id="editUserId">
+                <div class="bo-form-row">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Ad Soyad <span style="color: var(--bo-error);">*</span></label>
+                        <input type="text" class="bo-form-input" id="userFormName" placeholder="Ornek: Ahmet Yilmaz" required>
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Telefon <span style="color: var(--bo-error);">*</span></label>
+                        <input type="tel" class="bo-form-input" id="userFormPhone" placeholder="5XXXXXXXXX" required>
+                    </div>
+                </div>
+                <div class="bo-form-row">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Rol</label>
+                        <select class="bo-form-select" id="userRole" onchange="toggleBranchPermissions()">
+                            <option value="staff">Alt Kullanici (Staff)</option>
+                            <option value="owner">Ana Kullanici (Owner)</option>
+                        </select>
+                    </div>
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">Durum</label>
+                        <select class="bo-form-select" id="userActive">
+                            <option value="true">Aktif</option>
+                            <option value="false">Pasif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="permissions-section" id="branchPermissionsSection">
+                    <h4>Sube Yetkileri</h4>
+                    <p class="permissions-hint">Kullanicinin erisebilecegi subeleri secin</p>
+                    <div class="branch-checkboxes" id="branchCheckboxes">
+                        <!-- Will be populated by JS -->
+                    </div>
+                </div>
+                <div class="bo-modal-actions">
+                    <button type="button" class="bo-btn bo-btn-secondary" onclick="closeUserModal()">Iptal</button>
+                    <button type="submit" class="bo-btn bo-btn-primary" id="saveUserBtn">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Confirm Modal -->
     <div class="bo-modal-overlay" id="confirmModal">
         <div class="bo-modal" style="max-width: 400px;">
@@ -408,6 +618,8 @@
     <script src="js/services/orders-service.js"></script>
     <script src="js/services/offers-service.js"></script>
     <script src="js/services/locations-service.js"></script>
+    <script src="js/services/customer-users-service.js"></script>
+    <script src="js/services/points-service.js"></script>
 
     <script>
         // State
@@ -416,6 +628,7 @@
         var branchesData = [];
         var ordersData = [];
         var offersData = [];
+        var usersData = [];
         var pendingAction = null;
 
         // Init
@@ -478,8 +691,10 @@
 
                 renderCustomerCard();
                 await loadBranches();
+                await loadUsers();
                 await loadOrders();
                 await loadOffers();
+                await loadPoints();
 
                 document.getElementById('loadingCard').style.display = 'none';
                 document.getElementById('contentCard').style.display = 'block';
@@ -526,10 +741,11 @@
             grid.innerHTML = branchesData.map(function(addr) {
                 var isDefault = addr.is_default;
                 var fullAddress = addr.full_address || [addr.neighborhood, addr.street, addr.building_no ? 'No:' + addr.building_no : '', addr.district, addr.city].filter(Boolean).join(', ');
+                var pointsBadge = addr.points_collection_mode === 'branch' ? ' <span class="bo-badge info">Sube Puani</span>' : '';
 
                 return '<div class="branch-card ' + (isDefault ? 'default' : '') + '">' +
                     '<div class="branch-card-header">' +
-                        '<div class="branch-card-title">' + (addr.branch_name || 'Sube') + (isDefault ? ' <span class="bo-badge success">Varsayilan</span>' : '') + '</div>' +
+                        '<div class="branch-card-title">' + (addr.branch_name || 'Sube') + (isDefault ? ' <span class="bo-badge success">Varsayilan</span>' : '') + pointsBadge + '</div>' +
                         '<div class="branch-card-actions">' +
                             (!isDefault ? '<button class="bo-action-btn success" onclick="setDefaultBranch(\'' + addr.id + '\')" title="Varsayilan Yap"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></button>' : '') +
                             '<button class="bo-action-btn" onclick="editBranch(\'' + addr.id + '\')" title="Duzenle"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>' +
@@ -600,6 +816,48 @@
             '</tbody></table>';
         }
 
+        // Load points
+        async function loadPoints() {
+            try {
+                // Get summary
+                var summaryResult = await PointsService.getCustomerPointsSummary(customerId);
+                if (summaryResult.data) {
+                    document.getElementById('pointsTotal').textContent = formatNumber(summaryResult.data.totalPoints);
+                    document.getElementById('pointsOrderCount').textContent = formatNumber(summaryResult.data.orderCount);
+                    document.getElementById('pointsAvg').textContent = formatNumber(summaryResult.data.avgPoints);
+                }
+
+                // Get history
+                var historyResult = await PointsService.getCustomerPointsHistory(customerId, 1, 50);
+                renderPoints(historyResult.data || []);
+            } catch (error) {
+                console.error('Load points error:', error);
+                renderPoints([]);
+            }
+        }
+
+        function renderPoints(pointsData) {
+            var container = document.getElementById('pointsTable');
+            if (pointsData.length === 0) {
+                container.innerHTML = '<div class="bo-empty-state"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><h3>Puan Bulunamadi</h3><p>Bu musteri henuz puan kazanmamis.</p></div>';
+                return;
+            }
+
+            container.innerHTML = '<table class="bo-table"><thead><tr><th>Tarih</th><th>Bayi</th><th>Siparis</th><th>Aciklama</th><th style="text-align: right;">Puan</th></tr></thead><tbody>' +
+                pointsData.map(function(point) {
+                    var date = point.created_at ? new Date(point.created_at).toLocaleDateString('tr-TR') : '-';
+                    var dealerName = point.dealer ? point.dealer.name : '-';
+                    var orderNumber = point.order ? (point.order.order_number || '#' + point.order.id.substring(0,8)) : '-';
+
+                    return '<tr><td>' + date + '</td><td>' + dealerName + '</td><td><strong>' + orderNumber + '</strong></td><td>' + (point.description || '-') + '</td><td style="text-align: right;"><span style="color: #10b981; font-weight: 600;">+' + formatNumber(point.points) + '</span></td></tr>';
+                }).join('') +
+            '</tbody></table>';
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
         // Branch functions
         async function loadCities() {
             var citySelect = document.getElementById('branchCity');
@@ -663,6 +921,7 @@
             document.getElementById('branchBuildingNo').value = addr.building_no || '';
             document.getElementById('branchFloor').value = addr.floor || '';
             document.getElementById('branchApartment').value = addr.apartment || '';
+            document.getElementById('branchPointsMode').value = addr.points_collection_mode || 'customer';
             document.getElementById('branchModal').classList.add('show');
         }
 
@@ -681,6 +940,7 @@
                 building_no: document.getElementById('branchBuildingNo').value.trim() || null,
                 floor: document.getElementById('branchFloor').value.trim() || null,
                 apartment: document.getElementById('branchApartment').value.trim() || null,
+                points_collection_mode: document.getElementById('branchPointsMode').value || 'customer',
                 is_active: true
             };
 
@@ -797,7 +1057,221 @@
                 } catch (error) { showToast('Bir hata olustu', 'error'); }
             }
 
+            if (pendingAction.type === 'deleteUser') {
+                try {
+                    var result = await CustomerUsersService.delete(pendingAction.id);
+                    if (result.error) { showToast('Hata: ' + result.error.message, 'error'); }
+                    else { showToast('Kullanici silindi', 'success'); await loadUsers(); }
+                } catch (error) { showToast('Bir hata olustu', 'error'); }
+            }
+
             closeConfirmModal();
+        }
+
+        // =====================================
+        // USER MANAGEMENT FUNCTIONS
+        // =====================================
+
+        // Load users
+        async function loadUsers() {
+            try {
+                var result = await CustomerUsersService.getByCustomerId(customerId);
+                usersData = result.data || [];
+                renderUsers();
+            } catch (error) { console.error('Load users error:', error); }
+        }
+
+        function renderUsers() {
+            var grid = document.getElementById('usersGrid');
+            if (usersData.length === 0) {
+                grid.innerHTML = '<div class="bo-empty-state"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><h3>Kullanici Bulunamadi</h3><p>Bu musteriye henuz kullanici eklenmemis.</p></div>';
+                return;
+            }
+
+            grid.innerHTML = usersData.map(function(user) {
+                var roleText = user.role === 'owner' ? 'Ana Kullanici' : 'Alt Kullanici';
+                var roleClass = user.role === 'owner' ? 'info' : 'default';
+                var statusClass = user.is_active !== false ? 'success' : 'error';
+                var statusText = user.is_active !== false ? 'Aktif' : 'Pasif';
+                var branchCount = user.customer_user_branches ? user.customer_user_branches.length : 0;
+                var isOwner = user.role === 'owner';
+
+                return '<div class="user-card">' +
+                    '<div class="user-card-header">' +
+                        '<div class="user-card-info">' +
+                            '<div class="user-card-name">' + (user.name || '-') + '</div>' +
+                            '<div class="user-card-phone">' + (user.phone || '-') + '</div>' +
+                        '</div>' +
+                        '<div class="user-card-actions">' +
+                            '<button class="bo-action-btn" onclick="editUser(\'' + user.id + '\')" title="Duzenle"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>' +
+                            (!isOwner ? '<button class="bo-action-btn delete" onclick="deleteUser(\'' + user.id + '\')" title="Sil"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>' : '') +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="user-card-badges">' +
+                        '<span class="bo-badge ' + roleClass + '">' + roleText + '</span>' +
+                        '<span class="bo-badge ' + statusClass + '">' + statusText + '</span>' +
+                    '</div>' +
+                    '<div class="user-card-branches">' +
+                        '<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>' +
+                        (isOwner ? 'Tum subeler' : (branchCount > 0 ? branchCount + ' sube yetkisi' : 'Sube yetkisi yok')) +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        // User Modal
+        function openUserModal(userId) {
+            document.getElementById('editUserId').value = '';
+            document.getElementById('userForm').reset();
+            document.getElementById('userRole').value = 'staff';
+            document.getElementById('userActive').value = 'true';
+            document.getElementById('userModalTitle').textContent = 'Yeni Kullanici Ekle';
+            renderBranchCheckboxes([]);
+            toggleBranchPermissions();
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('show');
+        }
+
+        function toggleBranchPermissions() {
+            var role = document.getElementById('userRole').value;
+            var section = document.getElementById('branchPermissionsSection');
+            if (role === 'owner') {
+                section.style.display = 'none';
+            } else {
+                section.style.display = 'block';
+            }
+        }
+
+        function renderBranchCheckboxes(selectedBranchIds) {
+            var container = document.getElementById('branchCheckboxes');
+            if (branchesData.length === 0) {
+                container.innerHTML = '<p style="color: var(--bo-text-secondary); font-size: 13px;">Bu musteriye ait sube bulunmuyor.</p>';
+                return;
+            }
+
+            container.innerHTML = branchesData.map(function(branch) {
+                var isChecked = selectedBranchIds.includes(branch.id) ? 'checked' : '';
+                return '<label class="branch-checkbox-item">' +
+                    '<input type="checkbox" name="branchPermission" value="' + branch.id + '" ' + isChecked + '>' +
+                    '<span>' + (branch.branch_name || 'Sube') + ' <small style="color: var(--bo-text-secondary);">(' + (branch.district || '') + ')</small></span>' +
+                '</label>';
+            }).join('');
+        }
+
+        async function editUser(userId) {
+            var user = usersData.find(function(u) { return u.id === userId; });
+            if (!user) return;
+
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('userFormName').value = user.name || '';
+            document.getElementById('userFormPhone').value = user.phone || '';
+            document.getElementById('userRole').value = user.role || 'staff';
+            document.getElementById('userActive').value = user.is_active !== false ? 'true' : 'false';
+            document.getElementById('userModalTitle').textContent = 'Kullaniciyi Duzenle';
+
+            // Get branch permissions
+            var selectedBranchIds = [];
+            if (user.customer_user_branches && user.customer_user_branches.length > 0) {
+                selectedBranchIds = user.customer_user_branches.map(function(ub) { return ub.branch_id; });
+            }
+            renderBranchCheckboxes(selectedBranchIds);
+            toggleBranchPermissions();
+
+            document.getElementById('userModal').classList.add('show');
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+
+            var form = document.getElementById('userForm');
+            if (!form) {
+                console.error('User form not found');
+                showToast('Form bulunamadi', 'error');
+                return;
+            }
+
+            var userNameEl = form.querySelector('#userFormName');
+            var userPhoneEl = form.querySelector('#userFormPhone');
+            var userRoleEl = form.querySelector('#userRole');
+            var userActiveEl = form.querySelector('#userActive');
+            var editUserIdEl = form.querySelector('#editUserId');
+
+            if (!userNameEl || !userPhoneEl) {
+                console.error('Form elements not found:', { userNameEl, userPhoneEl });
+                showToast('Form elemanlari bulunamadi', 'error');
+                return;
+            }
+
+            var userId = editUserIdEl ? editUserIdEl.value : '';
+            var role = userRoleEl ? userRoleEl.value : 'staff';
+
+            var userData = {
+                customer_id: customerId,
+                name: userNameEl.value.trim(),
+                phone: userPhoneEl.value.trim(),
+                role: role,
+                is_active: userActiveEl ? userActiveEl.value === 'true' : true
+            };
+
+            if (!userData.name || !userData.phone) {
+                showToast('Ad Soyad ve Telefon zorunludur', 'error');
+                return;
+            }
+
+            // Get selected branches (only for staff)
+            var selectedBranchIds = [];
+            if (role === 'staff') {
+                var checkboxes = document.querySelectorAll('input[name="branchPermission"]:checked');
+                checkboxes.forEach(function(cb) { selectedBranchIds.push(cb.value); });
+            }
+
+            try {
+                var result;
+                if (userId) {
+                    result = await CustomerUsersService.update(userId, userData);
+                } else {
+                    result = await CustomerUsersService.create(userData);
+                }
+
+                if (result.error) {
+                    showToast('Hata: ' + result.error.message, 'error');
+                    return;
+                }
+
+                // Update branch permissions
+                var savedUserId = userId || result.data.id;
+                if (role === 'staff') {
+                    await CustomerUsersService.updateBranchPermissions(savedUserId, selectedBranchIds);
+                } else {
+                    // Owner gets all branches - clear specific permissions
+                    await CustomerUsersService.updateBranchPermissions(savedUserId, []);
+                }
+
+                showToast(userId ? 'Kullanici guncellendi' : 'Kullanici eklendi', 'success');
+                closeUserModal();
+                await loadUsers();
+            } catch (error) {
+                console.error('Save user error:', error);
+                showToast('Bir hata olustu', 'error');
+            }
+        }
+
+        function deleteUser(userId) {
+            var user = usersData.find(function(u) { return u.id === userId; });
+            if (!user) return;
+
+            if (user.role === 'owner') {
+                showToast('Ana kullanici (owner) silinemez', 'error');
+                return;
+            }
+
+            pendingAction = { type: 'deleteUser', id: userId };
+            document.getElementById('confirmTitle').textContent = 'Kullaniciyi Sil';
+            document.getElementById('confirmMessage').textContent = '"' + (user.name || 'Bu kullanici') + '" isimli kullaniciyi silmek istediginize emin misiniz?';
+            document.getElementById('confirmModal').classList.add('show');
         }
 
         // Toast

@@ -12,13 +12,334 @@
 		a { text-decoration: none; color: inherit; }
 		.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 		.settings-layout { display: flex; gap: 30px; padding: 30px 0; }
-		.settings-content { flex: 1; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 30px; }
-		.content-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-		.placeholder-content { text-align: center; padding: 60px 20px; }
-		.placeholder-icon { width: 80px; height: 80px; margin: 0 auto 20px; color: #e31e24; }
-		.placeholder-text { font-size: 16px; color: #666; margin-bottom: 10px; }
-		.placeholder-subtext { font-size: 14px; color: #999; }
-		@media (max-width: 992px) { .settings-layout { flex-direction: column; } }
+		.settings-content { flex: 1; }
+
+		/* Hero Card - Gradient */
+		.points-hero {
+			background: linear-gradient(135deg, #e31e24 0%, #ff6b6b 100%);
+			border-radius: 16px;
+			padding: 32px;
+			color: #fff;
+			position: relative;
+			overflow: hidden;
+			margin-bottom: 24px;
+			box-shadow: 0 8px 32px rgba(227, 30, 36, 0.3);
+		}
+		.points-hero::before {
+			content: '';
+			position: absolute;
+			top: -50%;
+			right: -20%;
+			width: 300px;
+			height: 300px;
+			background: rgba(255,255,255,0.1);
+			border-radius: 50%;
+		}
+		.points-hero::after {
+			content: '';
+			position: absolute;
+			bottom: -30%;
+			left: -10%;
+			width: 200px;
+			height: 200px;
+			background: rgba(255,255,255,0.05);
+			border-radius: 50%;
+		}
+		.points-hero-content { position: relative; z-index: 1; }
+		.points-hero-label {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			opacity: 0.9;
+			margin-bottom: 12px;
+		}
+		.points-hero-label svg { width: 20px; height: 20px; }
+		.points-hero-value {
+			font-size: 56px;
+			font-weight: 700;
+			line-height: 1;
+			margin-bottom: 8px;
+		}
+		.points-hero-suffix { font-size: 24px; font-weight: 500; opacity: 0.9; }
+		.points-hero-last {
+			font-size: 13px;
+			opacity: 0.85;
+			margin-top: 16px;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.points-hero-last svg { width: 16px; height: 16px; }
+
+		/* History Section */
+		.history-section {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+			padding: 24px;
+		}
+		.history-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 24px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.history-title svg { width: 22px; height: 22px; color: #e31e24; }
+
+		/* Month Group */
+		.month-group { margin-bottom: 32px; }
+		.month-group:last-child { margin-bottom: 0; }
+		.month-label {
+			font-size: 13px;
+			font-weight: 600;
+			color: #666;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 16px;
+			padding-bottom: 8px;
+			border-bottom: 2px solid #f0f0f0;
+		}
+
+		/* Timeline */
+		.timeline { position: relative; }
+		.timeline::before {
+			content: '';
+			position: absolute;
+			left: 7px;
+			top: 8px;
+			bottom: 8px;
+			width: 2px;
+			background: #e5e5e5;
+		}
+		.timeline-item {
+			position: relative;
+			padding-left: 32px;
+			padding-bottom: 24px;
+		}
+		.timeline-item:last-child { padding-bottom: 0; }
+		.timeline-dot {
+			position: absolute;
+			left: 0;
+			top: 4px;
+			width: 16px;
+			height: 16px;
+			background: #e31e24;
+			border-radius: 50%;
+			border: 3px solid #fff;
+			box-shadow: 0 0 0 2px #e31e24;
+		}
+		.timeline-content {
+			background: #fafafa;
+			border-radius: 10px;
+			padding: 16px;
+			transition: all 0.2s ease;
+		}
+		.timeline-content:hover {
+			background: #f5f5f5;
+			transform: translateX(4px);
+		}
+		.timeline-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			margin-bottom: 8px;
+		}
+		.timeline-date {
+			font-size: 13px;
+			color: #666;
+		}
+		.timeline-points {
+			font-size: 18px;
+			font-weight: 700;
+			color: #10b981;
+		}
+		.timeline-dealer {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+			margin-bottom: 4px;
+		}
+		.timeline-order {
+			font-size: 12px;
+			color: #888;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+		.empty-state-icon {
+			width: 80px;
+			height: 80px;
+			margin: 0 auto 20px;
+			background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.empty-state-icon svg {
+			width: 40px;
+			height: 40px;
+			color: #e31e24;
+		}
+		.empty-state-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 8px;
+		}
+		.empty-state-text {
+			font-size: 14px;
+			color: #666;
+			margin-bottom: 24px;
+			line-height: 1.6;
+		}
+		.empty-state-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			background: #e31e24;
+			color: #fff;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			text-decoration: none;
+			transition: all 0.2s ease;
+		}
+		.empty-state-btn:hover {
+			background: #c91920;
+			transform: translateY(-2px);
+		}
+		.empty-state-btn svg { width: 18px; height: 18px; }
+
+		/* Loading */
+		.loading-state {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 60px 20px;
+		}
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f0f0f0;
+			border-top-color: #e31e24;
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+		@keyframes spin { to { transform: rotate(360deg); } }
+		.loading-text {
+			margin-top: 16px;
+			font-size: 14px;
+			color: #666;
+		}
+
+		/* Points Breakdown Section */
+		.breakdown-section {
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+			padding: 24px;
+			margin-bottom: 24px;
+		}
+		.breakdown-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 16px;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+		.breakdown-title svg { width: 20px; height: 20px; color: #e31e24; }
+		.breakdown-list {
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
+		}
+		.breakdown-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 14px 16px;
+			background: #fafafa;
+			border-radius: 10px;
+			transition: all 0.2s ease;
+		}
+		.breakdown-item:hover {
+			background: #f5f5f5;
+		}
+		.breakdown-item.main-account {
+			background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+			border: 1px solid rgba(227, 30, 36, 0.1);
+		}
+		.breakdown-label {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+		.breakdown-label svg { width: 18px; height: 18px; color: #666; }
+		.breakdown-label.main svg { color: #e31e24; }
+		.breakdown-value {
+			font-size: 16px;
+			font-weight: 700;
+			color: #e31e24;
+		}
+		.breakdown-empty {
+			font-size: 13px;
+			color: #888;
+			text-align: center;
+			padding: 16px;
+		}
+
+		/* Load More */
+		.load-more {
+			text-align: center;
+			margin-top: 24px;
+		}
+		.load-more-btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 20px;
+			background: #fff;
+			color: #e31e24;
+			border: 1px solid #e31e24;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+		.load-more-btn:hover {
+			background: #fff5f5;
+		}
+		.load-more-btn svg { width: 16px; height: 16px; }
+
+		/* Responsive */
+		@media (max-width: 992px) {
+			.settings-layout { flex-direction: column; }
+			.points-hero-value { font-size: 42px; }
+		}
+		@media (max-width: 600px) {
+			.points-hero { padding: 24px; }
+			.points-hero-value { font-size: 36px; }
+			.points-hero-suffix { font-size: 18px; }
+			.timeline-header { flex-direction: column; gap: 4px; }
+			.timeline-points { order: -1; }
+		}
 	</style>
 </head>
 <body>
@@ -28,38 +349,313 @@
 		<div class="settings-layout">
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
-				<h1 class="content-title">Puanlarim</h1>
-				<div class="placeholder-content">
-					<svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<circle cx="12" cy="12" r="10"/>
-						<path d="M12 6v6l4 2"/>
-					</svg>
-					<p class="placeholder-text">Bu sayfa yakim zamanda aktif olacak</p>
-					<p class="placeholder-subtext">Puanlarinizi buradan takip edebileceksiniz</p>
+				<!-- Hero Card -->
+				<div class="points-hero" id="heroCard" style="display: none;">
+					<div class="points-hero-content">
+						<div class="points-hero-label">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+							</svg>
+							TOPLAM PUANINIZ
+						</div>
+						<div class="points-hero-value">
+							<span id="totalPoints">0</span>
+							<span class="points-hero-suffix">Puan</span>
+						</div>
+						<div class="points-hero-last" id="lastEarning" style="display: none;">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"></circle>
+								<polyline points="12 6 12 12 16 14"></polyline>
+							</svg>
+							<span id="lastEarningText"></span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Points Breakdown Section -->
+				<div class="breakdown-section" id="breakdownSection" style="display: none;">
+					<h3 class="breakdown-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+							<path d="M21 3v5h-5"></path>
+						</svg>
+						Puan Dagilimi
+					</h3>
+					<div class="breakdown-list" id="breakdownList"></div>
+				</div>
+
+				<!-- History Section -->
+				<div class="history-section">
+					<h2 class="history-title">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M12 8v4l3 3"></path>
+							<circle cx="12" cy="12" r="10"></circle>
+						</svg>
+						Puan Gecmisi
+					</h2>
+
+					<!-- Loading State -->
+					<div class="loading-state" id="loadingState">
+						<div class="loading-spinner"></div>
+						<p class="loading-text">Puanlariniz yukleniyor...</p>
+					</div>
+
+					<!-- Empty State -->
+					<div class="empty-state" id="emptyState" style="display: none;">
+						<div class="empty-state-icon">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+							</svg>
+						</div>
+						<h3 class="empty-state-title">Henuz puan kazanmadiniz</h3>
+						<p class="empty-state-text">
+							Siparisleriniz teslim edildikce<br>
+							puanlariniz burada gorunecek
+						</p>
+						<a href="isyerim-musteri.html" class="empty-state-btn">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="9" cy="21" r="1"></circle>
+								<circle cx="20" cy="21" r="1"></circle>
+								<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+							</svg>
+							Siparis Ver
+						</a>
+					</div>
+
+					<!-- History Content -->
+					<div id="historyContent" style="display: none;"></div>
+
+					<!-- Load More -->
+					<div class="load-more" id="loadMore" style="display: none;">
+						<button class="load-more-btn" onclick="loadMoreHistory()">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="6 9 12 15 18 9"></polyline>
+							</svg>
+							Daha Fazla Goster
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div id="isyerim-footer"></div>
+
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/points-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
 	<script>
+		// State
+		var customerId = null;
+		var currentPage = 1;
+		var pageSize = 20;
+		var totalRecords = 0;
+
 		document.addEventListener('DOMContentLoaded', async function() {
-			var customerId = sessionStorage.getItem('isyerim_customer_id');
-			if (!customerId) { window.location.href = 'isyerim-musteri-login.html'; return; }
+			customerId = sessionStorage.getItem('isyerim_customer_id');
+			if (!customerId) {
+				window.location.href = 'isyerim-musteri-login.html';
+				return;
+			}
+
+			// Load sidebar
 			try {
 				var response = await fetch('./components/isyerim-settings-sidebar.html');
 				var html = await response.text();
 				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
-				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('puanlarim'); }, 100);
-			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
+				setTimeout(function() {
+					if (typeof initSettingsSidebar === 'function') initSettingsSidebar('puanlarim');
+				}, 100);
+			} catch (err) {
+				console.error('Sidebar yukleme hatasi:', err);
+			}
+
+			// Load points data
+			await loadPointsData();
 		});
+
+		async function loadPointsData() {
+			try {
+				// Toplam puan
+				var totalResult = await PointsService.getCustomerTotalPoints(customerId);
+				var totalPoints = totalResult.totalPoints || 0;
+
+				// Hero karti goster
+				document.getElementById('totalPoints').textContent = formatNumber(totalPoints);
+				document.getElementById('heroCard').style.display = 'block';
+
+				// Son kazanim
+				var lastResult = await PointsService.getLastPointEarning(customerId);
+				if (lastResult.data) {
+					var lastData = lastResult.data;
+					var daysAgo = getDaysAgo(lastData.created_at);
+					var dealerName = lastData.dealer ? lastData.dealer.name : '';
+					document.getElementById('lastEarningText').textContent = 'Son kazanim: +' + lastData.points + ' puan' + (daysAgo ? ' (' + daysAgo + ')' : '') + (dealerName ? ' - ' + dealerName : '');
+					document.getElementById('lastEarning').style.display = 'flex';
+				}
+
+				// Puan dagilimi
+				await loadPointsBreakdown();
+
+				// Puan gecmisi
+				await loadPointsHistory();
+
+			} catch (error) {
+				console.error('Points data load error:', error);
+				document.getElementById('loadingState').style.display = 'none';
+				document.getElementById('emptyState').style.display = 'block';
+			}
+		}
+
+		async function loadPointsBreakdown() {
+			try {
+				var result = await PointsService.getCustomerPointsBreakdown(customerId);
+
+				if (!result.data) return;
+
+				var breakdown = result.data;
+				var hasAnyPoints = breakdown.mainAccount > 0 || Object.keys(breakdown.branches).length > 0;
+
+				// Sadece sube varsa veya ana hesapta puan varsa goster
+				if (!hasAnyPoints) return;
+
+				var container = document.getElementById('breakdownList');
+				var html = '';
+
+				// Ana hesap
+				html += '<div class="breakdown-item main-account">';
+				html += '<div class="breakdown-label main">';
+				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+				html += '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>';
+				html += '<polyline points="9 22 9 12 15 12 15 22"></polyline>';
+				html += '</svg>';
+				html += 'Ana Hesap';
+				html += '</div>';
+				html += '<span class="breakdown-value">' + formatNumber(breakdown.mainAccount) + ' Puan</span>';
+				html += '</div>';
+
+				// Subeler
+				var branchIds = Object.keys(breakdown.branches);
+				branchIds.forEach(function(branchId) {
+					var branch = breakdown.branches[branchId];
+					html += '<div class="breakdown-item">';
+					html += '<div class="breakdown-label">';
+					html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">';
+					html += '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>';
+					html += '<circle cx="12" cy="10" r="3"></circle>';
+					html += '</svg>';
+					html += branch.branchName;
+					html += '</div>';
+					html += '<span class="breakdown-value">' + formatNumber(branch.totalPoints) + ' Puan</span>';
+					html += '</div>';
+				});
+
+				container.innerHTML = html;
+				document.getElementById('breakdownSection').style.display = 'block';
+
+			} catch (error) {
+				console.error('Breakdown load error:', error);
+			}
+		}
+
+		async function loadPointsHistory() {
+			try {
+				var result = await PointsService.getPointsHistoryGroupedByMonth(customerId);
+
+				document.getElementById('loadingState').style.display = 'none';
+
+				if (!result.data || Object.keys(result.data).length === 0) {
+					document.getElementById('emptyState').style.display = 'block';
+					return;
+				}
+
+				renderHistory(result.data);
+				document.getElementById('historyContent').style.display = 'block';
+
+			} catch (error) {
+				console.error('History load error:', error);
+				document.getElementById('loadingState').style.display = 'none';
+				document.getElementById('emptyState').style.display = 'block';
+			}
+		}
+
+		function renderHistory(groupedData) {
+			var container = document.getElementById('historyContent');
+			var html = '';
+
+			// Ay anahtarlarini sirala (yeniden eskiye)
+			var monthKeys = Object.keys(groupedData).sort(function(a, b) {
+				return b.localeCompare(a);
+			});
+
+			monthKeys.forEach(function(monthKey) {
+				var group = groupedData[monthKey];
+				html += '<div class="month-group">';
+				html += '<div class="month-label">' + group.monthName + '</div>';
+				html += '<div class="timeline">';
+
+				group.records.forEach(function(record) {
+					var date = new Date(record.created_at);
+					var formattedDate = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+					var dealerName = record.dealer ? record.dealer.name : 'Ipragaz';
+					var orderNumber = record.order ? (record.order.order_number || record.order.id.substring(0, 8)) : '';
+
+					html += '<div class="timeline-item">';
+					html += '<div class="timeline-dot"></div>';
+					html += '<div class="timeline-content">';
+					html += '<div class="timeline-header">';
+					html += '<span class="timeline-date">' + formattedDate + '</span>';
+					html += '<span class="timeline-points">+' + formatNumber(record.points) + '</span>';
+					html += '</div>';
+					html += '<div class="timeline-dealer">' + dealerName + '</div>';
+					if (orderNumber) {
+						html += '<div class="timeline-order">Siparis #' + orderNumber + ' teslim edildi</div>';
+					}
+					html += '</div>';
+					html += '</div>';
+				});
+
+				html += '</div>';
+				html += '</div>';
+			});
+
+			container.innerHTML = html;
+		}
+
+		async function loadMoreHistory() {
+			currentPage++;
+			var result = await PointsService.getCustomerPointsHistory(customerId, currentPage, pageSize);
+			if (result.data && result.data.length > 0) {
+				// Mevcut icerigi guncelle
+				await loadPointsHistory();
+			}
+			if ((currentPage * pageSize) >= totalRecords) {
+				document.getElementById('loadMore').style.display = 'none';
+			}
+		}
+
+		function formatNumber(num) {
+			return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+		}
+
+		function getDaysAgo(dateStr) {
+			var date = new Date(dateStr);
+			var now = new Date();
+			var diffTime = Math.abs(now - date);
+			var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+			if (diffDays === 0) return 'bugun';
+			if (diffDays === 1) return 'dun';
+			if (diffDays < 7) return diffDays + ' gun once';
+			if (diffDays < 30) return Math.floor(diffDays / 7) + ' hafta once';
+			if (diffDays < 365) return Math.floor(diffDays / 30) + ' ay once';
+			return Math.floor(diffDays / 365) + ' yil once';
+		}
 	</script>
 </body>
 </html>

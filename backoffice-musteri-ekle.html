@@ -529,6 +529,16 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="bo-form-row single">
+                            <div class="bo-form-group">
+                                <label class="bo-form-checkbox">
+                                    <input type="checkbox" id="management_restricted" name="management_restricted">
+                                    <span>Yonetim kisitlamasi uygula</span>
+                                </label>
+                                <span class="bo-form-hint">Isaretlenirse, musteri kendi hesabindan sube ve kullanici yonetimi yapamaz. Sadece backoffice'den yonetilebilir.</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Sube Bilgileri -->
@@ -601,6 +611,17 @@
                                         <input type="checkbox" id="is_default_branch" name="is_default_branch" checked>
                                         <span>Bu subeyi varsayilan olarak ayarla</span>
                                     </label>
+                                </div>
+                            </div>
+
+                            <div class="bo-form-row single">
+                                <div class="bo-form-group">
+                                    <label class="bo-form-label">Puan Toplama Tercihi</label>
+                                    <select class="bo-form-select" id="points_collection_mode" name="points_collection_mode">
+                                        <option value="customer">Ana Musteri Hesabinda Topla</option>
+                                        <option value="branch">Bu Subede Topla</option>
+                                    </select>
+                                    <span class="bo-form-hint">Bu subeden verilen siparislerin puanlari nerede toplanacak?</span>
                                 </div>
                             </div>
                         </div>
@@ -845,7 +866,8 @@
                     company_name: document.getElementById('company_name').value.trim() || null,
                     sector: document.getElementById('sector').value || null,
                     dealer_id: document.getElementById('dealer_id').value || null,
-                    is_active: document.getElementById('is_active').checked
+                    is_active: document.getElementById('is_active').checked,
+                    management_restricted: document.getElementById('management_restricted').checked
                 };
 
                 // Check phone uniqueness
@@ -895,6 +917,7 @@
                             building_no: document.getElementById('building_no').value.trim() || null,
                             floor: document.getElementById('floor').value.trim() || null,
                             apartment: document.getElementById('apartment').value.trim() || null,
+                            points_collection_mode: document.getElementById('points_collection_mode').value || 'customer',
                             is_default: document.getElementById('is_default_branch').checked,
                             is_active: true
                         };

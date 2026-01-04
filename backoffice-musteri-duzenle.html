@@ -506,6 +506,16 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="bo-form-row single">
+                            <div class="bo-form-group">
+                                <label class="bo-form-checkbox">
+                                    <input type="checkbox" id="management_restricted" name="management_restricted">
+                                    <span>Yonetim kisitlamasi uygula</span>
+                                </label>
+                                <span class="bo-form-hint">Isaretlenirse, musteri kendi hesabindan sube ve kullanici yonetimi yapamaz. Sadece backoffice'den yonetilebilir.</span>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -646,6 +656,7 @@
                 document.getElementById('sector').value = customer.sector || '';
                 document.getElementById('dealer_id').value = customer.dealer_id || '';
                 document.getElementById('is_active').checked = customer.is_active !== false;
+                document.getElementById('management_restricted').checked = customer.management_restricted || false;
 
                 // Show form, hide loading
                 document.getElementById('loadingState').style.display = 'none';
@@ -755,7 +766,8 @@
                     company_name: document.getElementById('company_name').value.trim() || null,
                     sector: document.getElementById('sector').value || null,
                     dealer_id: document.getElementById('dealer_id').value || null,
-                    is_active: document.getElementById('is_active').checked
+                    is_active: document.getElementById('is_active').checked,
+                    management_restricted: document.getElementById('management_restricted').checked
                 };
 
                 // Update customer
