@@ -600,19 +600,21 @@
 			}
 		}
 
-		/* Offer Status Banner - Enhanced */
+		/* Offer Status Banner - Enhanced & Compact */
 		.offer-status-banner {
 			background: linear-gradient(135deg, #f0f9ff 0%, #e6f4ff 100%);
 			border: 3px solid #bae6fd;
-			border-radius: 16px;
-			padding: 32px;
-			margin-bottom: 40px;
-			display: flex;
-			align-items: flex-start;
-			gap: 24px;
-			box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+			border-radius: 12px;
+			padding: 20px 28px;
+			margin-bottom: 24px;
+			display: grid;
+			grid-template-columns: 56px 1fr auto auto;
+			align-items: center;
+			gap: 16px;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 			position: relative;
 			overflow: hidden;
+			grid-column: 1 / -1;
 		}
 
 		.offer-status-banner.status-requested {
@@ -663,14 +665,14 @@
 		}
 
 		.status-icon {
-			width: 72px;
-			height: 72px;
+			width: 56px;
+			height: 56px;
 			border-radius: 50%;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+			box-shadow: 0 3px 12px rgba(0,0,0,0.12);
 		}
 
 		.status-requested .status-icon {
@@ -715,8 +717,8 @@
 		}
 
 		.status-icon svg {
-			width: 36px;
-			height: 36px;
+			width: 28px;
+			height: 28px;
 		}
 
 		.status-content {
@@ -726,17 +728,22 @@
 		}
 
 		.status-title {
-			font-size: 22px;
-			font-weight: 700;
+			font-size: 18px;
+			font-weight: 600;
 			color: #333;
-			margin-bottom: 8px;
+			margin-bottom: 4px;
+			line-height: 1.3;
 		}
 
 		.status-message {
-			font-size: 15px;
+			font-size: 14px;
 			color: #555;
-			line-height: 1.6;
-			margin-bottom: 12px;
+			line-height: 1.5;
+			margin-bottom: 8px;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
 		}
 
 		.status-dealer {
@@ -750,22 +757,199 @@
 			font-weight: 600;
 		}
 
-		/* Add Product Notice */
+		/* Inline Branch Info - Bayi yanında */
+		.dealer-branch-separator {
+			margin: 0 8px;
+			color: rgba(0,0,0,0.3);
+			font-weight: 300;
+		}
+
+		.branch-inline {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			position: relative;
+			cursor: pointer;
+			padding: 2px 6px;
+			border-radius: 4px;
+			transition: background 0.2s;
+		}
+
+		.branch-inline:hover {
+			background: rgba(0,0,0,0.08);
+		}
+
+		.branch-inline svg {
+			width: 14px;
+			height: 14px;
+			fill: #166534;
+			flex-shrink: 0;
+		}
+
+		#branchDisplayText {
+			font-size: 13px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		/* Branch Tooltip */
+		.branch-tooltip {
+			display: none;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			margin-top: 8px;
+			background: #fff;
+			border: 2px solid #10b981;
+			border-radius: 8px;
+			padding: 12px 16px;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+			z-index: 1000;
+			min-width: 200px;
+			max-width: 300px;
+			max-height: 250px;
+			overflow-y: auto;
+		}
+
+		.branch-inline:hover .branch-tooltip,
+		.branch-tooltip.active {
+			display: block;
+		}
+
+		.branch-tooltip-header {
+			font-size: 11px;
+			font-weight: 600;
+			color: #666;
+			margin-bottom: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-bottom: 1px solid #eee;
+			padding-bottom: 8px;
+		}
+
+		.branch-tooltip-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		.branch-tooltip-list li {
+			padding: 6px 0;
+			font-size: 13px;
+			color: #333;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			border-bottom: 1px solid #f5f5f5;
+		}
+
+		.branch-tooltip-list li:last-child {
+			border-bottom: none;
+		}
+
+		.branch-tooltip-list li::before {
+			content: "•";
+			color: #10b981;
+			font-weight: bold;
+		}
+
+		/* Başka Şubeye Uygula - Küçük Buton */
+		.btn-extend-branch-sm {
+			background: #fff;
+			color: #002c77;
+			border: 1px solid #002c77;
+			border-radius: 6px;
+			padding: 8px 14px;
+			font-size: 13px;
+			font-weight: 500;
+			cursor: pointer;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			transition: all 0.2s;
+			white-space: nowrap;
+		}
+
+		.btn-extend-branch-sm:hover {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.btn-extend-branch-sm svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		/* Branch Section - Banner İçinde (Eski - artık kullanılmıyor) */
+		.branch-section {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			padding-left: 20px;
+			border-left: 2px solid rgba(0,0,0,0.15);
+			min-width: 180px;
+		}
+
+		.branch-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		.branch-info svg {
+			width: 16px;
+			height: 16px;
+			fill: #166534;
+			flex-shrink: 0;
+		}
+
+		.btn-extend-branch-inline {
+			background: rgba(255,255,255,0.8);
+			color: #166534;
+			border: 1px solid rgba(0,0,0,0.2);
+			border-radius: 6px;
+			padding: 8px 12px;
+			font-size: 12px;
+			font-weight: 500;
+			cursor: pointer;
+			font-family: inherit;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			transition: all 0.2s;
+			white-space: nowrap;
+		}
+
+		.btn-extend-branch-inline:hover {
+			background: #fff;
+			border-color: #166534;
+		}
+
+		.btn-extend-branch-inline svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		/* Add Product Notice - Minimal Style */
 		.add-product-notice {
 			display: flex;
-			align-items: flex-start;
-			gap: 16px;
-			background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-			border: 2px solid #ffc107;
-			border-radius: 12px;
-			padding: 20px 24px;
-			margin-top: 20px;
+			align-items: center;
+			gap: 12px;
+			background: #f9fafb;
+			border: 1px solid #e5e7eb;
+			border-radius: 8px;
+			padding: 10px 16px;
+			margin-top: 16px;
 		}
 
 		.add-product-notice .notice-icon {
-			width: 48px;
-			height: 48px;
-			background: #ffc107;
+			width: 28px;
+			height: 28px;
+			background: #e5e7eb;
 			border-radius: 50%;
 			display: flex;
 			align-items: center;
@@ -774,37 +958,46 @@
 		}
 
 		.add-product-notice .notice-icon svg {
-			width: 24px;
-			height: 24px;
-			color: #5d4037;
+			width: 14px;
+			height: 14px;
+			color: #6b7280;
+		}
+
+		.add-product-notice .notice-content {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			flex-wrap: wrap;
+			flex: 1;
 		}
 
 		.add-product-notice .notice-content p {
-			margin: 0 0 10px 0;
-			font-size: 14px;
-			color: #5d4037;
-			line-height: 1.5;
+			margin: 0;
+			font-size: 13px;
+			color: #6b7280;
+			line-height: 1.4;
 		}
 
 		.add-product-notice .dealer-contact {
 			display: flex;
 			align-items: center;
-			gap: 12px;
+			gap: 8px;
 			flex-wrap: wrap;
 		}
 
 		.add-product-notice .dealer-contact strong {
-			color: #333;
-			font-size: 15px;
+			color: #374151;
+			font-size: 13px;
 		}
 
 		.add-product-notice .dealer-contact .phone {
 			background: #fff;
-			padding: 6px 12px;
-			border-radius: 20px;
-			font-size: 14px;
-			color: #333;
+			padding: 4px 10px;
+			border-radius: 14px;
+			font-size: 12px;
+			color: #374151;
 			font-weight: 500;
+			border: 1px solid #e5e7eb;
 		}
 
 		/* Offer Metadata - Minimal Timeline */
@@ -1043,7 +1236,7 @@
 		/* Stats Container - Taahhut ve Fiyat yan yana, saga yasli */
 		.product-card.readonly .product-stats {
 			display: flex;
-			align-items: center;
+			align-items: stretch;
 			gap: 12px;
 			flex-shrink: 0;
 		}
@@ -1113,6 +1306,7 @@
 		.price-display-pending {
 			display: flex;
 			align-items: center;
+			justify-content: center;
 			gap: 6px;
 			padding: 8px 12px;
 			background: #fffbeb;
@@ -1146,10 +1340,53 @@
 
 		@media (max-width: 768px) {
 			.offer-status-banner {
-				flex-direction: column;
-				align-items: stretch;
-				gap: 20px;
-				padding: 24px 20px;
+				grid-template-columns: 48px 1fr;
+				grid-template-rows: auto auto auto;
+				gap: 12px;
+				padding: 16px;
+			}
+
+			.status-icon {
+				width: 48px;
+				height: 48px;
+				grid-row: 1;
+				grid-column: 1;
+			}
+
+			.status-icon svg {
+				width: 24px;
+				height: 24px;
+			}
+
+			.status-content {
+				grid-row: 1;
+				grid-column: 2;
+			}
+
+			.status-title {
+				font-size: 16px;
+			}
+
+			.status-message {
+				font-size: 13px;
+			}
+
+			.branch-section {
+				grid-column: 1 / -1;
+				grid-row: 2;
+				border-left: none;
+				border-top: 1px solid rgba(0,0,0,0.1);
+				padding-left: 0;
+				padding-top: 12px;
+				flex-direction: row;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.offer-buttons {
+				grid-column: 1 / -1;
+				grid-row: 3;
+				justify-content: center;
 			}
 
 			.btn-cancel-offer {
@@ -1273,12 +1510,15 @@
 		.content-with-chat {
 			display: grid;
 			grid-template-columns: 1fr 380px;
-			gap: 30px;
+			grid-template-rows: auto 1fr;
+			gap: 24px 30px;
 		}
 
 		.main-column {
 			min-width: 0;
 			overflow: hidden;
+			grid-row: 2;
+			grid-column: 1;
 		}
 
 		/* Chat Column */
@@ -1292,6 +1532,9 @@
 			display: flex;
 			flex-direction: column;
 			overflow: hidden;
+			grid-row: 2;
+			grid-column: 2;
+			align-self: start;
 		}
 
 		.chat-header {
@@ -1596,6 +1839,17 @@
 		@media (max-width: 992px) {
 			.content-with-chat {
 				grid-template-columns: 1fr;
+				grid-template-rows: auto auto auto;
+			}
+
+			.offer-status-banner {
+				grid-column: 1;
+				grid-row: 1;
+			}
+
+			.main-column {
+				grid-column: 1;
+				grid-row: 2;
 			}
 
 			.chat-column {
@@ -1622,14 +1876,9 @@
 			}
 		}
 
-		/* Branch Extension Section */
+		/* Branch Extension Section - Artık kullanılmıyor, banner içine taşındı */
 		.branch-extension-section {
-			background: #fff;
-			border-radius: 12px;
-			padding: 20px;
-			margin-bottom: 30px;
-			border: 1px solid #eee;
-			box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+			display: none !important;
 		}
 
 		.branch-extension-header {
@@ -1847,36 +2096,55 @@
 	<!-- Main Content -->
 	<main class="main-content">
 		<div class="container content-with-chat">
-			<!-- Main Column -->
-			<div class="main-column">
-				<!-- Status Banner (Aktif teklif varken gosterilecek) -->
-				<div class="offer-status-banner" id="offerStatusBanner" style="display: none;">
-					<div class="status-icon" id="statusIcon"></div>
-					<div class="status-content">
-						<h4 class="status-title" id="statusTitle">Teklif Durumu</h4>
-						<p class="status-message" id="statusMessage">Teklif talebiniz bayiye iletildi</p>
-						<div class="status-dealer" id="statusDealer">
-							<span>Bayi:</span> <strong id="statusDealerName">-</strong>
+			<!-- Status Banner (Aktif teklif varken gosterilecek) - Grid'in doğrudan child'ı -->
+			<div class="offer-status-banner" id="offerStatusBanner" style="display: none;">
+				<div class="status-icon" id="statusIcon"></div>
+				<div class="status-content">
+					<h4 class="status-title" id="statusTitle">Teklif Durumu</h4>
+					<p class="status-message" id="statusMessage">Teklif talebiniz bayiye iletildi</p>
+					<div class="status-dealer" id="statusDealer">
+						<span>Bayi:</span> <strong id="statusDealerName">-</strong>
+						<!-- Şube bilgisi inline -->
+						<span class="dealer-branch-separator" id="branchSeparator" style="display: none;">|</span>
+						<span class="branch-inline" id="branchInline" style="display: none;">
+							<svg viewBox="0 0 24 24" fill="currentColor">
+								<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+							</svg>
+							<span id="branchDisplayText">-</span>
+						</span>
+						<!-- Tooltip -->
+						<div class="branch-tooltip" id="branchTooltip">
+							<div class="branch-tooltip-header">Teklif Gecerli Subeler</div>
+							<ul class="branch-tooltip-list" id="branchTooltipList"></ul>
 						</div>
 					</div>
-					<div class="offer-buttons">
-						<button class="btn-accept-offer" id="btnAcceptOffer" onclick="acceptActiveOffer()" style="display: none;">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<polyline points="20 6 9 17 4 12"/>
-							</svg>
-							Teklifi Kabul Et
-						</button>
-						<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="12" cy="12" r="10"/>
-								<line x1="15" y1="9" x2="9" y2="15"/>
-								<line x1="9" y1="9" x2="15" y2="15"/>
-							</svg>
-							Teklifi Iptal Et
-						</button>
-					</div>
 				</div>
+				<div class="offer-buttons">
+					<button class="btn-accept-offer" id="btnAcceptOffer" onclick="acceptActiveOffer()" style="display: none;">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="20 6 9 17 4 12"/>
+						</svg>
+						Teklifi Kabul Et
+					</button>
+					<button class="btn-extend-branch-sm" id="btnExtendBranchInline" style="display: none;">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M12 5v14M5 12h14"/>
+						</svg>
+						Baska Subeye Uygula
+					</button>
+					<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"/>
+							<line x1="15" y1="9" x2="9" y2="15"/>
+							<line x1="9" y1="9" x2="15" y2="15"/>
+						</svg>
+						Teklifi Iptal Et
+					</button>
+				</div>
+			</div>
 
+			<!-- Main Column -->
+			<div class="main-column">
 				<!-- Branch Extension Section (sadece accepted status'ta görünür) -->
 				<div class="branch-extension-section" id="branchExtensionSection" style="display: none;">
 					<div class="branch-extension-header">
@@ -2423,15 +2691,11 @@
 			metadataEl.style.display = 'block';
 		}
 
-		// Info card'i read-only mod icin guncelle
+		// Info card'i read-only mod icin gizle
 		function updateInfoCardForReadOnly() {
 			var infoCard = document.querySelector('.info-card');
-			if (!infoCard) return;
-
-			var content = infoCard.querySelector('.info-card-content');
-			if (content) {
-				content.querySelector('h4').textContent = 'Mevcut Teklifiniz';
-				content.querySelector('p').textContent = 'Asagida teklif talebinizde belirttiginiz urunler ve miktarlar yer almaktadir. Yeni bir teklif talebi olusturmak icin mevcut teklifinizi iptal etmeniz gerekmektedir.';
+			if (infoCard) {
+				infoCard.style.display = 'none';
 			}
 		}
 
@@ -2488,7 +2752,7 @@
 						'</div>' +
 						'<div class="product-stats">' +
 							'<div class="consumption-display">' +
-								'<div class="consumption-display-label">Taahhut</div>' +
+								'<div class="consumption-display-label">Ortalama Tüketim</div>' +
 								'<div class="consumption-display-value">' + detail.commitment_quantity + '<span>adet/ay</span></div>' +
 							'</div>' +
 							priceHtml +
@@ -3178,28 +3442,105 @@
 
 		// ==================== SUBE GENISLETME FONKSIYONLARI ====================
 
-		// Sube genisletme bolumunu goster
+		// Sube adini formatla
+		function getBranchName(branch) {
+			if (!branch) return 'Bilinmeyen Sube';
+			return branch.branch_name ||
+				[branch.district, branch.city].filter(Boolean).join(', ') ||
+				'Bilinmeyen Sube';
+		}
+
+		// Sube listesini formatla (kisaltmali)
+		function formatBranchDisplay(branches) {
+			if (!branches || branches.length === 0) return null;
+
+			var names = branches.map(function(b) { return getBranchName(b); });
+
+			if (names.length === 1) {
+				return { text: 'Sube: ' + names[0], hasMore: false };
+			}
+			if (names.length === 2) {
+				return { text: 'Subeler: ' + names.join(', '), hasMore: false };
+			}
+			// 3+ sube
+			var remaining = names.length - 2;
+			return {
+				text: 'Subeler: ' + names[0] + ', ' + names[1] + ' + ' + remaining + ' sube',
+				hasMore: true,
+				allNames: names
+			};
+		}
+
+		// Tooltip listesini guncelle
+		function updateBranchTooltip(branches) {
+			var tooltipList = document.getElementById('branchTooltipList');
+			if (!tooltipList || !branches || branches.length === 0) return;
+
+			tooltipList.innerHTML = branches.map(function(b) {
+				return '<li>' + getBranchName(b) + '</li>';
+			}).join('');
+		}
+
+		// Sube genisletme bolumunu goster (Inline)
 		function showBranchExtensionSection() {
 			if (!activeOffer) return;
 
 			var section = document.getElementById('branchExtensionSection');
+			var branchSeparator = document.getElementById('branchSeparator');
+			var branchInline = document.getElementById('branchInline');
+			var branchDisplayText = document.getElementById('branchDisplayText');
+			var btnExtendInline = document.getElementById('btnExtendBranchInline');
+			var branchNameEl = document.getElementById('currentBranchName');
 
-			// Teklif zaten "Tum Subeler" icin gecerliyse genisletme bolumunu gosterme
+			// Teklif zaten "Tum Subeler" icin gecerliyse gosterme
 			if (!activeOffer.customer_branch_id) {
 				section.style.display = 'none';
+				if (branchSeparator) branchSeparator.style.display = 'none';
+				if (branchInline) branchInline.style.display = 'none';
+				if (btnExtendInline) btnExtendInline.style.display = 'none';
 				return;
 			}
 
-			var branchNameEl = document.getElementById('currentBranchName');
+			// Teklifin gecerli oldugu subeleri topla
+			var offerBranches = [];
 
-			// Mevcut sube adini goster
-			var branchName = activeOffer.customer_branch ?
-				(activeOffer.customer_branch.branch_name ||
-				[activeOffer.customer_branch.district, activeOffer.customer_branch.city].filter(Boolean).join(', ')) :
-				'Bilinmeyen Sube';
-			branchNameEl.textContent = branchName;
+			// Ana sube
+			if (activeOffer.customer_branch) {
+				offerBranches.push(activeOffer.customer_branch);
+			}
 
-			section.style.display = 'block';
+			// Genisletilmis subeler (offer_branch_extensions tablosundan)
+			if (activeOffer.offer_branch_extensions && activeOffer.offer_branch_extensions.length > 0) {
+				activeOffer.offer_branch_extensions.forEach(function(ext) {
+					if (ext.customer_branch) {
+						offerBranches.push(ext.customer_branch);
+					}
+				});
+			}
+
+			// Inline sube gosterimi
+			var displayInfo = formatBranchDisplay(offerBranches);
+			if (displayInfo && branchDisplayText) {
+				branchDisplayText.textContent = displayInfo.text;
+				if (branchSeparator) branchSeparator.style.display = 'inline';
+				if (branchInline) branchInline.style.display = 'inline-flex';
+
+				// Tooltip'i guncelle
+				if (displayInfo.hasMore || offerBranches.length > 1) {
+					updateBranchTooltip(offerBranches);
+				}
+			}
+
+			// Baska Subeye Uygula butonunu goster (sadece accepted durumunda)
+			if (btnExtendInline && activeOffer.status === 'accepted') {
+				btnExtendInline.style.display = 'flex';
+			}
+
+			// Eski section'u gizle
+			if (branchNameEl) {
+				branchNameEl.textContent = getBranchName(activeOffer.customer_branch);
+			}
+			section.style.display = 'none';
 		}
 
 		// Diger subeleri yukle
@@ -3296,6 +3637,15 @@
 			var btnExtend = document.getElementById('btnExtendBranch');
 			if (btnExtend) {
 				btnExtend.addEventListener('click', function() {
+					loadOtherBranches();
+					document.getElementById('branchSelectOverlay').classList.add('active');
+				});
+			}
+
+			// Banner icindeki inline buton icin de ayni islevi ekle
+			var btnExtendInline = document.getElementById('btnExtendBranchInline');
+			if (btnExtendInline) {
+				btnExtendInline.addEventListener('click', function() {
 					loadOtherBranches();
 					document.getElementById('branchSelectOverlay').classList.add('active');
 				});
