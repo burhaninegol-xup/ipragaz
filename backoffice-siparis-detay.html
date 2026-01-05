@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparis Detay - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+            --status-pending: #E65100;
+            --status-preparing: #1565C0;
+            --status-on-the-way: #3F51B5;
+            --status-completed: #2E7D32;
+            --status-cancelled: #C62828;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bo-bg-main); min-height: 100vh; }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            padding-bottom: 80px;
+        }
+        .bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+        .bo-content { padding: 24px; }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bo-page-header-left { display: flex; align-items: center; gap: 16px; }
+        .bo-page-header-left h1 { font-size: 24px; font-weight: 600; color: var(--bo-text-primary); }
+        .bo-back-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--bo-border);
+            background: var(--bo-bg-paper);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+        }
+        .bo-back-btn:hover { border-color: var(--bo-primary); color: var(--bo-primary); }
+        .bo-back-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .bo-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-btn-primary { background: var(--bo-primary); color: #fff; }
+        .bo-btn-primary:hover { background: var(--bo-primary-dark); }
+        .bo-btn-secondary { background: var(--bo-bg-paper); color: var(--bo-text-primary); border: 1px solid var(--bo-border); }
+        .bo-btn-secondary:hover { background: var(--bo-bg-main); }
+        .bo-btn-danger { background: var(--bo-error); color: #fff; }
+        .bo-btn-danger:hover { background: #dc2626; }
+        .bo-btn-sm { padding: 6px 12px; font-size: 13px; }
+
+        .bo-card { background: var(--bo-bg-paper); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .bo-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .bo-card-title { font-size: 16px; font-weight: 600; color: var(--bo-text-primary); display: flex; align-items: center; gap: 8px; }
+        .bo-card-title svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-card-body { padding: 24px; }
+
+        /* Order Header Card */
+        .bo-order-header-card {
+            background: linear-gradient(135deg, var(--bo-primary) 0%, var(--bo-primary-dark) 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .bo-order-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bo-order-header-left h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .bo-order-header-left p { font-size: 14px; opacity: 0.9; }
+        .bo-order-header-right { display: flex; align-items: center; gap: 12px; }
+
+        .bo-order-status-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            background: #fff;
+        }
+        .bo-order-status-large svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-order-status-large.waiting_for_assignment, .bo-order-status-large.pending { color: var(--status-pending); }
+        .bo-order-status-large.preparing { color: var(--status-preparing); }
+        .bo-order-status-large.on_the_way { color: var(--status-on-the-way); }
+        .bo-order-status-large.completed { color: var(--status-completed); }
+        .bo-order-status-large.cancelled { color: var(--status-cancelled); }
+
+        .bo-order-header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        .bo-order-stat {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        .bo-order-stat-value { font-size: 20px; font-weight: 700; }
+        .bo-order-stat-label { font-size: 12px; opacity: 0.9; }
+
+        /* Layout */
+        .bo-order-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        @media (max-width: 1024px) { .bo-order-layout { grid-template-columns: 1fr; } }
+
+        /* Info Grid */
+        .bo-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (max-width: 600px) { .bo-info-grid { grid-template-columns: 1fr; } }
+        .bo-info-item label { display: block; font-size: 12px; color: var(--bo-text-secondary); margin-bottom: 4px; }
+        .bo-info-item span { font-size: 14px; font-weight: 500; color: var(--bo-text-primary); }
+
+        /* Items Table */
+        .bo-items-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .bo-items-table th, .bo-items-table td { padding: 12px; text-align: left; font-size: 14px; }
+        .bo-items-table th {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .bo-items-table td { border-bottom: 1px solid var(--bo-border); }
+        .bo-items-table tr:last-child td { border-bottom: none; }
+        .bo-items-table .product-cell { display: flex; align-items: center; gap: 12px; }
+        .bo-items-table .product-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bo-bg-main);
+        }
+        .bo-items-table .product-name { font-weight: 500; }
+        .bo-items-table .product-code { font-size: 12px; color: var(--bo-text-secondary); }
+
+        /* Summary */
+        .bo-summary { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--bo-border); }
+        .bo-summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .bo-summary-row.total { font-size: 18px; font-weight: 600; color: var(--bo-text-primary); padding-top: 16px; border-top: 1px solid var(--bo-border); }
+
+        /* Timeline */
+        .bo-timeline { position: relative; padding-left: 24px; }
+        .bo-timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--bo-border);
+        }
+        .bo-timeline-item { position: relative; padding-bottom: 20px; }
+        .bo-timeline-item:last-child { padding-bottom: 0; }
+        .bo-timeline-dot {
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bo-border);
+            border: 3px solid var(--bo-bg-paper);
+        }
+        .bo-timeline-dot.pending, .bo-timeline-dot.waiting_for_assignment { background: var(--status-pending); }
+        .bo-timeline-dot.preparing { background: var(--status-preparing); }
+        .bo-timeline-dot.on_the_way { background: var(--status-on-the-way); }
+        .bo-timeline-dot.completed { background: var(--status-completed); }
+        .bo-timeline-dot.cancelled { background: var(--status-cancelled); }
+        .bo-timeline-content h4 { font-size: 14px; font-weight: 500; color: var(--bo-text-primary); margin-bottom: 4px; }
+        .bo-timeline-content p { font-size: 12px; color: var(--bo-text-secondary); }
+        .bo-timeline-content .time { font-size: 11px; color: var(--bo-text-secondary); margin-top: 4px; }
+
+        /* Status Change */
+        .bo-status-change { margin-top: 16px; }
+        .bo-status-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-paper);
+            cursor: pointer;
+        }
+        .bo-status-select:focus { outline: none; border-color: var(--bo-primary); }
+
+        /* Notes */
+        .bo-notes { margin-top: 16px; }
+        .bo-note-item { padding: 12px; background: var(--bo-bg-main); border-radius: 8px; margin-bottom: 8px; }
+        .bo-note-item p { font-size: 13px; color: var(--bo-text-primary); }
+        .bo-note-item .meta { font-size: 11px; color: var(--bo-text-secondary); margin-top: 4px; }
+
+        /* Footer Actions */
+        .bo-footer-actions {
+            position: fixed;
+            bottom: 0;
+            left: var(--bo-sidebar-width);
+            right: 0;
+            background: var(--bo-bg-paper);
+            border-top: 1px solid var(--bo-border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            z-index: 100;
+            transition: left 0.3s ease;
+        }
+        .bo-footer-actions.sidebar-collapsed { left: var(--bo-sidebar-collapsed); }
+
+        /* Loading */
+        .bo-loading { display: flex; align-items: center; justify-content: center; padding: 64px; }
+        .bo-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+        .bo-toast.show { transform: translateY(0); opacity: 1; }
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+        .bo-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Modal */
+        .bo-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+        .bo-modal-overlay.show { display: flex; }
+        .bo-modal { background: var(--bo-bg-paper); border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; }
+        .bo-modal h3 { font-size: 18px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 12px; }
+        .bo-modal p { font-size: 14px; color: var(--bo-text-secondary); margin-bottom: 24px; }
+        .bo-modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+        @media (max-width: 768px) {
+            .bo-footer-actions { left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="backoffice-sidebar"></div>
+
+    <main class="bo-main-content">
+        <div id="backoffice-header"></div>
+
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <button class="bo-back-btn" onclick="goBack()">
+                        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1>Siparis Detay</h1>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div class="bo-loading" id="loadingState">
+                <div class="bo-loading-spinner"></div>
+            </div>
+
+            <!-- Content -->
+            <div id="orderContent" style="display: none;">
+                <!-- Order Header Card -->
+                <div class="bo-order-header-card" id="orderHeaderCard">
+                    <div class="bo-order-header-top">
+                        <div class="bo-order-header-left">
+                            <h2 id="orderNumber">-</h2>
+                            <p id="orderDate">-</p>
+                        </div>
+                        <div class="bo-order-header-right">
+                            <span class="bo-order-status-large" id="orderStatus">-</span>
+                        </div>
+                    </div>
+                    <div class="bo-order-header-stats">
+                        <div class="bo-order-stat">
+                            <div class="bo-order-stat-value" id="statItems">0</div>
+                            <div class="bo-order-stat-label">Kalem</div>
+                        </div>
+                        <div class="bo-order-stat">
+                            <div class="bo-order-stat-value" id="statQuantity">0</div>
+                            <div class="bo-order-stat-label">Adet</div>
+                        </div>
+                        <div class="bo-order-stat">
+                            <div class="bo-order-stat-value" id="statTotal">0 TL</div>
+                            <div class="bo-order-stat-label">Toplam</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layout -->
+                <div class="bo-order-layout">
+                    <!-- Left Column -->
+                    <div class="bo-order-left">
+                        <!-- Dealer Info -->
+                        <div class="bo-card" style="margin-bottom: 24px;">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                    Bayi Bilgileri
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-info-grid" id="dealerInfo"></div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Info -->
+                        <div class="bo-card" style="margin-bottom: 24px;">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    Musteri Bilgileri
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-info-grid" id="customerInfo"></div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="bo-card">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                    Siparis Kalemleri
+                                </span>
+                            </div>
+                            <div class="bo-card-body" style="padding: 0;">
+                                <table class="bo-items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Urun</th>
+                                            <th>Birim Fiyat</th>
+                                            <th>Adet</th>
+                                            <th>Toplam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderItems"></tbody>
+                                </table>
+                                <div class="bo-summary" style="padding: 0 24px 24px;">
+                                    <div class="bo-summary-row">
+                                        <span>Ara Toplam</span>
+                                        <span id="subtotal">0 TL</span>
+                                    </div>
+                                    <div class="bo-summary-row total">
+                                        <span>Genel Toplam</span>
+                                        <span id="grandTotal">0 TL</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="bo-order-right">
+                        <!-- Status Change -->
+                        <div class="bo-card" style="margin-bottom: 24px;">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                                    Durum Degistir
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <select class="bo-status-select" id="statusSelect" onchange="changeStatus()">
+                                    <option value="waiting_for_assignment">Bekleyen</option>
+                                    <option value="preparing">Hazirlaniyor</option>
+                                    <option value="on_the_way">Yolda</option>
+                                    <option value="completed">Teslim Edildi</option>
+                                    <option value="cancelled">Iptal Edildi</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="bo-card">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    Siparis Gecmisi
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-timeline" id="timeline"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Actions -->
+    <div class="bo-footer-actions" id="footerActions">
+        <button class="bo-btn bo-btn-secondary" onclick="printOrder()">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Yazdir
+        </button>
+        <button class="bo-btn bo-btn-danger" onclick="cancelOrder()" id="cancelBtn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+            Siparisi Iptal Et
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="bo-modal-overlay" id="confirmModal">
+        <div class="bo-modal">
+            <h3 id="modalTitle">Emin misiniz?</h3>
+            <p id="modalMessage">Bu islemi geri alamazsiniz.</p>
+            <div class="bo-modal-actions">
+                <button class="bo-btn bo-btn-secondary" onclick="closeModal()">Vazgec</button>
+                <button class="bo-btn bo-btn-danger" id="modalConfirmBtn" onclick="confirmAction()">Iptal Et</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/orders-service.js"></script>
+
+    <script>
+        var orderId = null;
+        var currentOrder = null;
+        var pendingAction = null;
+
+        var statusLabels = {
+            'waiting_for_assignment': 'Bekleyen',
+            'pending': 'Bekleyen',
+            'preparing': 'Hazirlaniyor',
+            'on_the_way': 'Yolda',
+            'completed': 'Teslim Edildi',
+            'cancelled': 'Iptal Edildi'
+        };
+
+        var statusIcons = {
+            'waiting_for_assignment': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            'pending': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            'preparing': '<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
+            'on_the_way': '<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>',
+            'completed': '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+            'cancelled': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
+        };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            orderId = params.get('id');
+
+            if (!orderId) {
+                window.location.href = 'backoffice-siparisler.html';
+                return;
+            }
+
+            await loadComponents();
+            if (typeof setPageName === 'function') setPageName('Siparis Detay');
+
+            await loadOrder();
+        });
+
+        async function loadComponents() {
+            try {
+                var sidebarRes = await fetch('components/backoffice-sidebar.html');
+                document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+                var headerRes = await fetch('components/backoffice-header.html');
+                document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (e) { console.error('Component load error:', e); }
+        }
+
+        function executeScripts(container) {
+            container.querySelectorAll('script').forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        async function loadOrder() {
+            try {
+                var result = await OrdersService.getById(orderId);
+                if (result.error) throw result.error;
+
+                currentOrder = result.data;
+                renderOrder();
+
+                // Load timeline
+                await loadTimeline();
+
+            } catch (e) {
+                console.error('Load order error:', e);
+                showToast('Siparis yuklenemedi', 'error');
+            }
+        }
+
+        function renderOrder() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('orderContent').style.display = 'block';
+
+            // Header
+            document.getElementById('orderNumber').textContent = currentOrder.order_number || 'Siparis #' + orderId.substring(0, 8);
+            document.getElementById('orderDate').textContent = currentOrder.created_at ?
+                new Date(currentOrder.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+            // Status
+            var status = currentOrder.status || 'pending';
+            var statusEl = document.getElementById('orderStatus');
+            statusEl.className = 'bo-order-status-large ' + status;
+            statusEl.innerHTML = (statusIcons[status] || '') + (statusLabels[status] || status);
+
+            document.getElementById('statusSelect').value = status;
+
+            // Hide cancel button if already completed or cancelled
+            if (status === 'completed' || status === 'cancelled') {
+                document.getElementById('cancelBtn').style.display = 'none';
+            }
+
+            // Stats
+            var items = currentOrder.order_items || [];
+            var totalQty = items.reduce(function(sum, i) { return sum + (i.quantity || 0); }, 0);
+            var total = parseFloat(currentOrder.total_amount) || items.reduce(function(sum, i) { return sum + (parseFloat(i.total_price) || 0); }, 0);
+
+            document.getElementById('statItems').textContent = items.length;
+            document.getElementById('statQuantity').textContent = totalQty;
+            document.getElementById('statTotal').textContent = total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+
+            // Dealer info
+            var dealer = currentOrder.dealer || {};
+            document.getElementById('dealerInfo').innerHTML =
+                '<div class="bo-info-item"><label>Bayi Adi</label><span>' + (dealer.name || '-') + '</span></div>' +
+                '<div class="bo-info-item"><label>Bayi Kodu</label><span>' + (dealer.code || '-') + '</span></div>';
+
+            // Customer info
+            var customer = currentOrder.customer || {};
+            document.getElementById('customerInfo').innerHTML =
+                '<div class="bo-info-item"><label>Musteri Adi</label><span>' + (customer.name || customer.company_name || '-') + '</span></div>' +
+                '<div class="bo-info-item"><label>Telefon</label><span>' + (customer.phone || '-') + '</span></div>' +
+                '<div class="bo-info-item"><label>VKN</label><span>' + (customer.vkn || '-') + '</span></div>';
+
+            // Order items
+            var itemsHtml = items.map(function(item) {
+                var product = item.product || {};
+                var unitPrice = parseFloat(item.unit_price) || 0;
+                var totalPrice = parseFloat(item.total_price) || 0;
+
+                return '<tr>' +
+                    '<td>' +
+                        '<div class="product-cell">' +
+                            '<img src="' + (product.image_url || 'assets/product-placeholder.png') + '" class="product-img" onerror="this.src=\'assets/product-placeholder.png\'">' +
+                            '<div>' +
+                                '<div class="product-name">' + (product.name || '-') + '</div>' +
+                                '<div class="product-code">' + (product.code || '') + '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' + unitPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) + '</td>' +
+                    '<td>' + (item.quantity || 0) + '</td>' +
+                    '<td><strong>' + totalPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) + '</strong></td>' +
+                '</tr>';
+            }).join('');
+
+            document.getElementById('orderItems').innerHTML = itemsHtml || '<tr><td colspan="4" style="text-align: center;">Urun bulunamadi</td></tr>';
+
+            // Summary
+            document.getElementById('subtotal').textContent = total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+            document.getElementById('grandTotal').textContent = total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+        }
+
+        async function loadTimeline() {
+            try {
+                var result = await OrdersService.getStatusHistory(orderId);
+                var history = result.data || [];
+
+                if (history.length === 0) {
+                    // Create default entry
+                    history = [{
+                        new_status: currentOrder.status,
+                        created_at: currentOrder.created_at,
+                        notes: 'Siparis olusturuldu'
+                    }];
+                }
+
+                var timelineHtml = history.map(function(h) {
+                    var status = h.new_status || 'pending';
+                    var time = h.created_at ? new Date(h.created_at).toLocaleDateString('tr-TR', {
+                        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    }) : '-';
+
+                    return '<div class="bo-timeline-item">' +
+                        '<div class="bo-timeline-dot ' + status + '"></div>' +
+                        '<div class="bo-timeline-content">' +
+                            '<h4>' + (statusLabels[status] || status) + '</h4>' +
+                            '<p>' + (h.notes || '-') + '</p>' +
+                            '<div class="time">' + time + '</div>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+
+                document.getElementById('timeline').innerHTML = timelineHtml;
+
+            } catch (e) {
+                console.error('Load timeline error:', e);
+            }
+        }
+
+        async function changeStatus() {
+            var newStatus = document.getElementById('statusSelect').value;
+            if (newStatus === currentOrder.status) return;
+
+            try {
+                var adminId = sessionStorage.getItem('backoffice_admin_id');
+                var result = await OrdersService.updateStatus(orderId, newStatus, 'admin', adminId, 'Durum degistirildi');
+
+                if (result.error) throw result.error;
+
+                currentOrder.status = newStatus;
+                renderOrder();
+                await loadTimeline();
+                showToast('Durum guncellendi', 'success');
+
+            } catch (e) {
+                console.error('Change status error:', e);
+                showToast('Durum guncellenemedi', 'error');
+                document.getElementById('statusSelect').value = currentOrder.status;
+            }
+        }
+
+        function cancelOrder() {
+            pendingAction = { type: 'cancel' };
+            document.getElementById('modalTitle').textContent = 'Siparisi Iptal Et';
+            document.getElementById('modalMessage').textContent = 'Bu siparis iptal edilecek. Bu islemi geri alamazsiniz.';
+            document.getElementById('modalConfirmBtn').textContent = 'Iptal Et';
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            pendingAction = null;
+        }
+
+        async function confirmAction() {
+            if (!pendingAction) return;
+
+            if (pendingAction.type === 'cancel') {
+                try {
+                    var adminId = sessionStorage.getItem('backoffice_admin_id');
+                    var result = await OrdersService.cancel(orderId, 'admin', adminId);
+
+                    if (result.error) throw result.error;
+
+                    currentOrder.status = 'cancelled';
+                    renderOrder();
+                    await loadTimeline();
+                    showToast('Siparis iptal edildi', 'success');
+
+                } catch (e) {
+                    console.error('Cancel order error:', e);
+                    showToast('Siparis iptal edilemedi', 'error');
+                }
+            }
+
+            closeModal();
+        }
+
+        function printOrder() {
+            window.print();
+        }
+
+        function goBack() {
+            window.location.href = 'backoffice-siparisler.html';
+        }
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>

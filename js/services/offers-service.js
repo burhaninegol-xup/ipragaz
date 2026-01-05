@@ -51,6 +51,7 @@ const OffersService = {
                     *,
                     customer:customers(id, name, vkn, company_name, phone, email, address, is_active),
                     dealer:dealers(id, name, code),
+                    branch:customer_branches(id, branch_name, city, district, full_address),
                     offer_details(
                         id,
                         unit_price,
@@ -1162,6 +1163,56 @@ const OffersService = {
             };
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.validateCartPricesForBranch');
+        }
+    },
+
+    /**
+     * Tum teklifleri getir (backoffice icin)
+     * @param {Object} filters - { status, dealerId, customerId, dateFrom, dateTo }
+     */
+    async getAll(filters = {}) {
+        try {
+            let query = supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code),
+                    customer:customers(id, name, company_name, vkn),
+                    branch:customer_branches(id, branch_name, city, district),
+                    offer_details(
+                        id,
+                        product_id,
+                        unit_price,
+                        pricing_type,
+                        discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name)
+                    )
+                `)
+                .order('created_at', { ascending: false });
+
+            if (filters.status) {
+                query = query.eq('status', filters.status);
+            }
+            if (filters.dealerId) {
+                query = query.eq('dealer_id', filters.dealerId);
+            }
+            if (filters.customerId) {
+                query = query.eq('customer_id', filters.customerId);
+            }
+            if (filters.dateFrom) {
+                query = query.gte('created_at', filters.dateFrom);
+            }
+            if (filters.dateTo) {
+                query = query.lte('created_at', filters.dateTo + 'T23:59:59');
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            return { data: data || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getAll');
         }
     }
 };

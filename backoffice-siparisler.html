@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siparisler - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+            /* Order Status Colors */
+            --status-pending: #E65100;
+            --status-preparing: #1565C0;
+            --status-on-the-way: #3F51B5;
+            --status-completed: #2E7D32;
+            --status-cancelled: #C62828;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bo-bg-main); min-height: 100vh; }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        .bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+        .bo-content { padding: 24px; }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .bo-page-header-left h1 { font-size: 24px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 4px; }
+        .bo-page-header-left p { font-size: 14px; color: var(--bo-text-secondary); }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .bo-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-btn-primary { background: var(--bo-primary); color: #fff; }
+        .bo-btn-primary:hover { background: var(--bo-primary-dark); }
+        .bo-btn-secondary { background: var(--bo-bg-paper); color: var(--bo-text-primary); border: 1px solid var(--bo-border); }
+        .bo-btn-secondary:hover { background: var(--bo-bg-main); }
+        .bo-btn-sm { padding: 6px 12px; font-size: 13px; }
+        .bo-btn-sm svg { width: 16px; height: 16px; }
+
+        .bo-card { background: var(--bo-bg-paper); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+        /* Status Tabs */
+        .bo-status-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            overflow-x: auto;
+        }
+        .bo-status-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .bo-status-tab:hover { background: #e5e5e5; }
+        .bo-status-tab.active { background: var(--bo-primary); color: #fff; }
+        .bo-status-tab .count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(0,0,0,0.1);
+        }
+        .bo-status-tab.active .count { background: rgba(255,255,255,0.3); }
+
+        /* Toolbar */
+        .bo-toolbar {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bo-toolbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .bo-toolbar-right { display: flex; align-items: center; gap: 12px; }
+
+        .bo-search { position: relative; }
+        .bo-search input {
+            width: 280px;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main);
+            transition: all 0.2s ease;
+        }
+        .bo-search input:focus { outline: none; border-color: var(--bo-primary); background: var(--bo-bg-paper); }
+        .bo-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--bo-text-secondary); }
+        .bo-search-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .bo-select {
+            padding: 10px 36px 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+            cursor: pointer;
+            appearance: none;
+        }
+        .bo-select:focus { outline: none; border-color: var(--bo-primary); }
+
+        .bo-date-input {
+            padding: 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-main);
+        }
+        .bo-date-input:focus { outline: none; border-color: var(--bo-primary); }
+
+        /* Table */
+        .bo-table-wrapper { overflow-x: auto; }
+        .bo-table { width: 100%; border-collapse: collapse; }
+        .bo-table th, .bo-table td { padding: 14px 16px; text-align: left; font-size: 14px; }
+        .bo-table th {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .bo-table td { border-bottom: 1px solid var(--bo-border); color: var(--bo-text-primary); }
+        .bo-table tr:last-child td { border-bottom: none; }
+        .bo-table tr:hover td { background: rgba(0,0,0,0.02); }
+
+        /* Order Status Badge */
+        .bo-order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .bo-order-status svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-order-status.pending { background: rgba(230,81,0,0.1); color: var(--status-pending); }
+        .bo-order-status.waiting_for_assignment { background: rgba(230,81,0,0.1); color: var(--status-pending); }
+        .bo-order-status.preparing { background: rgba(21,101,192,0.1); color: var(--status-preparing); }
+        .bo-order-status.on_the_way { background: rgba(63,81,181,0.1); color: var(--status-on-the-way); }
+        .bo-order-status.completed { background: rgba(46,125,50,0.1); color: var(--status-completed); }
+        .bo-order-status.cancelled { background: rgba(198,40,40,0.1); color: var(--status-cancelled); }
+
+        .bo-order-number { font-weight: 600; color: var(--bo-primary); cursor: pointer; }
+        .bo-order-number:hover { text-decoration: underline; }
+
+        .bo-order-amount { font-weight: 600; color: var(--bo-text-primary); }
+
+        /* Action Buttons */
+        .bo-action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+        }
+        .bo-action-btn:hover { background: var(--bo-bg-main); color: var(--bo-text-primary); }
+        .bo-action-btn.view:hover { color: var(--bo-info); }
+        .bo-action-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Pagination */
+        .bo-pagination {
+            padding: 16px 24px;
+            border-top: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .bo-pagination-info { font-size: 13px; color: var(--bo-text-secondary); }
+        .bo-pagination-controls { display: flex; align-items: center; gap: 8px; }
+        .bo-pagination-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--bo-border);
+            background: var(--bo-bg-paper);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .bo-pagination-btn:hover:not(:disabled) { border-color: var(--bo-primary); color: var(--bo-primary); }
+        .bo-pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .bo-pagination-btn.active { background: var(--bo-primary); border-color: var(--bo-primary); color: #fff; }
+        .bo-pagination-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Empty State */
+        .bo-empty-state { text-align: center; padding: 64px 24px; }
+        .bo-empty-state svg { width: 80px; height: 80px; stroke: var(--bo-border); fill: none; stroke-width: 1.5; margin-bottom: 16px; }
+        .bo-empty-state h3 { font-size: 18px; font-weight: 500; color: var(--bo-text-primary); margin-bottom: 8px; }
+        .bo-empty-state p { font-size: 14px; color: var(--bo-text-secondary); }
+
+        /* Loading */
+        .bo-loading { display: flex; align-items: center; justify-content: center; padding: 64px; }
+        .bo-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+        .bo-toast.show { transform: translateY(0); opacity: 1; }
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+        .bo-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Mobile Cards */
+        .bo-order-cards { display: none; }
+        .bo-order-card {
+            padding: 16px;
+            border-bottom: 1px solid var(--bo-border);
+        }
+        .bo-order-card:last-child { border-bottom: none; }
+        .bo-order-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .bo-order-card-body { display: flex; flex-direction: column; gap: 8px; }
+        .bo-order-card-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .bo-order-card-row span:first-child { color: var(--bo-text-secondary); }
+        .bo-order-card-row span:last-child { color: var(--bo-text-primary); font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .bo-table-wrapper { display: none; }
+            .bo-order-cards { display: block; }
+            .bo-toolbar { flex-direction: column; align-items: stretch; }
+            .bo-toolbar-left, .bo-toolbar-right { width: 100%; }
+            .bo-search input { width: 100%; }
+            .bo-status-tabs { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="backoffice-sidebar"></div>
+
+    <main class="bo-main-content">
+        <div id="backoffice-header"></div>
+
+        <div class="bo-content">
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <h1>Siparisler</h1>
+                    <p>Tum siparis islemlerini buradan yonetin</p>
+                </div>
+                <button class="bo-btn bo-btn-secondary" onclick="exportData()">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Disari Aktar
+                </button>
+            </div>
+
+            <div class="bo-card">
+                <!-- Status Tabs -->
+                <div class="bo-status-tabs">
+                    <button class="bo-status-tab active" data-status="" onclick="filterByStatus('')">
+                        Tumunu Goster <span class="count" id="countAll">0</span>
+                    </button>
+                    <button class="bo-status-tab" data-status="waiting_for_assignment" onclick="filterByStatus('waiting_for_assignment')">
+                        Bekleyen <span class="count" id="countPending">0</span>
+                    </button>
+                    <button class="bo-status-tab" data-status="preparing" onclick="filterByStatus('preparing')">
+                        Hazirlaniyor <span class="count" id="countPreparing">0</span>
+                    </button>
+                    <button class="bo-status-tab" data-status="on_the_way" onclick="filterByStatus('on_the_way')">
+                        Yolda <span class="count" id="countOnTheWay">0</span>
+                    </button>
+                    <button class="bo-status-tab" data-status="completed" onclick="filterByStatus('completed')">
+                        Teslim Edildi <span class="count" id="countCompleted">0</span>
+                    </button>
+                    <button class="bo-status-tab" data-status="cancelled" onclick="filterByStatus('cancelled')">
+                        Iptal <span class="count" id="countCancelled">0</span>
+                    </button>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="bo-toolbar">
+                    <div class="bo-toolbar-left">
+                        <div class="bo-search">
+                            <span class="bo-search-icon">
+                                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </span>
+                            <input type="text" placeholder="Siparis no, bayi veya musteri ara..." id="searchInput" onkeyup="handleSearch()">
+                        </div>
+                        <select class="bo-select" id="dealerFilter" onchange="applyFilters()">
+                            <option value="">Tum Bayiler</option>
+                        </select>
+                        <input type="date" class="bo-date-input" id="dateFrom" onchange="applyFilters()">
+                        <input type="date" class="bo-date-input" id="dateTo" onchange="applyFilters()">
+                    </div>
+                    <div class="bo-toolbar-right">
+                        <select class="bo-select" id="perPage" onchange="changePerPage()">
+                            <option value="10">10 / sayfa</option>
+                            <option value="25">25 / sayfa</option>
+                            <option value="50">50 / sayfa</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Desktop Table -->
+                <div class="bo-table-wrapper">
+                    <table class="bo-table">
+                        <thead>
+                            <tr>
+                                <th>Siparis No</th>
+                                <th>Bayi</th>
+                                <th>Musteri</th>
+                                <th>Tutar</th>
+                                <th>Durum</th>
+                                <th>Tarih</th>
+                                <th>Islemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable"></tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Cards -->
+                <div class="bo-order-cards" id="orderCards"></div>
+
+                <!-- Pagination -->
+                <div class="bo-pagination" id="pagination">
+                    <div class="bo-pagination-info" id="paginationInfo">0 siparisten 0 - 0 arasi gosteriliyor</div>
+                    <div class="bo-pagination-controls" id="paginationControls"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/orders-service.js"></script>
+
+    <script>
+        // State
+        var allOrders = [];
+        var filteredOrders = [];
+        var currentPage = 1;
+        var perPage = 10;
+        var currentStatusFilter = '';
+
+        var statusLabels = {
+            'waiting_for_assignment': 'Bekleyen',
+            'pending': 'Bekleyen',
+            'preparing': 'Hazirlaniyor',
+            'on_the_way': 'Yolda',
+            'completed': 'Teslim Edildi',
+            'cancelled': 'Iptal'
+        };
+
+        var statusIcons = {
+            'waiting_for_assignment': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            'pending': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            'preparing': '<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>',
+            'on_the_way': '<svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>',
+            'completed': '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+            'cancelled': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'
+        };
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            await loadComponents();
+            if (typeof setPageName === 'function') setPageName('Siparisler');
+
+            await loadOrders();
+        });
+
+        async function loadComponents() {
+            try {
+                var sidebarRes = await fetch('components/backoffice-sidebar.html');
+                document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+                var headerRes = await fetch('components/backoffice-header.html');
+                document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (e) { console.error('Component load error:', e); }
+        }
+
+        function executeScripts(container) {
+            container.querySelectorAll('script').forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Load orders
+        async function loadOrders() {
+            var tableBody = document.getElementById('ordersTable');
+            tableBody.innerHTML = '<tr><td colspan="7"><div class="bo-loading"><div class="bo-loading-spinner"></div></div></td></tr>';
+
+            try {
+                var { data, error } = await supabaseClient
+                    .from('orders')
+                    .select(`
+                        *,
+                        dealer:dealers(id, name),
+                        customer:customers(id, name, company_name)
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allOrders = data || [];
+                filteredOrders = [...allOrders];
+
+                populateDealerFilter();
+                updateStatusCounts();
+                renderTable();
+
+            } catch (e) {
+                console.error('Load orders error:', e);
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 24px;">Veri yuklenemedi</td></tr>';
+            }
+        }
+
+        function populateDealerFilter() {
+            var dealerFilter = document.getElementById('dealerFilter');
+            var dealers = {};
+            allOrders.forEach(function(o) {
+                if (o.dealer && o.dealer.id) {
+                    dealers[o.dealer.id] = o.dealer.name;
+                }
+            });
+
+            dealerFilter.innerHTML = '<option value="">Tum Bayiler</option>';
+            Object.keys(dealers).sort(function(a, b) {
+                return dealers[a].localeCompare(dealers[b]);
+            }).forEach(function(id) {
+                dealerFilter.innerHTML += '<option value="' + id + '">' + dealers[id] + '</option>';
+            });
+        }
+
+        function updateStatusCounts() {
+            var counts = { all: 0, waiting_for_assignment: 0, pending: 0, preparing: 0, on_the_way: 0, completed: 0, cancelled: 0 };
+
+            allOrders.forEach(function(o) {
+                counts.all++;
+                if (counts[o.status] !== undefined) counts[o.status]++;
+            });
+
+            document.getElementById('countAll').textContent = counts.all;
+            document.getElementById('countPending').textContent = counts.waiting_for_assignment + counts.pending;
+            document.getElementById('countPreparing').textContent = counts.preparing;
+            document.getElementById('countOnTheWay').textContent = counts.on_the_way;
+            document.getElementById('countCompleted').textContent = counts.completed;
+            document.getElementById('countCancelled').textContent = counts.cancelled;
+        }
+
+        // Filter by status
+        function filterByStatus(status) {
+            currentStatusFilter = status;
+            currentPage = 1;
+
+            // Update tab UI
+            document.querySelectorAll('.bo-status-tab').forEach(function(tab) {
+                tab.classList.remove('active');
+                if (tab.dataset.status === status) tab.classList.add('active');
+            });
+
+            applyFilters();
+        }
+
+        var searchTimeout;
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() { applyFilters(); }, 300);
+        }
+
+        function applyFilters() {
+            var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            var dealerFilter = document.getElementById('dealerFilter').value;
+            var dateFrom = document.getElementById('dateFrom').value;
+            var dateTo = document.getElementById('dateTo').value;
+
+            filteredOrders = allOrders.filter(function(order) {
+                // Status filter
+                if (currentStatusFilter) {
+                    if (currentStatusFilter === 'waiting_for_assignment') {
+                        if (order.status !== 'waiting_for_assignment' && order.status !== 'pending') return false;
+                    } else if (order.status !== currentStatusFilter) {
+                        return false;
+                    }
+                }
+
+                // Search
+                if (searchTerm) {
+                    var orderNo = (order.order_number || '').toLowerCase();
+                    var dealerName = (order.dealer?.name || '').toLowerCase();
+                    var customerName = (order.customer?.name || order.customer?.company_name || '').toLowerCase();
+                    if (!orderNo.includes(searchTerm) && !dealerName.includes(searchTerm) && !customerName.includes(searchTerm)) {
+                        return false;
+                    }
+                }
+
+                // Dealer filter
+                if (dealerFilter && order.dealer?.id !== dealerFilter) return false;
+
+                // Date filter
+                if (dateFrom) {
+                    var orderDate = new Date(order.created_at).toISOString().split('T')[0];
+                    if (orderDate < dateFrom) return false;
+                }
+                if (dateTo) {
+                    var orderDate = new Date(order.created_at).toISOString().split('T')[0];
+                    if (orderDate > dateTo) return false;
+                }
+
+                return true;
+            });
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderTable() {
+            var tableBody = document.getElementById('ordersTable');
+            var cardsContainer = document.getElementById('orderCards');
+            var start = (currentPage - 1) * perPage;
+            var end = start + perPage;
+            var pageData = filteredOrders.slice(start, end);
+
+            if (pageData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7">' +
+                    '<div class="bo-empty-state">' +
+                        '<svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>' +
+                        '<h3>Siparis Bulunamadi</h3>' +
+                        '<p>Arama kriterlerinize uygun siparis bulunamadi.</p>' +
+                    '</div>' +
+                '</td></tr>';
+                cardsContainer.innerHTML = '';
+                updatePagination();
+                return;
+            }
+
+            // Desktop table
+            tableBody.innerHTML = pageData.map(function(order) {
+                var statusClass = order.status || 'pending';
+                var statusLabel = statusLabels[order.status] || order.status;
+                var statusIcon = statusIcons[order.status] || '';
+                var createdAt = order.created_at ? new Date(order.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+                var amount = order.total_amount ? parseFloat(order.total_amount).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : '0 TL';
+                var dealerName = order.dealer?.name || '-';
+                var customerName = order.customer?.name || order.customer?.company_name || '-';
+
+                return '<tr>' +
+                    '<td><span class="bo-order-number" onclick="viewOrder(\'' + order.id + '\')">' + (order.order_number || '-') + '</span></td>' +
+                    '<td>' + dealerName + '</td>' +
+                    '<td>' + customerName + '</td>' +
+                    '<td><span class="bo-order-amount">' + amount + '</span></td>' +
+                    '<td><span class="bo-order-status ' + statusClass + '">' + statusIcon + statusLabel + '</span></td>' +
+                    '<td>' + createdAt + '</td>' +
+                    '<td>' +
+                        '<button class="bo-action-btn view" onclick="viewOrder(\'' + order.id + '\')" title="Detay">' +
+                            '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>' +
+                        '</button>' +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+
+            // Mobile cards
+            cardsContainer.innerHTML = pageData.map(function(order) {
+                var statusClass = order.status || 'pending';
+                var statusLabel = statusLabels[order.status] || order.status;
+                var statusIcon = statusIcons[order.status] || '';
+                var createdAt = order.created_at ? new Date(order.created_at).toLocaleDateString('tr-TR') : '-';
+                var amount = order.total_amount ? parseFloat(order.total_amount).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : '0 TL';
+
+                return '<div class="bo-order-card" onclick="viewOrder(\'' + order.id + '\')">' +
+                    '<div class="bo-order-card-header">' +
+                        '<span class="bo-order-number">' + (order.order_number || '-') + '</span>' +
+                        '<span class="bo-order-status ' + statusClass + '">' + statusIcon + statusLabel + '</span>' +
+                    '</div>' +
+                    '<div class="bo-order-card-body">' +
+                        '<div class="bo-order-card-row"><span>Bayi</span><span>' + (order.dealer?.name || '-') + '</span></div>' +
+                        '<div class="bo-order-card-row"><span>Musteri</span><span>' + (order.customer?.name || order.customer?.company_name || '-') + '</span></div>' +
+                        '<div class="bo-order-card-row"><span>Tutar</span><span class="bo-order-amount">' + amount + '</span></div>' +
+                        '<div class="bo-order-card-row"><span>Tarih</span><span>' + createdAt + '</span></div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            var totalItems = filteredOrders.length;
+            var totalPages = Math.ceil(totalItems / perPage);
+            var start = (currentPage - 1) * perPage + 1;
+            var end = Math.min(currentPage * perPage, totalItems);
+
+            document.getElementById('paginationInfo').textContent =
+                totalItems + ' siparisten ' + (totalItems > 0 ? start : 0) + ' - ' + end + ' arasi gosteriliyor';
+
+            var controls = document.getElementById('paginationControls');
+            var html = '';
+
+            html += '<button class="bo-pagination-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (currentPage === 1 ? 'disabled' : '') + '>' +
+                '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg></button>';
+
+            var startPage = Math.max(1, currentPage - 2);
+            var endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                html += '<button class="bo-pagination-btn" onclick="goToPage(1)">1</button>';
+                if (startPage > 2) html += '<span style="padding: 0 8px;">...</span>';
+            }
+
+            for (var i = startPage; i <= endPage; i++) {
+                html += '<button class="bo-pagination-btn ' + (i === currentPage ? 'active' : '') + '" onclick="goToPage(' + i + ')">' + i + '</button>';
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += '<span style="padding: 0 8px;">...</span>';
+                html += '<button class="bo-pagination-btn" onclick="goToPage(' + totalPages + ')">' + totalPages + '</button>';
+            }
+
+            html += '<button class="bo-pagination-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === totalPages || totalPages === 0 ? 'disabled' : '') + '>' +
+                '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg></button>';
+
+            controls.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            var totalPages = Math.ceil(filteredOrders.length / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePerPage() {
+            perPage = parseInt(document.getElementById('perPage').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function viewOrder(id) {
+            window.location.href = 'backoffice-siparis-detay.html?id=' + id;
+        }
+
+        function exportData() {
+            var csv = 'Siparis No,Bayi,Musteri,Tutar,Durum,Tarih\n';
+            filteredOrders.forEach(function(o) {
+                csv += '"' + (o.order_number || '') + '","' + (o.dealer?.name || '') + '","' + (o.customer?.name || o.customer?.company_name || '') + '","' + (o.total_amount || 0) + '","' + (statusLabels[o.status] || o.status) + '","' + (o.created_at ? new Date(o.created_at).toLocaleDateString('tr-TR') : '') + '"\n';
+            });
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'siparisler_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+
+            showToast('CSV dosyasi indirildi', 'success');
+        }
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>

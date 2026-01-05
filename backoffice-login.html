@@ -410,6 +410,10 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/backoffice-admins-service.js"></script>
+
     <script>
         // Toggle password visibility
         function togglePassword() {
@@ -423,6 +427,13 @@
                 passwordInput.type = 'password';
                 eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
             }
+        }
+
+        // Reset login button
+        function resetLoginButton() {
+            var loginBtn = document.getElementById('loginBtn');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<span id="loginBtnText">Giris Yap</span><svg viewBox="0 0 24 24" id="loginBtnIcon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
         }
 
         // Handle login
@@ -445,19 +456,28 @@
             loginBtnText.textContent = 'Giris yapiliyor...';
             loginBtnIcon.outerHTML = '<div class="spinner"></div>';
 
-            // Simulate API call
-            await new Promise(function(resolve) { setTimeout(resolve, 1000); });
+            try {
+                // Veritabanından giriş kontrolü
+                var result = await BackofficeAdminsService.login(username, password);
 
-            // Simple auth check (in production, this would be an API call)
-            // Default credentials: admin / admin123
-            if (username === 'admin' && password === 'admin123') {
-                // Success - store session
-                sessionStorage.setItem('backoffice_admin_id', 'admin-001');
+                if (result.error) {
+                    // Hata
+                    errorText.textContent = result.error;
+                    errorMessage.classList.add('show');
+                    resetLoginButton();
+                    return;
+                }
+
+                // Başarılı giriş
+                var admin = result.data;
+                sessionStorage.setItem('backoffice_admin_id', admin.id);
                 sessionStorage.setItem('backoffice_admin_data', JSON.stringify({
-                    id: 'admin-001',
-                    name: 'Sistem Yoneticisi',
-                    username: 'admin',
-                    role: 'super_admin'
+                    id: admin.id,
+                    name: admin.name,
+                    username: admin.username,
+                    email: admin.email,
+                    phone: admin.phone,
+                    role: admin.role
                 }));
 
                 // Remember me
@@ -469,16 +489,12 @@
 
                 // Redirect to dashboard
                 window.location.href = 'backoffice-anasayfa.html';
-            } else {
-                // Error
-                errorText.textContent = 'Kullanici adi veya sifre hatali';
-                errorMessage.classList.add('show');
 
-                // Reset button
-                loginBtn.disabled = false;
-                loginBtnText.textContent = 'Giris Yap';
-                var iconHtml = '<svg viewBox="0 0 24 24" id="loginBtnIcon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
-                loginBtn.innerHTML = '<span id="loginBtnText">Giris Yap</span>' + iconHtml;
+            } catch (error) {
+                console.error('Login error:', error);
+                errorText.textContent = 'Bir hata olustu. Lutfen tekrar deneyin.';
+                errorMessage.classList.add('show');
+                resetLoginButton();
             }
         }
 

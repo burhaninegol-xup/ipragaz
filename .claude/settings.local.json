@@ -36,7 +36,12 @@
       "WebFetch(domain:data.ibb.gov.tr)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(unzip:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:vitest.dev)",
+      "Bash(pip3 install:*)",
+      "Bash(du:*)"
     ]
   }
 }

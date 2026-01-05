@@ -1612,8 +1612,8 @@
 							</svg>
 						</div>
 						<div class="btn-offer-countdown-text">
-							<h3>Teklif Onay Bekliyor</h3>
-							<p>Teklifinizi onaylamaniz bekleniyor</p>
+							<h3 id="offerCountdownTitle">Teklif Onay Bekliyor</h3>
+							<p id="offerCountdownDesc">Teklifinizi onaylamaniz bekleniyor</p>
 						</div>
 					</div>
 					<div class="countdown-timer" id="countdownTimer">--:--</div>
@@ -2477,20 +2477,37 @@
 				}
 
 				if (offers && offers.length > 0) {
-					// En son pending teklifi al
-					pendingOffer = offers[0];
-					console.log('Pending teklif bulundu:', pendingOffer);
+					var offerCount = offers.length;
+					console.log('Pending teklif bulundu:', offerCount, 'adet');
 
-					// price_updated_at varsa onu kullan, yoksa created_at
-					var startTime = pendingOffer.price_updated_at || pendingOffer.created_at;
-					if (!startTime) {
-						console.log('Countdown: Baslangic zamani bulunamadi');
+					// En erken deadline'i bul (en yakin sure dolacak teklif)
+					var earliestDeadline = null;
+					offers.forEach(function(offer) {
+						var startTime = offer.price_updated_at || offer.created_at;
+						if (startTime) {
+							var deadline = new Date(new Date(startTime).getTime() + (24 * 60 * 60 * 1000));
+							if (!earliestDeadline || deadline < earliestDeadline) {
+								earliestDeadline = deadline;
+							}
+						}
+					});
+
+					if (!earliestDeadline) {
+						console.log('Countdown: Deadline hesaplanamadi');
 						return;
 					}
 
-					// 24 saat sonrasini hesapla (deadline)
-					var startDate = new Date(startTime);
-					var deadline = new Date(startDate.getTime() + (24 * 60 * 60 * 1000));
+					// UI metnini guncelle
+					var titleEl = document.getElementById('offerCountdownTitle');
+					var descEl = document.getElementById('offerCountdownDesc');
+
+					if (offerCount === 1) {
+						titleEl.textContent = 'Teklif Onay Bekliyor';
+						descEl.textContent = 'Teklifinizi onaylamaniz bekleniyor';
+					} else {
+						titleEl.textContent = offerCount + ' Adet Teklif Bekliyor';
+						descEl.textContent = 'Tekliflerinizi onaylamaniz bekleniyor';
+					}
 
 					// Countdown kutusunu goster
 					var countdownBtn = document.getElementById('btnOfferCountdown');
@@ -2499,8 +2516,8 @@
 					// Section'i da goster (eger son siparis yoksa bile)
 					document.getElementById('repeatOrderSection').classList.add('visible');
 
-					// Countdown'i baslat
-					startCountdown(deadline);
+					// Countdown'i baslat (en erken deadline'a gore)
+					startCountdown(earliestDeadline);
 				} else {
 					console.log('Pending teklif bulunamadi');
 				}

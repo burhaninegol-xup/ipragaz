@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-sidebar-bg: #1a1a1a;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bo-bg-main);
+            min-height: 100vh;
+        }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed {
+            margin-left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-content {
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .bo-page-header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .bo-page-header-left p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .bo-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-btn-primary {
+            background: var(--bo-primary);
+            color: #ffffff;
+        }
+
+        .bo-btn-primary:hover {
+            background: var(--bo-primary-dark);
+        }
+
+        .bo-btn-secondary {
+            background: var(--bo-bg-paper);
+            color: var(--bo-text-primary);
+            border: 1px solid var(--bo-border);
+        }
+
+        .bo-btn-secondary:hover {
+            background: var(--bo-bg-main);
+        }
+
+        /* Card */
+        .bo-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .bo-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .bo-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        /* Filters */
+        .bo-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bo-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bo-form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-input, .bo-select {
+            padding: 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-paper);
+            transition: all 0.2s ease;
+        }
+
+        .bo-input:focus, .bo-select:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+        }
+
+        /* Stats Grid */
+        .bo-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .bo-stat-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .bo-stat-label {
+            font-size: 13px;
+            color: var(--bo-text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .bo-stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        .bo-stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .bo-stat-change.positive {
+            color: var(--bo-success);
+        }
+
+        .bo-stat-change.negative {
+            color: var(--bo-error);
+        }
+
+        /* Reports Grid */
+        .bo-reports-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .bo-reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bo-report-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .bo-report-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .bo-report-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bo-report-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        .bo-report-content {
+            padding: 24px;
+            min-height: 200px;
+        }
+
+        /* Loading */
+        .bo-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .bo-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Table */
+        .bo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bo-table th, .bo-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--bo-border);
+        }
+
+        .bo-table th {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--bo-text-secondary);
+            text-transform: uppercase;
+            background: var(--bo-bg-main);
+        }
+
+        .bo-table td {
+            font-size: 14px;
+            color: var(--bo-text-primary);
+        }
+
+        /* Empty State */
+        .bo-empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-empty svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .bo-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="backoffice-sidebar"></div>
+
+    <!-- Main Content -->
+    <main class="bo-main-content">
+        <!-- Header -->
+        <div id="backoffice-header"></div>
+
+        <!-- Page Content -->
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <h1>Raporlar</h1>
+                    <p>Satis, siparis ve musteri raporlarini goruntuleyin</p>
+                </div>
+                <button class="bo-btn bo-btn-secondary" onclick="exportReports()">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Disari Aktar
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="bo-card">
+                <div class="bo-filters">
+                    <div class="bo-form-group">
+                        <label for="startDate">Baslangic Tarihi</label>
+                        <input type="date" id="startDate" class="bo-input">
+                    </div>
+                    <div class="bo-form-group">
+                        <label for="endDate">Bitis Tarihi</label>
+                        <input type="date" id="endDate" class="bo-input">
+                    </div>
+                    <div class="bo-form-group">
+                        <label for="dealerSelect">Bayi</label>
+                        <select id="dealerSelect" class="bo-select">
+                            <option value="">Tum Bayiler</option>
+                        </select>
+                    </div>
+                    <div class="bo-form-group">
+                        <label for="reportType">Rapor Tipi</label>
+                        <select id="reportType" class="bo-select">
+                            <option value="all">Tum Raporlar</option>
+                            <option value="sales">Satis Raporu</option>
+                            <option value="dealers">Bayi Performansi</option>
+                            <option value="products">Urun Satislari</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="bo-stats-grid" id="statsGrid">
+                <div class="bo-stat-card">
+                    <div class="bo-stat-label">Toplam Siparis</div>
+                    <div class="bo-stat-value" id="totalOrders">-</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-label">Tamamlanan</div>
+                    <div class="bo-stat-value" id="completedOrders">-</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-label">Toplam Ciro</div>
+                    <div class="bo-stat-value" id="totalRevenue">-</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-label">Aktif Bayiler</div>
+                    <div class="bo-stat-value" id="activeDealers">-</div>
+                </div>
+            </div>
+
+            <!-- Reports Grid -->
+            <div class="bo-reports-grid">
+                <!-- Bayi Performans Raporu -->
+                <div class="bo-report-card">
+                    <div class="bo-report-header">
+                        <span class="bo-report-title">Bayi Performansi</span>
+                    </div>
+                    <div class="bo-report-content" id="dealerPerformanceReport">
+                        <div class="bo-loading">
+                            <div class="bo-loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Urun Satis Raporu -->
+                <div class="bo-report-card">
+                    <div class="bo-report-header">
+                        <span class="bo-report-title">Urun Satislari</span>
+                    </div>
+                    <div class="bo-report-content" id="productSalesReport">
+                        <div class="bo-loading">
+                            <div class="bo-loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Satis Listesi -->
+                <div class="bo-report-card full-width">
+                    <div class="bo-report-header">
+                        <span class="bo-report-title">Son Siparisler</span>
+                    </div>
+                    <div class="bo-report-content" id="salesReport">
+                        <div class="bo-loading">
+                            <div class="bo-loading-spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/reports-service.js"></script>
+    <script src="js/services/dealers-service.js"></script>
+
+    <script>
+        // State
+        var reportData = {
+            sales: [],
+            dealers: [],
+            products: [],
+            stats: null
+        };
+        var filters = {
+            startDate: null,
+            endDate: null,
+            dealerId: null
+        };
+        var debounceTimeout = null;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            await loadComponents();
+
+            if (typeof setPageName === 'function') {
+                setPageName('Raporlar');
+            }
+
+            // Set default dates (last 30 days)
+            var today = new Date();
+            var lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+
+            document.getElementById('startDate').value = formatDate(lastMonth);
+            document.getElementById('endDate').value = formatDate(today);
+
+            filters.startDate = formatDate(lastMonth);
+            filters.endDate = formatDate(today);
+
+            await loadDealers();
+            await loadReports();
+
+            // Bind filter events
+            bindFilterEvents();
+        });
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Load components
+        async function loadComponents() {
+            try {
+                var sidebarResponse = await fetch('components/backoffice-sidebar.html');
+                var sidebarHtml = await sidebarResponse.text();
+                document.getElementById('backoffice-sidebar').innerHTML = sidebarHtml;
+
+                var headerResponse = await fetch('components/backoffice-header.html');
+                var headerHtml = await headerResponse.text();
+                document.getElementById('backoffice-header').innerHTML = headerHtml;
+
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (error) {
+                console.error('Component load error:', error);
+            }
+        }
+
+        function executeScripts(container) {
+            var scripts = container.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Load dealers for filter
+        async function loadDealers() {
+            try {
+                var result = await DealersService.getAll();
+                if (result.error) return;
+
+                var select = document.getElementById('dealerSelect');
+                select.innerHTML = '<option value="">Tum Bayiler</option>';
+
+                result.data.forEach(function(dealer) {
+                    select.innerHTML += '<option value="' + dealer.id + '">' + dealer.name + '</option>';
+                });
+            } catch (error) {
+                console.error('Load dealers error:', error);
+            }
+        }
+
+        // Bind filter events
+        function bindFilterEvents() {
+            document.getElementById('startDate').addEventListener('change', debouncedUpdate);
+            document.getElementById('endDate').addEventListener('change', debouncedUpdate);
+            document.getElementById('dealerSelect').addEventListener('change', debouncedUpdate);
+            document.getElementById('reportType').addEventListener('change', debouncedUpdate);
+        }
+
+        function debouncedUpdate() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(function() {
+                filters.startDate = document.getElementById('startDate').value;
+                filters.endDate = document.getElementById('endDate').value;
+                filters.dealerId = document.getElementById('dealerSelect').value || null;
+                loadReports();
+            }, 300);
+        }
+
+        // Load all reports
+        async function loadReports() {
+            showLoading();
+
+            try {
+                // Load stats
+                var statsResult = await ReportsService.getDashboardStats(filters.startDate, filters.endDate);
+                if (!statsResult.error && statsResult.data) {
+                    reportData.stats = statsResult.data;
+                    renderStats();
+                }
+
+                // Load reports in parallel
+                var [salesResult, dealersResult, productsResult] = await Promise.all([
+                    ReportsService.getSalesReport(filters.startDate, filters.endDate, filters.dealerId),
+                    ReportsService.getDealerPerformanceReport(filters.startDate, filters.endDate),
+                    ReportsService.getProductSalesReport(filters.startDate, filters.endDate, filters.dealerId)
+                ]);
+
+                if (!salesResult.error) {
+                    reportData.sales = salesResult.data || [];
+                    renderSalesReport();
+                }
+
+                if (!dealersResult.error) {
+                    reportData.dealers = dealersResult.data || [];
+                    renderDealerReport();
+                }
+
+                if (!productsResult.error) {
+                    reportData.products = productsResult.data || [];
+                    renderProductReport();
+                }
+
+            } catch (error) {
+                console.error('Load reports error:', error);
+                showToast('Raporlar yuklenirken hata olustu', 'error');
+            }
+        }
+
+        function showLoading() {
+            var loadingHtml = '<div class="bo-loading"><div class="bo-loading-spinner"></div></div>';
+            document.getElementById('dealerPerformanceReport').innerHTML = loadingHtml;
+            document.getElementById('productSalesReport').innerHTML = loadingHtml;
+            document.getElementById('salesReport').innerHTML = loadingHtml;
+        }
+
+        // Render stats
+        function renderStats() {
+            var stats = reportData.stats;
+            document.getElementById('totalOrders').textContent = stats.total_orders || 0;
+            document.getElementById('completedOrders').textContent = stats.completed_orders || 0;
+            document.getElementById('totalRevenue').textContent = formatCurrency(stats.total_revenue || 0);
+            document.getElementById('activeDealers').textContent = stats.active_dealers || 0;
+        }
+
+        // Render dealer performance report
+        function renderDealerReport() {
+            var container = document.getElementById('dealerPerformanceReport');
+            var data = reportData.dealers.slice(0, 5); // Top 5
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="bo-empty"><p>Veri bulunamadi</p></div>';
+                return;
+            }
+
+            var html = '<table class="bo-table"><thead><tr><th>Bayi</th><th>Siparis</th><th>Tutar</th></tr></thead><tbody>';
+
+            data.forEach(function(dealer) {
+                html += '<tr>';
+                html += '<td>' + (dealer.name || '-') + '</td>';
+                html += '<td>' + (dealer.total_orders || 0) + '</td>';
+                html += '<td>' + formatCurrency(dealer.total_amount || 0) + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Render product sales report
+        function renderProductReport() {
+            var container = document.getElementById('productSalesReport');
+            var data = reportData.products.slice(0, 5); // Top 5
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="bo-empty"><p>Veri bulunamadi</p></div>';
+                return;
+            }
+
+            var html = '<table class="bo-table"><thead><tr><th>Urun</th><th>Adet</th><th>Tutar</th></tr></thead><tbody>';
+
+            data.forEach(function(product) {
+                html += '<tr>';
+                html += '<td>' + (product.product_name || '-') + '</td>';
+                html += '<td>' + (product.total_quantity || 0) + '</td>';
+                html += '<td>' + formatCurrency(product.total_amount || 0) + '</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Render sales report
+        function renderSalesReport() {
+            var container = document.getElementById('salesReport');
+            var data = reportData.sales.slice(0, 10); // Last 10
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="bo-empty"><p>Veri bulunamadi</p></div>';
+                return;
+            }
+
+            var html = '<table class="bo-table"><thead><tr><th>Tarih</th><th>Bayi</th><th>Tutar</th><th>Miktar</th><th>Tonaj</th></tr></thead><tbody>';
+
+            data.forEach(function(order) {
+                html += '<tr>';
+                html += '<td>' + formatDateDisplay(order.order_date) + '</td>';
+                html += '<td>' + (order.dealers?.name || '-') + '</td>';
+                html += '<td>' + formatCurrency(order.total_amount || 0) + '</td>';
+                html += '<td>' + (order.total_quantity || 0) + '</td>';
+                html += '<td>' + (order.total_tonnage?.toFixed(2) || '0') + ' ton</td>';
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('tr-TR', {
+                style: 'currency',
+                currency: 'TRY'
+            }).format(amount);
+        }
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '-';
+            return new Date(dateStr).toLocaleDateString('tr-TR');
+        }
+
+        // Export reports
+        function exportReports() {
+            showToast('Excel export hazirlaniyor...', 'success');
+            // TODO: Implement Excel export
+        }
+
+        // Toast
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast show ' + (type || '');
+
+            setTimeout(function() {
+                toast.className = 'bo-toast';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

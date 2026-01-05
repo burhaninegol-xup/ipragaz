@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teklif Detay - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+            --status-requested: #1565C0;
+            --status-pending: #E65100;
+            --status-accepted: #2E7D32;
+            --status-rejected: #616161;
+            --status-cancelled: #C62828;
+            --status-passive: #757575;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--bo-bg-main); min-height: 100vh; }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            padding-bottom: 80px;
+        }
+        .bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+        .bo-content { padding: 24px; }
+
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bo-page-header-left { display: flex; align-items: center; gap: 16px; }
+        .bo-page-header-left h1 { font-size: 24px; font-weight: 600; color: var(--bo-text-primary); }
+        .bo-back-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--bo-border);
+            background: var(--bo-bg-paper);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--bo-text-secondary);
+            transition: all 0.2s ease;
+        }
+        .bo-back-btn:hover { border-color: var(--bo-primary); color: var(--bo-primary); }
+        .bo-back-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .bo-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-btn-primary { background: var(--bo-primary); color: #fff; }
+        .bo-btn-primary:hover { background: var(--bo-primary-dark); }
+        .bo-btn-secondary { background: var(--bo-bg-paper); color: var(--bo-text-primary); border: 1px solid var(--bo-border); }
+        .bo-btn-secondary:hover { background: var(--bo-bg-main); }
+        .bo-btn-success { background: var(--bo-success); color: #fff; }
+        .bo-btn-success:hover { background: #059669; }
+        .bo-btn-danger { background: var(--bo-error); color: #fff; }
+        .bo-btn-danger:hover { background: #dc2626; }
+
+        .bo-card { background: var(--bo-bg-paper); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .bo-card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .bo-card-title { font-size: 16px; font-weight: 600; color: var(--bo-text-primary); display: flex; align-items: center; gap: 8px; }
+        .bo-card-title svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-card-body { padding: 24px; }
+
+        /* Offer Header Card */
+        .bo-offer-header-card {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .bo-offer-header-card.accepted { background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%); }
+        .bo-offer-header-card.rejected { background: linear-gradient(135deg, #616161 0%, #424242 100%); }
+        .bo-offer-header-card.cancelled { background: linear-gradient(135deg, #C62828 0%, #B71C1C 100%); }
+        .bo-offer-header-card.pending { background: linear-gradient(135deg, #E65100 0%, #BF360C 100%); }
+
+        .bo-offer-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .bo-offer-header-left h2 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .bo-offer-header-left p { font-size: 14px; opacity: 0.9; }
+
+        .bo-offer-status-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            background: #fff;
+        }
+        .bo-offer-status-large svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .bo-offer-status-large.requested { color: var(--status-requested); }
+        .bo-offer-status-large.pending { color: var(--status-pending); }
+        .bo-offer-status-large.accepted { color: var(--status-accepted); }
+        .bo-offer-status-large.rejected { color: var(--status-rejected); }
+        .bo-offer-status-large.cancelled { color: var(--status-cancelled); }
+        .bo-offer-status-large.passive { color: var(--status-passive); }
+
+        .bo-offer-header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        .bo-offer-stat {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+        .bo-offer-stat-value { font-size: 20px; font-weight: 700; }
+        .bo-offer-stat-label { font-size: 12px; opacity: 0.9; }
+
+        /* Layout */
+        .bo-offer-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        @media (max-width: 1024px) { .bo-offer-layout { grid-template-columns: 1fr; } }
+
+        /* Info Grid */
+        .bo-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (max-width: 600px) { .bo-info-grid { grid-template-columns: 1fr; } }
+        .bo-info-item label { display: block; font-size: 12px; color: var(--bo-text-secondary); margin-bottom: 4px; }
+        .bo-info-item span { font-size: 14px; font-weight: 500; color: var(--bo-text-primary); }
+        .bo-info-item.full-width { grid-column: 1 / -1; }
+
+        /* Items Table */
+        .bo-items-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .bo-items-table th, .bo-items-table td { padding: 12px; text-align: left; font-size: 14px; }
+        .bo-items-table th {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        .bo-items-table td { border-bottom: 1px solid var(--bo-border); }
+        .bo-items-table tr:last-child td { border-bottom: none; }
+        .bo-items-table .product-name { font-weight: 500; }
+        .bo-items-table .product-code { font-size: 12px; color: var(--bo-text-secondary); }
+
+        /* Pricing Display */
+        .bo-price { font-weight: 600; color: var(--bo-text-primary); }
+        .bo-discount {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--bo-success);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .bo-commitment {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--bo-info);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Status Change */
+        .bo-status-actions { display: flex; flex-direction: column; gap: 12px; }
+        .bo-action-card {
+            padding: 16px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .bo-action-card:hover { border-color: var(--bo-primary); background: rgba(227, 30, 36, 0.02); }
+        .bo-action-card h4 { font-size: 14px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 4px; }
+        .bo-action-card p { font-size: 12px; color: var(--bo-text-secondary); }
+        .bo-action-card.success:hover { border-color: var(--bo-success); background: rgba(16, 185, 129, 0.05); }
+        .bo-action-card.danger:hover { border-color: var(--bo-error); background: rgba(239, 68, 68, 0.05); }
+
+        /* Notes */
+        .bo-notes { margin-top: 16px; }
+        .bo-note-item { padding: 12px; background: var(--bo-bg-main); border-radius: 8px; margin-bottom: 8px; }
+        .bo-note-item p { font-size: 13px; color: var(--bo-text-primary); }
+        .bo-note-item .meta { font-size: 11px; color: var(--bo-text-secondary); margin-top: 4px; }
+
+        /* Footer Actions */
+        .bo-footer-actions {
+            position: fixed;
+            bottom: 0;
+            left: var(--bo-sidebar-width);
+            right: 0;
+            background: var(--bo-bg-paper);
+            border-top: 1px solid var(--bo-border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            z-index: 100;
+            transition: left 0.3s ease;
+        }
+        .bo-footer-actions.sidebar-collapsed { left: var(--bo-sidebar-collapsed); }
+
+        /* Loading */
+        .bo-loading { display: flex; align-items: center; justify-content: center; padding: 64px; }
+        .bo-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 90px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+        .bo-toast.show { transform: translateY(0); opacity: 1; }
+        .bo-toast.success { background: var(--bo-success); }
+        .bo-toast.error { background: var(--bo-error); }
+        .bo-toast svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Modal */
+        .bo-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+        .bo-modal-overlay.show { display: flex; }
+        .bo-modal { background: var(--bo-bg-paper); border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; }
+        .bo-modal h3 { font-size: 18px; font-weight: 600; color: var(--bo-text-primary); margin-bottom: 12px; }
+        .bo-modal p { font-size: 14px; color: var(--bo-text-secondary); margin-bottom: 24px; }
+        .bo-modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+        @media (max-width: 768px) {
+            .bo-footer-actions { left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div id="backoffice-sidebar"></div>
+
+    <main class="bo-main-content">
+        <div id="backoffice-header"></div>
+
+        <div class="bo-content">
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <button class="bo-back-btn" onclick="goBack()">
+                        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <h1>Teklif Detay</h1>
+                </div>
+            </div>
+
+            <div class="bo-loading" id="loadingState">
+                <div class="bo-loading-spinner"></div>
+            </div>
+
+            <div id="offerContent" style="display: none;">
+                <!-- Offer Header Card -->
+                <div class="bo-offer-header-card" id="offerHeaderCard">
+                    <div class="bo-offer-header-top">
+                        <div class="bo-offer-header-left">
+                            <h2 id="offerId">-</h2>
+                            <p id="offerDate">-</p>
+                        </div>
+                        <div class="bo-offer-header-right">
+                            <span class="bo-offer-status-large" id="offerStatus">-</span>
+                        </div>
+                    </div>
+                    <div class="bo-offer-header-stats">
+                        <div class="bo-offer-stat">
+                            <div class="bo-offer-stat-value" id="statItems">0</div>
+                            <div class="bo-offer-stat-label">Urun</div>
+                        </div>
+                        <div class="bo-offer-stat">
+                            <div class="bo-offer-stat-value" id="statCommitment">0</div>
+                            <div class="bo-offer-stat-label">Taahhut</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layout -->
+                <div class="bo-offer-layout">
+                    <!-- Left Column -->
+                    <div class="bo-offer-left">
+                        <!-- Dealer Info -->
+                        <div class="bo-card" style="margin-bottom: 24px;">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                    Bayi Bilgileri
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-info-grid" id="dealerInfo"></div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Info -->
+                        <div class="bo-card" style="margin-bottom: 24px;">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    Musteri Bilgileri
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-info-grid" id="customerInfo"></div>
+                            </div>
+                        </div>
+
+                        <!-- Offer Items -->
+                        <div class="bo-card">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                                    Teklif Kalemleri
+                                </span>
+                            </div>
+                            <div class="bo-card-body" style="padding: 0; overflow-x: auto;">
+                                <table class="bo-items-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Urun</th>
+                                            <th>Birim Fiyat</th>
+                                            <th>Indirim</th>
+                                            <th>Taahhut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="offerItems"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="bo-offer-right">
+                        <!-- Quick Actions -->
+                        <div class="bo-card" style="margin-bottom: 24px;" id="actionsCard">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                    Hizli Islemler
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-status-actions" id="statusActions"></div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="bo-card">
+                            <div class="bo-card-header">
+                                <span class="bo-card-title">
+                                    <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    Notlar
+                                </span>
+                            </div>
+                            <div class="bo-card-body">
+                                <div class="bo-notes" id="offerNotes">
+                                    <p style="color: var(--bo-text-secondary); font-size: 13px;">Henuz not eklenmemis.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Actions -->
+    <div class="bo-footer-actions" id="footerActions" style="display: none;">
+        <button class="bo-btn bo-btn-secondary" onclick="goBack()">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Geri Don
+        </button>
+        <button class="bo-btn bo-btn-danger" onclick="rejectOffer()" id="rejectBtn">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            Reddet
+        </button>
+        <button class="bo-btn bo-btn-success" onclick="acceptOffer()" id="acceptBtn">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Onayla
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="bo-modal-overlay" id="confirmModal">
+        <div class="bo-modal">
+            <h3 id="modalTitle">Emin misiniz?</h3>
+            <p id="modalMessage">Bu islemi geri alamazsiniz.</p>
+            <div class="bo-modal-actions">
+                <button class="bo-btn bo-btn-secondary" onclick="closeModal()">Vazgec</button>
+                <button class="bo-btn bo-btn-primary" id="modalConfirmBtn" onclick="confirmAction()">Onayla</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/offers-service.js"></script>
+
+    <script>
+        var offerId = null;
+        var currentOffer = null;
+        var pendingAction = null;
+
+        var statusLabels = {
+            'requested': 'Talep Edildi',
+            'pending': 'Bekleyen',
+            'accepted': 'Onaylandi',
+            'rejected': 'Reddedildi',
+            'cancelled': 'Iptal',
+            'passive': 'Pasif'
+        };
+
+        var statusIcons = {
+            'requested': '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>',
+            'pending': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            'accepted': '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+            'rejected': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+            'cancelled': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+            'passive': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>'
+        };
+
+        var pricingTypeLabels = {
+            'fixed_price': 'Sabit Fiyat',
+            'fixed_discount': 'Sabit Indirim',
+            'percentage_discount': '% Indirim'
+        };
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            var params = new URLSearchParams(window.location.search);
+            offerId = params.get('id');
+
+            if (!offerId) {
+                window.location.href = 'backoffice-teklifler.html';
+                return;
+            }
+
+            await loadComponents();
+            if (typeof setPageName === 'function') setPageName('Teklif Detay');
+
+            await loadOffer();
+        });
+
+        async function loadComponents() {
+            try {
+                var sidebarRes = await fetch('components/backoffice-sidebar.html');
+                document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+                var headerRes = await fetch('components/backoffice-header.html');
+                document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (e) { console.error('Component load error:', e); }
+        }
+
+        function executeScripts(container) {
+            container.querySelectorAll('script').forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        async function loadOffer() {
+            try {
+                var result = await OffersService.getById(offerId);
+                if (result.error) throw result.error;
+
+                currentOffer = result.data;
+                renderOffer();
+
+            } catch (e) {
+                console.error('Load offer error:', e);
+                showToast('Teklif yuklenemedi', 'error');
+            }
+        }
+
+        function renderOffer() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('offerContent').style.display = 'block';
+
+            // Header card color
+            var headerCard = document.getElementById('offerHeaderCard');
+            headerCard.className = 'bo-offer-header-card ' + (currentOffer.status || 'pending');
+
+            // Offer ID and date
+            document.getElementById('offerId').textContent = 'Teklif #' + offerId.substring(0, 8).toUpperCase();
+            document.getElementById('offerDate').textContent = currentOffer.created_at ?
+                new Date(currentOffer.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+            // Status
+            var status = currentOffer.status || 'pending';
+            var statusEl = document.getElementById('offerStatus');
+            statusEl.className = 'bo-offer-status-large ' + status;
+            statusEl.innerHTML = (statusIcons[status] || '') + (statusLabels[status] || status);
+
+            // Stats
+            var items = currentOffer.offer_details || [];
+            var totalCommitment = items.reduce(function(sum, i) { return sum + (i.commitment_quantity || 0); }, 0);
+
+            document.getElementById('statItems').textContent = items.length;
+            document.getElementById('statCommitment').textContent = totalCommitment;
+
+            // Dealer info
+            var dealer = currentOffer.dealer || {};
+            document.getElementById('dealerInfo').innerHTML =
+                '<div class="bo-info-item"><label>Bayi Adi</label><span>' + (dealer.name || '-') + '</span></div>' +
+                '<div class="bo-info-item"><label>Bayi Kodu</label><span>' + (dealer.code || '-') + '</span></div>';
+
+            // Customer info
+            var customer = currentOffer.customer || {};
+            var branch = currentOffer.branch || {};
+            var branchLocation = '';
+            if (branch.district && branch.city) {
+                branchLocation = branch.district + ' / ' + branch.city;
+            } else if (branch.city) {
+                branchLocation = branch.city;
+            }
+            document.getElementById('customerInfo').innerHTML =
+                '<div class="bo-info-item"><label>Musteri Adi</label><span>' + (customer.name || customer.company_name || '-') + '</span></div>' +
+                '<div class="bo-info-item"><label>VKN</label><span>' + (customer.vkn || '-') + '</span></div>' +
+                (branch.branch_name ? '<div class="bo-info-item"><label>Sube</label><span>' + branch.branch_name + '</span></div>' : '') +
+                (branchLocation ? '<div class="bo-info-item"><label>Sube Konumu</label><span>' + branchLocation + '</span></div>' : '') +
+                (branch.full_address ? '<div class="bo-info-item full-width"><label>Sube Adresi</label><span>' + branch.full_address + '</span></div>' : '');
+
+            // Offer items
+            var itemsHtml = items.map(function(item) {
+                var product = item.product || {};
+                var unitPrice = parseFloat(item.unit_price) || 0;
+                var discountValue = parseFloat(item.discount_value) || 0;
+                var commitment = item.commitment_quantity || 0;
+
+                var discountDisplay = '-';
+                if (item.pricing_type === 'percentage_discount' && discountValue > 0) {
+                    discountDisplay = '<span class="bo-discount">%' + discountValue + '</span>';
+                } else if (item.pricing_type === 'fixed_discount' && discountValue > 0) {
+                    discountDisplay = '<span class="bo-discount">-' + discountValue.toLocaleString('tr-TR') + ' TL</span>';
+                }
+
+                var commitmentDisplay = commitment > 0 ?
+                    '<span class="bo-commitment">' + commitment + ' adet</span>' : '-';
+
+                return '<tr>' +
+                    '<td><div class="product-name">' + (product.name || '-') + '</div><div class="product-code">' + (product.code || '') + '</div></td>' +
+                    '<td><span class="bo-price">' + unitPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) + '</span></td>' +
+                    '<td>' + discountDisplay + '</td>' +
+                    '<td>' + commitmentDisplay + '</td>' +
+                '</tr>';
+            }).join('');
+
+            document.getElementById('offerItems').innerHTML = itemsHtml || '<tr><td colspan="4" style="text-align: center;">Urun bulunamadi</td></tr>';
+
+            // Notes
+            if (currentOffer.notes) {
+                document.getElementById('offerNotes').innerHTML =
+                    '<div class="bo-note-item"><p>' + currentOffer.notes + '</p></div>';
+            }
+
+            // Actions based on status
+            renderActions(status);
+        }
+
+        function renderActions(status) {
+            var actionsContainer = document.getElementById('statusActions');
+            var footerActions = document.getElementById('footerActions');
+            var acceptBtn = document.getElementById('acceptBtn');
+            var rejectBtn = document.getElementById('rejectBtn');
+
+            if (status === 'pending' || status === 'requested') {
+                footerActions.style.display = 'flex';
+                actionsContainer.innerHTML =
+                    '<div class="bo-action-card success" onclick="acceptOffer()">' +
+                        '<h4>Teklifi Onayla</h4>' +
+                        '<p>Musteri bu teklifi kabul edecek</p>' +
+                    '</div>' +
+                    '<div class="bo-action-card danger" onclick="rejectOffer()">' +
+                        '<h4>Teklifi Reddet</h4>' +
+                        '<p>Musteri bu teklifi reddedecek</p>' +
+                    '</div>';
+            } else if (status === 'accepted') {
+                footerActions.style.display = 'none';
+                actionsContainer.innerHTML =
+                    '<div class="bo-action-card">' +
+                        '<h4>Teklif Onaylandi</h4>' +
+                        '<p>Bu teklif musteri tarafindan kabul edildi</p>' +
+                    '</div>';
+            } else {
+                footerActions.style.display = 'none';
+                actionsContainer.innerHTML =
+                    '<div class="bo-action-card">' +
+                        '<h4>Islem Yapilamaz</h4>' +
+                        '<p>Bu teklif uzerinde islem yapilamaz</p>' +
+                    '</div>';
+            }
+        }
+
+        function acceptOffer() {
+            pendingAction = { type: 'accept' };
+            document.getElementById('modalTitle').textContent = 'Teklifi Onayla';
+            document.getElementById('modalMessage').textContent = 'Bu teklif onaylanacak. Devam etmek istiyor musunuz?';
+            document.getElementById('modalConfirmBtn').textContent = 'Onayla';
+            document.getElementById('modalConfirmBtn').className = 'bo-btn bo-btn-success';
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function rejectOffer() {
+            pendingAction = { type: 'reject' };
+            document.getElementById('modalTitle').textContent = 'Teklifi Reddet';
+            document.getElementById('modalMessage').textContent = 'Bu teklif reddedilecek. Devam etmek istiyor musunuz?';
+            document.getElementById('modalConfirmBtn').textContent = 'Reddet';
+            document.getElementById('modalConfirmBtn').className = 'bo-btn bo-btn-danger';
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            pendingAction = null;
+        }
+
+        async function confirmAction() {
+            if (!pendingAction) return;
+
+            try {
+                var result;
+                if (pendingAction.type === 'accept') {
+                    result = await OffersService.accept(offerId);
+                    if (result.error) throw result.error;
+                    showToast('Teklif onaylandi', 'success');
+                } else if (pendingAction.type === 'reject') {
+                    result = await OffersService.reject(offerId);
+                    if (result.error) throw result.error;
+                    showToast('Teklif reddedildi', 'success');
+                }
+
+                await loadOffer();
+            } catch (e) {
+                console.error('Action error:', e);
+                showToast('Islem basarisiz', 'error');
+            }
+
+            closeModal();
+        }
+
+        function goBack() {
+            window.location.href = 'backoffice-teklifler.html';
+        }
+
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+        }
+    </script>
+</body>
+</html>

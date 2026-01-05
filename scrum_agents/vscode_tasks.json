@@ -1,0 +1,105 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🏃 Scrum Sprint - İnteraktif",
+            "type": "shell",
+            "command": "cd scrum_agents && python run_sprint.py --interactive",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🆕 Scrum - Yeni CRUD Modülü",
+            "type": "shell",
+            "command": "cd scrum_agents && python run_sprint.py --crud",
+            "args": ["${input:crudDetails}"],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "📊 Scrum - Rapor Özelliği",
+            "type": "shell",
+            "command": "cd scrum_agents && python run_sprint.py --rapor",
+            "args": ["${input:raporDetails}"],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🎨 Scrum - UI İyileştirme",
+            "type": "shell",
+            "command": "cd scrum_agents && python run_sprint.py --ui",
+            "args": ["${input:uiDetails}"],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🐛 Scrum - Bug Fix",
+            "type": "shell",
+            "command": "cd scrum_agents && python run_sprint.py --bug",
+            "args": ["${input:bugDetails}"],
+            "presentation": {
+                "reveal": "always",
+                "focus": true,
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "📋 Scrum - Son Logları Aç",
+            "type": "shell",
+            "command": "code scrum_agents/logs/$(ls -t scrum_agents/logs | head -1)/main_log.md",
+            "windows": {
+                "command": "code scrum_agents\\logs\\$(Get-ChildItem scrum_agents\\logs | Sort-Object LastWriteTime -Descending | Select-Object -First 1)\\main_log.md"
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "crudDetails",
+            "description": "CRUD modülü detayları (örn: Teslimat takip modülü)",
+            "type": "promptString"
+        },
+        {
+            "id": "raporDetails",
+            "description": "Rapor detayları (örn: Aylık satış raporu)",
+            "type": "promptString"
+        },
+        {
+            "id": "uiDetails",
+            "description": "UI iyileştirme detayları",
+            "type": "promptString"
+        },
+        {
+            "id": "bugDetails",
+            "description": "Bug açıklaması",
+            "type": "promptString"
+        }
+    ]
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrum Agent Dashboard - İpragaz</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>🏭 Scrum Agent Takımı</h1>
+                <span class="subtitle">İpragaz LPG Bayi Yönetim Sistemi</span>
+            </div>
+            <div class="header-right">
+                <div class="team-avatars" id="teamAvatars">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="input-card">
+                    <h2>💡 Yeni Görev</h2>
+                    <textarea 
+                        id="taskInput" 
+                        placeholder="Talebinizi veya sorunuzu yazın...
+
+Örnek: 'Müşteri listesine arama ve filtreleme özelliği ekle'
+Örnek: 'Sipariş durumu güncellenince bildirim gönder'
+Örnek: 'Dashboard'a aylık satış grafiği ekle'"
+                        rows="4"
+                    ></textarea>
+                    
+                    <details class="context-details">
+                        <summary>📋 Ek Bağlam (Opsiyonel)</summary>
+                        <textarea
+                            id="contextInput"
+                            placeholder="Varsa ek bilgiler: mevcut kod yapısı, kısıtlamalar, tercihler..."
+                            rows="3"
+                        ></textarea>
+                    </details>
+
+                    <details class="error-details">
+                        <summary>🐛 Console Hata Raporu (Opsiyonel)</summary>
+                        <textarea
+                            id="errorReportInput"
+                            placeholder="Sayfada aldığınız console hatalarını buraya yapıştırın...
+
+Örnek:
+Uncaught TypeError: ReportsService.getDashboardStats is not a function
+    at backoffice-raporlar.html:156
+
+Tarayıcı console'u açmak için: F12 veya Cmd+Option+J"
+                            rows="4"
+                        ></textarea>
+                        <p class="error-hint">💡 Agent'lar bu hataları görerek daha doğru çözüm üretebilir.</p>
+                    </details>
+
+                    <button id="startBtn" class="btn-primary" onclick="startTask()">
+                        🚀 Görevi Başlat
+                    </button>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progressSection" style="display: none;">
+                <div class="progress-header">
+                    <h2>📊 İlerleme Durumu</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                
+                <div class="phases" id="phases">
+                    <div class="phase" data-phase="analysis">
+                        <div class="phase-icon">📋</div>
+                        <div class="phase-name">Analiz</div>
+                        <div class="phase-status">⏳</div>
+                    </div>
+                    <div class="phase" data-phase="discussion">
+                        <div class="phase-icon">💬</div>
+                        <div class="phase-name">Tartışma</div>
+                        <div class="phase-status">⏳</div>
+                    </div>
+                    <div class="phase" data-phase="development">
+                        <div class="phase-icon">💻</div>
+                        <div class="phase-name">Geliştirme</div>
+                        <div class="phase-status">⏳</div>
+                    </div>
+                    <div class="phase" data-phase="testing">
+                        <div class="phase-icon">🧪</div>
+                        <div class="phase-name">Test</div>
+                        <div class="phase-status">⏳</div>
+                    </div>
+                    <div class="phase" data-phase="summary">
+                        <div class="phase-icon">📊</div>
+                        <div class="phase-name">Sonuç</div>
+                        <div class="phase-status">⏳</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section class="chat-section" id="chatSection" style="display: none;">
+                <div class="chat-header">
+                    <h2>💬 Takım Konuşmaları</h2>
+                    <button class="btn-secondary" onclick="toggleFullscreen()">⛶ Tam Ekran</button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Mesajlar buraya eklenecek -->
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section" id="statsSection" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statCalls">0</div>
+                        <div class="stat-label">API Çağrısı</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statTokens">0</div>
+                        <div class="stat-label">Token</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statCost">$0.00</div>
+                        <div class="stat-label">Maliyet</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statMessages">0</div>
+                        <div class="stat-label">Mesaj</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Previous Logs Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <h3>📚 Geçmiş Görevler</h3>
+            <div class="logs-list" id="logsList">
+                <!-- JS ile doldurulacak -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div class="modal" id="logModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Log Detayı</h2>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Log içeriği -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

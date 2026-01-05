@@ -1,0 +1,162 @@
+class ReportsService {
+    constructor() {
+        this.supabase = window.supabaseClient;
+    }
+
+    async getDashboardStats() {
+        try {
+            // Paralel olarak tüm istatistikleri çek
+            const [
+                ordersResult,
+                customersResult,
+                dealersResult,
+                offersResult
+            ] = await Promise.all([
+                this.getOrderStats(),
+                this.getCustomerStats(),
+                this.getDealerStats(),
+                this.getOfferStats()
+            ]);
+
+            // Error handling - herhangi bir servis başarısız olursa
+            if (ordersResult.error || customersResult.error || 
+                dealersResult.error || offersResult.error) {
+                return {
+                    data: null,
+                    error: 'Bazı veriler alınamadı'
+                };
+            }
+
+            return {
+                data: {
+                    orders: ordersResult.data,
+                    customers: customersResult.data,
+                    dealers: dealersResult.data,
+                    offers: offersResult.data,
+                    lastUpdated: new Date().toISOString()
+                },
+                error: null
+            };
+
+        } catch (error) {
+            console.error('Dashboard stats error:', error);
+            return {
+                data: null,
+                error: error.message
+            };
+        }
+    }
+
+    async getOrderStats() {
+        try {
+            const { data, error } = await this.supabase
+                .from('orders')
+                .select('id, status, total_amount, created_at')
+                .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+            if (error) throw error;
+
+            const stats = {
+                total: data.length,
+                pending: data.filter(o => o.status === 'pending').length,
+                completed: data.filter(o => o.status === 'completed').length,
+                totalRevenue: data.reduce((sum, o) => sum + (o.total_amount || 0), 0),
+                last30Days: data.length
+            };
+
+            return { data: stats, error: null };
+
+        } catch (error) {
+            return { data: null, error: error.message };
+        }
+    }
+
+    async getCustomerStats() {
+        try {
+            const { data, error } = await this.supabase
+                .from('customers')
+                .select('id, created_at, is_active')
+                .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+            if (error) throw error;
+
+            const stats = {
+                total: data.length,
+                active: data.filter(c => c.is_active).length,
+                new30Days: data.length
+            };
+
+            return { data: stats, error: null };
+
+        } catch (error) {
+            return { data: null, error: error.message };
+        }
+    }
+
+    async getDealerStats() {
+        try {
+            const { data, error } = await this.supabase
+                .from('dealers')
+                .select('id, is_active, created_at');
+
+            if (error) throw error;
+
+            const stats = {
+                total: data.length,
+                active: data.filter(d => d.is_active).length
+            };
+
+            return { data: stats, error: null };
+
+        } catch (error) {
+            return { data: null, error: error.message };
+        }
+    }
+
+    async getOfferStats() {
+        try {
+            const { data, error } = await this.supabase
+                .from('offers')
+                .select('id, status, created_at')
+                .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+            if (error) throw error;
+
+            const stats = {
+                total: data.length,
+                pending: data.filter(o => o.status === 'pending').length,
+                accepted: data.filter(o => o.status === 'accepted').length,
+                rejected: data.filter(o => o.status === 'rejected').length
+            };
+
+            return { data: stats, error: null };
+
+        } catch (error) {
+            return { data: null, error: error.message };
+        }
+    }
+
+    // Ek rapor metodları - gelecekte kullanım için
+    async getMonthlyReport(year, month) {
+        try {
+            const startDate = new Date(year, month - 1, 1).toISOString();
+            const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+
+            const { data, error } = await this.supabase
+                .from('orders')
+                .select('*')
+                .gte('created_at', startDate)
+                .lte('created_at', endDate);
+
+            if (error) throw error;
+
+            return { data, error: null };
+
+        } catch (error) {
+            return { data: null, error: error.message };
+        }
+    }
+}
+
+// Global service instance
+window.ReportsService = new ReportsService();
