@@ -452,6 +452,168 @@
             .bo-chart-legend { flex-direction: column; align-items: flex-start; gap: 12px; }
             .bo-legend-item { width: 100%; }
         }
+
+        /* Multiselect Dropdown */
+        .bo-multiselect {
+            position: relative;
+            width: 100%;
+        }
+        .bo-multiselect-trigger {
+            width: 100%;
+            height: 44px;
+            padding: 0 16px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--bo-text-primary);
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .bo-multiselect-trigger:hover { border-color: #d4d4d4; }
+        .bo-multiselect-trigger.active { border-color: var(--bo-primary); box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1); }
+        .bo-multiselect-trigger svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--bo-text-secondary);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+        .bo-multiselect-trigger.active svg { transform: rotate(180deg); }
+        .bo-multiselect-text {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+        }
+        .bo-multiselect-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--bo-primary);
+            color: #fff;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .bo-multiselect-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            width: 100%;
+            min-width: 280px;
+            background: #fff;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 350px;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        .bo-multiselect-dropdown.open { display: flex; }
+        .bo-multiselect-search {
+            padding: 12px;
+            border-bottom: 1px solid var(--bo-border);
+        }
+        .bo-multiselect-search input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--bo-text-primary);
+            transition: all 0.2s ease;
+        }
+        .bo-multiselect-search input:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+            box-shadow: 0 0 0 2px rgba(227, 30, 36, 0.1);
+        }
+        .bo-multiselect-options {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+            max-height: 220px;
+        }
+        .bo-multiselect-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            font-size: 13px;
+            color: var(--bo-text-primary);
+        }
+        .bo-multiselect-option:hover { background: #f5f5f5; }
+        .bo-multiselect-option.selected { background: rgba(227, 30, 36, 0.06); }
+        .bo-multiselect-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--bo-primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .bo-multiselect-option-text { flex: 1; }
+        .bo-multiselect-option-badge {
+            font-size: 11px;
+            color: var(--bo-text-secondary);
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .bo-multiselect-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid var(--bo-border);
+            background: #fafafa;
+        }
+        .bo-multiselect-actions button {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+            color: var(--bo-text-primary);
+        }
+        .bo-multiselect-actions button:hover { background: #f0f0f0; }
+        .bo-multiselect-actions button.primary {
+            background: var(--bo-primary);
+            color: #fff;
+            border-color: var(--bo-primary);
+        }
+        .bo-multiselect-actions button.primary:hover { background: var(--bo-primary-dark); }
+        .bo-multiselect-empty {
+            padding: 20px;
+            text-align: center;
+            color: var(--bo-text-secondary);
+            font-size: 13px;
+        }
+        .bo-multiselect.disabled .bo-multiselect-trigger {
+            background-color: #f9f9f9;
+            color: #a3a3a3;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -471,24 +633,75 @@
 
             <!-- Filter Bar -->
             <div class="bo-filter-bar">
+                <!-- Il Multiselect -->
                 <div class="bo-filter-group">
                     <label>Il</label>
-                    <select class="bo-filter-select" id="filterCity" onchange="onCityChange()">
-                        <option value="">Tum Iller</option>
-                    </select>
+                    <div class="bo-multiselect" id="cityMultiselect">
+                        <div class="bo-multiselect-trigger" onclick="toggleMultiselect('city')">
+                            <span class="bo-multiselect-text">Tum Iller</span>
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        <div class="bo-multiselect-dropdown" id="cityDropdown">
+                            <div class="bo-multiselect-search">
+                                <input type="text" placeholder="Il ara..." oninput="filterMultiselectOptions('city', this.value)">
+                            </div>
+                            <div class="bo-multiselect-options" id="cityOptions">
+                                <div class="bo-multiselect-empty">Yukleniyor...</div>
+                            </div>
+                            <div class="bo-multiselect-actions">
+                                <button onclick="selectAllMultiselect('city')">Tumunu Sec</button>
+                                <button onclick="clearMultiselect('city')">Temizle</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Ilce Multiselect -->
                 <div class="bo-filter-group">
                     <label>Ilce</label>
-                    <select class="bo-filter-select" id="filterDistrict" onchange="onDistrictChange()" disabled>
-                        <option value="">Once il secin</option>
-                    </select>
+                    <div class="bo-multiselect disabled" id="districtMultiselect">
+                        <div class="bo-multiselect-trigger" onclick="toggleMultiselect('district')">
+                            <span class="bo-multiselect-text">Once il secin</span>
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        <div class="bo-multiselect-dropdown" id="districtDropdown">
+                            <div class="bo-multiselect-search">
+                                <input type="text" placeholder="Ilce ara..." oninput="filterMultiselectOptions('district', this.value)">
+                            </div>
+                            <div class="bo-multiselect-options" id="districtOptions">
+                                <div class="bo-multiselect-empty">Once il secin</div>
+                            </div>
+                            <div class="bo-multiselect-actions">
+                                <button onclick="selectAllMultiselect('district')">Tumunu Sec</button>
+                                <button onclick="clearMultiselect('district')">Temizle</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Bayi Multiselect -->
                 <div class="bo-filter-group">
                     <label>Bayi</label>
-                    <select class="bo-filter-select" id="filterDealer" disabled>
-                        <option value="">Once ilce secin</option>
-                    </select>
+                    <div class="bo-multiselect disabled" id="dealerMultiselect">
+                        <div class="bo-multiselect-trigger" onclick="toggleMultiselect('dealer')">
+                            <span class="bo-multiselect-text">Once ilce secin</span>
+                            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </div>
+                        <div class="bo-multiselect-dropdown" id="dealerDropdown">
+                            <div class="bo-multiselect-search">
+                                <input type="text" placeholder="Bayi ara..." oninput="filterMultiselectOptions('dealer', this.value)">
+                            </div>
+                            <div class="bo-multiselect-options" id="dealerOptions">
+                                <div class="bo-multiselect-empty">Once ilce secin</div>
+                            </div>
+                            <div class="bo-multiselect-actions">
+                                <button onclick="selectAllMultiselect('dealer')">Tumunu Sec</button>
+                                <button onclick="clearMultiselect('dealer')">Temizle</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="bo-filter-actions">
                     <button class="bo-btn bo-btn-primary" onclick="applyFilters()">
                         <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
@@ -734,6 +947,12 @@
         var salesChart = null;
         var locationChart = null;
 
+        // Multiselect State
+        var selectedCities = [];      // [{id, name}]
+        var selectedDistricts = [];   // [{id, name}]
+        var selectedDealers = [];     // [{id, name}]
+        var openMultiselect = null;   // Currently open dropdown
+
         // Init
         document.addEventListener('DOMContentLoaded', async function() {
             var adminId = sessionStorage.getItem('backoffice_admin_id');
@@ -765,99 +984,346 @@
             });
         }
 
-        // Filter Functions
+        // ============================================
+        // MULTISELECT FUNCTIONS
+        // ============================================
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (openMultiselect && !e.target.closest('.bo-multiselect')) {
+                closeAllMultiselects();
+            }
+        });
+
+        function toggleMultiselect(type) {
+            var multiselect = document.getElementById(type + 'Multiselect');
+            var dropdown = document.getElementById(type + 'Dropdown');
+            var trigger = multiselect.querySelector('.bo-multiselect-trigger');
+
+            // If disabled, don't open
+            if (multiselect.classList.contains('disabled')) return;
+
+            // Close other open dropdowns
+            if (openMultiselect && openMultiselect !== type) {
+                closeAllMultiselects();
+            }
+
+            var isOpen = dropdown.classList.contains('open');
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                trigger.classList.remove('active');
+                openMultiselect = null;
+            } else {
+                dropdown.classList.add('open');
+                trigger.classList.add('active');
+                openMultiselect = type;
+                // Focus search input
+                var searchInput = dropdown.querySelector('input');
+                if (searchInput) setTimeout(function() { searchInput.focus(); }, 50);
+            }
+        }
+
+        function closeAllMultiselects() {
+            ['city', 'district', 'dealer'].forEach(function(type) {
+                var dropdown = document.getElementById(type + 'Dropdown');
+                var trigger = document.querySelector('#' + type + 'Multiselect .bo-multiselect-trigger');
+                if (dropdown) dropdown.classList.remove('open');
+                if (trigger) trigger.classList.remove('active');
+            });
+            openMultiselect = null;
+        }
+
+        function filterMultiselectOptions(type, query) {
+            var optionsContainer = document.getElementById(type + 'Options');
+            var options = optionsContainer.querySelectorAll('.bo-multiselect-option');
+            var normalizedQuery = query.toLowerCase().trim();
+
+            options.forEach(function(option) {
+                var text = option.querySelector('.bo-multiselect-option-text').textContent.toLowerCase();
+                option.style.display = text.includes(normalizedQuery) ? 'flex' : 'none';
+            });
+        }
+
+        function selectAllMultiselect(type) {
+            var optionsContainer = document.getElementById(type + 'Options');
+            var checkboxes = optionsContainer.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(function(cb) {
+                if (!cb.checked && cb.closest('.bo-multiselect-option').style.display !== 'none') {
+                    cb.checked = true;
+                    onMultiselectOptionChange(type, cb);
+                }
+            });
+        }
+
+        function clearMultiselect(type) {
+            var optionsContainer = document.getElementById(type + 'Options');
+            var checkboxes = optionsContainer.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach(function(cb) {
+                if (cb.checked) {
+                    cb.checked = false;
+                    onMultiselectOptionChange(type, cb);
+                }
+            });
+        }
+
+        function onMultiselectOptionChange(type, checkbox) {
+            var id = checkbox.getAttribute('data-id');
+            var name = checkbox.getAttribute('data-name');
+            var option = checkbox.closest('.bo-multiselect-option');
+
+            if (type === 'city') {
+                if (checkbox.checked) {
+                    if (!selectedCities.find(function(c) { return c.id === id; })) {
+                        selectedCities.push({ id: id, name: name });
+                    }
+                    option.classList.add('selected');
+                } else {
+                    selectedCities = selectedCities.filter(function(c) { return c.id !== id; });
+                    option.classList.remove('selected');
+                }
+                updateMultiselectTrigger('city');
+                loadDistrictsForSelectedCities();
+            } else if (type === 'district') {
+                if (checkbox.checked) {
+                    if (!selectedDistricts.find(function(d) { return d.id === id; })) {
+                        selectedDistricts.push({ id: id, name: name });
+                    }
+                    option.classList.add('selected');
+                } else {
+                    selectedDistricts = selectedDistricts.filter(function(d) { return d.id !== id; });
+                    option.classList.remove('selected');
+                }
+                updateMultiselectTrigger('district');
+                loadDealersForSelectedDistricts();
+            } else if (type === 'dealer') {
+                if (checkbox.checked) {
+                    if (!selectedDealers.find(function(d) { return d.id === id; })) {
+                        selectedDealers.push({ id: id, name: name });
+                    }
+                    option.classList.add('selected');
+                } else {
+                    selectedDealers = selectedDealers.filter(function(d) { return d.id !== id; });
+                    option.classList.remove('selected');
+                }
+                updateMultiselectTrigger('dealer');
+            }
+        }
+
+        function updateMultiselectTrigger(type) {
+            var trigger = document.querySelector('#' + type + 'Multiselect .bo-multiselect-trigger');
+            var textSpan = trigger.querySelector('.bo-multiselect-text');
+            var existingCount = trigger.querySelector('.bo-multiselect-count');
+            if (existingCount) existingCount.remove();
+
+            var selected;
+            var defaultText;
+
+            if (type === 'city') {
+                selected = selectedCities;
+                defaultText = 'Tum Iller';
+            } else if (type === 'district') {
+                selected = selectedDistricts;
+                defaultText = selectedCities.length > 0 ? 'Tum Ilceler' : 'Once il secin';
+            } else {
+                selected = selectedDealers;
+                defaultText = selectedDistricts.length > 0 ? 'Tum Bayiler' : 'Once ilce secin';
+            }
+
+            if (selected.length === 0) {
+                textSpan.textContent = defaultText;
+            } else if (selected.length === 1) {
+                textSpan.textContent = selected[0].name;
+            } else {
+                textSpan.textContent = selected.length + ' secili';
+                var countBadge = document.createElement('span');
+                countBadge.className = 'bo-multiselect-count';
+                countBadge.textContent = selected.length;
+                trigger.insertBefore(countBadge, trigger.querySelector('svg'));
+            }
+        }
+
+        function renderMultiselectOptions(type, data) {
+            var optionsContainer = document.getElementById(type + 'Options');
+
+            if (!data || data.length === 0) {
+                var emptyText = type === 'city' ? 'Il bulunamadi' :
+                               (type === 'district' ? 'Ilce bulunamadi' : 'Bayi bulunamadi');
+                optionsContainer.innerHTML = '<div class="bo-multiselect-empty">' + emptyText + '</div>';
+                return;
+            }
+
+            var selected = type === 'city' ? selectedCities :
+                          (type === 'district' ? selectedDistricts : selectedDealers);
+
+            optionsContainer.innerHTML = data.map(function(item) {
+                var isSelected = selected.find(function(s) { return s.id === item.id; });
+                return '<div class="bo-multiselect-option' + (isSelected ? ' selected' : '') + '">' +
+                    '<input type="checkbox" data-id="' + item.id + '" data-name="' + item.name + '"' +
+                    (isSelected ? ' checked' : '') +
+                    ' onchange="onMultiselectOptionChange(\'' + type + '\', this)">' +
+                    '<span class="bo-multiselect-option-text">' + item.name + '</span>' +
+                    '</div>';
+            }).join('');
+        }
+
+        // ============================================
+        // FILTER FUNCTIONS
+        // ============================================
+
         async function loadCities() {
-            var citySelect = document.getElementById('filterCity');
             try {
                 var result = await ReportsService.getCities();
                 if (result.data) {
                     citiesData = result.data;
-                    citySelect.innerHTML = '<option value="">Tum Iller</option>';
-                    result.data.forEach(function(city) {
-                        citySelect.innerHTML += '<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>';
-                    });
+                    renderMultiselectOptions('city', result.data);
                 }
             } catch (e) { console.error('Cities load error:', e); }
         }
 
-        async function onCityChange() {
-            var citySelect = document.getElementById('filterCity');
-            var districtSelect = document.getElementById('filterDistrict');
-            var dealerSelect = document.getElementById('filterDealer');
-
-            var cityId = citySelect.value;
+        async function loadDistrictsForSelectedCities() {
+            var districtMultiselect = document.getElementById('districtMultiselect');
+            var dealerMultiselect = document.getElementById('dealerMultiselect');
 
             // Reset district and dealer
-            districtSelect.innerHTML = '<option value="">Yukleniyor...</option>';
-            districtSelect.disabled = true;
-            dealerSelect.innerHTML = '<option value="">Once ilce secin</option>';
-            dealerSelect.disabled = true;
+            selectedDistricts = [];
+            selectedDealers = [];
+            updateMultiselectTrigger('district');
+            updateMultiselectTrigger('dealer');
 
-            if (!cityId) {
-                districtSelect.innerHTML = '<option value="">Once il secin</option>';
+            if (selectedCities.length === 0) {
+                districtMultiselect.classList.add('disabled');
+                dealerMultiselect.classList.add('disabled');
+                document.getElementById('districtOptions').innerHTML = '<div class="bo-multiselect-empty">Once il secin</div>';
+                document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Once ilce secin</div>';
+                districtsData = [];
+                dealersData = [];
                 return;
             }
 
+            districtMultiselect.classList.remove('disabled');
+            document.getElementById('districtOptions').innerHTML = '<div class="bo-multiselect-empty">Yukleniyor...</div>';
+
             try {
-                var result = await ReportsService.getDistrictsByCity(cityId);
-                if (result.data) {
-                    districtsData = result.data;
-                    districtSelect.innerHTML = '<option value="">Tum Ilceler</option>';
-                    result.data.forEach(function(d) {
-                        districtSelect.innerHTML += '<option value="' + d.id + '" data-name="' + d.name + '">' + d.name + '</option>';
-                    });
-                    districtSelect.disabled = false;
+                // Secili illerin ilcelerini getir
+                var allDistricts = [];
+                for (var i = 0; i < selectedCities.length; i++) {
+                    var result = await ReportsService.getDistrictsByCity(selectedCities[i].id);
+                    if (result.data) {
+                        allDistricts = allDistricts.concat(result.data);
+                    }
                 }
+
+                // Duplicate'leri kaldir ve sirala
+                var uniqueDistricts = [];
+                var seen = {};
+                allDistricts.forEach(function(d) {
+                    if (!seen[d.id]) {
+                        seen[d.id] = true;
+                        uniqueDistricts.push(d);
+                    }
+                });
+                uniqueDistricts.sort(function(a, b) { return a.name.localeCompare(b.name, 'tr'); });
+
+                districtsData = uniqueDistricts;
+                renderMultiselectOptions('district', uniqueDistricts);
+
+                // Dealer'lari sifirla
+                dealerMultiselect.classList.add('disabled');
+                document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Once ilce secin</div>';
+                dealersData = [];
+
             } catch (e) { console.error('Districts load error:', e); }
         }
 
-        async function onDistrictChange() {
-            var citySelect = document.getElementById('filterCity');
-            var districtSelect = document.getElementById('filterDistrict');
-            var dealerSelect = document.getElementById('filterDealer');
+        async function loadDealersForSelectedDistricts() {
+            var dealerMultiselect = document.getElementById('dealerMultiselect');
 
-            var cityOption = citySelect.options[citySelect.selectedIndex];
-            var districtOption = districtSelect.options[districtSelect.selectedIndex];
+            // Reset dealers
+            selectedDealers = [];
+            updateMultiselectTrigger('dealer');
 
-            var cityName = cityOption ? cityOption.getAttribute('data-name') : null;
-            var districtName = districtOption ? districtOption.getAttribute('data-name') : null;
+            if (selectedDistricts.length === 0) {
+                // Ilce secili degilse ama il seciliyse, o illerdeki tum bayileri goster
+                if (selectedCities.length > 0) {
+                    dealerMultiselect.classList.remove('disabled');
+                    document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Yukleniyor...</div>';
 
-            dealerSelect.innerHTML = '<option value="">Yukleniyor...</option>';
-            dealerSelect.disabled = true;
+                    try {
+                        var allDealers = [];
+                        for (var i = 0; i < selectedCities.length; i++) {
+                            var result = await ReportsService.getDealersByLocation(selectedCities[i].name, null);
+                            if (result.data) {
+                                allDealers = allDealers.concat(result.data);
+                            }
+                        }
 
-            if (!cityName) {
-                dealerSelect.innerHTML = '<option value="">Once il secin</option>';
+                        // Duplicate'leri kaldir ve sirala
+                        var uniqueDealers = [];
+                        var seen = {};
+                        allDealers.forEach(function(d) {
+                            if (!seen[d.id]) {
+                                seen[d.id] = true;
+                                uniqueDealers.push(d);
+                            }
+                        });
+                        uniqueDealers.sort(function(a, b) { return a.name.localeCompare(b.name, 'tr'); });
+
+                        dealersData = uniqueDealers;
+                        renderMultiselectOptions('dealer', uniqueDealers);
+                    } catch (e) { console.error('Dealers load error:', e); }
+                } else {
+                    dealerMultiselect.classList.add('disabled');
+                    document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Once ilce secin</div>';
+                    dealersData = [];
+                }
                 return;
             }
 
+            dealerMultiselect.classList.remove('disabled');
+            document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Yukleniyor...</div>';
+
             try {
-                var result = await ReportsService.getDealersByLocation(cityName, districtName);
-                if (result.data) {
-                    dealersData = result.data;
-                    dealerSelect.innerHTML = '<option value="">Tum Bayiler (' + result.data.length + ')</option>';
-                    result.data.forEach(function(d) {
-                        dealerSelect.innerHTML += '<option value="' + d.id + '">' + d.name + '</option>';
-                    });
-                    dealerSelect.disabled = false;
+                // Secili ilcelerdeki bayileri getir
+                var allDealers = [];
+
+                // Secili illerin isimlerini al
+                var cityNames = selectedCities.map(function(c) { return c.name; });
+
+                for (var i = 0; i < selectedDistricts.length; i++) {
+                    // Her ilce icin, uygun il adini bul
+                    for (var j = 0; j < cityNames.length; j++) {
+                        var result = await ReportsService.getDealersByLocation(cityNames[j], selectedDistricts[i].name);
+                        if (result.data && result.data.length > 0) {
+                            allDealers = allDealers.concat(result.data);
+                        }
+                    }
                 }
+
+                // Duplicate'leri kaldir ve sirala
+                var uniqueDealers = [];
+                var seen = {};
+                allDealers.forEach(function(d) {
+                    if (!seen[d.id]) {
+                        seen[d.id] = true;
+                        uniqueDealers.push(d);
+                    }
+                });
+                uniqueDealers.sort(function(a, b) { return a.name.localeCompare(b.name, 'tr'); });
+
+                dealersData = uniqueDealers;
+                renderMultiselectOptions('dealer', uniqueDealers);
+
             } catch (e) { console.error('Dealers load error:', e); }
         }
 
         function applyFilters() {
-            var citySelect = document.getElementById('filterCity');
-            var districtSelect = document.getElementById('filterDistrict');
-            var dealerSelect = document.getElementById('filterDealer');
-
-            var cityOption = citySelect.options[citySelect.selectedIndex];
-            var districtOption = districtSelect.options[districtSelect.selectedIndex];
-
-            var cityName = cityOption ? cityOption.getAttribute('data-name') : null;
-            var districtName = districtOption ? districtOption.getAttribute('data-name') : null;
-            var dealerId = dealerSelect.value;
+            closeAllMultiselects();
 
             // Bayi ID'lerini belirle
-            if (dealerId) {
-                currentFilters.dealerIds = [dealerId];
+            if (selectedDealers.length > 0) {
+                currentFilters.dealerIds = selectedDealers.map(function(d) { return d.id; });
             } else if (dealersData.length > 0) {
                 currentFilters.dealerIds = dealersData.map(function(d) { return d.id; });
             } else {
@@ -868,14 +1334,30 @@
         }
 
         function clearFilters() {
-            document.getElementById('filterCity').value = '';
-            document.getElementById('filterDistrict').innerHTML = '<option value="">Once il secin</option>';
-            document.getElementById('filterDistrict').disabled = true;
-            document.getElementById('filterDealer').innerHTML = '<option value="">Once ilce secin</option>';
-            document.getElementById('filterDealer').disabled = true;
+            closeAllMultiselects();
+
+            // Reset all selections
+            selectedCities = [];
+            selectedDistricts = [];
+            selectedDealers = [];
+            districtsData = [];
+            dealersData = [];
+
+            // Reset UI
+            updateMultiselectTrigger('city');
+            updateMultiselectTrigger('district');
+            updateMultiselectTrigger('dealer');
+
+            // Re-render city options (clear checkboxes)
+            renderMultiselectOptions('city', citiesData);
+
+            // Disable district and dealer
+            document.getElementById('districtMultiselect').classList.add('disabled');
+            document.getElementById('dealerMultiselect').classList.add('disabled');
+            document.getElementById('districtOptions').innerHTML = '<div class="bo-multiselect-empty">Once il secin</div>';
+            document.getElementById('dealerOptions').innerHTML = '<div class="bo-multiselect-empty">Once ilce secin</div>';
 
             currentFilters.dealerIds = [];
-            dealersData = [];
             loadReportData();
         }
 
@@ -1051,37 +1533,24 @@
 
         // Chart Functions
         async function loadChartData() {
-            // Bayi seciliyse grafik gizli, yukleme
-            var dealerSelect = document.getElementById('filterDealer');
-            if (dealerSelect.value) {
+            // Tek bayi seciliyse grafik gizli, yukleme
+            if (selectedDealers.length === 1) {
                 return;
             }
 
             try {
                 var currentMonth = ReportsService.getCurrentMonthRange();
-                var citySelect = document.getElementById('filterCity');
-                var districtSelect = document.getElementById('filterDistrict');
-
-                var cityOption = citySelect.options[citySelect.selectedIndex];
-                var districtOption = districtSelect.options[districtSelect.selectedIndex];
-
-                var cityName = cityOption ? cityOption.getAttribute('data-name') : null;
-                var districtName = districtOption ? districtOption.getAttribute('data-name') : null;
-
-                // Lokasyona gore bayi filtresi olustur
                 var chartFilters = { ...currentMonth };
 
-                if (cityName) {
-                    // Il seciliyse, o ildeki (veya ilce seciliyse o ilcedeki) bayileri al
-                    var dealersResult = await ReportsService.getDealersByLocation(cityName, districtName);
-                    if (dealersResult.data && dealersResult.data.length > 0) {
-                        chartFilters.dealerIds = dealersResult.data.map(function(d) { return d.id; });
-                    } else {
-                        // Hic bayi yoksa bos grafik goster
-                        chartFilters.dealerIds = ['no-match'];
-                    }
+                // Lokasyona gore bayi filtresi olustur
+                if (selectedDealers.length > 0) {
+                    // Secili bayiler varsa onlari kullan
+                    chartFilters.dealerIds = selectedDealers.map(function(d) { return d.id; });
+                } else if (dealersData.length > 0) {
+                    // Secili bayi yoksa ama dealersData varsa (il/ilce secilmis demek)
+                    chartFilters.dealerIds = dealersData.map(function(d) { return d.id; });
                 }
-                // cityName yoksa dealerIds bos = tum bayiler
+                // Hicbir filtre yoksa dealerIds bos = tum bayiler
 
                 var result = await ReportsService.getDealerSalesData(chartFilters);
 
@@ -1269,20 +1738,12 @@
 
         // Charts Visibility Control
         function updateChartsVisibility() {
-            var citySelect = document.getElementById('filterCity');
-            var districtSelect = document.getElementById('filterDistrict');
-            var dealerSelect = document.getElementById('filterDealer');
-
-            var cityValue = citySelect.value;
-            var districtValue = districtSelect.value;
-            var dealerValue = dealerSelect.value;
-
             var locationWidget = document.getElementById('locationChartWidget');
             var dealerWidget = document.getElementById('chartWidget');
             var singleDealerInfo = document.getElementById('singleDealerInfo');
 
             // Tek bayi seciliyse - grafikler gizli, bilgilendirme goster
-            if (dealerValue) {
+            if (selectedDealers.length === 1) {
                 locationWidget.style.display = 'none';
                 dealerWidget.style.display = 'none';
                 singleDealerInfo.style.display = 'block';
@@ -1292,7 +1753,7 @@
             // Bilgilendirme mesajini gizle
             singleDealerInfo.style.display = 'none';
 
-            // Il/Ilce grafiği her zaman goster (bayi secili degilse)
+            // Il/Ilce grafiği her zaman goster (tek bayi secili degilse)
             locationWidget.style.display = 'block';
 
             // Bayi grafigi: Tek bayi secili degilse her zaman goster
@@ -1301,14 +1762,8 @@
 
         // Location Chart Functions
         async function loadLocationChart() {
-            var citySelect = document.getElementById('filterCity');
-            var cityValue = citySelect.value;
-            var cityOption = citySelect.options[citySelect.selectedIndex];
-            var cityName = cityOption ? cityOption.getAttribute('data-name') : null;
-
-            // Eger bayi seciliyse grafik gizli, yukleme
-            var dealerSelect = document.getElementById('filterDealer');
-            if (dealerSelect.value) {
+            // Eger tek bayi seciliyse grafik gizli, yukleme
+            if (selectedDealers.length === 1) {
                 return;
             }
 
@@ -1316,26 +1771,37 @@
                 var currentMonth = ReportsService.getCurrentMonthRange();
                 var result;
 
-                if (!cityValue) {
+                if (selectedCities.length === 0) {
                     // Tum iller
                     result = await ReportsService.getCitySalesData(currentMonth);
-                } else {
-                    // Secili ilin ilceleri
+                    updateLocationChartHeader(null, result.data ? result.data.length : 0);
+                } else if (selectedCities.length === 1) {
+                    // Tek il seciliyse, o ilin ilceleri
                     result = await ReportsService.getDistrictSalesData({
                         ...currentMonth,
-                        cityName: cityName
+                        cityName: selectedCities[0].name
                     });
+                    updateLocationChartHeader(selectedCities[0].name, result.data ? result.data.length : 0);
+                } else {
+                    // Birden fazla il seciliyse, secili illeri goster
+                    result = await ReportsService.getCitySalesData(currentMonth);
+                    // Secili illere gore filtrele
+                    if (result.data) {
+                        var cityNames = selectedCities.map(function(c) { return c.name; });
+                        result.data = result.data.filter(function(d) {
+                            return cityNames.indexOf(d.name) !== -1;
+                        });
+                    }
+                    updateLocationChartHeader(null, result.data ? result.data.length : 0, true);
                 }
 
                 if (result.data && result.data.length > 0) {
                     document.getElementById('locationChartEmpty').style.display = 'none';
                     document.querySelector('#locationChartWidget .bo-chart-container canvas').style.display = 'block';
                     initLocationChart(result.data);
-                    updateLocationChartHeader(cityName, result.data.length);
                 } else {
                     document.getElementById('locationChartEmpty').style.display = 'block';
                     document.querySelector('#locationChartWidget .bo-chart-container canvas').style.display = 'none';
-                    updateLocationChartHeader(cityName, 0);
                     if (locationChart) {
                         locationChart.destroy();
                         locationChart = null;
@@ -1472,12 +1938,17 @@
             setupLocationLegendHandlers();
         }
 
-        function updateLocationChartHeader(cityName, count) {
+        function updateLocationChartHeader(cityName, count, isMultiCity) {
             var titleEl = document.getElementById('locationChartTitle');
             var subtitleEl = document.getElementById('locationChartSubtitle');
             var countEl = document.getElementById('locationChartCount');
 
-            if (!cityName) {
+            if (isMultiCity) {
+                // Birden fazla il secili
+                titleEl.textContent = 'Secili Iller Satis Dagilimi';
+                subtitleEl.textContent = selectedCities.length + ' il secili - karsilastirmali satis analizi';
+                countEl.textContent = count + ' Il';
+            } else if (!cityName) {
                 titleEl.textContent = 'Il Bazli Satis Dagilimi';
                 subtitleEl.textContent = 'Turkiye geneli il bazinda toplam satis performansi';
                 countEl.textContent = count + ' Il';
@@ -1489,7 +1960,9 @@
         }
 
         function clearDealerFilter() {
-            document.getElementById('filterDealer').value = '';
+            selectedDealers = [];
+            updateMultiselectTrigger('dealer');
+            renderMultiselectOptions('dealer', dealersData);
             applyFilters();
         }
 

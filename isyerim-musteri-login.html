@@ -285,6 +285,10 @@
 		sessionStorage.removeItem('isNewUser');
 		sessionStorage.removeItem('isyerim_phone');
 		sessionStorage.removeItem('isyerim_customer_id');
+		sessionStorage.removeItem('selected_address_id');
+		sessionStorage.removeItem('selected_address_name');
+		sessionStorage.removeItem('isyerim_dealer_id');
+		sessionStorage.removeItem('isyerim_dealer_name');
 
 		// Phone number formatting
 		document.getElementById('phone').addEventListener('input', function(e) {
@@ -329,7 +333,7 @@
 				const list = document.getElementById('customer-list');
 				list.innerHTML = '';
 
-				customers.forEach(function(customer) {
+				customers.filter(function(c) { return c.is_active; }).forEach(function(customer) {
 					const item = document.createElement('div');
 					item.className = 'customer-item';
 					item.innerHTML =

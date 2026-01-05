@@ -1060,7 +1060,7 @@
 	<main class="main-content">
 		<!-- Welcome -->
 		<div class="welcome-section">
-			<h1>Hoş Geldiniz, Hibizz</h1>
+			<h1 id="welcomeTitle">Hoş Geldiniz</h1>
 			<p>İşte bugünkü özet bilgileriniz</p>
 		</div>
 
@@ -1226,6 +1226,12 @@
 		// Bayi componentlerini yukle
 		document.addEventListener('DOMContentLoaded', function() {
 			ComponentLoader.loadBayiComponents();
+
+			// Hoş geldiniz mesajını güncelle
+			var dealerName = sessionStorage.getItem('bayi_dealer_name');
+			if (dealerName) {
+				document.getElementById('welcomeTitle').textContent = 'Hoş Geldiniz, ' + dealerName;
+			}
 		});
 
 		$(document).ready(async function() {

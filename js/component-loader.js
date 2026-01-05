@@ -716,21 +716,43 @@ const ComponentLoader = {
                 console.warn('Staff sube yetki kontrolu hatasi:', e);
             }
         }
-        // Owner kullanici icin varsayilan sube atama
+        // Owner kullanici icin sube atama
+        // Oncelik sirasi: 1) last_selected_branch_id (DB), 2) is_default=true (Merkez sube)
         else if (userRole === 'owner' && customerId && !savedId && typeof BranchesService !== 'undefined') {
             try {
-                var result = await BranchesService.getByCustomerId(customerId);
+                // 1. Kullanicinin son sectigi subeyi veritabanindan al
+                if (userId && typeof CustomerUsersService !== 'undefined') {
+                    var userResult = await CustomerUsersService.getById(userId);
+                    if (!userResult.error && userResult.data && userResult.data.last_selected_branch_id) {
+                        // Son secilen subeyi getir
+                        var branchResult = await BranchesService.getById(userResult.data.last_selected_branch_id);
+                        // Sube aktif ve BU MUSTERIYE ait olmali
+                        if (!branchResult.error && branchResult.data &&
+                            branchResult.data.is_active &&
+                            branchResult.data.customer_id === customerId) {
+                            savedId = branchResult.data.id;
+                            savedName = branchResult.data.branch_name;
+                            sessionStorage.setItem('selected_address_id', savedId);
+                            sessionStorage.setItem('selected_address_name', savedName);
+                            branchChanged = true;
+                            console.log('Owner icin son secilen sube yuklendi:', savedName);
+                        }
+                    }
+                }
 
-                if (!result.error && result.data && result.data.length > 0) {
-                    var firstBranch = result.data[0];
-                    savedId = firstBranch.id;
-                    savedName = firstBranch.branch_name;
-
-                    // SessionStorage'i guncelle
-                    sessionStorage.setItem('selected_address_id', savedId);
-                    sessionStorage.setItem('selected_address_name', savedName);
-                    branchChanged = true;
-                    console.log('Owner icin varsayilan sube atandi:', savedName);
+                // 2. Son secilen sube yoksa veya gecersizse, is_default=true olan (Merkez) subeyi sec
+                if (!savedId) {
+                    var result = await BranchesService.getByCustomerId(customerId);
+                    if (!result.error && result.data && result.data.length > 0) {
+                        // is_default DESC ile siralandigi icin ilk sube Merkez sube
+                        var firstBranch = result.data[0];
+                        savedId = firstBranch.id;
+                        savedName = firstBranch.branch_name;
+                        sessionStorage.setItem('selected_address_id', savedId);
+                        sessionStorage.setItem('selected_address_name', savedName);
+                        branchChanged = true;
+                        console.log('Owner icin Merkez sube atandi:', savedName);
+                    }
                 }
             } catch (e) {
                 console.warn('Owner sube yukleme hatasi:', e);
@@ -1291,6 +1313,13 @@ window.confirmAddressSelection = async function() {
 
     sessionStorage.setItem('selected_address_id', selectedAddressId);
     sessionStorage.setItem('selected_address_name', selectedAddressName);
+
+    // Veritabanina son secilen subeyi kaydet
+    var userId = sessionStorage.getItem('isyerim_user_id');
+    if (userId && typeof CustomerUsersService !== 'undefined' && CustomerUsersService.updateLastSelectedBranch) {
+        CustomerUsersService.updateLastSelectedBranch(userId, selectedAddressId)
+            .catch(function(err) { console.warn('Son secilen sube kaydedilemedi:', err); });
+    }
 
     var locationSpan = document.getElementById('headerUserLocation');
     if (locationSpan) {

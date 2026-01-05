@@ -6,8 +6,15 @@
 const SUPABASE_URL = 'https://mkofufdksqejvrnarxae.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_jA5Htra9A1BrGTRGDi0tnA_gmw8xU-R';
 
-// Supabase client'i oluştur
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Supabase client'i oluştur (cache bypass için global header)
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: {
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+        }
+    }
+});
 
 // Global erişim için
 window.supabaseClient = supabaseClient;

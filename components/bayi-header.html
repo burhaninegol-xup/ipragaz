@@ -18,7 +18,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 54px;
+		height: 120px;
 	}
 
 	.header__logo {
@@ -29,53 +29,70 @@
 	.header__logo a {
 		display: flex;
 		align-items: center;
-		gap: 14px;
+		gap: 16px;
 		text-decoration: none;
 	}
 
-	/* Gradient divider */
+	/* Gradient divider - İpragaz kırmızı tonu */
 	.header__logo a::after {
 		content: '';
 		display: block;
 		width: 1px;
-		height: 32px;
+		height: 40px;
 		background: linear-gradient(
 			to bottom,
-			rgba(0, 44, 119, 0) 0%,
-			rgba(0, 44, 119, 0.3) 50%,
-			rgba(0, 44, 119, 0) 100%
+			rgba(227, 30, 36, 0) 0%,
+			rgba(227, 30, 36, 0.4) 50%,
+			rgba(227, 30, 36, 0) 100%
 		);
 	}
 
 	.header__logo img {
-		height: 44px;
+		height: 52px;
 	}
 
 	.header__app-title {
-		font-size: 15px;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		font-size: 16px;
 		font-weight: 600;
-		color: #002c77;
+		color: #1a1a2e;
 		letter-spacing: 0.5px;
-		text-transform: uppercase;
 		white-space: nowrap;
+	}
+
+	.header__app-title::before {
+		content: '';
+		width: 5px;
+		height: 28px;
+		background: #e31e24;
+		border-radius: 2.5px;
 	}
 
 	@media (max-width: 480px) {
 		.header__wrapper {
-			height: 50px;
+			height: 56px;
 		}
 		.header__logo img {
-			height: 38px;
+			height: 44px;
 		}
 		.header__logo a::after {
-			height: 26px;
+			height: 32px;
 		}
 		.header__app-title {
-			font-size: 13px;
+			font-size: 14px;
+		}
+		.header__app-title::before {
+			width: 4px;
+			height: 22px;
 		}
 	}
 
 	@media (max-width: 360px) {
+		.header__logo img {
+			height: 40px;
+		}
 		.header__app-title,
 		.header__logo a::after {
 			display: none;
@@ -103,7 +120,7 @@
 	}
 
 	.bayi-header-nav nav ul li a:hover {
-		color: #002c77;
+		color: #e31e24;
 	}
 
 	.header__user-panel {
@@ -219,7 +236,7 @@
 	.notification-header-title { font-size: 16px; font-weight: 600; color: #333; }
 	.notification-mark-all {
 		font-size: 13px;
-		color: #002c77;
+		color: #e31e24;
 		cursor: pointer;
 		background: none;
 		border: none;
@@ -315,7 +332,7 @@
 		bottom: 0;
 		left: 0;
 		height: 3px;
-		background: #002c77;
+		background: #e31e24;
 		animation: toast-progress 5s linear;
 	}
 	@keyframes toast-progress { from { width: 100%; } to { width: 0%; } }
@@ -346,7 +363,7 @@
 		align-items: center;
 		gap: 6px;
 		font-size: 13px;
-		color: #002c77;
+		color: #e31e24;
 		font-weight: 500;
 		cursor: pointer;
 		background: none;
@@ -459,42 +476,65 @@
 		padding: 0 4px;
 	}
 
-	/* Dealer Info Container */
+	/* Dealer Info Container - Profesyonel tasarım */
 	.dealer-info-container {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 12px;
 		margin-left: auto;
 		margin-right: 16px;
+		background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+		padding: 10px 16px;
+		border-radius: 12px;
+		border: 1px solid #ffe0e0;
+		transition: all 0.2s ease;
+	}
+
+	.dealer-info-container:hover {
+		border-color: #e31e24;
+		box-shadow: 0 2px 8px rgba(227, 30, 36, 0.1);
 	}
 
 	.dealer-name {
 		font-weight: 600;
 		font-size: 14px;
-		color: #1a1a1a;
+		color: #1a1a2e;
+		max-width: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.dealer-code-badge {
-		font-size: 12px;
-		color: #666;
-		background: #f5f5f5;
-		padding: 3px 10px;
-		border-radius: 4px;
-		border: 1px solid #e0e0e0;
+		font-size: 11px;
+		font-weight: 600;
+		color: #e31e24;
+		background: #fff5f5;
+		padding: 4px 10px;
+		border-radius: 6px;
+		border: 1px solid #ffcccc;
 	}
 
 	.dealer-info-btn {
 		background: none;
 		border: none;
-		color: #999;
+		color: #bbb;
 		cursor: pointer;
-		padding: 4px;
+		padding: 6px;
 		display: flex;
 		align-items: center;
+		border-radius: 6px;
+		transition: all 0.2s;
 	}
 
 	.dealer-info-btn:hover {
 		color: #e31e24;
+		background: rgba(227, 30, 36, 0.08);
+	}
+
+	.dealer-info-btn:focus {
+		outline: 2px solid #e31e24;
+		outline-offset: 2px;
 	}
 
 	/* UUID Tooltip */
@@ -556,7 +596,25 @@
 
 	@media (max-width: 768px) {
 		.dealer-info-container {
+			padding: 6px 10px;
+			gap: 8px;
+			margin-right: 8px;
+		}
+		.dealer-name {
 			display: none;
+		}
+		.dealer-info-btn {
+			padding: 4px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.dealer-info-container {
+			padding: 4px 8px;
+		}
+		.dealer-code-badge {
+			font-size: 10px;
+			padding: 3px 8px;
 		}
 	}
 </style>
@@ -567,7 +625,7 @@
 			<div class="header__logo">
 				<a href="bayi-anasayfa.html">
 					<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
-					<span class="header__app-title">Bayi Uygulamasi</span>
+					<span class="header__app-title">Bayi Paneli</span>
 				</a>
 			</div>
 

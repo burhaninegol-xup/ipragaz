@@ -317,6 +317,29 @@ const CustomerUsersService = {
             .single();
 
         return { data, error };
+    },
+
+    /**
+     * Kullanicinin son sectigi subeyi guncelle
+     * @param {string} userId - Kullanici ID
+     * @param {string} branchId - Sube ID
+     * @returns {Promise<{data: Object|null, error: Object|null}>}
+     */
+    async updateLastSelectedBranch(userId, branchId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('customer_users')
+                .update({ last_selected_branch_id: branchId })
+                .eq('id', userId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            console.error('updateLastSelectedBranch error:', error);
+            return { data: null, error };
+        }
     }
 };
 
