@@ -1,0 +1,235 @@
+[
+  {
+    "scenario_id": "dealer-price-change",
+    "scenario_name": "Bayi Değişikliğinde Fiyat Güncelleme",
+    "success": true,
+    "total_steps": 20,
+    "passed_steps": 20,
+    "failed_step": null,
+    "duration_ms": 12485.298999999999,
+    "error_screenshot": null,
+    "notes": [
+      "Console (23 log)"
+    ],
+    "steps": [
+      {
+        "step_index": 0,
+        "action": "goto",
+        "description": "Login sayfasına git",
+        "success": true,
+        "duration_ms": 2089.121,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "URL: http://localhost:8000/isyerim-musteri-login.html"
+        ]
+      },
+      {
+        "step_index": 1,
+        "action": "fill",
+        "description": "Telefon numarası gir",
+        "success": true,
+        "duration_ms": 159.267,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1111111111"
+        ]
+      },
+      {
+        "step_index": 2,
+        "action": "click",
+        "description": "Devam butonuna tıkla",
+        "success": true,
+        "duration_ms": 250.457,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 3,
+        "action": "waitForSelector",
+        "description": "OTP sayfasını bekle",
+        "success": true,
+        "duration_ms": 14.944,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 4,
+        "action": "fill",
+        "description": "OTP 1. hane",
+        "success": true,
+        "duration_ms": 113.84700000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 5,
+        "action": "fill",
+        "description": "OTP 2. hane",
+        "success": true,
+        "duration_ms": 107.66000000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 6,
+        "action": "fill",
+        "description": "OTP 3. hane",
+        "success": true,
+        "duration_ms": 109.258,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 7,
+        "action": "fill",
+        "description": "OTP 4. hane",
+        "success": true,
+        "duration_ms": 106.817,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 8,
+        "action": "click",
+        "description": "OTP doğrula butonuna tıkla",
+        "success": true,
+        "duration_ms": 138.544,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 9,
+        "action": "waitForNavigation",
+        "description": "Sayfa yönlendirmesini bekle",
+        "success": true,
+        "duration_ms": 5162.7210000000005,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 10,
+        "action": "waitForSelector",
+        "description": "Ürün kartlarını bekle",
+        "success": true,
+        "duration_ms": 16.656000000000002,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 11,
+        "action": "screenshot",
+        "description": "Ana sayfa ilk yükleme ekran görüntüsü",
+        "success": true,
+        "duration_ms": 291.95300000000003,
+        "error": null,
+        "screenshot": "20260105_183412_anasayfa-ilk-yukleme.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      },
+      {
+        "step_index": 12,
+        "action": "assertVisible",
+        "description": "Fiyat etiketleri görünmeli",
+        "success": true,
+        "duration_ms": 7.64,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 13,
+        "action": "click",
+        "description": "İlk ürüne tıkla",
+        "success": true,
+        "duration_ms": 238.111,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 14,
+        "action": "waitForSelector",
+        "description": "Ürün detay sayfasını bekle",
+        "success": true,
+        "duration_ms": 1299.319,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 15,
+        "action": "screenshot",
+        "description": "Ürün detay fiyat ekran görüntüsü",
+        "success": true,
+        "duration_ms": 109.50999999999999,
+        "error": null,
+        "screenshot": "20260105_183412_urun-detay-fiyat.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      },
+      {
+        "step_index": 16,
+        "action": "assertVisible",
+        "description": "Fiyat etiketi görünmeli",
+        "success": true,
+        "duration_ms": 6.592,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 17,
+        "action": "click",
+        "description": "Anasayfaya dön",
+        "success": true,
+        "duration_ms": 258.308,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 18,
+        "action": "waitForSelector",
+        "description": "Ana sayfaya dönüldü",
+        "success": true,
+        "duration_ms": 802.8610000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 19,
+        "action": "screenshot",
+        "description": "Ana sayfaya geri dönüş ekran görüntüsü",
+        "success": true,
+        "duration_ms": 261.889,
+        "error": null,
+        "screenshot": "20260105_183412_anasayfa-geri-donus.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      }
+    ]
+  }
+]

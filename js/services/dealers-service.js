@@ -324,6 +324,23 @@ const DealersService = {
     },
 
     /**
+     * Bayinin yetkili olduğu mikropazarları (ilçeleri) getir
+     */
+    async getMicromarkets(dealerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('dealer_districts')
+                .select('district_id, districts(id, name)')
+                .eq('dealer_id', dealerId);
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'DealersService.getMicromarkets');
+        }
+    },
+
+    /**
      * Bayi girişi (username + password_hash ile)
      */
     async login(username, passwordHash) {

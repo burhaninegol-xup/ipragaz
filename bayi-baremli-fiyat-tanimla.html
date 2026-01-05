@@ -2054,14 +2054,13 @@
 
 		// Sayfa yüklendiğinde çalıştır
 		$(document).ready(async function() {
-			// Bayi ID'sini al
-			try {
-				const { data: dealers } = await DealersService.getAll();
-				if (dealers && dealers.length > 0) {
-					currentDealerId = dealers[0].id;
-				}
-			} catch (err) {
-				console.error('Bayi bilgisi alınamadı:', err);
+			// Login olan bayinin ID'sini sessionStorage'dan al
+			currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+
+			if (!currentDealerId) {
+				console.error('Bayi girisi yapilmamis!');
+				window.location.href = 'bayi-login.html';
+				return;
 			}
 
 			// Önce barem verilerini yükle

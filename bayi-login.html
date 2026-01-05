@@ -201,6 +201,41 @@
 				font-size: 20px;
 			}
 		}
+
+		/* Quick Login Section */
+		.quick-login-section {
+			margin-top: 25px;
+			padding-top: 20px;
+			border-top: 1px solid #eee;
+		}
+		.quick-login-title {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 12px;
+			text-align: center;
+		}
+		.dealer-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			max-height: 200px;
+			overflow-y: auto;
+		}
+		.dealer-item {
+			padding: 10px 14px;
+			background: #f8f9fa;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 13px;
+			transition: all 0.2s;
+		}
+		.dealer-item:hover {
+			background: #e8f4fd;
+			border-color: #002c77;
+		}
+		.dealer-item .dealer-name { font-weight: 500; color: #1a1a2e; }
+		.dealer-item .dealer-location { font-size: 11px; color: #888; margin-left: 6px; }
 	</style>
 </head>
 
@@ -242,6 +277,13 @@
 					<div class="spinner"></div>
 				</button>
 			</form>
+
+			<div class="quick-login-section">
+				<p class="quick-login-title">Hızlı Giriş</p>
+				<div class="dealer-list" id="dealer-list">
+					<div style="text-align:center;color:#999;font-size:12px;">Yükleniyor...</div>
+				</div>
+			</div>
 
 			<div class="login-footer">
 				<p>&copy; 2025 İpragaz - Tüm hakları saklıdır</p>
@@ -355,6 +397,46 @@
 					$form.submit();
 				}
 			});
+
+			// Hızlı giriş için bayileri yükle
+			loadDealersForQuickLogin();
+		});
+
+		// Hızlı giriş - bayileri listele
+		async function loadDealersForQuickLogin() {
+			try {
+				const { data: dealers, error } = await DealersService.getAll();
+				if (error || !dealers) return;
+
+				const $list = $('#dealer-list');
+				$list.empty();
+
+				dealers.forEach(dealer => {
+					const location = [dealer.district, dealer.city].filter(Boolean).join(', ');
+					const $item = $(`
+						<div class="dealer-item" data-id="${dealer.id}" data-name="${dealer.name}" data-code="${dealer.code || ''}">
+							<span class="dealer-name">${dealer.name}</span>
+							${location ? `<span class="dealer-location">(${location})</span>` : ''}
+						</div>
+					`);
+					$list.append($item);
+				});
+			} catch (err) {
+				console.error('Bayiler yüklenemedi:', err);
+			}
+		}
+
+		// Bayi tıklama ile hızlı giriş
+		$(document).on('click', '.dealer-item', function() {
+			const id = $(this).data('id');
+			const name = $(this).data('name');
+			const code = $(this).data('code');
+
+			sessionStorage.setItem('bayi_dealer_id', id);
+			sessionStorage.setItem('bayi_dealer_name', name);
+			sessionStorage.setItem('bayi_dealer_code', code || '');
+
+			window.location.href = 'bayi-anasayfa.html';
 		});
 	</script>
 </body>

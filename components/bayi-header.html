@@ -458,6 +458,107 @@
 		justify-content: center;
 		padding: 0 4px;
 	}
+
+	/* Dealer Info Container */
+	.dealer-info-container {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		margin-left: auto;
+		margin-right: 16px;
+	}
+
+	.dealer-name {
+		font-weight: 600;
+		font-size: 14px;
+		color: #1a1a1a;
+	}
+
+	.dealer-code-badge {
+		font-size: 12px;
+		color: #666;
+		background: #f5f5f5;
+		padding: 3px 10px;
+		border-radius: 4px;
+		border: 1px solid #e0e0e0;
+	}
+
+	.dealer-info-btn {
+		background: none;
+		border: none;
+		color: #999;
+		cursor: pointer;
+		padding: 4px;
+		display: flex;
+		align-items: center;
+	}
+
+	.dealer-info-btn:hover {
+		color: #e31e24;
+	}
+
+	/* UUID Tooltip */
+	.dealer-uuid-tooltip {
+		position: absolute;
+		top: calc(100% + 8px);
+		right: 0;
+		background: #333;
+		color: white;
+		padding: 12px;
+		border-radius: 6px;
+		min-width: 300px;
+		display: none;
+		z-index: 200;
+		box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+	}
+
+	.dealer-uuid-tooltip.show {
+		display: block;
+	}
+
+	.uuid-code {
+		font-family: monospace;
+		background: #444;
+		padding: 6px 8px;
+		border-radius: 4px;
+		font-size: 11px;
+		word-break: break-all;
+		margin: 8px 0;
+	}
+
+	.uuid-copy-btn {
+		background: #e31e24;
+		color: white;
+		border: none;
+		padding: 6px 12px;
+		border-radius: 4px;
+		font-size: 12px;
+		cursor: pointer;
+		width: 100%;
+	}
+
+	.uuid-copy-btn:hover {
+		background: #c91a20;
+	}
+
+	.micromarkets-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	.micromarket-tag {
+		font-size: 10px;
+		padding: 3px 8px;
+		background: #333;
+		border-radius: 4px;
+		color: #ccc;
+	}
+
+	@media (max-width: 768px) {
+		.dealer-info-container {
+			display: none;
+		}
+	}
 </style>
 
 <header class="header">
@@ -468,6 +569,31 @@
 					<img src="./İpragaz Bayi_files/iPRAGAZ-02-140x40.svg" alt="İpragaz">
 					<span class="header__app-title">Bayi Uygulamasi</span>
 				</a>
+			</div>
+
+			<!-- Dealer Info -->
+			<div class="dealer-info-container" id="dealerInfoContainer">
+				<span class="dealer-name" id="headerDealerName">-</span>
+				<span class="dealer-code-badge" id="headerDealerCode">-</span>
+				<div style="position: relative;">
+					<button class="dealer-info-btn" onclick="toggleDealerUuidTooltip(event)">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="12" y1="16" x2="12" y2="12"></line>
+							<line x1="12" y1="8" x2="12.01" y2="8"></line>
+						</svg>
+					</button>
+					<div class="dealer-uuid-tooltip" id="dealerUuidTooltip">
+						<div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Teknik ID (UUID)</div>
+						<div class="uuid-code" id="headerDealerUuid">-</div>
+						<button class="uuid-copy-btn" onclick="copyDealerUuid()">Kopyala</button>
+
+						<div class="micromarkets-section" id="micromarketsSection" style="display:none;">
+							<div style="font-size: 11px; color: #aaa; margin: 12px 0 6px; border-top: 1px solid #444; padding-top: 10px;">Yetkili Mikropazarlar</div>
+							<div class="micromarkets-list" id="micromarketsList"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="bayi-header-nav">
@@ -807,9 +933,4 @@ const DealerNotificationUI = {
 	}
 };
 
-// Initialize when document is ready
-document.addEventListener('DOMContentLoaded', () => {
-	// Wait a bit for other scripts to load
-	setTimeout(() => DealerNotificationUI.init(), 500);
-});
 </script>

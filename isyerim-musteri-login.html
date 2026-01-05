@@ -183,6 +183,42 @@
 				font-size: 50px;
 			}
 		}
+
+		/* Quick Login Section */
+		.quick-login-section {
+			margin-top: 25px;
+			padding-top: 20px;
+			border-top: 1px solid #eee;
+		}
+		.quick-login-title {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 12px;
+			text-align: center;
+		}
+		.customer-list {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			max-height: 200px;
+			overflow-y: auto;
+		}
+		.customer-item {
+			padding: 10px 14px;
+			background: #f8f9fa;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 13px;
+			transition: all 0.2s;
+		}
+		.customer-item:hover {
+			background: #fde8e8;
+			border-color: #e31e24;
+		}
+		.customer-item .customer-name { font-weight: 500; color: #1a1a2e; }
+		.customer-item .customer-company { font-size: 11px; color: #666; }
+		.customer-item .customer-location { font-size: 11px; color: #888; }
 	</style>
 </head>
 <body>
@@ -224,8 +260,22 @@
 
 			<!-- Submit Button -->
 			<button class="btn-submit" id="submit-btn">Devam</button>
+
+			<!-- Quick Login Section -->
+			<div class="quick-login-section">
+				<p class="quick-login-title">Hızlı Giriş</p>
+				<div class="customer-list" id="customer-list">
+					<div style="text-align:center;color:#999;font-size:12px;">Yükleniyor...</div>
+				</div>
+			</div>
 		</div>
 	</div>
+
+	<!-- Supabase & Services -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/customer-users-service.js"></script>
 
 	<script>
 		// Yeni giriş için tüm session değerlerini temizle
@@ -269,6 +319,71 @@
 			// OTP sayfasına yönlendir (isNewUser kontrolü OTP sayfasında Supabase'den yapılacak)
 			window.location.href = 'isyerim-musteri-otp.html?phone=' + phone;
 		});
+
+		// Müşterileri yükle (Hızlı Giriş için)
+		async function loadCustomersForQuickLogin() {
+			try {
+				const { data: customers, error } = await CustomersService.getAll();
+				if (error || !customers) return;
+
+				const list = document.getElementById('customer-list');
+				list.innerHTML = '';
+
+				customers.forEach(function(customer) {
+					const item = document.createElement('div');
+					item.className = 'customer-item';
+					item.innerHTML =
+						'<div class="customer-name">' + customer.name + '</div>' +
+						(customer.company_name ? '<div class="customer-company">' + customer.company_name + '</div>' : '') +
+						(customer.address ? '<div class="customer-location">' + customer.address.substring(0, 50) + '...</div>' : '');
+					item.onclick = function() { quickLoginAsCustomer(customer); };
+					list.appendChild(item);
+				});
+			} catch (err) {
+				console.error('Müşteriler yüklenemedi:', err);
+			}
+		}
+
+		// Hızlı giriş
+		async function quickLoginAsCustomer(customer) {
+			try {
+				// Owner kullanıcısını bul veya oluştur
+				let userId;
+				const { data: users } = await CustomerUsersService.getByCustomerId(customer.id);
+				const owner = users && users.find(function(u) { return u.role === 'owner'; });
+
+				if (owner) {
+					userId = owner.id;
+				} else {
+					// Owner yoksa oluştur
+					const { data: newOwner } = await CustomerUsersService.createOwner(
+						customer.id,
+						customer.name,
+						customer.phone
+					);
+					userId = newOwner ? newOwner.id : customer.id;
+				}
+
+				// SessionStorage'a kaydet
+				sessionStorage.setItem('isyerim_phone', customer.phone);
+				sessionStorage.setItem('isyerim_customer_id', customer.id);
+				sessionStorage.setItem('isyerim_user_id', userId);
+				sessionStorage.setItem('isyerim_user_role', 'owner');
+				sessionStorage.setItem('isyerim_user_name', customer.name);
+				sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+				sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
+				sessionStorage.setItem('isNewUser', 'false');
+
+				// Anasayfaya yönlendir
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+			} catch (err) {
+				console.error('Hızlı giriş hatası:', err);
+				alert('Giriş yapılamadı');
+			}
+		}
+
+		// Sayfa yüklendiğinde müşterileri getir
+		loadCustomersForQuickLogin();
 	</script>
 </body>
 </html>

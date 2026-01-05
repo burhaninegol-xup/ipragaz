@@ -167,6 +167,27 @@
 			margin-top: 4px;
 		}
 
+		/* Price Labels */
+		.price-label {
+			font-size: 11px;
+			padding: 3px 8px;
+			border-radius: 4px;
+			margin-left: 8px;
+			font-weight: 500;
+		}
+		.price-label.size-ozel {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+		.price-label.bayi-ozel {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+		.price-label.perakende {
+			background: #f5f5f5;
+			color: #666;
+		}
+
 		.product-description {
 			font-size: 14px;
 			color: #666;
@@ -638,14 +659,19 @@
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/barem-prices-service.js"></script>
+	<script src="./js/services/price-resolver-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
 		// Global değişkenler
 		var currentProduct = null;
 		var allProducts = [];
-		var customerPrices = {};
+		var resolvedPrices = {}; // PriceResolverService'den gelen fiyatlar
 		var currentQuantity = 1;
-		var tekliftenCekildi = sessionStorage.getItem('tekliften_cekildi') === 'true';
+		var currentCustomerId = null;
+		var currentBranchId = null;
+		var currentDealerId = null;
 		var isProductFavorite = false; // Favori durumu
 
 		// URL'den product ID al
@@ -690,24 +716,24 @@
 
 				currentProduct = result.data;
 
-				// Müşteri fiyatlarını çek
-				var customerId = sessionStorage.getItem('isyerim_customer_id') || sessionStorage.getItem('customer_id');
-				if (customerId && !tekliftenCekildi) {
-					var pricesResult = await CustomerPricesService.getByCustomerId(customerId);
-					if (pricesResult.data) {
-						pricesResult.data.forEach(function(cp) {
-							if (cp.is_active) {
-								customerPrices[cp.product_id] = cp.unit_price;
-							}
-						});
-					}
-				}
+				// Session'dan müşteri bilgilerini al
+				currentCustomerId = sessionStorage.getItem('isyerim_customer_id');
+				currentBranchId = sessionStorage.getItem('selected_address_id');
+				currentDealerId = sessionStorage.getItem('isyerim_dealer_id');
 
 				// Tüm ürünleri getir (önerilen ürünler için)
 				var allResult = await ProductsService.getAll();
 				if (allResult.data) {
 					allProducts = allResult.data;
 				}
+
+				// PriceResolverService ile fiyatları çözümle
+				resolvedPrices = await PriceResolverService.resolvePricesForProducts(
+					allProducts,
+					currentCustomerId,
+					currentBranchId,
+					currentDealerId
+				);
 
 				// Favori durumunu kontrol et
 				var isyerimCustomerId = sessionStorage.getItem('isyerim_customer_id');
@@ -732,10 +758,13 @@
 		function renderProductDetail() {
 			var container = document.getElementById('product-detail-content');
 
-			// Fiyat hesapla
-			var price = customerPrices[currentProduct.id] || currentProduct.base_price;
-			var priceLabel = customerPrices[currentProduct.id] && !tekliftenCekildi ? 'Bayi Fiyatı' : 'KDV dahil tavan fiyatıdır';
-			var formattedPrice = parseFloat(price).toLocaleString('tr-TR', {
+			// PriceResolverService'den çözümlenmiş fiyatı al
+			var priceInfo = resolvedPrices[currentProduct.id] || {
+				price: currentProduct.base_price || 0,
+				label: 'Perakende',
+				cssClass: 'perakende'
+			};
+			var formattedPrice = parseFloat(priceInfo.price).toLocaleString('tr-TR', {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2
 			});
@@ -771,8 +800,8 @@
 				'<div class="product-info">' +
 					'<h1 class="product-title">' + currentProduct.name + '</h1>' +
 					'<div class="product-price-info">' +
-						'<div class="product-price-value">₺' + formattedPrice + '</div>' +
-						'<div class="product-price-label">/ Adet* ' + priceLabel + '</div>' +
+						'<div class="product-price-value">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
+						'<div class="product-price-label">/ Adet* KDV dahil</div>' +
 					'</div>' +
 					(currentProduct.description ? '<p class="product-description">' + currentProduct.description + '</p>' : '') +
 					'<div class="quantity-cart-row">' +
@@ -861,9 +890,12 @@
 			}
 
 			var html = recommended.map(function(product) {
-				var price = customerPrices[product.id] || product.base_price;
-				var priceLabel = customerPrices[product.id] && !tekliftenCekildi ? 'Bayi Fiyatı' : 'Tavan Fiyattır';
-				var formattedPrice = parseFloat(price).toLocaleString('tr-TR', {
+				var priceInfo = resolvedPrices[product.id] || {
+					price: product.base_price || 0,
+					label: 'Perakende',
+					cssClass: 'perakende'
+				};
+				var formattedPrice = parseFloat(priceInfo.price).toLocaleString('tr-TR', {
 					minimumFractionDigits: 2,
 					maximumFractionDigits: 2
 				});
@@ -877,13 +909,32 @@
 						'<img src="' + imageUrl + '" alt="' + product.name + '">' +
 					'</div>' +
 					'<div class="product-card-name">' + product.name + '</div>' +
-					'<div class="product-card-price">₺' + formattedPrice + ' ' + priceLabel + '</div>' +
+					'<div class="product-card-price">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
 					'<button class="btn-card-add-cart" onclick="event.stopPropagation(); addRecommendedToCart(this, \'' + product.id + '\')">Sepete Ekle</button>' +
 				'</div>';
 			}).join('');
 
 			container.innerHTML = html;
 		}
+
+		// Bayi değişikliğinde fiyatları yenile
+		window.refreshPrices = async function() {
+			// Güncel bayi/şube bilgilerini sessionStorage'dan al
+			currentBranchId = sessionStorage.getItem('selected_address_id');
+			currentDealerId = sessionStorage.getItem('isyerim_dealer_id');
+
+			// PriceResolverService ile fiyatları yeniden çözümle
+			resolvedPrices = await PriceResolverService.resolvePricesForProducts(
+				allProducts,
+				currentCustomerId,
+				currentBranchId,
+				currentDealerId
+			);
+
+			// Sayfayı yeniden render et
+			renderProductDetail();
+			renderRecommendedProducts();
+		};
 
 		// Accordion toggle
 		function toggleAccordion(id) {
@@ -929,7 +980,8 @@
 		async function addToCart() {
 			if (!currentProduct) return;
 
-			var price = customerPrices[currentProduct.id] || currentProduct.base_price;
+			// Çözümlenmiş fiyatı al
+			var priceInfo = resolvedPrices[currentProduct.id] || { price: currentProduct.base_price || 0 };
 			var btn = document.getElementById('addToCartBtn');
 
 			// Ürünü sepete ekle
@@ -937,7 +989,7 @@
 				id: currentProduct.id,
 				code: currentProduct.code,
 				name: currentProduct.name,
-				price: price,
+				price: priceInfo.price,
 				points: currentProduct.points_per_unit || 0,
 				image_url: currentProduct.image_url
 			}, currentQuantity);
@@ -960,13 +1012,14 @@
 			var product = allProducts.find(function(p) { return p.id === productId; });
 			if (!product) return;
 
-			var price = customerPrices[product.id] || product.base_price;
+			// Çözümlenmiş fiyatı al
+			var priceInfo = resolvedPrices[product.id] || { price: product.base_price || 0 };
 
 			await CartService.addItem({
 				id: product.id,
 				code: product.code,
 				name: product.name,
-				price: price,
+				price: priceInfo.price,
 				points: product.points_per_unit || 0,
 				image_url: product.image_url
 			});

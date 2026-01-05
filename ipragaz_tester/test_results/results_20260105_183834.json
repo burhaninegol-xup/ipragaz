@@ -1,0 +1,25 @@
+[
+  {
+    "scenario_id": "dealer-price-change",
+    "scenario_name": "Bayi Değişikliğinde Fiyat Güncelleme",
+    "success": false,
+    "total_steps": 29,
+    "passed_steps": 0,
+    "failed_step": 1,
+    "duration_ms": 1308.673,
+    "error_screenshot": "20260105_183834_error_step0.png",
+    "notes": [],
+    "steps": [
+      {
+        "step_index": 0,
+        "action": "goto",
+        "description": "Login sayfasına git",
+        "success": false,
+        "duration_ms": 368.512,
+        "error": "Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5500/isyerim-musteri-login.html\nCall log:\n  - navigating to \"http://localhost:5500/isyerim-musteri-login.html\", waiting until \"networkidle\"\n",
+        "screenshot": "20260105_183834_error_step0.png",
+        "notes": []
+      }
+    ]
+  }
+]

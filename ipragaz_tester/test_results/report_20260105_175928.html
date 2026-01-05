@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Raporu - 20260105_175928</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: #1a1a2e; color: #eee; padding: 2rem; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { color: #fff; margin-bottom: 0.5rem; }
+        .header .date { color: #888; }
+        
+        .summary { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .summary-card { background: #16213e; padding: 1.5rem 2rem; border-radius: 12px; text-align: center; }
+        .summary-card .value { font-size: 2rem; font-weight: bold; }
+        .summary-card .label { color: #888; margin-top: 0.5rem; }
+        .summary-card.passed .value { color: #4ade80; }
+        .summary-card.failed .value { color: #f87171; }
+        
+        .scenarios { max-width: 900px; margin: 0 auto; }
+        .scenario { background: #16213e; border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+        .scenario.success { border-left: 4px solid #4ade80; }
+        .scenario.failed { border-left: 4px solid #f87171; }
+        
+        .scenario-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; cursor: pointer; }
+        .scenario-header:hover { background: #1e2a4a; }
+        .status-icon { font-size: 1.2rem; }
+        .scenario-name { flex: 1; font-weight: 500; }
+        .scenario-stats { color: #888; }
+        .scenario-time { color: #888; font-size: 0.9rem; }
+        
+        .scenario-body { display: none; padding: 0 1.5rem 1rem; }
+        .scenario.expanded .scenario-body { display: block; }
+        
+        .step { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; background: #0f1629; }
+        .step-success { }
+        .step-failed { background: #2d1f1f; }
+        .step-status { }
+        .step-desc { flex: 1; }
+        .step-time { color: #666; font-size: 0.85rem; }
+        
+        .error-msg { color: #f87171; font-size: 0.9rem; margin-top: 0.5rem; padding: 0.5rem; background: #3d1f1f; border-radius: 4px; }
+        .screenshot { margin-top: 0.75rem; }
+        .screenshot img { max-width: 100%; border-radius: 8px; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 Test Raporu</h1>
+        <div class="date">2026-01-05 17:59:31</div>
+    </div>
+    
+    <div class="summary">
+        <div class="summary-card">
+            <div class="value">1</div>
+            <div class="label">Toplam</div>
+        </div>
+        <div class="summary-card passed">
+            <div class="value">0</div>
+            <div class="label">Başarılı</div>
+        </div>
+        <div class="summary-card failed">
+            <div class="value">1</div>
+            <div class="label">Başarısız</div>
+        </div>
+        <div class="summary-card">
+            <div class="value">0%</div>
+            <div class="label">Başarı</div>
+        </div>
+    </div>
+    
+    <div class="scenarios">
+        
+            <div class="scenario failed">
+                <div class="scenario-header" onclick="toggleScenario(this)">
+                    <span class="status-icon">❌</span>
+                    <span class="scenario-name">Bayi Değişikliğinde Fiyat Güncelleme</span>
+                    <span class="scenario-stats">0/20 adım</span>
+                    <span class="scenario-time">1273ms</span>
+                </div>
+                <div class="scenario-body">
+                    
+                <div class="step step-failed">
+                    <span class="step-status">❌</span>
+                    <span class="step-desc">Login sayfasına git</span>
+                    <span class="step-time">352ms</span>
+                    <div class="error-msg">⚠️ Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/isyerim-musteri-login.html
+Call log:
+  - navigating to "http://localhost:8080/isyerim-musteri-login.html", waiting until "networkidle"
+</div>
+                    <div class="screenshot"><img src="screenshots/20260105_175928_error_step0.png" alt="Screenshot"></div>
+                </div>
+                
+                </div>
+            </div>
+            
+    </div>
+    
+    <script>
+        function toggleScenario(header) {
+            header.parentElement.classList.toggle('expanded');
+        }
+        // Başarısız olanları otomatik aç
+        document.querySelectorAll('.scenario.failed').forEach(s => s.classList.add('expanded'));
+    </script>
+</body>
+</html>

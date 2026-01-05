@@ -804,6 +804,11 @@ const ComponentLoader = {
 
         // Bayi bildirim sistemini baslat
         this.initBayiNotifications();
+
+        // Header'a dealer bilgilerini yukle
+        if (typeof window.loadDealerInfoToHeader === 'function') {
+            window.loadDealerInfoToHeader();
+        }
     },
 
     /**
@@ -1513,6 +1518,21 @@ window.confirmDealerSelection = async function() {
     var customerId = sessionStorage.getItem('isyerim_customer_id');
     if (!customerId) return;
 
+    // Ayni bayi mi kontrol et - degismiyorsa direkt kapat
+    var currentDealer = sessionStorage.getItem('isyerim_dealer_id');
+    if (currentDealer === selectedTempDealerId) {
+        window.closeDealerModal();
+        return;
+    }
+
+    // Sepette urun var mi kontrol et - varsa onay iste
+    if (typeof CartService !== 'undefined' && !CartService.isEmpty()) {
+        var confirmed = confirm('Bayi değiştirirseniz sepetinizdeki ürünler silinecektir. Devam etmek istiyor musunuz?');
+        if (!confirmed) {
+            return; // Iptal edildi, modal acik kalsin
+        }
+    }
+
     var btn = document.getElementById('dealerSelectConfirmBtn');
     if (btn) {
         btn.disabled = true;
@@ -1557,6 +1577,16 @@ window.confirmDealerSelection = async function() {
 
         // Close modal
         window.closeDealerModal();
+
+        // Fiyatları güncelle (anasayfada ise)
+        if (typeof window.refreshPrices === 'function') {
+            window.refreshPrices();
+        }
+
+        // Bayi degisti, sepeti temizle
+        if (typeof CartService !== 'undefined') {
+            await CartService.clearCart();
+        }
 
     } catch (err) {
         console.error('Error confirming dealer:', err);
@@ -1670,9 +1700,26 @@ async function evaluateDealerForBranch(branchId) {
             // Tek bayi - otomatik sec
             await autoSelectDealer(dealers[0], customerId);
         } else {
-            // Birden fazla bayi - temizle ve "Bayi Seciniz" goster
-            clearDealerSelection();
-            updateDealerButton(null, 'select');
+            // Birden fazla bayi var
+            // Onceden secilmis bir bayi var mi ve hala gecerli mi kontrol et
+            var savedDealerId = sessionStorage.getItem('isyerim_dealer_id');
+            var savedDealerName = sessionStorage.getItem('isyerim_dealer_name');
+
+            // Secili bayi bu bolgede gecerli mi?
+            var savedDealerValid = savedDealerId && dealers.some(function(d) {
+                return d.id === savedDealerId;
+            });
+
+            if (savedDealerValid) {
+                // Onceki secim gecerli - koru
+                currentDealerId = savedDealerId;
+                currentDealerName = savedDealerName;
+                updateDealerButton(savedDealerName);
+            } else {
+                // Onceki secim gecersiz veya yok - temizle
+                clearDealerSelection();
+                updateDealerButton(null, 'select');
+            }
         }
     } catch (err) {
         console.error('Bayi degerlendirme hatasi:', err);
@@ -1790,3 +1837,98 @@ window.bayiLogout = function() {
     sessionStorage.removeItem('bayi_dealer_code');
     window.location.href = 'bayi-login.html';
 };
+
+// ========== Dealer Info Header Functions ==========
+
+/**
+ * Dealer bilgilerini header'a yukle
+ */
+window.loadDealerInfoToHeader = function() {
+    var dealerId = sessionStorage.getItem('bayi_dealer_id');
+    var dealerName = sessionStorage.getItem('bayi_dealer_name');
+    var dealerCode = sessionStorage.getItem('bayi_dealer_code');
+
+    var nameEl = document.getElementById('headerDealerName');
+    var codeEl = document.getElementById('headerDealerCode');
+    var uuidEl = document.getElementById('headerDealerUuid');
+
+    if (nameEl) nameEl.textContent = dealerName || '-';
+    if (codeEl) codeEl.textContent = dealerCode || '-';
+    if (uuidEl) uuidEl.textContent = dealerId || '-';
+};
+
+/**
+ * UUID tooltip toggle
+ */
+window.toggleDealerUuidTooltip = function(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    var tooltip = document.getElementById('dealerUuidTooltip');
+    if (tooltip) {
+        var isShowing = tooltip.classList.toggle('show');
+        // Tooltip açılırken mikropazarları yükle
+        if (isShowing) {
+            loadDealerMicromarkets();
+        }
+    }
+};
+
+/**
+ * Bayinin yetkili olduğu mikropazarları yükle
+ */
+async function loadDealerMicromarkets() {
+    var dealerId = sessionStorage.getItem('bayi_dealer_id');
+    if (!dealerId) return;
+
+    var section = document.getElementById('micromarketsSection');
+    var list = document.getElementById('micromarketsList');
+    if (!section || !list) return;
+
+    try {
+        var result = await DealersService.getMicromarkets(dealerId);
+        if (result.error || !result.data || result.data.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+
+        list.innerHTML = result.data.map(function(d) {
+            return '<span class="micromarket-tag">' + d.districts.name + '</span>';
+        }).join('');
+        section.style.display = 'block';
+    } catch (err) {
+        console.error('Mikropazarlar yüklenemedi:', err);
+        section.style.display = 'none';
+    }
+}
+
+/**
+ * UUID kopyala
+ */
+window.copyDealerUuid = function() {
+    var uuid = sessionStorage.getItem('bayi_dealer_id');
+    if (uuid) {
+        navigator.clipboard.writeText(uuid).then(function() {
+            var btn = document.querySelector('.uuid-copy-btn');
+            if (btn) {
+                var originalText = btn.textContent;
+                btn.textContent = '✓ Kopyalandi!';
+                setTimeout(function() {
+                    btn.textContent = originalText;
+                }, 2000);
+            }
+        }).catch(function(err) {
+            console.error('UUID kopyalanamadi:', err);
+        });
+    }
+};
+
+// Tooltip disina tiklaninca kapat
+document.addEventListener('click', function(e) {
+    var tooltip = document.getElementById('dealerUuidTooltip');
+    var infoBtn = document.querySelector('.dealer-info-btn');
+    if (tooltip && infoBtn && !tooltip.contains(e.target) && !infoBtn.contains(e.target)) {
+        tooltip.classList.remove('show');
+    }
+});

@@ -1,0 +1,16 @@
+[
+  {
+    "scenario_id": "dealer-price-change",
+    "scenario_name": "Bayi Değişikliğinde Fiyat Güncelleme",
+    "success": false,
+    "total_steps": 20,
+    "passed_steps": 0,
+    "failed_step": null,
+    "duration_ms": 2109.074,
+    "error_screenshot": null,
+    "notes": [
+      "Beklenmeyen hata: Page.screenshot: Target page, context or browser has been closed"
+    ],
+    "steps": []
+  }
+]

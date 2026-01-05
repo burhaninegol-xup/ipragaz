@@ -1,0 +1,351 @@
+[
+  {
+    "scenario_id": "dealer-price-change",
+    "scenario_name": "Bayi Değişikliğinde Fiyat Güncelleme",
+    "success": true,
+    "total_steps": 31,
+    "passed_steps": 31,
+    "failed_step": null,
+    "duration_ms": 19249.525999999998,
+    "error_screenshot": null,
+    "notes": [
+      "Console (23 log)"
+    ],
+    "steps": [
+      {
+        "step_index": 0,
+        "action": "goto",
+        "description": "Login sayfasına git",
+        "success": true,
+        "duration_ms": 1961.9370000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "URL: http://localhost:8000/isyerim-musteri-login.html"
+        ]
+      },
+      {
+        "step_index": 1,
+        "action": "fill",
+        "description": "Telefon numarası gir",
+        "success": true,
+        "duration_ms": 151.877,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1111111111"
+        ]
+      },
+      {
+        "step_index": 2,
+        "action": "click",
+        "description": "Devam butonuna tıkla",
+        "success": true,
+        "duration_ms": 254.02400000000003,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 3,
+        "action": "waitForSelector",
+        "description": "OTP sayfasını bekle",
+        "success": true,
+        "duration_ms": 37.586,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 4,
+        "action": "fill",
+        "description": "OTP 1. hane",
+        "success": true,
+        "duration_ms": 122.589,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 5,
+        "action": "fill",
+        "description": "OTP 2. hane",
+        "success": true,
+        "duration_ms": 108.622,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 6,
+        "action": "fill",
+        "description": "OTP 3. hane",
+        "success": true,
+        "duration_ms": 107.127,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 7,
+        "action": "fill",
+        "description": "OTP 4. hane",
+        "success": true,
+        "duration_ms": 108.811,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Değer: 1"
+        ]
+      },
+      {
+        "step_index": 8,
+        "action": "click",
+        "description": "OTP doğrula butonuna tıkla",
+        "success": true,
+        "duration_ms": 134.355,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 9,
+        "action": "waitForNavigation",
+        "description": "Sayfa yönlendirmesini bekle",
+        "success": true,
+        "duration_ms": 4865.352,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 10,
+        "action": "waitForSelector",
+        "description": "Ürün kartlarını bekle",
+        "success": true,
+        "duration_ms": 17.006,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 11,
+        "action": "click",
+        "description": "Bayi seçim modalını aç",
+        "success": true,
+        "duration_ms": 134.658,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 12,
+        "action": "waitForSelector",
+        "description": "Bayi modal açıldı",
+        "success": true,
+        "duration_ms": 4.572,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 13,
+        "action": "click",
+        "description": "İlk bayiyi seç",
+        "success": true,
+        "duration_ms": 1925.5739999999998,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 14,
+        "action": "click",
+        "description": "Bayi seçimini onayla",
+        "success": true,
+        "duration_ms": 132.56799999999998,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 15,
+        "action": "wait",
+        "description": "Fiyatların yüklenmesini bekle",
+        "success": true,
+        "duration_ms": 1000.9140000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 16,
+        "action": "screenshot",
+        "description": "Ana sayfa - İlk bayi fiyatları",
+        "success": true,
+        "duration_ms": 310.34299999999996,
+        "error": null,
+        "screenshot": "20260105_205905_anasayfa-ilk-bayi.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      },
+      {
+        "step_index": 17,
+        "action": "click",
+        "description": "İlk ürüne tıkla",
+        "success": true,
+        "duration_ms": 243.875,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 18,
+        "action": "waitForSelector",
+        "description": "Ürün detay sayfasını bekle",
+        "success": true,
+        "duration_ms": 1808.072,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 19,
+        "action": "storeText",
+        "description": "İlk bayi fiyatını kaydet",
+        "success": true,
+        "duration_ms": 12.094000000000001,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "'ilkBayiFiyati' = '₺2.100,00 Size Ozel'"
+        ]
+      },
+      {
+        "step_index": 20,
+        "action": "screenshot",
+        "description": "Ürün detay - İlk bayi fiyatı",
+        "success": true,
+        "duration_ms": 122.876,
+        "error": null,
+        "screenshot": "20260105_205905_urun-detay-ilk-bayi.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      },
+      {
+        "step_index": 21,
+        "action": "click",
+        "description": "Bayi seçim modalını aç (2. kez)",
+        "success": true,
+        "duration_ms": 134.603,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 22,
+        "action": "waitForSelector",
+        "description": "Bayi modal açıldı",
+        "success": true,
+        "duration_ms": 4.295,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 23,
+        "action": "click",
+        "description": "İkinci bayiyi seç",
+        "success": true,
+        "duration_ms": 1411.3519999999999,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 24,
+        "action": "click",
+        "description": "Bayi seçimini onayla",
+        "success": true,
+        "duration_ms": 133.793,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 25,
+        "action": "wait",
+        "description": "Fiyatların güncellenmesini bekle",
+        "success": true,
+        "duration_ms": 1001.088,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 26,
+        "action": "assertNotEqual",
+        "description": "Fiyat değişmeli!",
+        "success": true,
+        "duration_ms": 7.825,
+        "error": null,
+        "screenshot": null,
+        "notes": [
+          "Fiyat değişti: '₺2.100,00 Size Ozel' → '₺2.100,00 Perakende'"
+        ]
+      },
+      {
+        "step_index": 27,
+        "action": "screenshot",
+        "description": "Ürün detay - İkinci bayi fiyatı",
+        "success": true,
+        "duration_ms": 102.592,
+        "error": null,
+        "screenshot": "20260105_205905_urun-detay-ikinci-bayi.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      },
+      {
+        "step_index": 28,
+        "action": "click",
+        "description": "Anasayfaya dön",
+        "success": true,
+        "duration_ms": 308.933,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 29,
+        "action": "waitForSelector",
+        "description": "Ana sayfaya dönüldü",
+        "success": true,
+        "duration_ms": 1301.845,
+        "error": null,
+        "screenshot": null,
+        "notes": []
+      },
+      {
+        "step_index": 30,
+        "action": "screenshot",
+        "description": "Ana sayfa - İkinci bayi fiyatları",
+        "success": true,
+        "duration_ms": 280.125,
+        "error": null,
+        "screenshot": "20260105_205905_anasayfa-ikinci-bayi.png",
+        "notes": [
+          "Screenshot alındı"
+        ]
+      }
+    ]
+  }
+]

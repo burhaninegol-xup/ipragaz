@@ -1,0 +1,25 @@
+[
+  {
+    "scenario_id": "dealer-price-change",
+    "scenario_name": "Bayi Değişikliğinde Fiyat Güncelleme",
+    "success": false,
+    "total_steps": 20,
+    "passed_steps": 0,
+    "failed_step": 1,
+    "duration_ms": 1273.3909999999998,
+    "error_screenshot": "/Users/burhaninegol/cluade-code/ipragaz-bayi/ipragaz_tester/test_results/screenshots/20260105_175928_error_step0.png",
+    "notes": [],
+    "steps": [
+      {
+        "step_index": 0,
+        "action": "goto",
+        "description": "Login sayfasına git",
+        "success": false,
+        "duration_ms": 351.78900000000004,
+        "error": "Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/isyerim-musteri-login.html\nCall log:\n  - navigating to \"http://localhost:8080/isyerim-musteri-login.html\", waiting until \"networkidle\"\n",
+        "screenshot": "/Users/burhaninegol/cluade-code/ipragaz-bayi/ipragaz_tester/test_results/screenshots/20260105_175928_error_step0.png",
+        "notes": []
+      }
+    ]
+  }
+]

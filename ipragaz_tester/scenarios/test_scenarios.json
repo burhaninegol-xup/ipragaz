@@ -1,0 +1,188 @@
+{
+  "config": {
+    "baseUrl": "http://localhost:5500",
+    "timeout": 30000,
+    "screenshotOnError": true,
+    "screenshotOnSuccess": false,
+    "headless": false,
+    "slowMo": 100
+  },
+  "credentials": {
+    "testCustomer": {
+      "phone": "1111111111",
+      "otp": "1111"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "dealer-price-change",
+      "name": "Bayi Değişikliğinde Fiyat Güncelleme",
+      "description": "Bayi değiştirildiğinde ürün fiyatları ve fiyat türleri güncellenmeli",
+      "tags": ["dealer", "price", "critical"],
+      "steps": [
+        {
+          "action": "goto",
+          "target": "/isyerim-musteri-login.html",
+          "description": "Login sayfasına git"
+        },
+        {
+          "action": "fill",
+          "target": "#phone",
+          "value": "{{testCustomer.phone}}",
+          "description": "Telefon numarası gir"
+        },
+        {
+          "action": "click",
+          "target": "#submit-btn",
+          "description": "Devam butonuna tıkla"
+        },
+        {
+          "action": "waitForSelector",
+          "target": ".otp-input",
+          "description": "OTP sayfasını bekle"
+        },
+        {
+          "action": "fill",
+          "target": ".otp-container .otp-input:nth-child(1)",
+          "value": "1",
+          "description": "OTP 1. hane"
+        },
+        {
+          "action": "fill",
+          "target": ".otp-container .otp-input:nth-child(2)",
+          "value": "1",
+          "description": "OTP 2. hane"
+        },
+        {
+          "action": "fill",
+          "target": ".otp-container .otp-input:nth-child(3)",
+          "value": "1",
+          "description": "OTP 3. hane"
+        },
+        {
+          "action": "fill",
+          "target": ".otp-container .otp-input:nth-child(4)",
+          "value": "1",
+          "description": "OTP 4. hane"
+        },
+        {
+          "action": "click",
+          "target": "#submit-btn",
+          "description": "OTP doğrula butonuna tıkla"
+        },
+        {
+          "action": "waitForNavigation",
+          "description": "Sayfa yönlendirmesini bekle"
+        },
+        {
+          "action": "waitForSelector",
+          "target": ".product-card",
+          "timeout": 10000,
+          "description": "Ürün kartlarını bekle"
+        },
+        {
+          "action": "click",
+          "target": "#dealerSelectBtn",
+          "description": "Bayi seçim modalını aç"
+        },
+        {
+          "action": "waitForSelector",
+          "target": "#dealerModalOverlay.active",
+          "description": "Bayi modal açıldı"
+        },
+        {
+          "action": "click",
+          "target": ".dealer-modal-item:first-child",
+          "description": "İlk bayiyi seç"
+        },
+        {
+          "action": "click",
+          "target": "#dealerSelectConfirmBtn",
+          "description": "Bayi seçimini onayla"
+        },
+        {
+          "action": "wait",
+          "timeout": 1500,
+          "description": "Fiyatların yüklenmesini bekle"
+        },
+        {
+          "action": "screenshot",
+          "name": "anasayfa-ilk-bayi",
+          "description": "Ana sayfa - İlk bayi fiyatları"
+        },
+        {
+          "action": "click",
+          "target": ".product-card:first-child",
+          "description": "İlk ürüne tıkla"
+        },
+        {
+          "action": "waitForSelector",
+          "target": ".product-price-value",
+          "description": "Ürün detay sayfasını bekle"
+        },
+        {
+          "action": "storeText",
+          "target": ".product-price-value",
+          "variable": "ilkBayiFiyati",
+          "description": "İlk bayi fiyatını kaydet"
+        },
+        {
+          "action": "screenshot",
+          "name": "urun-detay-ilk-bayi",
+          "description": "Ürün detay - İlk bayi fiyatı"
+        },
+        {
+          "action": "click",
+          "target": "#dealerSelectBtn",
+          "description": "Bayi seçim modalını aç (2. kez)"
+        },
+        {
+          "action": "waitForSelector",
+          "target": "#dealerModalOverlay.active",
+          "description": "Bayi modal açıldı"
+        },
+        {
+          "action": "click",
+          "target": ".dealer-modal-item:nth-child(2)",
+          "description": "İkinci bayiyi seç"
+        },
+        {
+          "action": "click",
+          "target": "#dealerSelectConfirmBtn",
+          "description": "Bayi seçimini onayla"
+        },
+        {
+          "action": "wait",
+          "timeout": 1500,
+          "description": "Fiyatların güncellenmesini bekle"
+        },
+        {
+          "action": "assertNotEqual",
+          "target": ".product-price-value",
+          "variable": "ilkBayiFiyati",
+          "description": "Fiyat değişmeli!"
+        },
+        {
+          "action": "screenshot",
+          "name": "urun-detay-ikinci-bayi",
+          "description": "Ürün detay - İkinci bayi fiyatı"
+        },
+        {
+          "action": "click",
+          "target": ".breadcrumb-list li:first-child a",
+          "description": "Anasayfaya dön"
+        },
+        {
+          "action": "waitForSelector",
+          "target": ".product-card",
+          "description": "Ana sayfaya dönüldü"
+        },
+        {
+          "action": "screenshot",
+          "name": "anasayfa-ikinci-bayi",
+          "description": "Ana sayfa - İkinci bayi fiyatları"
+        }
+      ]
+    }
+  ]
+}

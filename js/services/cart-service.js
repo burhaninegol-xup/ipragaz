@@ -141,12 +141,19 @@ const CartService = {
 
         if (existingItem) {
             existingItem.quantity += quantity;
+            // Fiyat bilgilerini de guncelle (bayi degismis olabilir)
+            existingItem.price = price;
+            existingItem.priceType = product.priceType || 'retail';
+            existingItem.priceLabel = product.priceLabel || 'Perakende';
+            existingItem.points = this.calculatePointsFromPrice(price);
         } else {
             cart.items.push({
                 id: product.id,
                 code: product.code,
                 name: product.name,
                 price: price,
+                priceType: product.priceType || 'retail',
+                priceLabel: product.priceLabel || 'Perakende',
                 points: this.calculatePointsFromPrice(price),
                 image_url: product.image_url || '',
                 quantity: quantity
@@ -249,6 +256,59 @@ const CartService = {
         }
 
         return { items: [] };
+    },
+
+    /**
+     * Bayi degistiginde sepet fiyatlarini guncelle
+     * @param {string} customerId - Musteri ID
+     * @param {string} branchId - Sube ID
+     * @param {string} dealerId - Yeni Bayi ID
+     */
+    async refreshPrices(customerId, branchId, dealerId) {
+        var cart = this.getCart();
+        if (cart.items.length === 0) return cart;
+
+        // PriceResolverService ile yeni fiyatlari al
+        if (typeof PriceResolverService === 'undefined') {
+            console.warn('PriceResolverService bulunamadi, sepet fiyatlari guncellenemedi');
+            return cart;
+        }
+
+        try {
+            var products = cart.items.map(function(item) {
+                return { id: item.id, base_price: item.price };
+            });
+
+            var newPrices = await PriceResolverService.resolvePricesForProducts(
+                products, customerId, branchId, dealerId
+            );
+
+            // Sepet itemlarini guncelle
+            var self = this;
+            cart.items.forEach(function(item) {
+                var resolved = newPrices[item.id];
+                if (resolved) {
+                    item.price = resolved.price;
+                    item.priceType = resolved.priceType;
+                    item.priceLabel = resolved.label;
+                    item.points = self.calculatePointsFromPrice(resolved.price);
+                }
+            });
+
+            this.saveCart(cart);
+
+            // Veritabanini da guncelle
+            for (var i = 0; i < cart.items.length; i++) {
+                var item = cart.items[i];
+                await this.syncToDatabase(item.id, item.quantity, item.price);
+            }
+
+            console.log('Sepet fiyatlari guncellendi:', cart.items.length, 'urun');
+            return cart;
+        } catch (err) {
+            console.error('Sepet fiyat guncelleme hatasi:', err);
+            return cart;
+        }
     },
 
     /**
