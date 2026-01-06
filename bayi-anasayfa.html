@@ -1214,7 +1214,7 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/products-service.js"></script>
-	<script src="./js/services/customer-prices-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script>
@@ -1432,26 +1432,29 @@
 				});
 			}
 
-			// Limit uyarılarını yükle
+			// Limit uyarılarını yükle (yeni offers sistemi üzerinden)
 			async function loadLimitAlerts() {
 				try {
-					const { data: customers } = await CustomersService.getAll(currentDealerId);
-					if (!customers) return;
+					// Bayinin kabul edilmiş tekliflerini getir (offers + offer_details)
+					const { data: offers } = await OffersService.getCustomersWithAcceptedOffers(currentDealerId);
+					if (!offers) return;
 
 					// Uyarı veren müşterileri filtrele
 					var alertCustomers = [];
-					customers.forEach(function(customer) {
-						if (!customer.customer_prices || !customer.is_active) return;
+					offers.forEach(function(offer) {
+						if (!offer.customer || !offer.customer.is_active) return;
 
 						var warnings = [];
-						customer.customer_prices.forEach(function(cp) {
-							if (cp.commitment_quantity > 0 && cp.this_month_quantity !== undefined) {
-								var percent = (cp.this_month_quantity / cp.commitment_quantity) * 100;
+						(offer.offer_details || []).forEach(function(detail) {
+							// commitment_quantity > 0 olan ve %50'nin altında tüketen ürünleri bul
+							if (detail.commitment_quantity > 0) {
+								var thisMonth = detail.this_month_quantity || 0;
+								var percent = (thisMonth / detail.commitment_quantity) * 100;
 								if (percent < 50) {
 									warnings.push({
-										product: cp.product,
-										current: cp.this_month_quantity,
-										commitment: cp.commitment_quantity,
+										product: detail.product,
+										current: thisMonth,
+										commitment: detail.commitment_quantity,
 										percent: Math.round(percent)
 									});
 								}
@@ -1459,7 +1462,7 @@
 						});
 
 						if (warnings.length > 0) {
-							alertCustomers.push({ customer: customer, warnings: warnings });
+							alertCustomers.push({ customer: offer.customer, warnings: warnings });
 						}
 					});
 
