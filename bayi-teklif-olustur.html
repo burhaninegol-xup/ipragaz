@@ -242,6 +242,43 @@
 			color: #002c77;
 		}
 
+		/* Offer Summary */
+		.summary-grid {
+			display: flex;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+		.summary-item {
+			flex: 1;
+			min-width: 200px;
+			background: #f8f9fa;
+			padding: 15px 20px;
+			border-radius: 10px;
+			text-align: center;
+		}
+		.summary-item.benefit {
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			border: 1px solid #81c784;
+		}
+		.summary-label {
+			display: block;
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 8px;
+		}
+		.summary-value {
+			display: block;
+			font-size: 20px;
+			font-weight: 700;
+			color: #1a1a2e;
+		}
+		.summary-value.highlight {
+			color: #e53935;
+		}
+		.summary-value.benefit-value {
+			color: #2e7d32;
+		}
+
 		/* VKN Search */
 		.vkn-search-row {
 			display: flex;
@@ -1654,6 +1691,171 @@
 			justify-content: center;
 		}
 
+		/* Offer Preview Modal */
+		.offer-preview-modal {
+			max-width: 600px;
+			max-height: 80vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.modal-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.modal-header h3 {
+			margin: 0;
+			font-size: 18px;
+			color: #1a1a2e;
+			text-align: left;
+		}
+
+		.modal-close-btn {
+			background: none;
+			border: none;
+			cursor: pointer;
+			padding: 5px;
+			color: #666;
+		}
+
+		.modal-close-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.preview-content {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.preview-customer {
+			background: #f8f9fa;
+			padding: 15px;
+			border-radius: 10px;
+			margin-bottom: 20px;
+		}
+
+		.preview-customer-label {
+			font-size: 12px;
+			color: #666;
+			margin-bottom: 5px;
+		}
+
+		.preview-customer-name {
+			font-size: 16px;
+			font-weight: 600;
+			color: #1a1a2e;
+		}
+
+		.preview-customer-branch {
+			font-size: 13px;
+			color: #666;
+			margin-top: 3px;
+		}
+
+		.preview-section-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #666;
+			margin-bottom: 10px;
+		}
+
+		.preview-products-list {
+			max-height: 200px;
+			overflow-y: auto;
+		}
+
+		.preview-product-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 10px;
+			background: #fff;
+			border: 1px solid #eee;
+			border-radius: 8px;
+			margin-bottom: 8px;
+		}
+
+		.preview-product-info {
+			flex: 1;
+		}
+
+		.preview-product-name {
+			font-size: 14px;
+			font-weight: 500;
+			color: #1a1a2e;
+		}
+
+		.preview-product-detail {
+			font-size: 12px;
+			color: #666;
+			margin-top: 2px;
+		}
+
+		.preview-product-prices {
+			text-align: right;
+		}
+
+		.preview-product-original {
+			font-size: 12px;
+			color: #999;
+			text-decoration: line-through;
+		}
+
+		.preview-product-final {
+			font-size: 14px;
+			font-weight: 600;
+			color: #e53935;
+		}
+
+		.preview-totals {
+			margin-top: 20px;
+			padding-top: 15px;
+			border-top: 1px solid #eee;
+		}
+
+		.preview-total-row {
+			display: flex;
+			justify-content: space-between;
+			padding: 8px 0;
+			font-size: 14px;
+		}
+
+		.preview-total-row.discount span:last-child {
+			color: #e53935;
+			font-weight: 600;
+		}
+
+		.preview-total-row.benefit {
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			padding: 12px;
+			border-radius: 8px;
+			margin-top: 8px;
+		}
+
+		.preview-total-row.benefit span:last-child {
+			color: #2e7d32;
+			font-weight: 700;
+			font-size: 16px;
+		}
+
+		.btn-send {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			background: linear-gradient(135deg, #002c77 0%, #004aad 100%);
+		}
+
+		.btn-send svg {
+			width: 18px;
+			height: 18px;
+		}
+
 		/* Success Message */
 		.success-message {
 			position: fixed;
@@ -2578,6 +2780,30 @@
 			</div>
 		</div>
 
+		<!-- Offer Summary Section -->
+		<div class="form-section" id="offer-summary-section" style="display: none;">
+			<div class="section-title">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M9 7h6m-6 4h6m-4 4h4M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+				</svg>
+				Teklif Özeti
+			</div>
+			<div class="summary-grid">
+				<div class="summary-item">
+					<span class="summary-label">Teklifin Perakende Tutarı</span>
+					<span class="summary-value" id="total-retail-price">0.00 TL</span>
+				</div>
+				<div class="summary-item">
+					<span class="summary-label">Teklifin İndirimli Tutarı</span>
+					<span class="summary-value highlight" id="total-discounted-price">0.00 TL</span>
+				</div>
+				<div class="summary-item benefit">
+					<span class="summary-label">Müşteriye Sağlanan Fayda</span>
+					<span class="summary-value benefit-value" id="total-benefit">0.00 TL</span>
+				</div>
+			</div>
+		</div>
+
 		<!-- Products Form Section -->
 		<div class="form-section products-form" id="products-form">
 			<div class="section-title">
@@ -2754,6 +2980,64 @@
 			<div class="modal-actions">
 				<button type="button" class="btn btn-secondary" id="modal-cancel">İptal</button>
 				<button type="button" class="btn btn-primary" id="modal-confirm">Onayla</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Offer Preview Modal -->
+	<div class="modal-overlay" id="offer-preview-modal">
+		<div class="modal offer-preview-modal">
+			<div class="modal-header">
+				<h3>Teklif Özeti</h3>
+				<button type="button" class="modal-close-btn" id="preview-modal-close">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+
+			<div class="preview-content">
+				<!-- Müşteri Bilgisi -->
+				<div class="preview-customer">
+					<div class="preview-customer-label">Müşteri</div>
+					<div class="preview-customer-name" id="preview-customer-name"></div>
+					<div class="preview-customer-branch" id="preview-customer-branch"></div>
+				</div>
+
+				<!-- Ürün Listesi -->
+				<div class="preview-products">
+					<div class="preview-section-title">Ürünler</div>
+					<div class="preview-products-list" id="preview-products-list">
+						<!-- Dinamik olarak doldurulacak -->
+					</div>
+				</div>
+
+				<!-- Toplam Tutarlar -->
+				<div class="preview-totals">
+					<div class="preview-total-row">
+						<span>Perakende Tutarı</span>
+						<span id="preview-retail-total">0.00 TL</span>
+					</div>
+					<div class="preview-total-row discount">
+						<span>İndirimli Tutarı</span>
+						<span id="preview-discounted-total">0.00 TL</span>
+					</div>
+					<div class="preview-total-row benefit">
+						<span>Müşteri Faydası</span>
+						<span id="preview-benefit-total">0.00 TL</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-actions">
+				<button type="button" class="btn btn-secondary" id="preview-modal-cancel">Vazgeç</button>
+				<button type="button" class="btn btn-primary btn-send" id="preview-modal-send">
+					<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+						<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+					</svg>
+					TEKLİFİ GÖNDER
+				</button>
 			</div>
 		</div>
 	</div>
@@ -3041,6 +3325,9 @@
 					currentVkn = offer.customer.vkn;
 					isEditMode = true;
 
+					// Save buton metnini guncelle
+					updateSaveButtonText();
+
 					// Musterinin bayi coverage'indaki subelerini yukle
 					await loadCustomerBranches(offer.customer.id);
 
@@ -3103,6 +3390,8 @@
 
 					// Ürün satırlarını temizle
 					$('#product-rows').empty();
+					// Teklif özetini güncelle
+					updateOfferSummary();
 
 					// Teklif detayları varsa sadece onları göster
 					if (customerPrices && customerPrices.length > 0) {
@@ -3216,6 +3505,9 @@
 							currentOffer = offer; // Aktif teklif varsa güncelle
 						}
 
+						// Save buton metnini guncelle
+						updateSaveButtonText();
+
 						// Chat'i baslat
 						initializeChat();
 
@@ -3272,6 +3564,8 @@
 
 						// Ürün satırlarını temizle
 						$('#product-rows').empty();
+						// Teklif özetini güncelle
+						updateOfferSummary();
 
 						// Teklif detayları varsa sadece onları göster
 						if (customerPrices && customerPrices.length > 0) {
@@ -3341,6 +3635,8 @@
 
 						// Tüm ürünleri varsayılan perakende fiyatla göster
 						$('#product-rows').empty();
+						// Teklif özetini güncelle
+						updateOfferSummary();
 
 						products.forEach(function(product) {
 							addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
@@ -3502,6 +3798,9 @@
 				'</div>';
 
 				$('#product-rows').append(rowHtml);
+
+				// Teklif özetini güncelle
+				updateOfferSummary();
 			}
 
 			// Fiyat formatlama
@@ -3712,10 +4011,12 @@
 				updateFinalPrice($row);
 			});
 
-			// Quantity input change - clear error
+			// Quantity input change - clear error and update summary
 			$(document).on('input', '.quantity-input', function() {
 				var $row = $(this).closest('.product-row');
 				$row.find('.consumption-box-compact').removeClass('error');
+				// Teklif özetini güncelle
+				updateOfferSummary();
 			});
 
 			// Update final price for a row
@@ -3738,6 +4039,97 @@
 
 				// Update the final price display
 				$row.find('.final-price-value').text(formatPrice(finalPrice) + ' TL');
+
+				// Teklif özetini güncelle
+				updateOfferSummary();
+			}
+
+			// Save buton metnini duruma gore guncelle
+			function updateSaveButtonText() {
+				var $saveBtn = $('#save-btn');
+				if (currentOffer && ['requested', 'pending'].includes(currentOffer.status)) {
+					$saveBtn.html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg> TEKLİFİ GÖNDER');
+				} else {
+					$saveBtn.html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg> Kaydet');
+				}
+			}
+
+			// Update offer summary totals
+			function updateOfferSummary() {
+				var totalRetail = 0;
+				var totalDiscounted = 0;
+
+				$('#product-rows .product-row').each(function() {
+					var $row = $(this);
+					var basePrice = parseFloat($row.data('base-price')) || 0;
+					var quantity = parseFloat($row.find('.quantity-input').val()) || 0;
+					var finalPrice = parseFloat($row.find('.final-price-value').text().replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+					totalRetail += basePrice * quantity;
+					totalDiscounted += finalPrice * quantity;
+				});
+
+				var benefit = totalRetail - totalDiscounted;
+
+				$('#total-retail-price').text(totalRetail.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+				$('#total-discounted-price').text(totalDiscounted.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+				$('#total-benefit').text(benefit.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+
+				// En az bir ürün varsa özet alanını göster
+				if ($('#product-rows .product-row').length > 0) {
+					$('#offer-summary-section').show();
+				} else {
+					$('#offer-summary-section').hide();
+				}
+			}
+
+			// Populate offer preview modal
+			function populateOfferPreview() {
+				// Müşteri bilgisi
+				var customerName = $('#customer-name').text();
+				var branchName = $('#branch-select option:selected').text();
+				$('#preview-customer-name').text(customerName);
+				$('#preview-customer-branch').text(branchName !== 'Şube seçiniz...' ? branchName : '');
+
+				// Ürün listesi
+				var productsHtml = '';
+				var totalRetail = 0;
+				var totalDiscounted = 0;
+
+				$('#product-rows .product-row').each(function() {
+					var $row = $(this);
+					var productName = $row.find('.product-name').text();
+					var basePrice = parseFloat($row.data('base-price')) || 0;
+					var quantity = parseFloat($row.find('.quantity-input').val()) || 0;
+					var finalPriceText = $row.find('.final-price-value').text();
+					var finalPrice = parseFloat(finalPriceText.replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+
+					var rowRetail = basePrice * quantity;
+					var rowDiscounted = finalPrice * quantity;
+					totalRetail += rowRetail;
+					totalDiscounted += rowDiscounted;
+
+					var showOriginal = finalPrice < basePrice;
+
+					productsHtml += '<div class="preview-product-item">' +
+						'<div class="preview-product-info">' +
+							'<div class="preview-product-name">' + productName + '</div>' +
+							'<div class="preview-product-detail">' + quantity + ' adet x ' + finalPrice.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL</div>' +
+						'</div>' +
+						'<div class="preview-product-prices">' +
+							(showOriginal ? '<div class="preview-product-original">' + rowRetail.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL</div>' : '') +
+							'<div class="preview-product-final">' + rowDiscounted.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL</div>' +
+						'</div>' +
+					'</div>';
+				});
+
+				$('#preview-products-list').html(productsHtml);
+
+				// Toplamlar
+				var benefit = totalRetail - totalDiscounted;
+				$('#preview-retail-total').text(totalRetail.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+				$('#preview-discounted-total').text(totalDiscounted.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+				$('#preview-benefit-total').text(benefit.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
 			}
 
 			// Save button
@@ -3794,15 +4186,22 @@
 					return;
 				}
 
-				$('#save-modal').addClass('active');
+				populateOfferPreview();
+				$('#offer-preview-modal').addClass('active');
 			});
 
 			$('#modal-cancel').on('click', function() {
 				$('#save-modal').removeClass('active');
 			});
 
-			$('#modal-confirm').on('click', async function() {
-				$('#save-modal').removeClass('active');
+			// Preview modal close/cancel handlers
+			$('#preview-modal-close, #preview-modal-cancel').on('click', function() {
+				$('#offer-preview-modal').removeClass('active');
+			});
+
+			// TEKLİFİ GÖNDER - preview modal send handler
+			$('#preview-modal-send').on('click', async function() {
+				$('#offer-preview-modal').removeClass('active');
 				showLoading('Kaydediliyor...');
 
 				try {
