@@ -41,7 +41,10 @@
       "Bash(python3:*)",
       "WebFetch(domain:vitest.dev)",
       "Bash(pip3 install:*)",
-      "Bash(du:*)"
+      "Bash(du:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(xargs:*)"
     ]
   }
 }

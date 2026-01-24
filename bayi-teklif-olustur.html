@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Müşteri Fiyat Tanımlama - İpragaz Bayi</title>
+	<title>Teklif Oluşturma - İpragaz Bayi</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -2497,14 +2497,14 @@
 		<div class="main-column">
 			<!-- Page Header -->
 			<div class="page-header">
-			<a href="bayi-musteri-listesi.html" class="back-btn">
+			<a href="bayi-teklif-listesi.html" class="back-btn">
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
 				</svg>
 			</a>
 			<div class="page-header-text">
-				<h1 id="page-title">Yeni Müşteri Fiyat Tanımlama</h1>
-				<p id="page-subtitle">Müşteri için özel fiyat ve taahhüt tanımlayın</p>
+				<h1 id="page-title">Yeni Teklif Oluşturma</h1>
+				<p id="page-subtitle">Müşteriye özel fiyat ve taahhüt tanımlayın</p>
 			</div>
 		</div>
 
@@ -2521,7 +2521,7 @@
 			<svg viewBox="0 0 24 24" fill="currentColor">
 				<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
 			</svg>
-			<span>MÜŞTERİ FİYATLARI PASİF DURUMDA</span>
+			<span>TEKLİF PASİF DURUMDA</span>
 		</div>
 
 		<!-- Cancelled Status Banner -->
@@ -2662,7 +2662,7 @@
 				</svg>
 				Teklifi İptal Et
 			</button>
-			<a href="bayi-musteri-listesi.html" class="btn btn-secondary">
+			<a href="bayi-teklif-listesi.html" class="btn btn-secondary">
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
 				</svg>
@@ -3058,7 +3058,7 @@
 
 					$('#customer-info-box').removeClass('error').addClass('visible');
 					$('#customer-name').text(offer.customer.name + (offer.customer.company_name ? ' - ' + offer.customer.company_name : ''));
-					$('#page-title').text('Müşteri Fiyat Düzenleme');
+					$('#page-title').text('Teklif Düzenleme');
 					$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
 
 					// Fiyat tanımlanmış mı kontrolü
@@ -3230,7 +3230,7 @@
 
 						$('#customer-info-box').removeClass('error').addClass('visible');
 						$('#customer-name').text(customer.name + (customer.company_name ? ' - ' + customer.company_name : ''));
-						$('#page-title').text('Müşteri Fiyat Düzenleme');
+						$('#page-title').text('Teklif Düzenleme');
 						$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
 
 						// Fiyat tanımlanmış mı kontrolü
@@ -3930,7 +3930,7 @@
 
 					setTimeout(function() {
 						$('#success-message').removeClass('active');
-						window.location.href = 'bayi-musteri-listesi.html';
+						window.location.href = 'bayi-teklif-listesi.html';
 					}, 2000);
 
 				} catch (err) {

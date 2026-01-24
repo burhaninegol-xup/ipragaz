@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Müşteri Listesi - İpragaz Bayi</title>
+	<title>Teklif Listesi - İpragaz Bayi</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -333,15 +333,15 @@
 			color: #fff;
 		}
 
-		/* Customer List */
-		.customer-list {
+		/* Offer List */
+		.offer-list {
 			background: #fff;
 			border-radius: 20px;
 			padding: 20px;
 			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 		}
 
-		.customer-card {
+		.offer-card {
 			display: flex;
 			align-items: center;
 			gap: 20px;
@@ -353,26 +353,26 @@
 			cursor: pointer;
 		}
 
-		.customer-card:last-child {
+		.offer-card:last-child {
 			margin-bottom: 0;
 		}
 
-		.customer-card:hover {
+		.offer-card:hover {
 			border-color: #002c77;
 			box-shadow: 0 4px 15px rgba(0,44,119,0.08);
 		}
 
-		.customer-card.has-warning {
+		.offer-card.has-warning {
 			background: #fffbf5;
 			border-color: #ffe0b2;
 		}
 
-		.customer-card.has-warning:hover {
+		.offer-card.has-warning:hover {
 			background: #fff8e1;
 			border-color: #ffcc80;
 		}
 
-		.customer-avatar {
+		.offer-avatar {
 			width: 50px;
 			height: 50px;
 			border-radius: 12px;
@@ -383,26 +383,26 @@
 			flex-shrink: 0;
 		}
 
-		.customer-avatar svg {
+		.offer-avatar svg {
 			width: 24px;
 			height: 24px;
 			color: #1976d2;
 		}
 
-		.customer-card.has-warning .customer-avatar {
+		.offer-card.has-warning .offer-avatar {
 			background: linear-gradient(135deg, #ff9800 0%, #ffc107 100%);
 		}
 
-		.customer-card.has-warning .customer-avatar svg {
+		.offer-card.has-warning .offer-avatar svg {
 			color: #fff;
 		}
 
-		.customer-info {
+		.offer-info {
 			flex: 1;
 			min-width: 0;
 		}
 
-		.customer-name {
+		.offer-customer-name {
 			font-size: 15px;
 			font-weight: 600;
 			color: #333;
@@ -412,12 +412,12 @@
 			text-overflow: ellipsis;
 		}
 
-		.customer-vkn {
+		.offer-vkn {
 			font-size: 12px;
 			color: #888;
 		}
 
-		.customer-branch {
+		.offer-branch {
 			display: flex;
 			align-items: center;
 			gap: 4px;
@@ -426,14 +426,14 @@
 			margin-top: 2px;
 		}
 
-		.customer-branch svg {
+		.offer-branch svg {
 			width: 12px;
 			height: 12px;
 			fill: #999;
 		}
 
 		/* Warning Badge with Tooltip */
-		.customer-warning {
+		.offer-warning {
 			position: relative;
 			display: flex;
 			align-items: center;
@@ -445,13 +445,13 @@
 			cursor: pointer;
 		}
 
-		.customer-warning svg {
+		.offer-warning svg {
 			width: 16px;
 			height: 16px;
 			color: #ff9800;
 		}
 
-		.customer-warning > span {
+		.offer-warning > span {
 			font-size: 12px;
 			color: #e65100;
 			font-weight: 500;
@@ -484,7 +484,7 @@
 			border-top-color: #333;
 		}
 
-		.customer-warning:hover .warning-tooltip {
+		.offer-warning:hover .warning-tooltip {
 			opacity: 1;
 			visibility: visible;
 		}
@@ -531,7 +531,7 @@
 			color: #fff;
 		}
 
-		.customer-action {
+		.offer-action {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -545,18 +545,18 @@
 			flex-shrink: 0;
 		}
 
-		.customer-action:hover {
+		.offer-action:hover {
 			background: #002c77;
 			color: #fff;
 		}
 
-		.customer-action svg {
+		.offer-action svg {
 			width: 20px;
 			height: 20px;
 		}
 
 		/* Passive Badge */
-		.customer-passive-badge {
+		.offer-passive-badge {
 			display: flex;
 			align-items: center;
 			gap: 6px;
@@ -567,13 +567,13 @@
 			flex-shrink: 0;
 		}
 
-		.customer-passive-badge svg {
+		.offer-passive-badge svg {
 			width: 16px;
 			height: 16px;
 			color: #e53935;
 		}
 
-		.customer-passive-badge span {
+		.offer-passive-badge span {
 			font-size: 11px;
 			color: #c62828;
 			font-weight: 500;
@@ -581,32 +581,32 @@
 		}
 
 		/* Passive Customer Card Style */
-		.customer-card.is-passive {
+		.offer-card.is-passive {
 			background: #fafafa;
 			border-color: #e0e0e0;
 		}
 
-		.customer-card.is-passive:hover {
+		.offer-card.is-passive:hover {
 			background: #f5f5f5;
 			border-color: #bdbdbd;
 		}
 
-		.customer-card.is-passive .customer-avatar {
+		.offer-card.is-passive .offer-avatar {
 			background: linear-gradient(135deg, #eeeeee 0%, #e0e0e0 100%);
 		}
 
-		.customer-card.is-passive .customer-avatar svg {
+		.offer-card.is-passive .offer-avatar svg {
 			color: #9e9e9e;
 		}
 
 		@media (max-width: 768px) {
-			.customer-passive-badge span {
+			.offer-passive-badge span {
 				display: none;
 			}
 		}
 
 		/* No Price Badge */
-		.customer-noprice-badge {
+		.offer-noprice-badge {
 			display: flex;
 			align-items: center;
 			gap: 6px;
@@ -617,34 +617,34 @@
 			flex-shrink: 0;
 		}
 
-		.customer-noprice-badge svg {
+		.offer-noprice-badge svg {
 			width: 16px;
 			height: 16px;
 			color: #1976d2;
 		}
 
-		.customer-noprice-badge span {
+		.offer-noprice-badge span {
 			font-size: 11px;
 			color: #1565c0;
 			font-weight: 500;
 		}
 
 		/* No Price Customer Card Style */
-		.customer-card.no-price {
+		.offer-card.no-price {
 			background: #f5f9ff;
 			border-color: #e3f2fd;
 		}
 
-		.customer-card.no-price:hover {
+		.offer-card.no-price:hover {
 			background: #e8f4ff;
 			border-color: #bbdefb;
 		}
 
-		.customer-card.no-price .customer-avatar {
+		.offer-card.no-price .offer-avatar {
 			background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
 		}
 
-		.customer-card.no-price .customer-avatar svg {
+		.offer-card.no-price .offer-avatar svg {
 			color: #1976d2;
 		}
 
@@ -660,7 +660,7 @@
 		}
 
 		@media (max-width: 768px) {
-			.customer-noprice-badge span {
+			.offer-noprice-badge span {
 				display: none;
 			}
 		}
@@ -1032,7 +1032,7 @@
 			}
 
 
-			.customer-card {
+			.offer-card {
 				gap: 15px;
 			}
 		}
@@ -1069,15 +1069,15 @@
 				justify-content: center;
 			}
 
-			.customer-info {
+			.offer-info {
 				flex: 1;
 			}
 
-			.customer-warning {
+			.offer-warning {
 				padding: 4px 8px;
 			}
 
-			.customer-warning span {
+			.offer-warning span {
 				display: none;
 			}
 		}
@@ -1091,11 +1091,11 @@
 				font-size: 22px;
 			}
 
-			.customer-card {
+			.offer-card {
 				padding: 14px;
 			}
 
-			.customer-avatar {
+			.offer-avatar {
 				width: 44px;
 				height: 44px;
 			}
@@ -1244,15 +1244,15 @@
 		<!-- Page Header -->
 		<div class="page-header">
 			<div class="page-header-left">
-				<h1>Müşteri Listesi</h1>
-				<p>Fiyat tanımladığınız tüm müşterilerinizi görüntüleyin</p>
+				<h1>Teklif Listesi</h1>
+				<p>Oluşturduğunuz tüm teklifleri görüntüleyin</p>
 			</div>
 			<div class="page-header-right">
-				<a href="bayi-musteri-ekle.html" class="btn-primary">
+				<a href="bayi-teklif-olustur.html" class="btn-primary">
 					<svg viewBox="0 0 24 24" fill="currentColor">
 						<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
 					</svg>
-					Yeni Müşteri Ekle
+					Yeni Teklif Oluştur
 				</a>
 			</div>
 		</div>
@@ -1264,7 +1264,7 @@
 					<svg viewBox="0 0 24 24" fill="currentColor">
 						<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
 					</svg>
-					<input type="text" id="search-input" placeholder="Müşteri adı veya VKN ile ara...">
+					<input type="text" id="search-input" placeholder="Teklif veya müşteri adı ile ara...">
 				</div>
 				<div class="filter-buttons">
 					<button class="filter-btn active" data-filter="all">
@@ -1296,7 +1296,7 @@
 		</div>
 
 		<!-- Customer List -->
-		<div class="customer-list" id="customer-list">
+		<div class="offer-list" id="customer-list">
 			<!-- Müşteriler Supabase'den dinamik olarak yüklenir -->
 			<div class="loading-placeholder" style="text-align: center; padding: 40px; color: #666;">
 				<div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #e31e24; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
@@ -1384,7 +1384,7 @@
 			}
 
 			// Müşteri listesini Supabase'den yükle (Pagination destekli)
-			async function loadCustomers() {
+			async function loadOffers() {
 				showLoading();
 				try {
 					// Bayi ID'sini sessionStorage'dan al (login sirasinda kaydedilir)
@@ -1435,7 +1435,7 @@
 						};
 					});
 
-					renderCustomerList(allCustomers);
+					renderOfferList(allCustomers);
 					renderPagination();
 
 					// Filtre sayılarını ayrı sorguda güncelle (ilk yüklemede)
@@ -1527,8 +1527,8 @@
 					'<span>' + statusLabels[status] + '</span></div>';
 			}
 
-			// Müşteri kartı oluştur
-			function createCustomerCard(customer) {
+			// Teklif kartı oluştur
+			function createOfferCard(customer) {
 				var offerStatus = customer.offer_status || 'pending';
 
 				// Sube bilgisi
@@ -1537,36 +1537,36 @@
 					var branchName = customer.customer_branch.branch_name || '';
 					var branchLocation = [customer.customer_branch.district, customer.customer_branch.city].filter(Boolean).join(', ');
 					var branchLabel = branchName || branchLocation || 'Şube';
-					branchHtml = '<div class="customer-branch"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span>' + branchLabel + '</span></div>';
+					branchHtml = '<div class="offer-branch"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><span>' + branchLabel + '</span></div>';
 				}
 
-				return '<div class="customer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-offer-id="' + customer.offer_id + '" data-status="' + offerStatus + '">' +
-					'<div class="customer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
-					'<div class="customer-info"><div class="customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="customer-vkn">VKN: ' + customer.vkn + '</div>' + branchHtml + '</div>' +
+				return '<div class="offer-card" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-offer-id="' + customer.offer_id + '" data-status="' + offerStatus + '">' +
+					'<div class="offer-avatar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>' +
+					'<div class="offer-info"><div class="offer-customer-name">' + customer.name + (customer.company_name ? ' - ' + customer.company_name : '') + '</div><div class="offer-vkn">VKN: ' + customer.vkn + '</div>' + branchHtml + '</div>' +
 					getStatusBadge(offerStatus) +
-					'<a href="bayi-musteri-ekle.html?offer_id=' + customer.offer_id + '" class="customer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
+					'<a href="bayi-teklif-olustur.html?offer_id=' + customer.offer_id + '" class="offer-action"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg></a>' +
 				'</div>';
 			}
 
-			// Müşteri listesini render et
-			function renderCustomerList(customers) {
-				var $list = $('.customer-list');
+			// Teklif listesini render et
+			function renderOfferList(customers) {
+				var $list = $('.offer-list');
 				$list.empty();
 
 				if (customers.length === 0) {
-					$list.html('<div class="empty-state"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><h3>Müşteri bulunamadı</h3><p>Arama kriterlerinize uygun müşteri yok</p></div>');
+					$list.html('<div class="empty-state"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><h3>Teklif bulunamadı</h3><p>Arama kriterlerinize uygun teklif yok</p></div>');
 					return;
 				}
 
 				customers.forEach(function(customer) {
-					$list.append(createCustomerCard(customer));
+					$list.append(createOfferCard(customer));
 				});
 
 				// Kart tıklama olayını yeniden bağla
-				$('.customer-card').on('click', function(e) {
-					if (!$(e.target).closest('.customer-action').length) {
+				$('.offer-card').on('click', function(e) {
+					if (!$(e.target).closest('.offer-action').length) {
 						var offerId = $(this).data('offer-id');
-						window.location.href = 'bayi-musteri-ekle.html?offer_id=' + offerId;
+						window.location.href = 'bayi-teklif-olustur.html?offer_id=' + offerId;
 					}
 				});
 			}
@@ -1594,32 +1594,32 @@
 			}
 
 			// Müşterileri yükle
-			loadCustomers();
+			loadOffers();
 
 			// Pagination event handlers
 			$('#prev-page').on('click', function() {
 				if (paginationState.currentPage > 0) {
 					paginationState.currentPage--;
-					loadCustomers();
+					loadOffers();
 				}
 			});
 
 			$('#next-page').on('click', function() {
 				if (paginationState.currentPage < paginationState.totalPages - 1) {
 					paginationState.currentPage++;
-					loadCustomers();
+					loadOffers();
 				}
 			});
 
 			$(document).on('click', '.pagination-page:not(.ellipsis)', function() {
 				paginationState.currentPage = parseInt($(this).data('page'));
-				loadCustomers();
+				loadOffers();
 			});
 
 			$('#page-size-select').on('change', function() {
 				paginationState.pageSize = parseInt($(this).val());
 				paginationState.currentPage = 0; // Sayfa başına dön
-				loadCustomers();
+				loadOffers();
 			});
 
 			// Filter functionality (server-side)
@@ -1634,14 +1634,14 @@
 				// Filtre değiştiğinde sayfa 0'a dön ve yeniden yükle
 				paginationState.currentFilter = filter;
 				paginationState.currentPage = 0;
-				loadCustomers();
+				loadOffers();
 			});
 
 			// Search functionality (client-side - mevcut sayfada)
 			$('#search-input').on('keyup', function() {
 				var searchTerm = $(this).val().toLowerCase();
 
-				$('.customer-card').each(function() {
+				$('.offer-card').each(function() {
 					var $card = $(this);
 					var name = ($card.data('name') || '').toLowerCase();
 					var vkn = ($card.data('vkn') || '').toString();

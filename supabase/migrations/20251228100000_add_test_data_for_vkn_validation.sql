@@ -60,6 +60,9 @@ WHERE EXISTS (
     JOIN customers c ON o.customer_id = c.id
     WHERE c.vkn = '1234567890'
 )
+AND EXISTS (
+    SELECT 1 FROM products
+)
 AND NOT EXISTS (
     SELECT 1 FROM offer_details od
     JOIN offers o ON od.offer_id = o.id

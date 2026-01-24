@@ -224,6 +224,89 @@ const CustomersService = {
     },
 
     /**
+     * Sayfalı müşteri listesi (şube ve teklif bilgileriyle birlikte)
+     */
+    async getPaginatedByDealerId(dealerId, options = {}) {
+        try {
+            const page = options.page || 0;
+            const pageSize = options.pageSize || 20;
+            const from = page * pageSize;
+            const to = from + pageSize - 1;
+
+            let query = supabaseClient
+                .from('customers')
+                .select(`
+                    *,
+                    customer_branches(id, branch_name, city, district, is_default),
+                    offers(id, status)
+                `, { count: 'exact' })
+                .eq('dealer_id', dealerId);
+
+            // Aktif/Pasif filtresi
+            if (options.isActive === true) {
+                query = query.eq('is_active', true);
+            } else if (options.isActive === false) {
+                query = query.eq('is_active', false);
+            }
+
+            query = query.order('name').range(from, to);
+
+            const { data, error, count } = await query;
+            if (error) throw error;
+
+            return {
+                data,
+                totalCount: count,
+                totalPages: Math.ceil(count / pageSize),
+                error: null
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'CustomersService.getPaginatedByDealerId');
+        }
+    },
+
+    /**
+     * Bayi müşteri sayılarını duruma göre getir
+     */
+    async getCustomerCountsByStatus(dealerId) {
+        try {
+            // Tüm müşterileri say
+            const { count: allCount, error: allError } = await supabaseClient
+                .from('customers')
+                .select('id', { count: 'exact', head: true })
+                .eq('dealer_id', dealerId);
+            if (allError) throw allError;
+
+            // Aktif müşterileri say
+            const { count: activeCount, error: activeError } = await supabaseClient
+                .from('customers')
+                .select('id', { count: 'exact', head: true })
+                .eq('dealer_id', dealerId)
+                .eq('is_active', true);
+            if (activeError) throw activeError;
+
+            // Pasif müşterileri say
+            const { count: passiveCount, error: passiveError } = await supabaseClient
+                .from('customers')
+                .select('id', { count: 'exact', head: true })
+                .eq('dealer_id', dealerId)
+                .eq('is_active', false);
+            if (passiveError) throw passiveError;
+
+            return {
+                data: {
+                    all: allCount || 0,
+                    active: activeCount || 0,
+                    passive: passiveCount || 0
+                },
+                error: null
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'CustomersService.getCustomerCountsByStatus');
+        }
+    },
+
+    /**
      * Güvenlik sorularının cevaplarını kaydet
      */
     async updateSecurityAnswers(customerId, answers) {

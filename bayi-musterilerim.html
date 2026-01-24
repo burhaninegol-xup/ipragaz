@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Müşterilerim - İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 26px;
+			color: #1a1a2e;
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: #666;
+			font-size: 14px;
+		}
+
+		.page-header-right .btn-primary {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+			text-decoration: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+		}
+
+		.page-header-right .btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+		}
+
+		.page-header-right .btn-primary svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Search & Filter Section */
+		.filter-section {
+			background: #fff;
+			border-radius: 16px;
+			padding: 20px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.filter-row {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.search-box {
+			flex: 1;
+			min-width: 250px;
+			position: relative;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 12px 16px 12px 45px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 14px;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.search-box svg {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.filter-buttons {
+			display: flex;
+			background: #f5f7fa;
+			border-radius: 10px;
+			padding: 4px;
+		}
+
+		.filter-btn {
+			padding: 10px 18px;
+			border: none;
+			background: transparent;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-weight: 500;
+		}
+
+		.filter-btn.active {
+			background: #fff;
+			color: #002c77;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		}
+
+		.filter-btn:hover:not(.active) {
+			color: #333;
+		}
+
+		.filter-btn .count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			background: #e0e0e0;
+			border-radius: 10px;
+			font-size: 11px;
+			margin-left: 6px;
+		}
+
+		.filter-btn.active .count {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.filter-btn.success .count {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.filter-btn.success.active .count {
+			background: #4caf50;
+			color: #fff;
+		}
+
+		.filter-btn.passive .count {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.filter-btn.passive.active .count {
+			background: #e53935;
+			color: #fff;
+		}
+
+		/* Customer List */
+		.customer-list {
+			background: #fff;
+			border-radius: 20px;
+			padding: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.customer-card {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			padding: 18px;
+			border: 1px solid #e8ecf1;
+			border-radius: 14px;
+			margin-bottom: 12px;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.customer-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.customer-card:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.08);
+			transform: translateY(-2px);
+		}
+
+		.customer-avatar {
+			width: 56px;
+			height: 56px;
+			border-radius: 14px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			font-size: 18px;
+			font-weight: 700;
+			color: #fff;
+			text-transform: uppercase;
+		}
+
+		.customer-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.customer-name {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.customer-company {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 6px;
+		}
+
+		.customer-meta {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.customer-meta-item {
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			font-size: 12px;
+			color: #888;
+		}
+
+		.customer-meta-item svg {
+			width: 14px;
+			height: 14px;
+			color: #999;
+		}
+
+		/* Customer Stats */
+		.customer-stats {
+			display: flex;
+			gap: 10px;
+			flex-shrink: 0;
+		}
+
+		.stat-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		.stat-badge svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.stat-badge.branches {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.stat-badge.offers {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		/* Status Badge */
+		.customer-status {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 11px;
+			font-weight: 600;
+			text-transform: uppercase;
+			flex-shrink: 0;
+		}
+
+		.customer-status.active {
+			background: #e8f5e9;
+			color: #2e7d32;
+			border: 1px solid #c8e6c9;
+		}
+
+		.customer-status.passive {
+			background: #ffebee;
+			color: #c62828;
+			border: 1px solid #ffcdd2;
+		}
+
+		.customer-status svg {
+			width: 12px;
+			height: 12px;
+		}
+
+		/* Action Button */
+		.customer-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #f5f7fa;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			flex-shrink: 0;
+		}
+
+		.customer-action:hover {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.customer-action svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		/* Passive Customer Card Style */
+		.customer-card.is-passive {
+			background: #fafafa;
+			border-color: #e0e0e0;
+		}
+
+		.customer-card.is-passive:hover {
+			background: #f5f5f5;
+			border-color: #bdbdbd;
+		}
+
+		.customer-card.is-passive .customer-avatar {
+			background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: #666;
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #999;
+		}
+
+		/* Pagination Styles */
+		.pagination-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+			margin-top: 20px;
+			padding: 15px 20px;
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+		}
+
+		.pagination-info {
+			font-size: 14px;
+			color: #666;
+		}
+
+		.pagination-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.pagination-btn {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 16px;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-btn:hover:not(:disabled) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		.pagination-pages {
+			display: flex;
+			gap: 4px;
+		}
+
+		.pagination-page {
+			min-width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			color: #333;
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-page:hover:not(.ellipsis) {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.pagination-page.active {
+			background: #002c77;
+			border-color: #002c77;
+			color: #fff;
+		}
+
+		.pagination-page.ellipsis {
+			border: none;
+			cursor: default;
+			background: transparent;
+		}
+
+		.pagination-size {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #666;
+		}
+
+		.pagination-size select {
+			padding: 6px 10px;
+			border: 1px solid #e0e0e0;
+			border-radius: 6px;
+			font-size: 13px;
+			cursor: pointer;
+		}
+
+		.pagination-size select:focus {
+			outline: none;
+			border-color: #002c77;
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.customer-card {
+				gap: 15px;
+			}
+
+			.customer-stats {
+				flex-direction: column;
+				gap: 6px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.page-header-right {
+				width: 100%;
+			}
+
+			.page-header-right .btn-primary {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.filter-row {
+				flex-direction: column;
+			}
+
+			.search-box {
+				width: 100%;
+			}
+
+			.filter-buttons {
+				width: 100%;
+				justify-content: center;
+			}
+
+			.customer-card {
+				flex-wrap: wrap;
+			}
+
+			.customer-stats {
+				flex-direction: row;
+				width: 100%;
+				justify-content: flex-start;
+				margin-top: 10px;
+			}
+
+			.customer-status span {
+				display: none;
+			}
+
+			.pagination-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.pagination-controls {
+				justify-content: center;
+			}
+
+			.pagination-pages {
+				display: none;
+			}
+
+			.pagination-info,
+			.pagination-size {
+				justify-content: center;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.main-content {
+				padding: 20px 15px;
+			}
+
+			.page-header-left h1 {
+				font-size: 22px;
+			}
+
+			.customer-card {
+				padding: 14px;
+			}
+
+			.customer-avatar {
+				width: 48px;
+				height: 48px;
+				font-size: 16px;
+			}
+
+			.filter-btn {
+				padding: 8px 12px;
+				font-size: 12px;
+			}
+
+			.stat-badge span {
+				display: none;
+			}
+		}
+
+		/* Loading spinner */
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Müşterilerim</h1>
+				<p>Tüm müşterilerinizi görüntüleyin ve yönetin</p>
+			</div>
+			<div class="page-header-right">
+				<a href="bayi-musteri-detay.html" class="btn-primary">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+					</svg>
+					Yeni Müşteri Ekle
+				</a>
+			</div>
+		</div>
+
+		<!-- Filter Section -->
+		<div class="filter-section">
+			<div class="filter-row">
+				<div class="search-box">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+					</svg>
+					<input type="text" id="search-input" placeholder="Müşteri adı, VKN veya telefon ile ara...">
+				</div>
+				<div class="filter-buttons">
+					<button class="filter-btn active" data-filter="all">
+						Tümü
+						<span class="count">0</span>
+					</button>
+					<button class="filter-btn success" data-filter="active">
+						Aktif
+						<span class="count">0</span>
+					</button>
+					<button class="filter-btn passive" data-filter="passive">
+						Pasif
+						<span class="count">0</span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Customer List -->
+		<div class="customer-list" id="customer-list">
+			<div class="loading-placeholder" style="text-align: center; padding: 40px; color: #666;">
+				<div class="spinner" style="width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid #002c77; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
+				<p>Müşteriler yükleniyor...</p>
+			</div>
+		</div>
+
+		<!-- Pagination Controls -->
+		<div class="pagination-container" id="pagination-container" style="display: none;">
+			<div class="pagination-info">
+				<span id="pagination-info-text">1-20 / 150 müşteri</span>
+			</div>
+			<div class="pagination-controls">
+				<button class="pagination-btn" id="prev-page" disabled>
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+					Önceki
+				</button>
+				<div class="pagination-pages" id="pagination-pages">
+					<!-- Dinamik sayfa numaraları -->
+				</div>
+				<button class="pagination-btn" id="next-page">
+					Sonraki
+					<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+				</button>
+			</div>
+			<div class="pagination-size">
+				<label>Sayfa başına:</label>
+				<select id="page-size-select">
+					<option value="10">10</option>
+					<option value="20" selected>20</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		// Auth kontrol
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
+		// Bayi componentlerini yukle
+		document.addEventListener('DOMContentLoaded', function() {
+			ComponentLoader.loadBayiComponents();
+		});
+
+		$(document).ready(async function() {
+			var allCustomers = [];
+			var currentDealerId = null;
+
+			// Pagination state
+			var paginationState = {
+				currentPage: 0,
+				pageSize: 20,
+				totalCount: 0,
+				totalPages: 0,
+				currentFilter: 'all'
+			};
+
+			// Loading overlay
+			function showLoading() {
+				if (!$('#loading-overlay').length) {
+					$('body').append('<div id="loading-overlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;"><div style="text-align:center;"><div style="width:40px;height:40px;border:3px solid #e0e0e0;border-top-color:#002c77;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 15px;"></div><div style="color:#333;font-size:14px;">Yükleniyor...</div></div></div>');
+				}
+				$('#loading-overlay').show();
+			}
+
+			function hideLoading() {
+				$('#loading-overlay').hide();
+			}
+
+			// Avatar initials oluştur
+			function getInitials(name) {
+				if (!name) return '?';
+				var parts = name.trim().split(' ');
+				if (parts.length >= 2) {
+					return (parts[0][0] + parts[1][0]).toUpperCase();
+				}
+				return name.substring(0, 2).toUpperCase();
+			}
+
+			// Müşteri listesini yükle
+			async function loadCustomers() {
+				showLoading();
+				try {
+					currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+					if (!currentDealerId) {
+						console.error('Bayi ID bulunamadi');
+						hideLoading();
+						$('.customer-list').html('<div class="empty-state"><p>Bayi bilgisi bulunamadı. Lütfen tekrar giriş yapın.</p></div>');
+						return;
+					}
+
+					// Pagination ve filtre seçeneklerini hazırla
+					var options = {
+						page: paginationState.currentPage,
+						pageSize: paginationState.pageSize
+					};
+
+					// Filtre uygula
+					if (paginationState.currentFilter === 'active') {
+						options.isActive = true;
+					} else if (paginationState.currentFilter === 'passive') {
+						options.isActive = false;
+					}
+
+					// Müşterileri çek (şube sayısı ve aktif teklif sayısı ile birlikte)
+					const result = await CustomersService.getPaginatedByDealerId(currentDealerId, options);
+					if (result.error) throw new Error(result.error);
+
+					// Pagination state güncelle
+					paginationState.totalCount = result.totalCount;
+					paginationState.totalPages = result.totalPages;
+
+					allCustomers = result.data || [];
+
+					// Her müşteri için şube ve teklif sayısını hesapla
+					for (var i = 0; i < allCustomers.length; i++) {
+						var customer = allCustomers[i];
+						// Şube sayısı
+						customer.branch_count = customer.customer_branches ? customer.customer_branches.length : 0;
+						// Aktif teklif sayısı
+						customer.active_offer_count = customer.offers ? customer.offers.filter(function(o) {
+							return o.status === 'accepted';
+						}).length : 0;
+					}
+
+					renderCustomerList(allCustomers);
+					renderPagination();
+					updateFilterCounts();
+
+					hideLoading();
+				} catch (err) {
+					hideLoading();
+					console.error('Müşteri yükleme hatası:', err);
+					$('.customer-list').html('<div class="empty-state"><p>Müşteriler yüklenirken hata oluştu</p></div>');
+				}
+			}
+
+			// Pagination render
+			function renderPagination() {
+				var $container = $('#pagination-container');
+				if (paginationState.totalCount === 0) {
+					$container.hide();
+					return;
+				}
+				$container.show();
+
+				var from = paginationState.currentPage * paginationState.pageSize + 1;
+				var to = Math.min(from + paginationState.pageSize - 1, paginationState.totalCount);
+				$('#pagination-info-text').text(from + '-' + to + ' / ' + paginationState.totalCount + ' müşteri');
+
+				$('#prev-page').prop('disabled', paginationState.currentPage === 0);
+				$('#next-page').prop('disabled', paginationState.currentPage >= paginationState.totalPages - 1);
+
+				renderPageNumbers();
+			}
+
+			function renderPageNumbers() {
+				var $pages = $('#pagination-pages');
+				$pages.empty();
+
+				var total = paginationState.totalPages;
+				var current = paginationState.currentPage;
+
+				var pages = [];
+				if (total <= 7) {
+					for (var i = 0; i < total; i++) pages.push(i);
+				} else {
+					pages = [0];
+					if (current > 2) pages.push('...');
+					for (var j = Math.max(1, current - 1); j <= Math.min(total - 2, current + 1); j++) {
+						pages.push(j);
+					}
+					if (current < total - 3) pages.push('...');
+					pages.push(total - 1);
+				}
+
+				pages.forEach(function(p) {
+					if (p === '...') {
+						$pages.append('<span class="pagination-page ellipsis">...</span>');
+					} else {
+						var isActive = p === current ? ' active' : '';
+						$pages.append('<button class="pagination-page' + isActive + '" data-page="' + p + '">' + (p + 1) + '</button>');
+					}
+				});
+			}
+
+			// Müşteri kartı oluştur
+			function createCustomerCard(customer) {
+				var isActive = customer.is_active !== false;
+				var cardClass = isActive ? '' : ' is-passive';
+				var statusClass = isActive ? 'active' : 'passive';
+				var statusText = isActive ? 'Aktif' : 'Pasif';
+				var statusIcon = isActive
+					? '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>'
+					: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>';
+
+				var initials = getInitials(customer.name);
+				var phone = customer.phone || '-';
+				var branchCount = customer.branch_count || 0;
+				var offerCount = customer.active_offer_count || 0;
+
+				return '<div class="customer-card' + cardClass + '" data-id="' + customer.id + '" data-name="' + customer.name + '" data-vkn="' + customer.vkn + '" data-phone="' + phone + '">' +
+					'<div class="customer-avatar">' + initials + '</div>' +
+					'<div class="customer-info">' +
+						'<div class="customer-name">' + customer.name + '</div>' +
+						(customer.company_name ? '<div class="customer-company">' + customer.company_name + '</div>' : '') +
+						'<div class="customer-meta">' +
+							'<div class="customer-meta-item">' +
+								'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>' +
+								'<span>VKN: ' + customer.vkn + '</span>' +
+							'</div>' +
+							'<div class="customer-meta-item">' +
+								'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>' +
+								'<span>' + phone + '</span>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="customer-stats">' +
+						'<div class="stat-badge branches">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
+							'<span>' + branchCount + ' Şube</span>' +
+						'</div>' +
+						'<div class="stat-badge offers">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>' +
+							'<span>' + offerCount + ' Aktif Teklif</span>' +
+						'</div>' +
+					'</div>' +
+					'<div class="customer-status ' + statusClass + '">' +
+						statusIcon +
+						'<span>' + statusText + '</span>' +
+					'</div>' +
+					'<a href="bayi-musteri-detay.html?id=' + customer.id + '" class="customer-action">' +
+						'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>' +
+					'</a>' +
+				'</div>';
+			}
+
+			// Müşteri listesini render et
+			function renderCustomerList(customers) {
+				var $list = $('.customer-list');
+				$list.empty();
+
+				if (customers.length === 0) {
+					$list.html('<div class="empty-state">' +
+						'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>' +
+						'<h3>Müşteri bulunamadı</h3>' +
+						'<p>Arama kriterlerinize uygun müşteri yok</p>' +
+					'</div>');
+					return;
+				}
+
+				customers.forEach(function(customer) {
+					$list.append(createCustomerCard(customer));
+				});
+
+				// Kart tıklama olayını bağla
+				$('.customer-card').on('click', function(e) {
+					if (!$(e.target).closest('.customer-action').length) {
+						var customerId = $(this).data('id');
+						window.location.href = 'bayi-musteri-detay.html?id=' + customerId;
+					}
+				});
+			}
+
+			// Filtre sayılarını güncelle
+			async function updateFilterCounts() {
+				if (!currentDealerId) return;
+
+				try {
+					const { data: counts, error } = await CustomersService.getCustomerCountsByStatus(currentDealerId);
+					if (error) throw error;
+
+					$('.filter-btn[data-filter="all"] .count').text(counts.all || 0);
+					$('.filter-btn[data-filter="active"] .count').text(counts.active || 0);
+					$('.filter-btn[data-filter="passive"] .count').text(counts.passive || 0);
+				} catch (err) {
+					console.error('Filtre sayıları yüklenemedi:', err);
+				}
+			}
+
+			// Müşterileri yükle
+			loadCustomers();
+
+			// Pagination event handlers
+			$('#prev-page').on('click', function() {
+				if (paginationState.currentPage > 0) {
+					paginationState.currentPage--;
+					loadCustomers();
+				}
+			});
+
+			$('#next-page').on('click', function() {
+				if (paginationState.currentPage < paginationState.totalPages - 1) {
+					paginationState.currentPage++;
+					loadCustomers();
+				}
+			});
+
+			$(document).on('click', '.pagination-page:not(.ellipsis)', function() {
+				paginationState.currentPage = parseInt($(this).data('page'));
+				loadCustomers();
+			});
+
+			$('#page-size-select').on('change', function() {
+				paginationState.pageSize = parseInt($(this).val());
+				paginationState.currentPage = 0;
+				loadCustomers();
+			});
+
+			// Filter functionality
+			$('.filter-btn').on('click', function() {
+				var $btn = $(this);
+				var filter = $btn.data('filter');
+
+				$('.filter-btn').removeClass('active');
+				$btn.addClass('active');
+
+				paginationState.currentFilter = filter;
+				paginationState.currentPage = 0;
+				loadCustomers();
+			});
+
+			// Search functionality (client-side)
+			$('#search-input').on('keyup', function() {
+				var searchTerm = $(this).val().toLowerCase();
+
+				$('.customer-card').each(function() {
+					var $card = $(this);
+					var name = ($card.data('name') || '').toLowerCase();
+					var vkn = ($card.data('vkn') || '').toString();
+					var phone = ($card.data('phone') || '').toString();
+
+					if (name.indexOf(searchTerm) > -1 || vkn.indexOf(searchTerm) > -1 || phone.indexOf(searchTerm) > -1) {
+						$card.show();
+					} else {
+						$card.hide();
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

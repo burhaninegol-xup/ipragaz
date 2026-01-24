@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Müşteri Detay - İpragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f5f7fa;
+			min-height: 100vh;
+		}
+
+		/* Main Content */
+		.main-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 30px 20px;
+		}
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #fff;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			border: 1px solid #e0e0e0;
+		}
+
+		.back-btn:hover {
+			background: #002c77;
+			color: #fff;
+			border-color: #002c77;
+		}
+
+		.back-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.page-header-left h1 {
+			font-size: 26px;
+			color: #1a1a2e;
+			font-weight: 700;
+		}
+
+		.page-header-right {
+			display: flex;
+			gap: 10px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 20px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-primary {
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+		}
+
+		.btn-secondary {
+			background: #fff;
+			color: #333;
+			border: 1px solid #e0e0e0;
+		}
+
+		.btn-secondary:hover {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.btn-danger {
+			background: #fff;
+			color: #e53935;
+			border: 1px solid #ffcdd2;
+		}
+
+		.btn-danger:hover {
+			background: #ffebee;
+		}
+
+		.btn-success {
+			background: #fff;
+			color: #2e7d32;
+			border: 1px solid #c8e6c9;
+		}
+
+		.btn-success:hover {
+			background: #e8f5e9;
+		}
+
+		/* Summary Card */
+		.summary-card {
+			background: #fff;
+			border-radius: 20px;
+			padding: 30px;
+			margin-bottom: 25px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			display: flex;
+			align-items: center;
+			gap: 25px;
+		}
+
+		.summary-avatar {
+			width: 80px;
+			height: 80px;
+			border-radius: 20px;
+			background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 28px;
+			font-weight: 700;
+			color: #fff;
+			text-transform: uppercase;
+			flex-shrink: 0;
+		}
+
+		.summary-info {
+			flex: 1;
+		}
+
+		.summary-name {
+			font-size: 22px;
+			font-weight: 700;
+			color: #333;
+			margin-bottom: 5px;
+		}
+
+		.summary-company {
+			font-size: 15px;
+			color: #666;
+			margin-bottom: 10px;
+		}
+
+		.summary-meta {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+
+		.summary-meta-item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 13px;
+			color: #888;
+		}
+
+		.summary-meta-item svg {
+			width: 16px;
+			height: 16px;
+			color: #999;
+		}
+
+		.summary-status {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 20px;
+			border-radius: 25px;
+			font-size: 14px;
+			font-weight: 600;
+			flex-shrink: 0;
+		}
+
+		.summary-status.active {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.summary-status.passive {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		.summary-status svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Tab Navigation */
+		.tab-navigation {
+			background: #fff;
+			border-radius: 16px;
+			padding: 8px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			display: flex;
+			gap: 5px;
+			overflow-x: auto;
+		}
+
+		.tab-btn {
+			padding: 12px 24px;
+			border: none;
+			background: transparent;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 500;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			white-space: nowrap;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.tab-btn:hover {
+			color: #333;
+			background: #f5f7fa;
+		}
+
+		.tab-btn.active {
+			background: #002c77;
+			color: #fff;
+		}
+
+		.tab-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.tab-btn .badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			background: rgba(0,0,0,0.1);
+			border-radius: 10px;
+			font-size: 11px;
+			padding: 0 6px;
+		}
+
+		.tab-btn.active .badge {
+			background: rgba(255,255,255,0.2);
+		}
+
+		/* Tab Content */
+		.tab-content {
+			display: none;
+		}
+
+		.tab-content.active {
+			display: block;
+		}
+
+		/* Content Card */
+		.content-card {
+			background: #fff;
+			border-radius: 16px;
+			padding: 25px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.content-card-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.content-card-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.content-card-title svg {
+			width: 20px;
+			height: 20px;
+			color: #002c77;
+		}
+
+		/* Form Styles */
+		.form-row {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 20px;
+			margin-bottom: 20px;
+		}
+
+		.form-group {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+
+		.form-group label {
+			font-size: 13px;
+			font-weight: 500;
+			color: #666;
+		}
+
+		.form-group input,
+		.form-group select,
+		.form-group textarea {
+			padding: 12px 15px;
+			border: 1px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 14px;
+			transition: all 0.2s;
+			background: #fff;
+		}
+
+		.form-group input:focus,
+		.form-group select:focus,
+		.form-group textarea:focus {
+			outline: none;
+			border-color: #002c77;
+			box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+		}
+
+		.form-group input:disabled,
+		.form-group select:disabled,
+		.form-group textarea:disabled {
+			background: #f5f7fa;
+			color: #333;
+		}
+
+		.form-group .value-display {
+			padding: 12px 15px;
+			background: #f5f7fa;
+			border-radius: 10px;
+			font-size: 14px;
+			color: #333;
+		}
+
+		/* Branch Card */
+		.branch-card {
+			display: flex;
+			align-items: flex-start;
+			gap: 15px;
+			padding: 18px;
+			border: 1px solid #e8ecf1;
+			border-radius: 14px;
+			margin-bottom: 12px;
+			transition: all 0.2s;
+		}
+
+		.branch-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.branch-card:hover {
+			border-color: #002c77;
+			box-shadow: 0 4px 15px rgba(0,44,119,0.08);
+		}
+
+		.branch-icon {
+			width: 44px;
+			height: 44px;
+			border-radius: 12px;
+			background: #e3f2fd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+		}
+
+		.branch-icon svg {
+			width: 22px;
+			height: 22px;
+			color: #1976d2;
+		}
+
+		.branch-info {
+			flex: 1;
+			min-width: 0;
+		}
+
+		.branch-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.branch-name .default-badge {
+			background: #002c77;
+			color: #fff;
+			font-size: 10px;
+			padding: 2px 8px;
+			border-radius: 10px;
+			font-weight: 500;
+		}
+
+		.branch-address {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 6px;
+		}
+
+		.branch-contact {
+			font-size: 12px;
+			color: #888;
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.branch-contact span {
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.branch-contact svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		.branch-actions {
+			display: flex;
+			gap: 8px;
+		}
+
+		.branch-action-btn {
+			width: 36px;
+			height: 36px;
+			border-radius: 8px;
+			border: 1px solid #e0e0e0;
+			background: #fff;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			transition: all 0.2s;
+			color: #666;
+		}
+
+		.branch-action-btn:hover {
+			border-color: #002c77;
+			color: #002c77;
+		}
+
+		.branch-action-btn svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		/* Offer Card (Liste için) */
+		.offer-list-card {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 15px;
+			border: 1px solid #e8ecf1;
+			border-radius: 12px;
+			margin-bottom: 10px;
+			transition: all 0.2s;
+			cursor: pointer;
+		}
+
+		.offer-list-card:hover {
+			border-color: #002c77;
+			background: #f8f9fc;
+		}
+
+		.offer-list-card:last-child {
+			margin-bottom: 0;
+		}
+
+		.offer-list-info {
+			flex: 1;
+		}
+
+		.offer-list-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 4px;
+		}
+
+		.offer-list-date {
+			font-size: 12px;
+			color: #888;
+		}
+
+		.offer-status-badge {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 5px 12px;
+			border-radius: 15px;
+			font-size: 11px;
+			font-weight: 600;
+		}
+
+		.offer-status-badge.accepted {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.offer-status-badge.pending {
+			background: #e3f2fd;
+			color: #1565c0;
+		}
+
+		.offer-status-badge.requested {
+			background: #fff3e0;
+			color: #e65100;
+		}
+
+		.offer-status-badge.rejected {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		/* Timeline */
+		.timeline {
+			position: relative;
+			padding-left: 30px;
+		}
+
+		.timeline::before {
+			content: '';
+			position: absolute;
+			left: 8px;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			background: #e0e0e0;
+		}
+
+		.timeline-item {
+			position: relative;
+			padding-bottom: 25px;
+		}
+
+		.timeline-item:last-child {
+			padding-bottom: 0;
+		}
+
+		.timeline-dot {
+			position: absolute;
+			left: -26px;
+			top: 4px;
+			width: 14px;
+			height: 14px;
+			border-radius: 50%;
+			background: #fff;
+			border: 3px solid #002c77;
+		}
+
+		.timeline-content {
+			background: #f5f7fa;
+			border-radius: 10px;
+			padding: 15px;
+		}
+
+		.timeline-title {
+			font-size: 14px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 5px;
+		}
+
+		.timeline-desc {
+			font-size: 13px;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.timeline-date {
+			font-size: 12px;
+			color: #999;
+		}
+
+		/* Edit Mode Banner */
+		.edit-mode-banner {
+			display: none;
+			background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+			color: #fff;
+			padding: 12px 20px;
+			border-radius: 12px;
+			margin-bottom: 20px;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.edit-mode-banner.active {
+			display: flex;
+		}
+
+		.edit-mode-banner-text {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			font-weight: 600;
+		}
+
+		.edit-mode-banner-text svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.edit-mode-actions {
+			display: flex;
+			gap: 10px;
+		}
+
+		.edit-mode-actions .btn {
+			padding: 8px 16px;
+			font-size: 13px;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 40px 20px;
+			color: #888;
+		}
+
+		.empty-state svg {
+			width: 60px;
+			height: 60px;
+			color: #ccc;
+			margin-bottom: 15px;
+		}
+
+		.empty-state h4 {
+			font-size: 16px;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+		}
+
+		/* Modal */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+		}
+
+		.modal {
+			background: #fff;
+			border-radius: 20px;
+			width: 100%;
+			max-width: 500px;
+			max-height: 90vh;
+			overflow-y: auto;
+		}
+
+		.modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 25px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.modal-title {
+			font-size: 18px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.modal-close {
+			width: 36px;
+			height: 36px;
+			border-radius: 50%;
+			background: #f5f5f5;
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			color: #666;
+			transition: all 0.2s;
+		}
+
+		.modal-close:hover {
+			background: #eee;
+		}
+
+		.modal-close svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.modal-body {
+			padding: 25px;
+		}
+
+		.modal-footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 10px;
+			padding: 20px 25px;
+			border-top: 1px solid #eee;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.page-header-right {
+				width: 100%;
+				flex-wrap: wrap;
+			}
+
+			.page-header-right .btn {
+				flex: 1;
+				justify-content: center;
+			}
+
+			.summary-card {
+				flex-direction: column;
+				text-align: center;
+			}
+
+			.summary-meta {
+				justify-content: center;
+			}
+
+			.tab-navigation {
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			.tab-btn {
+				padding: 10px 16px;
+				font-size: 13px;
+			}
+
+			.branch-card {
+				flex-direction: column;
+			}
+
+			.branch-actions {
+				width: 100%;
+				justify-content: flex-end;
+			}
+
+			.edit-mode-banner {
+				flex-direction: column;
+				gap: 10px;
+			}
+
+			.edit-mode-actions {
+				width: 100%;
+			}
+
+			.edit-mode-actions .btn {
+				flex: 1;
+				justify-content: center;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.main-content {
+				padding: 20px 15px;
+			}
+
+			.page-header-left h1 {
+				font-size: 20px;
+			}
+
+			.summary-avatar {
+				width: 60px;
+				height: 60px;
+				font-size: 22px;
+			}
+
+			.summary-name {
+				font-size: 18px;
+			}
+		}
+
+		/* Loading spinner */
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		.loading-spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #e0e0e0;
+			border-top-color: #002c77;
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 40px auto;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Edit Mode Banner -->
+		<div class="edit-mode-banner" id="edit-mode-banner">
+			<div class="edit-mode-banner-text">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+				Düzenleme Modu Aktif
+			</div>
+			<div class="edit-mode-actions">
+				<button class="btn btn-secondary" id="cancel-edit-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+					İptal
+				</button>
+				<button class="btn btn-primary" id="save-edit-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+					Kaydet
+				</button>
+			</div>
+		</div>
+
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<a href="bayi-musterilerim.html" class="back-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+				</a>
+				<h1 id="page-title">Müşteri Detay</h1>
+			</div>
+			<div class="page-header-right" id="page-actions">
+				<button class="btn btn-secondary" id="edit-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+					Düzenle
+				</button>
+				<button class="btn btn-danger" id="deactivate-btn">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>
+					Pasife Al
+				</button>
+			</div>
+		</div>
+
+		<!-- Summary Card -->
+		<div class="summary-card" id="summary-card">
+			<div class="summary-avatar" id="summary-avatar">?</div>
+			<div class="summary-info">
+				<div class="summary-name" id="summary-name">-</div>
+				<div class="summary-company" id="summary-company"></div>
+				<div class="summary-meta">
+					<div class="summary-meta-item">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+						<span id="summary-vkn">VKN: -</span>
+					</div>
+					<div class="summary-meta-item">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+						<span id="summary-phone">-</span>
+					</div>
+					<div class="summary-meta-item">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+						<span id="summary-branch-count">0 Şube</span>
+					</div>
+				</div>
+			</div>
+			<div class="summary-status active" id="summary-status">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+				<span>Aktif</span>
+			</div>
+		</div>
+
+		<!-- Tab Navigation -->
+		<div class="tab-navigation">
+			<button class="tab-btn active" data-tab="general">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+				Genel Bilgiler
+			</button>
+			<button class="tab-btn" data-tab="branches">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+				Şubeler
+				<span class="badge" id="branch-count-badge">0</span>
+			</button>
+			<button class="tab-btn" data-tab="offers">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+				Teklifler
+				<span class="badge" id="offer-count-badge">0</span>
+			</button>
+			<button class="tab-btn" data-tab="history">
+				<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+				Geçmiş
+			</button>
+		</div>
+
+		<!-- Tab Contents -->
+		<!-- General Info Tab -->
+		<div class="tab-content active" id="tab-general">
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+						İletişim Bilgileri
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Müşteri Adı</label>
+						<input type="text" id="field-name" disabled>
+					</div>
+					<div class="form-group">
+						<label>Telefon</label>
+						<input type="text" id="field-phone" disabled>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>E-posta</label>
+						<input type="email" id="field-email" disabled>
+					</div>
+				</div>
+			</div>
+
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+						Firma Bilgileri
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Firma Ünvanı</label>
+						<input type="text" id="field-company" disabled>
+					</div>
+					<div class="form-group">
+						<label>Vergi Kimlik Numarası (VKN)</label>
+						<input type="text" id="field-vkn" disabled>
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Vergi Dairesi</label>
+						<input type="text" id="field-tax-office" disabled>
+					</div>
+				</div>
+			</div>
+
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+						Sistem Bilgileri
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Oluşturulma Tarihi</label>
+						<div class="value-display" id="field-created-at">-</div>
+					</div>
+					<div class="form-group">
+						<label>Son Güncelleme</label>
+						<div class="value-display" id="field-updated-at">-</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Branches Tab -->
+		<div class="tab-content" id="tab-branches">
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+						Şube Listesi
+					</div>
+					<button class="btn btn-primary btn-sm" id="add-branch-btn">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+						Yeni Şube Ekle
+					</button>
+				</div>
+				<div id="branch-list">
+					<div class="loading-spinner"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Offers Tab -->
+		<div class="tab-content" id="tab-offers">
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+						Teklif Geçmişi
+					</div>
+					<a href="bayi-teklif-olustur.html" class="btn btn-primary btn-sm" id="new-offer-btn">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+						Yeni Teklif Oluştur
+					</a>
+				</div>
+				<div id="offer-list">
+					<div class="loading-spinner"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- History Tab -->
+		<div class="tab-content" id="tab-history">
+			<div class="content-card">
+				<div class="content-card-header">
+					<div class="content-card-title">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+						Değişiklik Geçmişi
+					</div>
+				</div>
+				<div id="history-timeline">
+					<div class="loading-spinner"></div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Branch Modal -->
+	<div class="modal-overlay" id="branch-modal">
+		<div class="modal">
+			<div class="modal-header">
+				<div class="modal-title" id="branch-modal-title">Yeni Şube Ekle</div>
+				<button class="modal-close" id="branch-modal-close">
+					<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="branch-id">
+				<div class="form-group" style="margin-bottom: 15px;">
+					<label>Şube Adı</label>
+					<input type="text" id="branch-name" placeholder="Merkez Şube">
+				</div>
+				<div class="form-group" style="margin-bottom: 15px;">
+					<label>Adres</label>
+					<textarea id="branch-address" rows="2" placeholder="Tam adres"></textarea>
+				</div>
+				<div class="form-row" style="margin-bottom: 15px;">
+					<div class="form-group">
+						<label>İlçe</label>
+						<input type="text" id="branch-district" placeholder="İlçe">
+					</div>
+					<div class="form-group">
+						<label>İl</label>
+						<input type="text" id="branch-city" placeholder="İl">
+					</div>
+				</div>
+				<div class="form-row" style="margin-bottom: 15px;">
+					<div class="form-group">
+						<label>Yetkili Kişi</label>
+						<input type="text" id="branch-contact" placeholder="Yetkili adı">
+					</div>
+					<div class="form-group">
+						<label>Telefon</label>
+						<input type="text" id="branch-phone" placeholder="0xxx xxx xx xx">
+					</div>
+				</div>
+				<div class="form-group">
+					<label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+						<input type="checkbox" id="branch-default" style="width: 18px; height: 18px;">
+						Varsayılan şube olarak ayarla
+					</label>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" id="branch-cancel-btn">İptal</button>
+				<button class="btn btn-primary" id="branch-save-btn">Kaydet</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<!-- Supabase -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script>
+		// Auth kontrol
+		if (!bayiAuthCheck()) {
+			throw new Error('Auth required');
+		}
+
+		// Bayi componentlerini yukle
+		document.addEventListener('DOMContentLoaded', function() {
+			ComponentLoader.loadBayiComponents();
+		});
+
+		$(document).ready(async function() {
+			var customerId = null;
+			var customerData = null;
+			var currentDealerId = null;
+			var isEditMode = false;
+			var isNewCustomer = false;
+
+			// URL'den müşteri ID'sini al
+			var urlParams = new URLSearchParams(window.location.search);
+			customerId = urlParams.get('id');
+			isNewCustomer = !customerId;
+
+			currentDealerId = sessionStorage.getItem('bayi_dealer_id');
+			if (!currentDealerId) {
+				alert('Bayi bilgisi bulunamadı. Lütfen tekrar giriş yapın.');
+				window.location.href = 'bayi-login.html';
+				return;
+			}
+
+			// Yeni müşteri ekleme modu
+			if (isNewCustomer) {
+				$('#page-title').text('Yeni Müşteri Ekle');
+				$('#page-actions').hide();
+				$('#summary-card').hide();
+				$('.tab-navigation').hide();
+				$('.tab-content').hide();
+				$('#tab-general').addClass('active').show();
+				enterEditMode();
+				initNewCustomer();
+			} else {
+				loadCustomerData();
+			}
+
+			// Avatar initials oluştur
+			function getInitials(name) {
+				if (!name) return '?';
+				var parts = name.trim().split(' ');
+				if (parts.length >= 2) {
+					return (parts[0][0] + parts[1][0]).toUpperCase();
+				}
+				return name.substring(0, 2).toUpperCase();
+			}
+
+			// Tarih formatla
+			function formatDate(dateStr) {
+				if (!dateStr) return '-';
+				var date = new Date(dateStr);
+				return date.toLocaleDateString('tr-TR', {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit'
+				});
+			}
+
+			// Yeni müşteri için boş form hazırla
+			function initNewCustomer() {
+				customerData = {
+					name: '',
+					phone: '',
+					email: '',
+					company_name: '',
+					vkn: '',
+					tax_office: '',
+					is_active: true,
+					dealer_id: currentDealerId
+				};
+				renderGeneralInfo();
+			}
+
+			// Müşteri verilerini yükle
+			async function loadCustomerData() {
+				try {
+					const { data, error } = await CustomersService.getById(customerId);
+					if (error) throw error;
+					if (!data) {
+						alert('Müşteri bulunamadı');
+						window.location.href = 'bayi-musterilerim.html';
+						return;
+					}
+
+					customerData = data;
+					renderCustomerSummary();
+					renderGeneralInfo();
+					loadBranches();
+					loadOffers();
+					loadHistory();
+
+				} catch (err) {
+					console.error('Müşteri yükleme hatası:', err);
+					alert('Müşteri yüklenirken hata oluştu');
+				}
+			}
+
+			// Özet kartı render
+			function renderCustomerSummary() {
+				$('#summary-avatar').text(getInitials(customerData.name));
+				$('#summary-name').text(customerData.name);
+				$('#summary-company').text(customerData.company_name || '');
+				$('#summary-vkn').text('VKN: ' + (customerData.vkn || '-'));
+				$('#summary-phone').text(customerData.phone || '-');
+
+				var branchCount = customerData.customer_branches ? customerData.customer_branches.length : 0;
+				$('#summary-branch-count').text(branchCount + ' Şube');
+				$('#branch-count-badge').text(branchCount);
+
+				// Status
+				var isActive = customerData.is_active !== false;
+				var $status = $('#summary-status');
+				$status.removeClass('active passive');
+				if (isActive) {
+					$status.addClass('active');
+					$status.html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Aktif</span>');
+					$('#deactivate-btn').show().html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>Pasife Al');
+					$('#deactivate-btn').removeClass('btn-success').addClass('btn-danger');
+				} else {
+					$status.addClass('passive');
+					$status.html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg><span>Pasif</span>');
+					$('#deactivate-btn').show().html('<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Aktif Et');
+					$('#deactivate-btn').removeClass('btn-danger').addClass('btn-success');
+				}
+
+				// Page title güncelle
+				$('#page-title').text(customerData.name);
+			}
+
+			// Genel bilgiler render
+			function renderGeneralInfo() {
+				$('#field-name').val(customerData.name || '');
+				$('#field-phone').val(customerData.phone || '');
+				$('#field-email').val(customerData.email || '');
+				$('#field-company').val(customerData.company_name || '');
+				$('#field-vkn').val(customerData.vkn || '');
+				$('#field-tax-office').val(customerData.tax_office || '');
+				$('#field-created-at').text(formatDate(customerData.created_at));
+				$('#field-updated-at').text(formatDate(customerData.updated_at));
+			}
+
+			// Şubeleri yükle
+			async function loadBranches() {
+				var $list = $('#branch-list');
+
+				try {
+					const { data: branches, error } = await BranchesService.getByCustomerId(customerId);
+					if (error) throw error;
+
+					$list.empty();
+
+					if (!branches || branches.length === 0) {
+						$list.html('<div class="empty-state"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><h4>Henüz şube eklenmemiş</h4><p>Yeni şube eklemek için yukarıdaki butonu kullanın</p></div>');
+						return;
+					}
+
+					$('#branch-count-badge').text(branches.length);
+					$('#summary-branch-count').text(branches.length + ' Şube');
+
+					branches.forEach(function(branch) {
+						var defaultBadge = branch.is_default ? '<span class="default-badge">Varsayılan</span>' : '';
+						var branchName = branch.branch_name || 'Şube';
+						var address = [branch.address, branch.district, branch.city].filter(Boolean).join(', ');
+
+						$list.append(
+							'<div class="branch-card" data-branch-id="' + branch.id + '">' +
+								'<div class="branch-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>' +
+								'<div class="branch-info">' +
+									'<div class="branch-name">' + branchName + defaultBadge + '</div>' +
+									'<div class="branch-address">' + (address || '-') + '</div>' +
+									'<div class="branch-contact">' +
+										'<span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>' + (branch.contact_person || '-') + '</span>' +
+										'<span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>' + (branch.phone || '-') + '</span>' +
+									'</div>' +
+								'</div>' +
+								'<div class="branch-actions">' +
+									'<button class="branch-action-btn edit-branch-btn" data-branch-id="' + branch.id + '" title="Düzenle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>' +
+									'<button class="branch-action-btn delete-branch-btn" data-branch-id="' + branch.id + '" title="Sil"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>' +
+								'</div>' +
+							'</div>'
+						);
+					});
+
+				} catch (err) {
+					console.error('Şube yükleme hatası:', err);
+					$list.html('<div class="empty-state"><p>Şubeler yüklenirken hata oluştu</p></div>');
+				}
+			}
+
+			// Teklifleri yükle
+			async function loadOffers() {
+				var $list = $('#offer-list');
+
+				try {
+					const { data: offers, error } = await OffersService.getByCustomerId(customerId);
+					if (error) throw error;
+
+					$list.empty();
+
+					if (!offers || offers.length === 0) {
+						$list.html('<div class="empty-state"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg><h4>Henüz teklif oluşturulmamış</h4><p>Yeni teklif oluşturmak için yukarıdaki butonu kullanın</p></div>');
+						$('#offer-count-badge').text('0');
+						return;
+					}
+
+					$('#offer-count-badge').text(offers.length);
+
+					// Yeni teklif butonuna customer_id ekle
+					$('#new-offer-btn').attr('href', 'bayi-teklif-olustur.html?customer_id=' + customerId);
+
+					var statusLabels = {
+						requested: 'Talep Edildi',
+						pending: 'Beklemede',
+						accepted: 'Kabul Edildi',
+						rejected: 'Reddedildi',
+						cancelled: 'İptal Edildi',
+						passive: 'Pasif'
+					};
+
+					offers.forEach(function(offer) {
+						var status = offer.status || 'pending';
+						var statusLabel = statusLabels[status] || status;
+
+						$list.append(
+							'<div class="offer-list-card" data-offer-id="' + offer.id + '">' +
+								'<div class="offer-list-info">' +
+									'<div class="offer-list-title">Teklif #' + offer.id.substring(0, 8) + '</div>' +
+									'<div class="offer-list-date">' + formatDate(offer.created_at) + '</div>' +
+								'</div>' +
+								'<div class="offer-status-badge ' + status + '">' + statusLabel + '</div>' +
+							'</div>'
+						);
+					});
+
+					// Teklif kartına tıklama
+					$('.offer-list-card').on('click', function() {
+						var offerId = $(this).data('offer-id');
+						window.location.href = 'bayi-teklif-olustur.html?offer_id=' + offerId;
+					});
+
+				} catch (err) {
+					console.error('Teklif yükleme hatası:', err);
+					$list.html('<div class="empty-state"><p>Teklifler yüklenirken hata oluştu</p></div>');
+				}
+			}
+
+			// Geçmişi yükle (şimdilik basit timeline)
+			function loadHistory() {
+				var $timeline = $('#history-timeline');
+				$timeline.empty();
+
+				var timeline = '<div class="timeline">';
+
+				// Oluşturulma
+				timeline += '<div class="timeline-item">' +
+					'<div class="timeline-dot"></div>' +
+					'<div class="timeline-content">' +
+						'<div class="timeline-title">Müşteri Oluşturuldu</div>' +
+						'<div class="timeline-desc">Müşteri kaydı sisteme eklendi</div>' +
+						'<div class="timeline-date">' + formatDate(customerData.created_at) + '</div>' +
+					'</div>' +
+				'</div>';
+
+				// Son güncelleme (varsa ve farklıysa)
+				if (customerData.updated_at && customerData.updated_at !== customerData.created_at) {
+					timeline += '<div class="timeline-item">' +
+						'<div class="timeline-dot"></div>' +
+						'<div class="timeline-content">' +
+							'<div class="timeline-title">Bilgiler Güncellendi</div>' +
+							'<div class="timeline-desc">Müşteri bilgileri güncellendi</div>' +
+							'<div class="timeline-date">' + formatDate(customerData.updated_at) + '</div>' +
+						'</div>' +
+					'</div>';
+				}
+
+				timeline += '</div>';
+				$timeline.html(timeline);
+			}
+
+			// Tab değişimi
+			$('.tab-btn').on('click', function() {
+				var tab = $(this).data('tab');
+				$('.tab-btn').removeClass('active');
+				$(this).addClass('active');
+				$('.tab-content').removeClass('active');
+				$('#tab-' + tab).addClass('active');
+			});
+
+			// Düzenleme moduna gir
+			function enterEditMode() {
+				isEditMode = true;
+				$('#edit-mode-banner').addClass('active');
+				$('#edit-btn').hide();
+				$('#deactivate-btn').hide();
+
+				// Form alanlarını aktif et
+				$('#tab-general input:not([type="hidden"])').prop('disabled', false);
+			}
+
+			// Düzenleme modundan çık
+			function exitEditMode() {
+				isEditMode = false;
+				$('#edit-mode-banner').removeClass('active');
+				$('#edit-btn').show();
+				$('#deactivate-btn').show();
+
+				// Form alanlarını pasif et
+				$('#tab-general input:not([type="hidden"])').prop('disabled', true);
+
+				// Orijinal verileri geri yükle
+				if (!isNewCustomer) {
+					renderGeneralInfo();
+				}
+			}
+
+			// Düzenle butonu
+			$('#edit-btn').on('click', function() {
+				enterEditMode();
+			});
+
+			// İptal butonu
+			$('#cancel-edit-btn').on('click', function() {
+				if (isNewCustomer) {
+					window.location.href = 'bayi-musterilerim.html';
+				} else {
+					exitEditMode();
+				}
+			});
+
+			// Kaydet butonu
+			$('#save-edit-btn').on('click', async function() {
+				var updateData = {
+					name: $('#field-name').val().trim(),
+					phone: $('#field-phone').val().trim(),
+					email: $('#field-email').val().trim(),
+					company_name: $('#field-company').val().trim(),
+					vkn: $('#field-vkn').val().trim(),
+					tax_office: $('#field-tax-office').val().trim()
+				};
+
+				// Validasyon
+				if (!updateData.name) {
+					alert('Müşteri adı zorunludur');
+					return;
+				}
+
+				if (!updateData.vkn) {
+					alert('VKN zorunludur');
+					return;
+				}
+
+				try {
+					var result;
+					if (isNewCustomer) {
+						updateData.dealer_id = currentDealerId;
+						updateData.is_active = true;
+						result = await CustomersService.create(updateData);
+					} else {
+						result = await CustomersService.update(customerId, updateData);
+					}
+
+					if (result.error) throw new Error(result.error);
+
+					if (isNewCustomer) {
+						alert('Müşteri başarıyla oluşturuldu');
+						window.location.href = 'bayi-musteri-detay.html?id=' + result.data.id;
+					} else {
+						customerData = { ...customerData, ...updateData };
+						renderCustomerSummary();
+						exitEditMode();
+						alert('Müşteri bilgileri güncellendi');
+					}
+				} catch (err) {
+					console.error('Kaydetme hatası:', err);
+					alert('Kaydetme sırasında hata oluştu: ' + err.message);
+				}
+			});
+
+			// Pasife Al / Aktif Et butonu
+			$('#deactivate-btn').on('click', async function() {
+				var isActive = customerData.is_active !== false;
+				var action = isActive ? 'pasife almak' : 'aktif etmek';
+
+				if (!confirm('Bu müşteriyi ' + action + ' istediğinize emin misiniz?')) {
+					return;
+				}
+
+				try {
+					var result;
+					if (isActive) {
+						result = await CustomersService.deactivate(customerId);
+					} else {
+						result = await CustomersService.activate(customerId);
+					}
+
+					if (result.error) throw new Error(result.error);
+
+					customerData.is_active = !isActive;
+					renderCustomerSummary();
+					alert('Müşteri durumu güncellendi');
+				} catch (err) {
+					console.error('Durum güncelleme hatası:', err);
+					alert('İşlem sırasında hata oluştu');
+				}
+			});
+
+			// Şube Modal işlemleri
+			var editingBranchId = null;
+
+			$('#add-branch-btn').on('click', function() {
+				editingBranchId = null;
+				$('#branch-modal-title').text('Yeni Şube Ekle');
+				$('#branch-id').val('');
+				$('#branch-name').val('');
+				$('#branch-address').val('');
+				$('#branch-district').val('');
+				$('#branch-city').val('');
+				$('#branch-contact').val('');
+				$('#branch-phone').val('');
+				$('#branch-default').prop('checked', false);
+				$('#branch-modal').addClass('active');
+			});
+
+			$(document).on('click', '.edit-branch-btn', async function(e) {
+				e.stopPropagation();
+				editingBranchId = $(this).data('branch-id');
+
+				try {
+					const { data: branch, error } = await BranchesService.getById(editingBranchId);
+					if (error) throw error;
+
+					$('#branch-modal-title').text('Şube Düzenle');
+					$('#branch-id').val(branch.id);
+					$('#branch-name').val(branch.branch_name || '');
+					$('#branch-address').val(branch.address || '');
+					$('#branch-district').val(branch.district || '');
+					$('#branch-city').val(branch.city || '');
+					$('#branch-contact').val(branch.contact_person || '');
+					$('#branch-phone').val(branch.phone || '');
+					$('#branch-default').prop('checked', branch.is_default);
+					$('#branch-modal').addClass('active');
+				} catch (err) {
+					console.error('Şube yükleme hatası:', err);
+					alert('Şube bilgileri yüklenemedi');
+				}
+			});
+
+			$(document).on('click', '.delete-branch-btn', async function(e) {
+				e.stopPropagation();
+				var branchId = $(this).data('branch-id');
+
+				if (!confirm('Bu şubeyi silmek istediğinize emin misiniz?')) {
+					return;
+				}
+
+				try {
+					const { error } = await BranchesService.delete(branchId);
+					if (error) throw error;
+
+					loadBranches();
+					alert('Şube silindi');
+				} catch (err) {
+					console.error('Şube silme hatası:', err);
+					alert('Şube silinemedi');
+				}
+			});
+
+			$('#branch-modal-close, #branch-cancel-btn').on('click', function() {
+				$('#branch-modal').removeClass('active');
+			});
+
+			$('#branch-save-btn').on('click', async function() {
+				var branchData = {
+					customer_id: customerId,
+					branch_name: $('#branch-name').val().trim(),
+					address: $('#branch-address').val().trim(),
+					district: $('#branch-district').val().trim(),
+					city: $('#branch-city').val().trim(),
+					contact_person: $('#branch-contact').val().trim(),
+					phone: $('#branch-phone').val().trim(),
+					is_default: $('#branch-default').is(':checked')
+				};
+
+				if (!branchData.branch_name) {
+					alert('Şube adı zorunludur');
+					return;
+				}
+
+				try {
+					var result;
+					if (editingBranchId) {
+						result = await BranchesService.update(editingBranchId, branchData);
+					} else {
+						result = await BranchesService.create(branchData);
+					}
+
+					if (result.error) throw new Error(result.error);
+
+					$('#branch-modal').removeClass('active');
+					loadBranches();
+					alert(editingBranchId ? 'Şube güncellendi' : 'Şube eklendi');
+				} catch (err) {
+					console.error('Şube kaydetme hatası:', err);
+					alert('Şube kaydedilemedi: ' + err.message);
+				}
+			});
+		});
+	</script>
+</body>
+</html>

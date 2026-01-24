@@ -918,7 +918,7 @@ const DealerNotificationUI = {
 
 		// Navigate to offer if available
 		if (offerId) {
-			window.location.href = 'bayi-musteri-ekle.html?offer_id=' + offerId;
+			window.location.href = 'bayi-teklif-olustur.html?offer_id=' + offerId;
 		}
 	},
 
@@ -972,7 +972,7 @@ const DealerNotificationUI = {
 			</div>
 			<div class="toast-message">${notification.message}</div>
 			${notification.offer_id ? `
-				<button class="toast-action" onclick="window.location.href='bayi-musteri-ekle.html?offer_id=${notification.offer_id}'">
+				<button class="toast-action" onclick="window.location.href='bayi-teklif-olustur.html?offer_id=${notification.offer_id}'">
 					Teklifi Goruntule
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>

@@ -999,7 +999,7 @@ const ComponentLoader = {
 
                     // Teklif sayfasina git
                     if (offerId) {
-                        window.location.href = 'bayi-musteri-listesi.html';
+                        window.location.href = 'bayi-teklif-listesi.html';
                     }
                 });
             });
@@ -1108,8 +1108,8 @@ const ComponentLoader = {
             </div>
             <div class="toast-message">${notification.message}</div>
             ${notification.offer_id ? `
-                <button class="toast-action" onclick="window.location.href='bayi-musteri-listesi.html'">
-                    Musterilere Git
+                <button class="toast-action" onclick="window.location.href='bayi-teklif-listesi.html'">
+                    Tekliflere Git
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
                     </svg>

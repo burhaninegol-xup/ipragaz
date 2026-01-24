@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Raporu - 20260106_143701</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: #1a1a2e; color: #eee; padding: 2rem; }
+        .header { text-align: center; margin-bottom: 2rem; }
+        .header h1 { color: #fff; margin-bottom: 0.5rem; }
+        .header .date { color: #888; }
+        
+        .summary { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .summary-card { background: #16213e; padding: 1.5rem 2rem; border-radius: 12px; text-align: center; }
+        .summary-card .value { font-size: 2rem; font-weight: bold; }
+        .summary-card .label { color: #888; margin-top: 0.5rem; }
+        .summary-card.passed .value { color: #4ade80; }
+        .summary-card.failed .value { color: #f87171; }
+        
+        .scenarios { max-width: 900px; margin: 0 auto; }
+        .scenario { background: #16213e; border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
+        .scenario.success { border-left: 4px solid #4ade80; }
+        .scenario.failed { border-left: 4px solid #f87171; }
+        
+        .scenario-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; cursor: pointer; }
+        .scenario-header:hover { background: #1e2a4a; }
+        .status-icon { font-size: 1.2rem; }
+        .scenario-name { flex: 1; font-weight: 500; }
+        .scenario-stats { color: #888; }
+        .scenario-time { color: #888; font-size: 0.9rem; }
+        
+        .scenario-body { display: none; padding: 0 1.5rem 1rem; }
+        .scenario.expanded .scenario-body { display: block; }
+        
+        .step { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; background: #0f1629; }
+        .step-success { }
+        .step-failed { background: #2d1f1f; }
+        .step-status { }
+        .step-desc { flex: 1; }
+        .step-time { color: #666; font-size: 0.85rem; }
+        
+        .error-msg { color: #f87171; font-size: 0.9rem; margin-top: 0.5rem; padding: 0.5rem; background: #3d1f1f; border-radius: 4px; }
+        .screenshot { margin-top: 0.75rem; }
+        .screenshot a { color: #60a5fa; text-decoration: none; padding: 0.25rem 0.5rem; background: #1e3a5f; border-radius: 4px; }
+        .screenshot a:hover { background: #2563eb; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 Test Raporu</h1>
+        <div class="date">2026-01-06 14:37:16</div>
+    </div>
+    
+    <div class="summary">
+        <div class="summary-card">
+            <div class="value">1</div>
+            <div class="label">Toplam</div>
+        </div>
+        <div class="summary-card passed">
+            <div class="value">1</div>
+            <div class="label">Başarılı</div>
+        </div>
+        <div class="summary-card failed">
+            <div class="value">0</div>
+            <div class="label">Başarısız</div>
+        </div>
+        <div class="summary-card">
+            <div class="value">100%</div>
+            <div class="label">Başarı</div>
+        </div>
+    </div>
+    
+    <div class="scenarios">
+        
+            <div class="scenario success">
+                <div class="scenario-header" onclick="toggleScenario(this)">
+                    <span class="status-icon">✅</span>
+                    <span class="scenario-name">Bayi Değişikliğinde Fiyat Güncelleme</span>
+                    <span class="scenario-stats">31/31 adım</span>
+                    <span class="scenario-time">14174ms</span>
+                </div>
+                <div class="scenario-body">
+                    
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Login sayfasına git</span>
+                    <span class="step-time">2407ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Telefon numarası gir</span>
+                    <span class="step-time">143ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Devam butonuna tıkla</span>
+                    <span class="step-time">253ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP sayfasını bekle</span>
+                    <span class="step-time">19ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP 1. hane</span>
+                    <span class="step-time">115ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP 2. hane</span>
+                    <span class="step-time">109ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP 3. hane</span>
+                    <span class="step-time">107ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP 4. hane</span>
+                    <span class="step-time">106ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">OTP doğrula butonuna tıkla</span>
+                    <span class="step-time">137ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Sayfa yönlendirmesini bekle</span>
+                    <span class="step-time">6ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ürün kartlarını bekle</span>
+                    <span class="step-time">1303ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi seçim modalını aç</span>
+                    <span class="step-time">142ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi modal açıldı</span>
+                    <span class="step-time">7ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">İlk bayiyi seç</span>
+                    <span class="step-time">922ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi seçimini onayla</span>
+                    <span class="step-time">136ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Fiyatların yüklenmesini bekle</span>
+                    <span class="step-time">1001ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ana sayfa - İlk bayi fiyatları</span>
+                    <span class="step-time">281ms</span>
+                    
+                    <div class="screenshot"><a href="/api/screenshots/20260106_143701_anasayfa-ilk-bayi.png" target="_blank">📷 Screenshot</a></div>
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">İlk ürüne tıkla</span>
+                    <span class="step-time">234ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ürün detay sayfasını bekle</span>
+                    <span class="step-time">1302ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">İlk bayi fiyatını kaydet</span>
+                    <span class="step-time">10ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ürün detay - İlk bayi fiyatı</span>
+                    <span class="step-time">96ms</span>
+                    
+                    <div class="screenshot"><a href="/api/screenshots/20260106_143701_urun-detay-ilk-bayi.png" target="_blank">📷 Screenshot</a></div>
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi seçim modalını aç (2. kez)</span>
+                    <span class="step-time">142ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi modal açıldı</span>
+                    <span class="step-time">5ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">İkinci bayiyi seç</span>
+                    <span class="step-time">911ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Bayi seçimini onayla</span>
+                    <span class="step-time">132ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Fiyatların güncellenmesini bekle</span>
+                    <span class="step-time">1001ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Fiyat değişmeli!</span>
+                    <span class="step-time">8ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ürün detay - İkinci bayi fiyatı</span>
+                    <span class="step-time">110ms</span>
+                    
+                    <div class="screenshot"><a href="/api/screenshots/20260106_143701_urun-detay-ikinci-bayi.png" target="_blank">📷 Screenshot</a></div>
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Anasayfaya dön</span>
+                    <span class="step-time">348ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ana sayfaya dönüldü</span>
+                    <span class="step-time">1301ms</span>
+                    
+                    
+                </div>
+                
+                <div class="step step-success">
+                    <span class="step-status">✅</span>
+                    <span class="step-desc">Ana sayfa - İkinci bayi fiyatları</span>
+                    <span class="step-time">281ms</span>
+                    
+                    <div class="screenshot"><a href="/api/screenshots/20260106_143701_anasayfa-ikinci-bayi.png" target="_blank">📷 Screenshot</a></div>
+                </div>
+                
+                </div>
+            </div>
+            
+    </div>
+    
+    <script>
+        function toggleScenario(header) {
+            header.parentElement.classList.toggle('expanded');
+        }
+        // Başarısız olanları otomatik aç
+        document.querySelectorAll('.scenario.failed').forEach(s => s.classList.add('expanded'));
+    </script>
+</body>
+</html>
