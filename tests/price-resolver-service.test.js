@@ -5,13 +5,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
  *
  * Fiyat oncelik kurallarini test eder:
  * 1. Aktif Teklif -> "Size Ozel"
- * 2. Bayi Barem Fiyati -> "Bayi Ozel"
- * 3. Perakende Fiyat -> "Perakende"
+ * 2. Perakende Fiyat -> "Perakende"
  */
 
 describe('PriceResolverService', () => {
   let mockOffersService
-  let mockBaremPricesService
   let PriceResolverService
 
   beforeEach(() => {
@@ -22,21 +20,13 @@ describe('PriceResolverService', () => {
       getAcceptedOfferForBranch: vi.fn()
     }
 
-    // BaremPricesService mock
-    mockBaremPricesService = {
-      getByDealerAndProduct: vi.fn(),
-      getByDealer: vi.fn()
-    }
-
     // Global'e ata
     global.OffersService = mockOffersService
-    global.BaremPricesService = mockBaremPricesService
 
     // PriceResolverService'i tanimla
     PriceResolverService = {
       PRICE_TYPES: {
         OFFER: { type: 'offer', label: 'Size Ozel', cssClass: 'size-ozel' },
-        BAREM: { type: 'barem', label: 'Bayi Ozel', cssClass: 'bayi-ozel' },
         RETAIL: { type: 'retail', label: 'Perakende', cssClass: 'perakende' }
       },
 
@@ -55,20 +45,7 @@ describe('PriceResolverService', () => {
             }
           }
 
-          // 2. Barem fiyat kontrolu
-          if (dealerId) {
-            var baremPrice = await this._getBaremPrice(productId, dealerId)
-            if (baremPrice !== null) {
-              return {
-                price: baremPrice,
-                priceType: this.PRICE_TYPES.BAREM.type,
-                label: this.PRICE_TYPES.BAREM.label,
-                cssClass: this.PRICE_TYPES.BAREM.cssClass
-              }
-            }
-          }
-
-          // 3. Perakende fiyat
+          // 2. Perakende fiyat
           return {
             price: basePrice || 0,
             priceType: this.PRICE_TYPES.RETAIL.type,
@@ -88,15 +65,10 @@ describe('PriceResolverService', () => {
       async resolvePricesForProducts(products, customerId, branchId, dealerId) {
         var result = {}
         var offerPrices = {}
-        var baremPrices = {}
 
         try {
           if (customerId && branchId && dealerId) {
             offerPrices = await this._getOfferPricesForBranch(customerId, branchId, dealerId)
-          }
-
-          if (dealerId) {
-            baremPrices = await this._getBaremPricesForDealer(dealerId)
           }
 
           var self = this
@@ -110,16 +82,6 @@ describe('PriceResolverService', () => {
                 priceType: self.PRICE_TYPES.OFFER.type,
                 label: self.PRICE_TYPES.OFFER.label,
                 cssClass: self.PRICE_TYPES.OFFER.cssClass
-              }
-              return
-            }
-
-            if (baremPrices[productId] !== undefined) {
-              result[productId] = {
-                price: baremPrices[productId],
-                priceType: self.PRICE_TYPES.BAREM.type,
-                label: self.PRICE_TYPES.BAREM.label,
-                cssClass: self.PRICE_TYPES.BAREM.cssClass
               }
               return
             }
@@ -175,44 +137,6 @@ describe('PriceResolverService', () => {
           }
         })
         return prices
-      },
-
-      async _getBaremPrice(productId, dealerId) {
-        var result = await BaremPricesService.getByDealerAndProduct(dealerId, productId)
-        if (result.error || !result.data || result.data.length === 0) return null
-
-        var firstTier = result.data.find(function(barem) {
-          return barem.min_quantity === 1
-        })
-
-        if (firstTier) return firstTier.unit_price
-        return result.data[0].unit_price
-      },
-
-      async _getBaremPricesForDealer(dealerId) {
-        var prices = {}
-        var result = await BaremPricesService.getByDealer(dealerId)
-        if (result.error || !result.data) return prices
-
-        var productBarems = {}
-        result.data.forEach(function(barem) {
-          var productId = barem.product_id
-          if (!productBarems[productId]) productBarems[productId] = []
-          productBarems[productId].push(barem)
-        })
-
-        Object.keys(productBarems).forEach(function(productId) {
-          var barems = productBarems[productId]
-          var firstTier = barems.find(function(b) { return b.min_quantity === 1 })
-          if (firstTier) {
-            prices[productId] = firstTier.unit_price
-          } else if (barems.length > 0) {
-            barems.sort(function(a, b) { return a.min_quantity - b.min_quantity })
-            prices[productId] = barems[0].unit_price
-          }
-        })
-
-        return prices
       }
     }
   })
@@ -244,46 +168,10 @@ describe('PriceResolverService', () => {
       expect(result.cssClass).toBe('size-ozel')
     })
 
-    it('teklif yok, barem varsa "Bayi Ozel" fiyat donmeli', async () => {
+    it('teklif yoksa "Perakende" fiyat donmeli', async () => {
       // Mock: Teklif yok
       mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
         data: null,
-        error: null
-      })
-
-      // Mock: Barem var
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [
-          { min_quantity: 1, max_quantity: 10, unit_price: 170.00 },
-          { min_quantity: 11, max_quantity: 50, unit_price: 160.00 }
-        ],
-        error: null
-      })
-
-      const result = await PriceResolverService.resolvePrice(
-        'product-1',
-        'customer-1',
-        'branch-1',
-        'dealer-1',
-        200.00
-      )
-
-      expect(result.price).toBe(170.00)
-      expect(result.priceType).toBe('barem')
-      expect(result.label).toBe('Bayi Ozel')
-      expect(result.cssClass).toBe('bayi-ozel')
-    })
-
-    it('teklif ve barem yoksa "Perakende" fiyat donmeli', async () => {
-      // Mock: Teklif yok
-      mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
-        data: null,
-        error: null
-      })
-
-      // Mock: Barem yok
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [],
         error: null
       })
 
@@ -318,12 +206,6 @@ describe('PriceResolverService', () => {
     })
 
     it('customerId yoksa teklif kontrolu yapilmamali', async () => {
-      // Mock: Barem var
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [{ min_quantity: 1, unit_price: 170.00 }],
-        error: null
-      })
-
       const result = await PriceResolverService.resolvePrice(
         'product-1',
         null, // customerId yok
@@ -333,8 +215,8 @@ describe('PriceResolverService', () => {
       )
 
       expect(mockOffersService.getAcceptedOfferForBranch).not.toHaveBeenCalled()
-      expect(result.price).toBe(170.00)
-      expect(result.priceType).toBe('barem')
+      expect(result.price).toBe(200.00)
+      expect(result.priceType).toBe('retail')
     })
   })
 
@@ -356,14 +238,6 @@ describe('PriceResolverService', () => {
         error: null
       })
 
-      // Mock: Barem - product-2 icin fiyat var
-      mockBaremPricesService.getByDealer.mockResolvedValue({
-        data: [
-          { product_id: 'product-2', min_quantity: 1, unit_price: 220.00 }
-        ],
-        error: null
-      })
-
       const result = await PriceResolverService.resolvePricesForProducts(
         products,
         'customer-1',
@@ -375,9 +249,9 @@ describe('PriceResolverService', () => {
       expect(result['product-1'].price).toBe(150.00)
       expect(result['product-1'].priceType).toBe('offer')
 
-      // product-2: Barem fiyati
-      expect(result['product-2'].price).toBe(220.00)
-      expect(result['product-2'].priceType).toBe('barem')
+      // product-2: Perakende fiyat
+      expect(result['product-2'].price).toBe(250.00)
+      expect(result['product-2'].priceType).toBe('retail')
 
       // product-3: Perakende fiyat
       expect(result['product-3'].price).toBe(300.00)
@@ -397,11 +271,6 @@ describe('PriceResolverService', () => {
             { product: { id: 'product-2' }, unit_price: 200.00 }
           ]
         },
-        error: null
-      })
-
-      mockBaremPricesService.getByDealer.mockResolvedValue({
-        data: [],
         error: null
       })
 
@@ -439,21 +308,14 @@ describe('PriceResolverService', () => {
   })
 
   describe('Fiyat Oncelik Sirasi', () => {
-    it('teklif fiyati barem fiyatindan once gelmeli', async () => {
-      // Ayni urun icin hem teklif hem barem fiyati var
+    it('teklif fiyati perakendeden once gelmeli', async () => {
+      // Ayni urun icin teklif fiyati var
       mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
         data: {
           offer_details: [
             { product: { id: 'product-1' }, unit_price: 100.00 } // Teklif: 100 TL
           ]
         },
-        error: null
-      })
-
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [
-          { min_quantity: 1, unit_price: 150.00 } // Barem: 150 TL
-        ],
         error: null
       })
 
@@ -468,87 +330,6 @@ describe('PriceResolverService', () => {
       // Teklif fiyati (100 TL) secilmeli
       expect(result.price).toBe(100.00)
       expect(result.priceType).toBe('offer')
-    })
-
-    it('barem fiyati perakendeden once gelmeli', async () => {
-      // Teklif yok
-      mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
-        data: null,
-        error: null
-      })
-
-      // Barem var
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [
-          { min_quantity: 1, unit_price: 150.00 }
-        ],
-        error: null
-      })
-
-      const result = await PriceResolverService.resolvePrice(
-        'product-1',
-        'customer-1',
-        'branch-1',
-        'dealer-1',
-        200.00
-      )
-
-      // Barem fiyati (150 TL) secilmeli
-      expect(result.price).toBe(150.00)
-      expect(result.priceType).toBe('barem')
-    })
-  })
-
-  describe('Barem Kademe Secimi', () => {
-    it('min_quantity=1 olan kademe secilmeli', async () => {
-      mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
-        data: null,
-        error: null
-      })
-
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [
-          { min_quantity: 1, max_quantity: 10, unit_price: 180.00 },
-          { min_quantity: 11, max_quantity: 50, unit_price: 170.00 },
-          { min_quantity: 51, max_quantity: 100, unit_price: 160.00 }
-        ],
-        error: null
-      })
-
-      const result = await PriceResolverService.resolvePrice(
-        'product-1',
-        'customer-1',
-        'branch-1',
-        'dealer-1',
-        200.00
-      )
-
-      expect(result.price).toBe(180.00) // min_quantity=1 olan
-    })
-
-    it('min_quantity=1 yoksa en kucuk min_quantity secilmeli', async () => {
-      mockOffersService.getAcceptedOfferForBranch.mockResolvedValue({
-        data: null,
-        error: null
-      })
-
-      mockBaremPricesService.getByDealerAndProduct.mockResolvedValue({
-        data: [
-          { min_quantity: 5, max_quantity: 10, unit_price: 175.00 },
-          { min_quantity: 11, max_quantity: 50, unit_price: 170.00 }
-        ],
-        error: null
-      })
-
-      const result = await PriceResolverService.resolvePrice(
-        'product-1',
-        'customer-1',
-        'branch-1',
-        'dealer-1',
-        200.00
-      )
-
-      expect(result.price).toBe(175.00) // min_quantity=5 (en kucuk)
     })
   })
 })

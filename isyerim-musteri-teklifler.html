@@ -74,7 +74,7 @@
 		}
 		.offer-card:hover { border-color: #e31e24; box-shadow: 0 4px 16px rgba(227, 30, 36, 0.1); }
 		.offer-card-left { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-		.offer-card-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; min-width: 140px; gap: 12px; }
+		.offer-card-right { display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-width: 140px; gap: 12px; }
 
 		.offer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
 		.offer-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #f5f7fa; color: #e31e24; flex-shrink: 0; }
@@ -113,6 +113,40 @@
 		.offer-status-badge.rejected { background: #F5F5F5; color: #616161; border: 1px solid #BDBDBD; }
 		/* Cancelled - Kirmizi */
 		.offer-status-badge.cancelled { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+
+		/* Countdown Timer for Offer Cards */
+		.offer-countdown {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			background: #fff3cd;
+			border: 1px solid #fbbf24;
+			border-radius: 6px;
+			padding: 4px 10px;
+			font-size: 11px;
+		}
+
+		.offer-countdown .countdown-icon {
+			width: 12px;
+			height: 12px;
+			color: #92400e;
+		}
+
+		.offer-countdown .countdown-time {
+			color: #92400e;
+			font-weight: 700;
+			font-family: 'Courier New', monospace;
+		}
+
+		.offer-countdown.warning {
+			background: #fee2e2;
+			border-color: #f87171;
+		}
+
+		.offer-countdown.warning .countdown-icon,
+		.offer-countdown.warning .countdown-time {
+			color: #991b1b;
+		}
 
 		.offer-arrow { color: #ccc; transition: color 0.2s; }
 		.offer-card:hover .offer-arrow { color: #e31e24; }
@@ -215,6 +249,7 @@
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
+	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
 	<script>
@@ -399,11 +434,10 @@
 				html += '<div class="offer-card" onclick="goToOfferDetail(\'' + offer.id + '\')">';
 				html += '<div class="offer-card-left">';
 
-				// Header: Icon + Number + Date
+				// Header: Icon + Number (tarih artik bayi altinda)
 				html += '<div class="offer-header">';
 				html += '<div class="offer-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>';
 				html += '<span class="offer-number">Teklif #' + (offer.id || '').substring(0, 8).toUpperCase() + '</span>';
-				html += '<span class="offer-date">' + dateStr + ' ' + timeStr + '</span>';
 				html += '</div>';
 
 				// Branch
@@ -412,34 +446,38 @@
 				html += branchName;
 				html += '</div>';
 
-				// Products
-				if (productSummary) {
-					html += '<div class="offer-products">';
-					html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>';
-					html += productSummary;
-					html += '</div>';
-				}
-
 				// Dealer
 				html += '<div class="offer-dealer">';
 				html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
 				html += dealerName;
 				html += '</div>';
 
+				// Tarih (bayi altinda)
+				html += '<div class="offer-date" style="margin-left:20px;font-size:12px;color:#999">' + dateStr + ' ' + timeStr + '</div>';
+
 				html += '</div>'; // card-left
 
 				html += '<div class="offer-card-right">';
 				html += '<span class="offer-status-badge ' + status.class + '">' + status.icon + status.text + '</span>';
-				html += '<div style="display:flex;align-items:center;gap:12px">';
-				html += '<span class="offer-item-count">' + productCount + ' urun</span>';
-				html += '<span class="offer-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></span>';
-				html += '</div>';
+
+				// Countdown timer (sadece pending icin)
+				if (offer.status === 'pending') {
+					html += '<div class="offer-countdown">';
+					html += '<svg class="countdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+					html += '<span class="countdown-time" id="countdown-' + offer.id + '">--:--:--</span>';
+					html += '</div>';
+				}
+
 				html += '</div>'; // card-right
 
 				html += '</div>'; // offer-card
 			});
 
 			listContainer.innerHTML = html;
+
+			// Countdown timer'ları başlat
+			clearAllCountdowns();
+			initOfferCountdowns();
 		}
 
 		function goToOfferDetail(offerId) {
@@ -587,6 +625,86 @@
 					}
 				}
 			});
+		}
+
+		// ============================================
+		// COUNTDOWN TIMER FONKSIYONLARI
+		// ============================================
+
+		var countdownIntervals = {}; // offerId -> intervalId
+
+		async function initOfferCountdowns() {
+			// Tum pending teklifler icin countdown baslat
+			var pendingOffers = allOffers.filter(function(o) { return o.status === 'pending'; });
+
+			for (var i = 0; i < pendingOffers.length; i++) {
+				var offer = pendingOffers[i];
+				await initSingleCountdown(offer.id);
+			}
+		}
+
+		async function initSingleCountdown(offerId) {
+			var logsResult = await OfferLogsService.getByOfferId(offerId);
+			if (!logsResult.data || logsResult.data.length === 0) return;
+
+			// En son 'price_updated' veya 'created' action'ini bul
+			var lastSentLog = logsResult.data.find(function(log) {
+				return log.action === 'price_updated' || log.action === 'created';
+			});
+
+			if (lastSentLog) {
+				startCardCountdown(offerId, lastSentLog.created_at);
+			}
+		}
+
+		function startCardCountdown(offerId, sentTimestamp) {
+			var timerEl = document.getElementById('countdown-' + offerId);
+			if (!timerEl) return;
+
+			var sentTime = new Date(sentTimestamp).getTime();
+			var endTime = sentTime + (24 * 60 * 60 * 1000);
+
+			// Onceki interval'i temizle
+			if (countdownIntervals[offerId]) {
+				clearInterval(countdownIntervals[offerId]);
+			}
+
+			function updateTimer() {
+				var now = Date.now();
+				var remaining = endTime - now;
+				var container = timerEl.closest('.offer-countdown');
+
+				if (remaining <= 0) {
+					timerEl.textContent = '00:00:00';
+					if (container) container.classList.add('warning');
+					clearInterval(countdownIntervals[offerId]);
+					return;
+				}
+
+				var hours = Math.floor(remaining / (1000 * 60 * 60));
+				var minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+				timerEl.textContent =
+					String(hours).padStart(2, '0') + ':' +
+					String(minutes).padStart(2, '0') + ':' +
+					String(seconds).padStart(2, '0');
+
+				// Son 1 saat kaldığında uyarı rengi
+				if (remaining < 60 * 60 * 1000) {
+					if (container) container.classList.add('warning');
+				}
+			}
+
+			updateTimer();
+			countdownIntervals[offerId] = setInterval(updateTimer, 1000);
+		}
+
+		function clearAllCountdowns() {
+			Object.keys(countdownIntervals).forEach(function(offerId) {
+				clearInterval(countdownIntervals[offerId]);
+			});
+			countdownIntervals = {};
 		}
 	</script>
 </body>

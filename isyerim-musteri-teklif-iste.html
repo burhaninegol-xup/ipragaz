@@ -608,7 +608,7 @@
 			padding: 20px 28px;
 			margin-bottom: 24px;
 			display: grid;
-			grid-template-columns: 56px 1fr auto auto;
+			grid-template-columns: 56px 1fr auto auto auto;
 			align-items: center;
 			gap: 16px;
 			box-shadow: 0 4px 16px rgba(0,0,0,0.1);
@@ -747,14 +747,59 @@
 		}
 
 		.status-dealer {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
 			font-size: 14px;
 			color: #444;
 			font-weight: 500;
+			margin-top: 4px;
 		}
 
 		.status-dealer strong {
-			color: #333;
+			display: inline-block;
+			background: linear-gradient(135deg, #002c77 0%, #0047ab 100%);
+			color: #fff;
 			font-weight: 600;
+			padding: 6px 14px;
+			border-radius: 20px;
+			font-size: 14px;
+			box-shadow: 0 2px 6px rgba(0,44,119,0.25);
+		}
+
+		/* Countdown Timer for Customer Page */
+		.offer-countdown-container {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			background: #fff3cd;
+			border: 1px solid #fbbf24;
+			border-radius: 8px;
+			padding: 6px 12px;
+			font-size: 13px;
+			margin-left: auto;
+		}
+
+		.offer-countdown-container .countdown-label {
+			color: #92400e;
+			font-weight: 500;
+		}
+
+		.offer-countdown-container .countdown-timer {
+			color: #92400e;
+			font-weight: 700;
+			font-family: 'Courier New', monospace;
+			min-width: 65px;
+		}
+
+		.offer-countdown-container.warning {
+			background: #fee2e2;
+			border-color: #f87171;
+		}
+
+		.offer-countdown-container.warning .countdown-label,
+		.offer-countdown-container.warning .countdown-timer {
+			color: #991b1b;
 		}
 
 		/* Inline Branch Info - Bayi yanında */
@@ -2076,6 +2121,84 @@
 			margin-bottom: 15px;
 			line-height: 1.5;
 		}
+
+		/* Offer Summary Section */
+		.offer-summary-section {
+			background: #fff;
+			border-radius: 12px;
+			padding: 24px;
+			margin-top: 24px;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+		}
+
+		.offer-summary-header {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			margin-bottom: 20px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.offer-summary-header svg {
+			width: 22px;
+			height: 22px;
+			color: #002c77;
+		}
+
+		.offer-summary-header h3 {
+			font-size: 16px;
+			font-weight: 600;
+			color: #333;
+			margin: 0;
+		}
+
+		.summary-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 16px;
+		}
+
+		.summary-item {
+			background: #f8f9fa;
+			padding: 18px 20px;
+			border-radius: 10px;
+			text-align: center;
+		}
+
+		.summary-item.benefit {
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			border: 1px solid #81c784;
+		}
+
+		.summary-label {
+			display: block;
+			font-size: 12px;
+			color: #666;
+			margin-bottom: 8px;
+		}
+
+		.summary-value {
+			display: block;
+			font-size: 22px;
+			font-weight: 700;
+			color: #1a1a2e;
+		}
+
+		.summary-value.highlight {
+			color: #e31e24;
+		}
+
+		.summary-value.benefit-value {
+			color: #2e7d32;
+		}
+
+		@media (max-width: 768px) {
+			.summary-grid {
+				grid-template-columns: 1fr;
+				gap: 12px;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -2118,6 +2241,11 @@
 							<ul class="branch-tooltip-list" id="branchTooltipList"></ul>
 						</div>
 					</div>
+				</div>
+				<!-- Countdown Timer -->
+				<div class="offer-countdown-container" id="offerCountdownContainer" style="display: none;">
+					<span class="countdown-label">Kalan Süre:</span>
+					<span class="countdown-timer" id="offerCountdownTimer">24:00:00</span>
 				</div>
 				<div class="offer-buttons">
 					<button class="btn-accept-offer" id="btnAcceptOffer" onclick="acceptActiveOffer()" style="display: none;">
@@ -2537,6 +2665,13 @@
 			// Teklif gecmisini yukle (cancelled degilse)
 			if (activeOffer.status !== 'cancelled') {
 				loadOfferLogs(activeOffer.id);
+
+				// Countdown timer'ı başlat (sadece requested ve pending için)
+				if (['requested', 'pending'].includes(activeOffer.status)) {
+					initOfferCountdown(activeOffer.id);
+				} else {
+					stopOfferCountdown();
+				}
 			}
 
 			// Sube genisletme bolumunu goster (sadece accepted status'ta)
@@ -2637,6 +2772,90 @@
 			// Iptal Et butonu: requested, pending ve accepted durumlarinda goster
 			if (cancelBtn) {
 				cancelBtn.style.display = ['requested', 'pending', 'accepted'].includes(status) ? 'flex' : 'none';
+			}
+		}
+
+		// === COUNTDOWN TIMER ===
+		var countdownInterval = null;
+		var countdownEndTime = null;
+
+		function startOfferCountdown(sentTimestamp) {
+			var container = document.getElementById('offerCountdownContainer');
+			if (!container) return;
+
+			// 24 saat = 86400000 ms
+			var sentTime = new Date(sentTimestamp).getTime();
+			countdownEndTime = sentTime + (24 * 60 * 60 * 1000);
+
+			// Önceki interval'i temizle
+			if (countdownInterval) {
+				clearInterval(countdownInterval);
+			}
+
+			container.style.display = 'flex';
+			updateOfferCountdown();
+			countdownInterval = setInterval(updateOfferCountdown, 1000);
+		}
+
+		function updateOfferCountdown() {
+			var container = document.getElementById('offerCountdownContainer');
+			var timerEl = document.getElementById('offerCountdownTimer');
+			if (!container || !timerEl) return;
+
+			var now = Date.now();
+			var remaining = countdownEndTime - now;
+
+			if (remaining <= 0) {
+				timerEl.textContent = '00:00:00';
+				container.classList.add('warning');
+				stopOfferCountdown();
+				return;
+			}
+
+			var hours = Math.floor(remaining / (1000 * 60 * 60));
+			var minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+			timerEl.textContent =
+				String(hours).padStart(2, '0') + ':' +
+				String(minutes).padStart(2, '0') + ':' +
+				String(seconds).padStart(2, '0');
+
+			// Son 1 saat kaldığında uyarı rengi
+			if (remaining < 60 * 60 * 1000) {
+				container.classList.add('warning');
+			} else {
+				container.classList.remove('warning');
+			}
+		}
+
+		function stopOfferCountdown() {
+			if (countdownInterval) {
+				clearInterval(countdownInterval);
+				countdownInterval = null;
+			}
+			var container = document.getElementById('offerCountdownContainer');
+			if (container) {
+				container.style.display = 'none';
+			}
+		}
+
+		async function initOfferCountdown(offerId) {
+			var logsResult = await OfferLogsService.getByOfferId(offerId);
+			if (!logsResult.data || logsResult.data.length === 0) {
+				stopOfferCountdown();
+				return;
+			}
+
+			// En son 'price_updated' veya 'created' action'ını bul
+			var lastSentLog = logsResult.data.find(function(log) {
+				return log.action === 'price_updated' || log.action === 'created';
+			});
+
+			if (lastSentLog) {
+				startOfferCountdown(lastSentLog.created_at);
+			} else {
+				stopOfferCountdown();
 			}
 		}
 
@@ -2785,11 +3004,97 @@
 						'</div>' +
 					'</div>' +
 				'</div>';
-
-				grid.innerHTML += addProductMessage;
 			}
 
 			grid.style.display = 'flex';
+
+			// Teklif ozeti bolumunu ekle
+			var existingSummary = document.getElementById('offerSummarySection');
+			if (existingSummary) {
+				existingSummary.remove();
+			}
+
+			var summaryHtml = '<div class="offer-summary-section" id="offerSummarySection" style="display: none;">' +
+				'<div class="offer-summary-header">' +
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+						'<path d="M9 7h6m-6 4h6m-4 4h4M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>' +
+					'</svg>' +
+					'<h3>Teklif Özeti</h3>' +
+				'</div>' +
+				'<div class="summary-grid">' +
+					'<div class="summary-item">' +
+						'<span class="summary-label">Teklifin Perakende Tutarı</span>' +
+						'<span class="summary-value" id="totalRetailPrice">0,00 TL</span>' +
+					'</div>' +
+					'<div class="summary-item">' +
+						'<span class="summary-label">Teklifin İndirimli Tutarı</span>' +
+						'<span class="summary-value highlight" id="totalDiscountedPrice">0,00 TL</span>' +
+					'</div>' +
+					'<div class="summary-item benefit">' +
+						'<span class="summary-label">Müşteriye Sağlanan Fayda</span>' +
+						'<span class="summary-value benefit-value" id="totalBenefit">0,00 TL</span>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+
+			// Önce Teklif Özeti eklenir
+			grid.insertAdjacentHTML('afterend', summaryHtml);
+
+			// Sonra Bayi ara mesajı (özetten sonra)
+			if (activeOffer && ['requested', 'pending', 'accepted'].includes(activeOffer.status)) {
+				var summarySection = document.getElementById('offerSummarySection');
+				if (summarySection) {
+					summarySection.insertAdjacentHTML('afterend', addProductMessage);
+				} else {
+					grid.insertAdjacentHTML('afterend', addProductMessage);
+				}
+			}
+
+			// Ozeti hesapla ve goster
+			updateOfferSummary(offerDetails);
+		}
+
+		// Teklif ozeti hesapla ve goster
+		function updateOfferSummary(offerDetails) {
+			var summarySection = document.getElementById('offerSummarySection');
+			if (!summarySection) return;
+
+			// Fiyat bilgisi olmayan detaylar varsa gosterme
+			var hasAnyPrice = offerDetails.some(function(d) {
+				return d.unit_price && d.unit_price > 0;
+			});
+
+			if (!hasAnyPrice) {
+				summarySection.style.display = 'none';
+				return;
+			}
+
+			var totalRetail = 0;
+			var totalDiscounted = 0;
+
+			offerDetails.forEach(function(detail) {
+				var product = detail.product;
+				var quantity = detail.commitment_quantity || 0;
+				var unitPrice = detail.unit_price || 0;
+
+				// Perakende fiyat: product.retail_price veya base_price
+				var retailPrice = (product && product.retail_price) || 0;
+
+				totalRetail += retailPrice * quantity;
+				totalDiscounted += unitPrice * quantity;
+			});
+
+			var benefit = totalRetail - totalDiscounted;
+
+			// Formatlama
+			document.getElementById('totalRetailPrice').textContent =
+				totalRetail.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+			document.getElementById('totalDiscountedPrice').textContent =
+				totalDiscounted.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+			document.getElementById('totalBenefit').textContent =
+				benefit.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+
+			summarySection.style.display = 'block';
 		}
 
 		// Para birimi formatlama

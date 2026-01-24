@@ -2073,7 +2073,7 @@
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
-	<script src="./js/services/barem-prices-service.js"></script>
+	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/services/price-resolver-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/component-loader.js"></script>
@@ -2740,17 +2740,27 @@
 					var offerCount = offers.length;
 					console.log('Pending teklif bulundu:', offerCount, 'adet');
 
-					// En erken deadline'i bul (en yakin sure dolacak teklif)
+					// En erken deadline'i bul (OfferLogsService kullanarak)
 					var earliestDeadline = null;
-					offers.forEach(function(offer) {
-						var startTime = offer.price_updated_at || offer.created_at;
-						if (startTime) {
-							var deadline = new Date(new Date(startTime).getTime() + (24 * 60 * 60 * 1000));
-							if (!earliestDeadline || deadline < earliestDeadline) {
-								earliestDeadline = deadline;
+					for (var i = 0; i < offers.length; i++) {
+						var offer = offers[i];
+						try {
+							var logsResult = await OfferLogsService.getByOfferId(offer.id);
+							if (logsResult.data && logsResult.data.length > 0) {
+								var lastSentLog = logsResult.data.find(function(log) {
+									return log.action === 'price_updated' || log.action === 'created';
+								});
+								if (lastSentLog) {
+									var deadline = new Date(new Date(lastSentLog.created_at).getTime() + (24 * 60 * 60 * 1000));
+									if (!earliestDeadline || deadline < earliestDeadline) {
+										earliestDeadline = deadline;
+									}
+								}
 							}
+						} catch (logErr) {
+							console.error('Log yukleme hatasi:', logErr);
 						}
-					});
+					}
 
 					if (!earliestDeadline) {
 						console.log('Countdown: Deadline hesaplanamadi');

@@ -4,15 +4,13 @@
  *
  * Oncelik sirasi:
  * 1. Aktif Teklif (accepted) -> "Size Ozel"
- * 2. Bayi Barem Fiyati (ilk kademe) -> "Bayi Ozel"
- * 3. Perakende Fiyat (base_price) -> "Perakende"
+ * 2. Perakende Fiyat (base_price) -> "Perakende"
  */
 
 const PriceResolverService = {
     // Fiyat tipleri ve etiketleri
     PRICE_TYPES: {
         OFFER: { type: 'offer', label: 'Size Ozel', cssClass: 'size-ozel' },
-        BAREM: { type: 'barem', label: 'Bayi Ozel', cssClass: 'bayi-ozel' },
         RETAIL: { type: 'retail', label: 'Perakende', cssClass: 'perakende' }
     },
 
@@ -40,20 +38,7 @@ const PriceResolverService = {
                 }
             }
 
-            // 2. Barem fiyat kontrolu
-            if (dealerId) {
-                var baremPrice = await this._getBaremPrice(productId, dealerId);
-                if (baremPrice !== null) {
-                    return {
-                        price: baremPrice,
-                        priceType: this.PRICE_TYPES.BAREM.type,
-                        label: this.PRICE_TYPES.BAREM.label,
-                        cssClass: this.PRICE_TYPES.BAREM.cssClass
-                    };
-                }
-            }
-
-            // 3. Perakende fiyat (fallback)
+            // 2. Perakende fiyat (fallback)
             return {
                 price: basePrice || 0,
                 priceType: this.PRICE_TYPES.RETAIL.type,
@@ -83,7 +68,6 @@ const PriceResolverService = {
     async resolvePricesForProducts(products, customerId, branchId, dealerId) {
         var result = {};
         var offerPrices = {};
-        var baremPrices = {};
 
         try {
             // 1. Aktif teklif fiyatlarini al (tek sorguda)
@@ -91,12 +75,7 @@ const PriceResolverService = {
                 offerPrices = await this._getOfferPricesForBranch(customerId, branchId, dealerId);
             }
 
-            // 2. Barem fiyatlarini al (tek sorguda)
-            if (dealerId) {
-                baremPrices = await this._getBaremPricesForDealer(dealerId);
-            }
-
-            // 3. Her urun icin oncelik sirasina gore fiyat belirle
+            // 2. Her urun icin oncelik sirasina gore fiyat belirle
             var self = this;
             products.forEach(function(product) {
                 var productId = product.id;
@@ -113,18 +92,7 @@ const PriceResolverService = {
                     return;
                 }
 
-                // Oncelik 2: Barem fiyati
-                if (baremPrices[productId] !== undefined) {
-                    result[productId] = {
-                        price: baremPrices[productId],
-                        priceType: self.PRICE_TYPES.BAREM.type,
-                        label: self.PRICE_TYPES.BAREM.label,
-                        cssClass: self.PRICE_TYPES.BAREM.cssClass
-                    };
-                    return;
-                }
-
-                // Oncelik 3: Perakende fiyat
+                // Oncelik 2: Perakende fiyat
                 result[productId] = {
                     price: basePrice,
                     priceType: self.PRICE_TYPES.RETAIL.type,
@@ -211,91 +179,8 @@ const PriceResolverService = {
     },
 
     /**
-     * Baremden urun fiyatini al (ilk kademe - min_quantity=1)
-     * @private
-     */
-    async _getBaremPrice(productId, dealerId) {
-        try {
-            var result = await BaremPricesService.getByDealerAndProduct(dealerId, productId);
-
-            if (result.error || !result.data || result.data.length === 0) {
-                return null;
-            }
-
-            // Barem'ler min_quantity'ye gore sirali geliyor
-            // Ilk kademe = min_quantity=1 olan
-            var firstTier = result.data.find(function(barem) {
-                return barem.min_quantity === 1;
-            });
-
-            if (firstTier) {
-                return firstTier.unit_price;
-            }
-
-            // min_quantity=1 yoksa ilk kademeyi al
-            return result.data[0].unit_price;
-        } catch (error) {
-            console.error('_getBaremPrice error:', error);
-            return null;
-        }
-    },
-
-    /**
-     * Bayi icin tum barem fiyatlarini al (toplu - ilk kademeler)
-     * @private
-     */
-    async _getBaremPricesForDealer(dealerId) {
-        var prices = {};
-
-        try {
-            var result = await BaremPricesService.getByDealer(dealerId);
-
-            if (result.error || !result.data) {
-                return prices;
-            }
-
-            // Her urun icin ilk kademe fiyatini al
-            var productBarems = {};
-
-            result.data.forEach(function(barem) {
-                var productId = barem.product_id;
-
-                if (!productBarems[productId]) {
-                    productBarems[productId] = [];
-                }
-                productBarems[productId].push(barem);
-            });
-
-            // Her urun icin min_quantity=1 olan veya en dusuk min_quantity olan fiyati al
-            Object.keys(productBarems).forEach(function(productId) {
-                var barems = productBarems[productId];
-
-                // min_quantity=1 olan ara
-                var firstTier = barems.find(function(b) {
-                    return b.min_quantity === 1;
-                });
-
-                if (firstTier) {
-                    prices[productId] = firstTier.unit_price;
-                } else if (barems.length > 0) {
-                    // min_quantity'ye gore en kucuk olani al
-                    barems.sort(function(a, b) {
-                        return a.min_quantity - b.min_quantity;
-                    });
-                    prices[productId] = barems[0].unit_price;
-                }
-            });
-
-            return prices;
-        } catch (error) {
-            console.error('_getBaremPricesForDealer error:', error);
-            return prices;
-        }
-    },
-
-    /**
      * Fiyat etiketi HTML'i olustur
-     * @param {string} priceType - Fiyat tipi (offer, barem, retail)
+     * @param {string} priceType - Fiyat tipi (offer, retail)
      * @param {string} label - Etiket metni
      * @param {string} cssClass - CSS sinifi
      * @returns {string} HTML string
