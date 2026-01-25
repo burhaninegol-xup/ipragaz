@@ -4,7 +4,8 @@
  *
  * Oncelik sirasi:
  * 1. Aktif Teklif (accepted) -> "Size Ozel"
- * 2. Perakende Fiyat (base_price) -> "Perakende"
+ * 2. Sehir Bazli Perakende Fiyat (retail_prices_by_city) -> "Perakende"
+ * 3. Base Price (products.base_price) -> "Perakende"
  */
 
 const PriceResolverService = {
@@ -63,11 +64,13 @@ const PriceResolverService = {
      * @param {string} customerId - Musteri ID
      * @param {string} branchId - Sube ID
      * @param {string} dealerId - Bayi ID
+     * @param {string} cityId - Sehir ID (opsiyonel, sehir bazli perakende fiyat icin)
      * @returns {Promise<Object>} - {productId: {price, priceType, label, cssClass}}
      */
-    async resolvePricesForProducts(products, customerId, branchId, dealerId) {
+    async resolvePricesForProducts(products, customerId, branchId, dealerId, cityId) {
         var result = {};
         var offerPrices = {};
+        var cityPrices = {};
 
         try {
             // 1. Aktif teklif fiyatlarini al (tek sorguda)
@@ -75,7 +78,12 @@ const PriceResolverService = {
                 offerPrices = await this._getOfferPricesForBranch(customerId, branchId, dealerId);
             }
 
-            // 2. Her urun icin oncelik sirasina gore fiyat belirle
+            // 2. Sehir bazli perakende fiyatlarini al
+            if (cityId) {
+                cityPrices = await this._getRetailPricesByCity(cityId);
+            }
+
+            // 3. Her urun icin oncelik sirasina gore fiyat belirle
             var self = this;
             products.forEach(function(product) {
                 var productId = product.id;
@@ -92,7 +100,18 @@ const PriceResolverService = {
                     return;
                 }
 
-                // Oncelik 2: Perakende fiyat
+                // Oncelik 2: Sehir bazli perakende fiyat
+                if (cityPrices[productId] !== undefined) {
+                    result[productId] = {
+                        price: cityPrices[productId],
+                        priceType: self.PRICE_TYPES.RETAIL.type,
+                        label: self.PRICE_TYPES.RETAIL.label,
+                        cssClass: self.PRICE_TYPES.RETAIL.cssClass
+                    };
+                    return;
+                }
+
+                // Oncelik 3: Base price (fallback)
                 result[productId] = {
                     price: basePrice,
                     priceType: self.PRICE_TYPES.RETAIL.type,
@@ -116,6 +135,31 @@ const PriceResolverService = {
                 };
             });
             return result;
+        }
+    },
+
+    /**
+     * Sehir bazli perakende fiyatlarini al
+     * @private
+     */
+    async _getRetailPricesByCity(cityId) {
+        var prices = {};
+        if (!cityId) return prices;
+
+        try {
+            const { data, error } = await RetailPricesByCityService.getByCityId(cityId);
+            if (error || !data) return prices;
+
+            data.forEach(function(item) {
+                if (item.product_id && item.retail_price) {
+                    prices[item.product_id] = item.retail_price;
+                }
+            });
+
+            return prices;
+        } catch (error) {
+            console.error('_getRetailPricesByCity error:', error);
+            return prices;
         }
     },
 

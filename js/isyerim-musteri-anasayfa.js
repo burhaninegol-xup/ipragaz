@@ -69,6 +69,11 @@ var currentBranchId = null;
 var currentDealerId = null;
 var favoriteIds = []; // Favori urun ID'leri
 
+// Teklif durumu değişkenleri
+var branchOfferStatus = null; // 'accepted', 'in_process', null
+var hasDealerInDistrict = true; // İlçede bayi var mı?
+var currentBranchInfo = null; // Seçili şube bilgisi
+
 // Ürünleri Supabase'den yükle
 async function loadProducts() {
 	try {
@@ -83,12 +88,66 @@ async function loadProducts() {
 		currentBranchId = sessionStorage.getItem('selected_address_id');
 		currentDealerId = sessionStorage.getItem('isyerim_dealer_id');
 
+		// Teklif durumu ve bayi kontrolu
+		branchOfferStatus = null;
+		hasDealerInDistrict = true;
+		currentBranchInfo = null;
+
+		if (currentBranchId && currentCustomerId) {
+			// 1. Şube detayını al
+			try {
+				const { data: branch } = await BranchesService.getById(currentBranchId);
+				currentBranchInfo = branch;
+
+				// 2. Şube için teklif durumunu kontrol et
+				const { data: offers } = await OffersService.getByBranchId(
+					currentCustomerId,
+					currentBranchId,
+					{} // tüm durumlar
+				);
+
+				if (offers && offers.length > 0) {
+					// En son teklifi al
+					var latestOffer = offers[0];
+					if (latestOffer.status === 'accepted') {
+						branchOfferStatus = 'accepted';
+					} else if (latestOffer.status === 'pending' || latestOffer.status === 'requested') {
+						branchOfferStatus = 'in_process';
+					} else {
+						branchOfferStatus = null;
+					}
+				} else {
+					branchOfferStatus = null;
+				}
+
+				// 3. Teklif yoksa ilçede bayi var mı kontrol et
+				if (!branchOfferStatus || branchOfferStatus !== 'accepted') {
+					if (branch && branch.city && branch.district) {
+						const { data: dealers } = await DealersService.getByDistrictWithMikroPazar(
+							branch.city,
+							branch.district,
+							branch.district_id
+						);
+						hasDealerInDistrict = dealers && dealers.length > 0;
+					}
+				}
+
+				console.log('Teklif durumu:', branchOfferStatus, 'Ilcede bayi var mi:', hasDealerInDistrict);
+			} catch (offerErr) {
+				console.error('Teklif durumu kontrol hatasi:', offerErr);
+			}
+		}
+
 		// PriceResolverService ile fiyatları çözümle
+		// Şube şehir ID'sini al
+		var cityId = currentBranchInfo ? currentBranchInfo.city_id : null;
+
 		resolvedPrices = await PriceResolverService.resolvePricesForProducts(
 			products,
 			currentCustomerId,
 			currentBranchId,
-			currentDealerId
+			currentDealerId,
+			cityId
 		);
 
 		// Favorileri yükle (giriş yapılmışsa)
@@ -130,7 +189,28 @@ function createProductCard(product) {
 	var isFavorite = favoriteIds.indexOf(product.id) !== -1;
 	var favoriteClass = isFavorite ? 'product-favorite active' : 'product-favorite';
 
-	return '<div class="product-card" data-product-id="' + product.id + '" style="cursor: pointer;">' +
+	// Buton belirleme (teklif durumuna göre)
+	var buttonHtml = '';
+	var cardClass = '';
+
+	if (branchOfferStatus === 'accepted') {
+		// Kabul edilmiş teklif var - Sepete Ekle
+		buttonHtml = '<button class="btn-add-cart">Sepete Ekle</button>';
+	} else if (branchOfferStatus === 'in_process') {
+		// Teklif süreçte - Teklifi İncele
+		buttonHtml = '<button class="btn-review-offer" onclick="goToOfferPage(event)">Teklifi Incele</button>';
+		cardClass = ' offer-pending';
+	} else {
+		// Teklif yok - Teklif Al
+		if (hasDealerInDistrict) {
+			buttonHtml = '<button class="btn-request-offer" onclick="goToOfferPage(event)">Teklif Al</button>';
+		} else {
+			buttonHtml = '<button class="btn-request-offer" onclick="showNoDealerOverlay(event)">Teklif Al</button>';
+		}
+		cardClass = ' no-offer';
+	}
+
+	return '<div class="product-card' + cardClass + '" data-product-id="' + product.id + '" style="cursor: pointer;">' +
 		'<button class="' + favoriteClass + '">' +
 			'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 		'</button>' +
@@ -139,7 +219,7 @@ function createProductCard(product) {
 		'</div>' +
 		'<div class="product-name">' + product.name + '</div>' +
 		'<div class="product-price">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
-		'<button class="btn-add-cart">Sepete Ekle</button>' +
+		buttonHtml +
 	'</div>';
 }
 
@@ -150,12 +230,27 @@ async function refreshPrices() {
 	currentBranchId = sessionStorage.getItem('selected_branch_id');
 	currentDealerId = sessionStorage.getItem('isyerim_dealer_id') || sessionStorage.getItem('dealer_id');
 
+	// Şube bilgisini yeniden al (city_id için)
+	var cityId = null;
+	if (currentBranchId) {
+		try {
+			const { data: branch } = await BranchesService.getById(currentBranchId);
+			if (branch) {
+				currentBranchInfo = branch;
+				cityId = branch.city_id;
+			}
+		} catch (err) {
+			console.error('Sube bilgisi alinamadi:', err);
+		}
+	}
+
 	// Fiyatları yeniden çözümle
 	resolvedPrices = await PriceResolverService.resolvePricesForProducts(
 		products,
 		currentCustomerId,
 		currentBranchId,
-		currentDealerId
+		currentDealerId,
+		cityId
 	);
 
 	// Ürün kartlarını yeniden render et
@@ -164,6 +259,49 @@ async function refreshPrices() {
 
 // Global erişim için window'a ata
 window.refreshPrices = refreshPrices;
+
+// =============================================
+// TEKLIF DURUMU FONKSIYONLARI
+// =============================================
+
+// Teklif sayfasına git
+function goToOfferPage(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	window.location.href = 'isyerim-musteri-teklif-iste.html';
+}
+
+// Bayi yok overlay'ı göster
+function showNoDealerOverlay(e) {
+	e.preventDefault();
+	e.stopPropagation();
+	var overlay = document.getElementById('noDealerOverlay');
+	if (overlay) {
+		overlay.classList.add('active');
+		document.body.style.overflow = 'hidden';
+	}
+}
+
+// Overlay kapat
+function closeNoDealerOverlay() {
+	var overlay = document.getElementById('noDealerOverlay');
+	if (overlay) {
+		overlay.classList.remove('active');
+		document.body.style.overflow = '';
+	}
+}
+
+// Overlay'e tıklayınca kapat
+document.addEventListener('DOMContentLoaded', function() {
+	var overlay = document.getElementById('noDealerOverlay');
+	if (overlay) {
+		overlay.addEventListener('click', function(e) {
+			if (e.target === this) {
+				closeNoDealerOverlay();
+			}
+		});
+	}
+});
 
 // Ürünleri render et
 function renderProducts() {
