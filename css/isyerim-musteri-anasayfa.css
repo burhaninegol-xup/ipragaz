@@ -1931,3 +1931,199 @@ a {
 		font-size: 13px;
 	}
 }
+
+/* =============================================
+   ACTIVE OFFER OVERLAY - URUN TEKLIFTE DEGIL
+   ============================================= */
+
+.active-offer-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+	padding: 20px;
+}
+
+.active-offer-overlay.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.active-offer-modal {
+	background: #fff;
+	border-radius: 16px;
+	padding: 30px;
+	max-width: 420px;
+	width: 100%;
+	text-align: center;
+	transform: scale(0.9);
+	transition: transform 0.3s ease;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.active-offer-overlay.active .active-offer-modal {
+	transform: scale(1);
+}
+
+.active-offer-icon {
+	width: 60px;
+	height: 60px;
+	margin: 0 auto 20px;
+	background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.active-offer-icon svg {
+	width: 32px;
+	height: 32px;
+	stroke: #fff;
+}
+
+.active-offer-title {
+	font-size: 20px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 12px;
+}
+
+.active-offer-desc {
+	font-size: 14px;
+	color: #666;
+	line-height: 1.6;
+	margin-bottom: 24px;
+}
+
+.active-offer-options {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 24px;
+}
+
+.active-offer-option {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	text-align: left;
+	background: #f8f9fa;
+	padding: 14px;
+	border-radius: 12px;
+}
+
+.option-number {
+	width: 28px;
+	height: 28px;
+	min-width: 28px;
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	color: #fff;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 14px;
+}
+
+.option-content {
+	flex: 1;
+}
+
+.option-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 4px;
+}
+
+.option-desc {
+	font-size: 13px;
+	color: #666;
+	line-height: 1.4;
+}
+
+.option-desc a {
+	color: #e31e24;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.option-desc a:hover {
+	text-decoration: underline;
+}
+
+.active-offer-actions {
+	display: flex;
+	gap: 12px;
+}
+
+.active-offer-cancel-btn {
+	flex: 1;
+	background: #f5f5f5;
+	border: none;
+	color: #666;
+	padding: 14px 20px;
+	border-radius: 10px;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.active-offer-cancel-btn:hover {
+	background: #eee;
+	color: #333;
+}
+
+.active-offer-goto-btn {
+	flex: 1;
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	border: none;
+	color: #fff;
+	padding: 14px 20px;
+	border-radius: 10px;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.active-offer-goto-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+	.active-offer-modal {
+		padding: 24px 20px;
+	}
+
+	.active-offer-title {
+		font-size: 18px;
+	}
+
+	.active-offer-desc {
+		font-size: 13px;
+	}
+
+	.active-offer-actions {
+		flex-direction: column;
+	}
+
+	.active-offer-cancel-btn,
+	.active-offer-goto-btn {
+		width: 100%;
+	}
+}

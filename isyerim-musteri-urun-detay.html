@@ -90,6 +90,45 @@
 		</div>
 	</div>
 
+	<!-- Active Offer - Add Product Overlay -->
+	<div class="active-offer-overlay" id="activeOfferOverlay">
+		<div class="active-offer-modal">
+			<div class="active-offer-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+					<path d="M12 8v4"/><path d="M12 16h.01"/>
+				</svg>
+			</div>
+			<h3 class="active-offer-title">Bu Urun Teklifinizde Yok</h3>
+			<p class="active-offer-desc">
+				Sectiginiz urun mevcut teklifinizde bulunmamaktadir.
+				Bu urunu teklifinize ekletmek icin asagidaki seceneklerden birini kullanabilirsiniz:
+			</p>
+
+			<div class="active-offer-options">
+				<div class="active-offer-option">
+					<div class="option-number">1</div>
+					<div class="option-content">
+						<p class="option-title">Bayinizi Arayin</p>
+						<p class="option-desc" id="activeOfferDealerInfo"></p>
+					</div>
+				</div>
+				<div class="active-offer-option">
+					<div class="option-number">2</div>
+					<div class="option-content">
+						<p class="option-title">Mesaj Gonderin</p>
+						<p class="option-desc">Teklif detay sayfasina giderek bayinize mesaj gonderebilirsiniz.</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="active-offer-actions">
+				<button class="active-offer-cancel-btn" onclick="closeActiveOfferOverlay()">VAZGEC</button>
+				<button class="active-offer-goto-btn" onclick="goToOfferDetail()">TEKLIF DETAYINA GIT</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>

@@ -73,6 +73,7 @@ var favoriteIds = []; // Favori urun ID'leri
 var branchOfferStatus = null; // 'accepted', 'in_process', null
 var hasDealerInDistrict = true; // İlçede bayi var mı?
 var currentBranchInfo = null; // Seçili şube bilgisi
+var currentOfferDealer = null; // Aktif teklifin bayi bilgisi
 
 // Ürünleri Supabase'den yükle
 async function loadProducts() {
@@ -111,13 +112,17 @@ async function loadProducts() {
 					var latestOffer = offers[0];
 					if (latestOffer.status === 'accepted') {
 						branchOfferStatus = 'accepted';
+						currentOfferDealer = latestOffer.dealer; // Bayi bilgisini kaydet
 					} else if (latestOffer.status === 'pending' || latestOffer.status === 'requested') {
 						branchOfferStatus = 'in_process';
+						currentOfferDealer = latestOffer.dealer; // Bayi bilgisini kaydet
 					} else {
 						branchOfferStatus = null;
+						currentOfferDealer = null;
 					}
 				} else {
 					branchOfferStatus = null;
+					currentOfferDealer = null;
 				}
 
 				// 3. Teklif yoksa ilçede bayi var mı kontrol et
@@ -222,13 +227,9 @@ function createProductCard(product) {
 		cardClass = ' in-offer';
 		buttonHtml = '<button class="btn-add-cart">Sepete Ekle</button>';
 	} else if (branchOfferStatus === 'accepted' && !priceInfo.isInOffer) {
-		// Aktif teklif var ama bu urun teklifte degil - Teklif Al
+		// Aktif teklif var ama bu urun teklifte degil - Overlay goster
 		cardClass = ' not-in-offer';
-		if (hasDealerInDistrict) {
-			buttonHtml = '<button class="btn-request-offer" onclick="goToOfferPage(event)">Teklif Al</button>';
-		} else {
-			buttonHtml = '<button class="btn-request-offer" onclick="showNoDealerOverlay(event)">Teklif Al</button>';
-		}
+		buttonHtml = '<button class="btn-request-offer" onclick="showActiveOfferOverlay(event)">Teklif Al</button>';
 	} else if (branchOfferStatus === 'in_process') {
 		// Teklif süreçte - Teklifi İncele
 		buttonHtml = '<button class="btn-review-offer" onclick="goToOfferPage(event)">Teklifi Incele</button>';
@@ -327,6 +328,52 @@ function closeNoDealerOverlay() {
 	}
 }
 
+// =============================================
+// AKTIF TEKLIF OVERLAY - URUN TEKLIFTE DEGIL
+// =============================================
+
+// Aktif teklif overlay'i goster
+function showActiveOfferOverlay(e) {
+	if (e) {
+		e.preventDefault();
+		e.stopPropagation();
+	}
+
+	var overlay = document.getElementById('activeOfferOverlay');
+	var dealerInfoEl = document.getElementById('activeOfferDealerInfo');
+
+	// Bayi bilgisini doldur
+	if (dealerInfoEl && currentOfferDealer) {
+		var name = currentOfferDealer.name || 'Bayiniz';
+		var phone = currentOfferDealer.phone || '';
+		if (phone) {
+			dealerInfoEl.innerHTML = '<strong>' + name + '</strong> - <a href="tel:' + phone.replace(/\s/g, '') + '">' + phone + '</a>';
+		} else {
+			dealerInfoEl.innerHTML = '<strong>' + name + '</strong> ile iletisime gecin.';
+		}
+	}
+
+	if (overlay) {
+		overlay.classList.add('active');
+		document.body.style.overflow = 'hidden';
+	}
+}
+
+// Aktif teklif overlay'i kapat
+function closeActiveOfferOverlay() {
+	var overlay = document.getElementById('activeOfferOverlay');
+	if (overlay) {
+		overlay.classList.remove('active');
+		document.body.style.overflow = '';
+	}
+}
+
+// Teklif detayina git
+function goToOfferDetail() {
+	closeActiveOfferOverlay();
+	window.location.href = 'isyerim-musteri-teklif-iste.html';
+}
+
 // Overlay'e tıklayınca kapat
 document.addEventListener('DOMContentLoaded', function() {
 	var overlay = document.getElementById('noDealerOverlay');
@@ -334,6 +381,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		overlay.addEventListener('click', function(e) {
 			if (e.target === this) {
 				closeNoDealerOverlay();
+			}
+		});
+	}
+
+	// Aktif teklif overlay'e tiklaninca kapat
+	var activeOfferOverlay = document.getElementById('activeOfferOverlay');
+	if (activeOfferOverlay) {
+		activeOfferOverlay.addEventListener('click', function(e) {
+			if (e.target === this) {
+				closeActiveOfferOverlay();
 			}
 		});
 	}
