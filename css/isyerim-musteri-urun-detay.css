@@ -760,3 +760,211 @@ a {
 .no-dealer-close-btn:hover {
 	color: #666;
 }
+
+/* =============================================
+   AKTIF TEKLIF - KAMPANYA BADGE VE FIYAT STILLERI
+   ============================================= */
+
+/* Kirmizi Kampanya Badge'i */
+.product-campaign-badge {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 10px 12px;
+	border-radius: 12px 12px 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.product-campaign-badge .badge-label {
+	font-size: 11px;
+	line-height: 1.2;
+}
+
+.product-campaign-badge .badge-price {
+	font-size: 16px;
+	font-weight: 700;
+}
+
+/* Teklifte olan kart */
+.product-card.in-offer {
+	padding-top: 55px;
+	border: 2px solid #e31e24;
+	position: relative;
+}
+
+/* Teklifte olmayan kart */
+.product-card.not-in-offer {
+	border-color: #eee;
+}
+
+/* Ustu cizili perakende fiyat */
+.product-original-price {
+	font-size: 13px;
+	color: #999;
+	margin-bottom: 2px;
+}
+
+.product-original-price del {
+	text-decoration: line-through;
+}
+
+/* Avantajli Fiyat etiketi */
+.product-advantage-label {
+	display: inline-block;
+	font-size: 12px;
+	color: #fff;
+	font-weight: 600;
+	background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+	padding: 6px 14px;
+	border-radius: 20px;
+	margin: 8px 0;
+}
+
+/* Ana urun detay kampanya badge */
+.product-detail-campaign-badge {
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	color: #fff;
+	padding: 12px 16px;
+	border-radius: 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.product-detail-campaign-badge .badge-label {
+	font-size: 13px;
+	line-height: 1.3;
+}
+
+.product-detail-campaign-badge .badge-price {
+	font-size: 20px;
+	font-weight: 700;
+}
+
+/* Ana urun ustu cizili fiyat */
+.product-detail-original-price {
+	font-size: 16px;
+	color: #999;
+	margin-bottom: 4px;
+}
+
+.product-detail-original-price del {
+	text-decoration: line-through;
+}
+
+/* Ana urun avantajli fiyat etiketi */
+.product-detail-advantage-label {
+	display: inline-block;
+	font-size: 13px;
+	color: #fff;
+	font-weight: 600;
+	background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+	padding: 8px 18px;
+	border-radius: 20px;
+	margin: 10px 0;
+}
+
+/* Badge fiyat wrapper (kirmizi band icindeki fiyat + birim) */
+.product-detail-campaign-badge .badge-price-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.product-detail-campaign-badge .badge-unit {
+	font-size: 11px;
+	font-weight: 400;
+	opacity: 0.9;
+}
+
+/* Badge sol taraf (etiketler) */
+.product-detail-campaign-badge .badge-left {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+/* Badge icindeki ustu cizili fiyat */
+.product-detail-campaign-badge .badge-original-price {
+	font-size: 13px;
+	opacity: 0.8;
+}
+
+.product-detail-campaign-badge .badge-original-price del {
+	text-decoration: line-through;
+}
+
+/* Badge icindeki Avantajli Fiyat etiketi */
+.product-detail-campaign-badge .badge-advantage-label {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	background: rgba(255, 255, 255, 0.2);
+	padding: 4px 10px;
+	border-radius: 12px;
+	width: fit-content;
+}
+
+/* Kampanya badge varken (teklifte olan urun) alt fiyat alanini gizle */
+.product-detail-campaign-badge ~ .product-price-info {
+	display: none;
+}
+
+/* =============================================
+   ONERILEN URUNLER KARTLARI - ESIT YUKSEKLIK
+   ============================================= */
+
+/* Kartlari flex ile esit yukseklikte yap */
+.product-card {
+	display: flex;
+	flex-direction: column;
+	min-height: 380px;
+}
+
+/* Kart icerik ogelerini flex ile duz */
+.product-card-image {
+	flex-shrink: 0;
+}
+
+.product-card-name {
+	flex-shrink: 0;
+}
+
+.product-original-price {
+	flex-shrink: 0;
+}
+
+.product-advantage-label {
+	flex-shrink: 0;
+}
+
+.product-card-price {
+	flex-shrink: 0;
+}
+
+/* Butonlari alta yasla */
+.product-card .btn-card-add-cart,
+.product-card .btn-request-offer,
+.product-card .btn-review-offer {
+	margin-top: auto;
+	width: 100%;
+	max-width: none;
+}
+
+/* In-offer kartlarda kalp ikonunu bandın altina tasi */
+.product-card.in-offer .product-card-favorite {
+	top: 60px;
+}
+
+/* In-offer kartlarda alt fiyat ve size-ozel gizle */
+.product-card.in-offer .product-card-price {
+	display: none;
+}

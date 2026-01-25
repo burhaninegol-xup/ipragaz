@@ -430,6 +430,10 @@ a {
 	padding: 20px;
 	text-align: center;
 	transition: box-shadow 0.2s, transform 0.2s;
+	/* Kartlari esit yukseklikte yap */
+	display: flex;
+	flex-direction: column;
+	min-height: 380px;
 }
 
 .product-card:hover {
@@ -534,6 +538,7 @@ a {
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.2s;
+	margin-top: auto; /* Butonu alta yasla */
 }
 
 .btn-add-cart:hover {
@@ -1680,6 +1685,7 @@ a {
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.2s;
+	margin-top: auto; /* Butonu alta yasla */
 }
 
 .btn-request-offer:hover {
@@ -1699,6 +1705,7 @@ a {
 	font-weight: 600;
 	cursor: pointer;
 	transition: all 0.2s;
+	margin-top: auto; /* Butonu alta yasla */
 }
 
 .btn-review-offer:hover {
@@ -1713,6 +1720,82 @@ a {
 
 .product-card.no-offer {
 	border-color: #ddd;
+}
+
+/* =============================================
+   AKTIF TEKLIF - KAMPANYA BADGE VE FIYAT STILLERI
+   ============================================= */
+
+/* Kirmizi Kampanya Badge'i */
+.product-campaign-badge {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 10px 12px;
+	border-radius: 12px 12px 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.product-campaign-badge .badge-label {
+	font-size: 11px;
+	line-height: 1.2;
+}
+
+.product-campaign-badge .badge-price {
+	font-size: 16px;
+	font-weight: 700;
+}
+
+/* Teklifte olan kart */
+.product-card.in-offer {
+	padding-top: 55px;
+	border: 2px solid #e31e24;
+	position: relative;
+}
+
+/* Teklifte dahil kartlarda kalp ikonu bandın altinda */
+.product-card.in-offer .product-favorite {
+	top: 60px; /* 55px padding + 5px bosluk */
+}
+
+/* Teklifte dahil kartlarda fiyat ve etiketini gizle */
+.product-card.in-offer .product-price {
+	display: none;
+}
+
+/* Teklifte olmayan kart */
+.product-card.not-in-offer {
+	border-color: #eee;
+}
+
+/* Ustu cizili perakende fiyat */
+.product-original-price {
+	font-size: 13px;
+	color: #999;
+	margin-bottom: 2px;
+}
+
+.product-original-price del {
+	text-decoration: line-through;
+}
+
+/* Avantajli Fiyat etiketi */
+.product-advantage-label {
+	display: inline-block;
+	font-size: 12px;
+	color: #fff;
+	font-weight: 600;
+	background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+	padding: 6px 14px;
+	border-radius: 20px;
+	margin: 8px 0;
 }
 
 /* =============================================

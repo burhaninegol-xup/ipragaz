@@ -107,14 +107,6 @@
 				const { data: productsData, error: productsError } = await ProductsService.getAll();
 				if (productsError) throw new Error(productsError);
 
-				products = productsData.map(p => ({
-					id: p.id,
-					code: p.code,
-					name: p.name,
-					image: p.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png',
-					base_price: p.base_price
-				}));
-
 				// Session'dan bayi ID'sini ve ismini al
 				currentDealerId = sessionStorage.getItem('bayi_dealer_id');
 				currentDealerName = sessionStorage.getItem('bayi_dealer_name') || 'Bayi';
@@ -124,6 +116,45 @@
 					showError('Bayi bilgisi bulunamadi. Lutfen tekrar giris yapin.');
 					return;
 				}
+
+				// Bayinin sehir bilgisini al ve il bazli fiyatlari yukle
+				var cityRetailPrices = {};
+				try {
+					const { data: dealer } = await DealersService.getById(currentDealerId);
+					if (dealer) {
+						// city_id varsa dogrudan kullan, yoksa city isminden bul
+						var cityId = dealer.city_id;
+						if (!cityId && dealer.city) {
+							const { data: locationIds } = await LocationsService.findLocationIds(dealer.city);
+							if (locationIds && locationIds.city_id) {
+								cityId = locationIds.city_id;
+							}
+						}
+
+						// city_id bulunduysa il bazli fiyatlari al
+						if (cityId) {
+							const { data: cityPrices } = await RetailPricesByCityService.getByCityId(cityId);
+							if (cityPrices) {
+								cityPrices.forEach(function(cp) {
+									if (cp.product_id && cp.retail_price) {
+										cityRetailPrices[cp.product_id] = cp.retail_price;
+									}
+								});
+							}
+						}
+					}
+				} catch (err) {
+					console.warn('Il bazli fiyatlar yuklenemedi, genel fiyatlar kullanilacak:', err);
+				}
+
+				// Urunleri isle - il bazli fiyat varsa onu, yoksa base_price kullan
+				products = productsData.map(p => ({
+					id: p.id,
+					code: p.code,
+					name: p.name,
+					image: p.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png',
+					base_price: cityRetailPrices[p.id] !== undefined ? cityRetailPrices[p.id] : p.base_price
+				}));
 
 				hideLoading();
 
@@ -273,7 +304,7 @@
 						if (product) {
 							var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
 							addProductRow(
-								{ id: product.id, code: product.code, name: product.name, base_price: product.base_price, image: fullProduct.image || product.image_url },
+								{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
 								detail.commitment_quantity || '',
 								detail.unit_price || '',
 								detail.this_month_quantity,
@@ -464,7 +495,7 @@
 								// Ürün bilgilerini products dizisinden tamamla (image için)
 								var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
 								addProductRow(
-									{ id: product.id, code: product.code, name: product.name, base_price: product.base_price, image: fullProduct.image || product.image_url },
+									{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
 									detail.commitment_quantity || '',
 									detail.unit_price || '',
 									detail.this_month_quantity,

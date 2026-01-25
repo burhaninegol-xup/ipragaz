@@ -65,7 +65,7 @@ const PriceResolverService = {
      * @param {string} branchId - Sube ID
      * @param {string} dealerId - Bayi ID
      * @param {string} cityId - Sehir ID (opsiyonel, sehir bazli perakende fiyat icin)
-     * @returns {Promise<Object>} - {productId: {price, priceType, label, cssClass}}
+     * @returns {Promise<Object>} - {productId: {price, priceType, label, cssClass, isInOffer, offerPrice, retailPrice}}
      */
     async resolvePricesForProducts(products, customerId, branchId, dealerId, cityId) {
         var result = {};
@@ -89,34 +89,36 @@ const PriceResolverService = {
                 var productId = product.id;
                 var basePrice = product.base_price || 0;
 
-                // Oncelik 1: Teklif fiyati
-                if (offerPrices[productId] !== undefined) {
+                // Perakende fiyati belirle (sehir bazli veya base price)
+                var retailPrice = cityPrices[productId] !== undefined ? cityPrices[productId] : basePrice;
+
+                // Urun teklifte mi?
+                var isInOffer = offerPrices[productId] !== undefined;
+                var offerPrice = isInOffer ? offerPrices[productId] : null;
+
+                // Oncelik 1: Teklif fiyati (eger teklifte ise)
+                if (isInOffer) {
                     result[productId] = {
-                        price: offerPrices[productId],
+                        price: offerPrice,
                         priceType: self.PRICE_TYPES.OFFER.type,
                         label: self.PRICE_TYPES.OFFER.label,
-                        cssClass: self.PRICE_TYPES.OFFER.cssClass
+                        cssClass: self.PRICE_TYPES.OFFER.cssClass,
+                        isInOffer: true,
+                        offerPrice: offerPrice,
+                        retailPrice: retailPrice
                     };
                     return;
                 }
 
-                // Oncelik 2: Sehir bazli perakende fiyat
-                if (cityPrices[productId] !== undefined) {
-                    result[productId] = {
-                        price: cityPrices[productId],
-                        priceType: self.PRICE_TYPES.RETAIL.type,
-                        label: self.PRICE_TYPES.RETAIL.label,
-                        cssClass: self.PRICE_TYPES.RETAIL.cssClass
-                    };
-                    return;
-                }
-
-                // Oncelik 3: Base price (fallback)
+                // Oncelik 2: Sehir bazli perakende fiyat veya base price
                 result[productId] = {
-                    price: basePrice,
+                    price: retailPrice,
                     priceType: self.PRICE_TYPES.RETAIL.type,
                     label: self.PRICE_TYPES.RETAIL.label,
-                    cssClass: self.PRICE_TYPES.RETAIL.cssClass
+                    cssClass: self.PRICE_TYPES.RETAIL.cssClass,
+                    isInOffer: false,
+                    offerPrice: null,
+                    retailPrice: retailPrice
                 };
             });
 
@@ -127,11 +129,15 @@ const PriceResolverService = {
             // Hata durumunda tum urunler icin perakende fiyat
             var self = this;
             products.forEach(function(product) {
+                var basePrice = product.base_price || 0;
                 result[product.id] = {
-                    price: product.base_price || 0,
+                    price: basePrice,
                     priceType: self.PRICE_TYPES.RETAIL.type,
                     label: self.PRICE_TYPES.RETAIL.label,
-                    cssClass: self.PRICE_TYPES.RETAIL.cssClass
+                    cssClass: self.PRICE_TYPES.RETAIL.cssClass,
+                    isInOffer: false,
+                    offerPrice: null,
+                    retailPrice: basePrice
                 };
             });
             return result;

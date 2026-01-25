@@ -174,7 +174,10 @@ function createProductCard(product) {
 	var priceInfo = resolvedPrices[product.id] || {
 		price: product.base_price || 0,
 		label: 'Perakende',
-		cssClass: 'perakende'
+		cssClass: 'perakende',
+		isInOffer: false,
+		offerPrice: null,
+		retailPrice: product.base_price || 0
 	};
 
 	var formattedPrice = parseFloat(priceInfo.price).toLocaleString('tr-TR', {
@@ -189,13 +192,43 @@ function createProductCard(product) {
 	var isFavorite = favoriteIds.indexOf(product.id) !== -1;
 	var favoriteClass = isFavorite ? 'product-favorite active' : 'product-favorite';
 
-	// Buton belirleme (teklif durumuna göre)
-	var buttonHtml = '';
+	// YENİ: Kampanya badge ve fiyat elemanlari
+	var campaignBadgeHtml = '';
+	var strikeThroughHtml = '';
+	var advantageLabelHtml = '';
 	var cardClass = '';
+	var buttonHtml = '';
 
-	if (branchOfferStatus === 'accepted') {
-		// Kabul edilmiş teklif var - Sepete Ekle
+	// Aktif teklif var ve urun teklifte mi?
+	if (branchOfferStatus === 'accepted' && priceInfo.isInOffer) {
+		// Teklifte olan urun - Kirmizi badge + ustu cizili fiyat + Sepete Ekle
+		var offerPriceFormatted = parseFloat(priceInfo.offerPrice).toLocaleString('tr-TR', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+		var retailPriceFormatted = parseFloat(priceInfo.retailPrice).toLocaleString('tr-TR', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+
+		campaignBadgeHtml =
+			'<div class="product-campaign-badge">' +
+				'<span class="badge-label">Tavsiye edilen<br>kampanyali fiyat</span>' +
+				'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
+			'</div>';
+
+		strikeThroughHtml = '<div class="product-original-price"><del>₺' + retailPriceFormatted + '</del></div>';
+		advantageLabelHtml = '<div class="product-advantage-label">Avantajli Fiyat</div>';
+		cardClass = ' in-offer';
 		buttonHtml = '<button class="btn-add-cart">Sepete Ekle</button>';
+	} else if (branchOfferStatus === 'accepted' && !priceInfo.isInOffer) {
+		// Aktif teklif var ama bu urun teklifte degil - Teklif Al
+		cardClass = ' not-in-offer';
+		if (hasDealerInDistrict) {
+			buttonHtml = '<button class="btn-request-offer" onclick="goToOfferPage(event)">Teklif Al</button>';
+		} else {
+			buttonHtml = '<button class="btn-request-offer" onclick="showNoDealerOverlay(event)">Teklif Al</button>';
+		}
 	} else if (branchOfferStatus === 'in_process') {
 		// Teklif süreçte - Teklifi İncele
 		buttonHtml = '<button class="btn-review-offer" onclick="goToOfferPage(event)">Teklifi Incele</button>';
@@ -211,6 +244,7 @@ function createProductCard(product) {
 	}
 
 	return '<div class="product-card' + cardClass + '" data-product-id="' + product.id + '" style="cursor: pointer;">' +
+		campaignBadgeHtml +
 		'<button class="' + favoriteClass + '">' +
 			'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 		'</button>' +
@@ -218,6 +252,8 @@ function createProductCard(product) {
 			'<img src="' + imageUrl + '" alt="' + product.name + '">' +
 		'</div>' +
 		'<div class="product-name">' + product.name + '</div>' +
+		strikeThroughHtml +
+		advantageLabelHtml +
 		'<div class="product-price">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
 		buttonHtml +
 	'</div>';
@@ -313,7 +349,19 @@ function renderProducts() {
 		return;
 	}
 
-	products.forEach(function(product) {
+	// YENİ: Teklifte olan ürünleri başa al (sadece aktif teklif varsa)
+	var sortedProducts = products.slice();
+	if (branchOfferStatus === 'accepted') {
+		sortedProducts.sort(function(a, b) {
+			var aInOffer = resolvedPrices[a.id] && resolvedPrices[a.id].isInOffer;
+			var bInOffer = resolvedPrices[b.id] && resolvedPrices[b.id].isInOffer;
+			if (aInOffer && !bInOffer) return -1;
+			if (!aInOffer && bInOffer) return 1;
+			return 0;
+		});
+	}
+
+	sortedProducts.forEach(function(product) {
 		grid.innerHTML += createProductCard(product);
 	});
 

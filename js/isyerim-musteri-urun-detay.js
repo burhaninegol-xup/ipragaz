@@ -155,7 +155,10 @@ function renderProductDetail() {
 	var priceInfo = resolvedPrices[currentProduct.id] || {
 		price: currentProduct.base_price || 0,
 		label: 'Perakende',
-		cssClass: 'perakende'
+		cssClass: 'perakende',
+		isInOffer: false,
+		offerPrice: null,
+		retailPrice: currentProduct.base_price || 0
 	};
 	var formattedPrice = parseFloat(priceInfo.price).toLocaleString('tr-TR', {
 		minimumFractionDigits: 2,
@@ -183,16 +186,72 @@ function renderProductDetail() {
 	// Favori butonu class'ı
 	var favBtnClass = isProductFavorite ? 'product-favorite-btn active' : 'product-favorite-btn';
 
-	// Buton belirleme (teklif durumuna göre)
+	// YENİ: Kampanya badge ve fiyat elemanlari
+	var campaignBadgeHtml = '';
+	var strikeThroughHtml = '';
+	var advantageLabelHtml = '';
 	var actionButtonHtml = '';
-	if (branchOfferStatus === 'accepted') {
-		// Kabul edilmiş teklif var - Sepete Ekle
+	var quantityHtml = '';
+
+	// Aktif teklif var ve urun teklifte mi?
+	if (branchOfferStatus === 'accepted' && priceInfo.isInOffer) {
+		// Teklifte olan urun - Kirmizi badge + ustu cizili fiyat + Sepete Ekle
+		var offerPriceFormatted = parseFloat(priceInfo.offerPrice).toLocaleString('tr-TR', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+		var retailPriceFormatted = parseFloat(priceInfo.retailPrice).toLocaleString('tr-TR', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		});
+
+		campaignBadgeHtml =
+			'<div class="product-detail-campaign-badge">' +
+				'<div class="badge-left">' +
+					'<span class="badge-label">Tavsiye edilen kampanyali fiyat</span>' +
+					'<div class="badge-original-price"><del>₺' + retailPriceFormatted + '</del></div>' +
+					'<div class="badge-advantage-label">Avantajli Fiyat</div>' +
+				'</div>' +
+				'<div class="badge-price-wrapper">' +
+					'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
+					'<span class="badge-unit">/ Adet* KDV dahil</span>' +
+				'</div>' +
+			'</div>';
+
+		strikeThroughHtml = '';  // Artik badge icinde
+		advantageLabelHtml = ''; // Artik badge icinde
+
+		// Miktar secici
+		quantityHtml = '<div class="quantity-selector">' +
+			'<button class="quantity-btn" id="decreaseBtn" onclick="decreaseQuantity()">−</button>' +
+			'<input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="99" onchange="onQuantityChange()">' +
+			'<button class="quantity-btn" id="increaseBtn" onclick="increaseQuantity()">+</button>' +
+		'</div>';
+
+		// Sepete Ekle butonu
 		actionButtonHtml = '<button class="btn-add-to-cart" id="addToCartBtn" onclick="addToCart()">' +
 			'<span>Sepete Ekle</span>' +
 			'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
 				'<path d="M9 18l6-6-6-6"/>' +
 			'</svg>' +
 		'</button>';
+	} else if (branchOfferStatus === 'accepted' && !priceInfo.isInOffer) {
+		// Aktif teklif var ama bu urun teklifte degil - Teklif Al
+		if (hasDealerInDistrict) {
+			actionButtonHtml = '<button class="btn-request-offer" onclick="goToOfferPage()">' +
+				'<span>Teklif Al</span>' +
+				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+					'<path d="M9 18l6-6-6-6"/>' +
+				'</svg>' +
+			'</button>';
+		} else {
+			actionButtonHtml = '<button class="btn-request-offer" onclick="showNoDealerOverlay()">' +
+				'<span>Teklif Al</span>' +
+				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+					'<path d="M9 18l6-6-6-6"/>' +
+				'</svg>' +
+			'</button>';
+		}
 	} else if (branchOfferStatus === 'in_process') {
 		// Teklif süreçte - Teklifi İncele
 		actionButtonHtml = '<button class="btn-review-offer" onclick="goToOfferPage()">' +
@@ -220,16 +279,6 @@ function renderProductDetail() {
 		}
 	}
 
-	// Miktar seçici sadece kabul edilmiş teklifte göster
-	var quantityHtml = '';
-	if (branchOfferStatus === 'accepted') {
-		quantityHtml = '<div class="quantity-selector">' +
-			'<button class="quantity-btn" id="decreaseBtn" onclick="decreaseQuantity()">−</button>' +
-			'<input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="99" onchange="onQuantityChange()">' +
-			'<button class="quantity-btn" id="increaseBtn" onclick="increaseQuantity()">+</button>' +
-		'</div>';
-	}
-
 	var html = '<div class="product-detail-grid">' +
 		'<div class="product-image-container">' +
 			'<button class="' + favBtnClass + '" id="favoriteBtn">' +
@@ -239,6 +288,9 @@ function renderProductDetail() {
 		'</div>' +
 		'<div class="product-info">' +
 			'<h1 class="product-title">' + currentProduct.name + '</h1>' +
+			campaignBadgeHtml +
+			strikeThroughHtml +
+			advantageLabelHtml +
 			'<div class="product-price-info">' +
 				'<div class="product-price-value">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
 				'<div class="product-price-label">/ Adet* KDV dahil</div>' +
@@ -324,7 +376,10 @@ function renderRecommendedProducts() {
 		var priceInfo = resolvedPrices[product.id] || {
 			price: product.base_price || 0,
 			label: 'Perakende',
-			cssClass: 'perakende'
+			cssClass: 'perakende',
+			isInOffer: false,
+			offerPrice: null,
+			retailPrice: product.base_price || 0
 		};
 		var formattedPrice = parseFloat(priceInfo.price).toLocaleString('tr-TR', {
 			minimumFractionDigits: 2,
@@ -332,7 +387,51 @@ function renderRecommendedProducts() {
 		});
 		var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
 
-		return '<div class="product-card" data-product-id="' + product.id + '" onclick="goToProductDetail(\'' + product.id + '\')">' +
+		// YENİ: Kampanya badge ve fiyat elemanlari
+		var campaignBadgeHtml = '';
+		var strikeThroughHtml = '';
+		var advantageLabelHtml = '';
+		var cardClass = '';
+		var buttonHtml = '';
+
+		// Aktif teklif var ve urun teklifte mi?
+		if (branchOfferStatus === 'accepted' && priceInfo.isInOffer) {
+			// Teklifte olan urun
+			var offerPriceFormatted = parseFloat(priceInfo.offerPrice).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+			var retailPriceFormatted = parseFloat(priceInfo.retailPrice).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+
+			campaignBadgeHtml =
+				'<div class="product-campaign-badge">' +
+					'<span class="badge-label">Tavsiye edilen kampanyali fiyat</span>' +
+					'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
+				'</div>';
+
+			strikeThroughHtml = '<div class="product-original-price"><del>₺' + retailPriceFormatted + '</del></div>';
+			advantageLabelHtml = '<div class="product-advantage-label">Avantajli Fiyat</div>';
+			cardClass = ' in-offer';
+			buttonHtml = '<button class="btn-card-add-cart" onclick="event.stopPropagation(); addRecommendedToCart(this, \'' + product.id + '\')">Sepete Ekle</button>';
+		} else if (branchOfferStatus === 'accepted' && !priceInfo.isInOffer) {
+			// Aktif teklif var ama bu urun teklifte degil
+			cardClass = ' not-in-offer';
+			buttonHtml = '<button class="btn-request-offer" onclick="event.stopPropagation(); goToOfferPage()">Teklif Al</button>';
+		} else if (branchOfferStatus === 'in_process') {
+			// Teklif süreçte
+			cardClass = ' offer-pending';
+			buttonHtml = '<button class="btn-review-offer" onclick="event.stopPropagation(); goToOfferPage()">Teklifi Incele</button>';
+		} else {
+			// Teklif yok
+			cardClass = ' no-offer';
+			buttonHtml = '<button class="btn-request-offer" onclick="event.stopPropagation(); goToOfferPage()">Teklif Al</button>';
+		}
+
+		return '<div class="product-card' + cardClass + '" data-product-id="' + product.id + '" onclick="goToProductDetail(\'' + product.id + '\')">' +
+			campaignBadgeHtml +
 			'<button class="product-card-favorite" onclick="event.stopPropagation(); toggleCardFavorite(this)">' +
 				'<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
 			'</button>' +
@@ -340,8 +439,10 @@ function renderRecommendedProducts() {
 				'<img src="' + imageUrl + '" alt="' + product.name + '">' +
 			'</div>' +
 			'<div class="product-card-name">' + product.name + '</div>' +
+			strikeThroughHtml +
+			advantageLabelHtml +
 			'<div class="product-card-price">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
-			'<button class="btn-card-add-cart" onclick="event.stopPropagation(); addRecommendedToCart(this, \'' + product.id + '\')">Sepete Ekle</button>' +
+			buttonHtml +
 		'</div>';
 	}).join('');
 
