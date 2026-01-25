@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sehir Fiyatlari - Ipragaz Back Office</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-sidebar-bg: #1a1a1a;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bo-bg-main);
+            min-height: 100vh;
+        }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed {
+            margin-left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-content {
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .bo-page-header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .bo-page-header-left p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .bo-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .bo-btn-primary {
+            background: var(--bo-primary);
+            color: #ffffff;
+        }
+
+        .bo-btn-primary:hover {
+            background: var(--bo-primary-dark);
+        }
+
+        .bo-btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .bo-btn-secondary {
+            background: var(--bo-bg-paper);
+            color: var(--bo-text-primary);
+            border: 1px solid var(--bo-border);
+        }
+
+        .bo-btn-secondary:hover {
+            background: var(--bo-bg-main);
+        }
+
+        .bo-btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .bo-btn-sm svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Stats Cards */
+        .bo-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .bo-stat-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .bo-stat-card-label {
+            font-size: 12px;
+            color: var(--bo-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .bo-stat-card-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        .bo-stat-card-value.success {
+            color: var(--bo-success);
+        }
+
+        .bo-stat-card-value.warning {
+            color: var(--bo-warning);
+        }
+
+        /* Card */
+        .bo-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .bo-card-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bo-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+        }
+
+        .bo-card-body {
+            padding: 20px 24px;
+        }
+
+        /* Bulk Operations */
+        .bo-bulk-ops {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .bo-bulk-op-section {
+            padding: 16px;
+            background: var(--bo-bg-main);
+            border-radius: 8px;
+        }
+
+        .bo-bulk-op-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--bo-text-primary);
+            margin-bottom: 12px;
+        }
+
+        .bo-bulk-op-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Select */
+        .bo-select {
+            padding: 10px 36px 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bo-bg-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23525252' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+            cursor: pointer;
+            appearance: none;
+            flex: 1;
+        }
+
+        .bo-select:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+        }
+
+        /* Input */
+        .bo-input {
+            padding: 10px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            width: 100px;
+            text-align: center;
+        }
+
+        .bo-input:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+        }
+
+        /* View Switcher */
+        .bo-view-switcher {
+            display: flex;
+            background: var(--bo-bg-main);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .bo-view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--bo-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .bo-view-btn.active {
+            background: var(--bo-bg-paper);
+            color: var(--bo-text-primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Toolbar */
+        .bo-toolbar {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--bo-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .bo-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .bo-toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Table */
+        .bo-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .bo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bo-table th,
+        .bo-table td {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .bo-table th {
+            background: var(--bo-bg-main);
+            color: var(--bo-text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .bo-table td {
+            border-bottom: 1px solid var(--bo-border);
+            color: var(--bo-text-primary);
+        }
+
+        .bo-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bo-table tr:hover td {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Price Input */
+        .bo-price-input {
+            width: 120px;
+            padding: 8px 12px;
+            border: 1px solid var(--bo-border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            text-align: right;
+            transition: all 0.2s ease;
+        }
+
+        .bo-price-input:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+        }
+
+        .bo-price-input.modified {
+            border-color: var(--bo-warning);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .bo-price-input.empty {
+            border-color: var(--bo-border);
+            background: var(--bo-bg-main);
+        }
+
+        /* Badge */
+        .bo-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .bo-badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--bo-success);
+        }
+
+        .bo-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--bo-warning);
+        }
+
+        .bo-badge.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--bo-error);
+        }
+
+        /* Diff indicator */
+        .bo-diff {
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .bo-diff.positive {
+            color: var(--bo-success);
+        }
+
+        .bo-diff.negative {
+            color: var(--bo-error);
+        }
+
+        /* Loading */
+        .bo-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px;
+        }
+
+        .bo-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bo-border);
+            border-top-color: var(--bo-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .bo-empty-state {
+            text-align: center;
+            padding: 64px 24px;
+        }
+
+        .bo-empty-state svg {
+            width: 80px;
+            height: 80px;
+            stroke: var(--bo-border);
+            fill: none;
+            stroke-width: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .bo-empty-state h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--bo-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .bo-empty-state p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        /* Toast */
+        .bo-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            background: var(--bo-text-primary);
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .bo-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .bo-toast.success {
+            background: var(--bo-success);
+        }
+
+        .bo-toast.error {
+            background: var(--bo-error);
+        }
+
+        .bo-toast svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Confirm Modal */
+        .bo-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+
+        .bo-modal-overlay.show {
+            display: flex;
+        }
+
+        .bo-modal {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .bo-modal h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 12px;
+        }
+
+        .bo-modal p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .bo-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* Save Bar */
+        .bo-save-bar {
+            position: fixed;
+            bottom: 0;
+            left: var(--bo-sidebar-width);
+            right: 0;
+            padding: 16px 24px;
+            background: var(--bo-bg-paper);
+            border-top: 1px solid var(--bo-border);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease;
+        }
+
+        .bo-save-bar.show {
+            display: flex;
+        }
+
+        .bo-main-content.sidebar-collapsed ~ .bo-save-bar,
+        .sidebar-collapsed .bo-save-bar {
+            left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-save-bar-info {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        .bo-save-bar-info strong {
+            color: var(--bo-warning);
+        }
+
+        .bo-save-bar-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .bo-bulk-ops {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="backoffice-sidebar"></div>
+
+    <!-- Main Content -->
+    <main class="bo-main-content">
+        <!-- Header -->
+        <div id="backoffice-header"></div>
+
+        <!-- Page Content -->
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <h1>Sehir Fiyatlari</h1>
+                    <p>81 il bazinda perakende fiyatlarini yonetin</p>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="bo-stats-grid">
+                <div class="bo-stat-card">
+                    <div class="bo-stat-card-label">Toplam Sehir</div>
+                    <div class="bo-stat-card-value" id="statCities">0</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-card-label">Toplam Urun</div>
+                    <div class="bo-stat-card-value" id="statProducts">0</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-card-label">Tanimli Fiyat</div>
+                    <div class="bo-stat-card-value success" id="statDefinedPrices">0</div>
+                </div>
+                <div class="bo-stat-card">
+                    <div class="bo-stat-card-label">Eksik Fiyat</div>
+                    <div class="bo-stat-card-value warning" id="statMissingPrices">0</div>
+                </div>
+            </div>
+
+            <!-- Bulk Operations -->
+            <div class="bo-card">
+                <div class="bo-card-header">
+                    <span class="bo-card-title">Toplu Islemler</span>
+                </div>
+                <div class="bo-card-body">
+                    <div class="bo-bulk-ops">
+                        <!-- Copy Prices -->
+                        <div class="bo-bulk-op-section">
+                            <div class="bo-bulk-op-title">Sehirler Arasi Fiyat Kopyala</div>
+                            <div class="bo-bulk-op-row">
+                                <select class="bo-select" id="copySourceCity">
+                                    <option value="">Kaynak Sehir Secin</option>
+                                </select>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#525252" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                                <select class="bo-select" id="copyTargetCity">
+                                    <option value="">Hedef Sehir Secin</option>
+                                </select>
+                                <button class="bo-btn bo-btn-secondary bo-btn-sm" onclick="copyPrices()">
+                                    Kopyala
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Percentage Change -->
+                        <div class="bo-bulk-op-section">
+                            <div class="bo-bulk-op-title">Yuzde Artis/Azalis Uygula</div>
+                            <div class="bo-bulk-op-row">
+                                <select class="bo-select" id="percentageCity">
+                                    <option value="">Sehir Secin</option>
+                                </select>
+                                <input type="number" class="bo-input" id="percentageValue" placeholder="%" step="0.1">
+                                <button class="bo-btn bo-btn-secondary bo-btn-sm" onclick="applyPercentage()">
+                                    Uygula
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Table Card -->
+            <div class="bo-card">
+                <!-- Toolbar -->
+                <div class="bo-toolbar">
+                    <div class="bo-toolbar-left">
+                        <!-- View Switcher -->
+                        <div class="bo-view-switcher">
+                            <button class="bo-view-btn active" onclick="switchView('city')" id="viewCityBtn">
+                                Sehir Bazli
+                            </button>
+                            <button class="bo-view-btn" onclick="switchView('product')" id="viewProductBtn">
+                                Urun Bazli
+                            </button>
+                        </div>
+
+                        <!-- City/Product Selector -->
+                        <select class="bo-select" id="mainSelector" onchange="loadPriceTable()">
+                            <option value="">Sehir Secin</option>
+                        </select>
+                    </div>
+                    <div class="bo-toolbar-right">
+                        <span class="bo-badge" id="modifiedCount" style="display: none;">
+                            0 degisiklik
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="bo-table-wrapper">
+                    <table class="bo-table">
+                        <thead id="tableHead">
+                            <tr>
+                                <th>Urun Kodu</th>
+                                <th>Urun Adi</th>
+                                <th>Baz Fiyat</th>
+                                <th>Sehir Fiyati</th>
+                                <th>Fark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="priceTable">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="bo-empty-state">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
+                                            <circle cx="12" cy="10" r="3"/>
+                                        </svg>
+                                        <h3>Sehir Secin</h3>
+                                        <p>Fiyatlari goruntulemek icin yukaridaki listeden bir sehir secin.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Save Bar -->
+    <div class="bo-save-bar" id="saveBar">
+        <div class="bo-save-bar-info">
+            <strong id="pendingChanges">0</strong> degisiklik kaydedilmeyi bekliyor
+        </div>
+        <div class="bo-save-bar-actions">
+            <button class="bo-btn bo-btn-secondary" onclick="discardChanges()">
+                Vazgec
+            </button>
+            <button class="bo-btn bo-btn-primary" onclick="saveChanges()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Kaydet
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="bo-toast" id="toast">
+        <svg viewBox="0 0 24 24" id="toastIcon"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <span id="toastMessage">Islem basarili</span>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="bo-modal-overlay" id="confirmModal">
+        <div class="bo-modal">
+            <h3 id="modalTitle">Emin misiniz?</h3>
+            <p id="modalMessage">Bu islemi geri alamazsiniz.</p>
+            <div class="bo-modal-actions">
+                <button class="bo-btn bo-btn-secondary" onclick="closeModal()">Iptal</button>
+                <button class="bo-btn bo-btn-primary" id="modalConfirmBtn" onclick="confirmAction()">Onayla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/locations-service.js"></script>
+    <script src="js/services/products-service.js"></script>
+    <script src="js/services/retail-prices-by-city-service.js"></script>
+
+    <script>
+        // State
+        var cities = [];
+        var products = [];
+        var currentView = 'city'; // 'city' or 'product'
+        var currentSelectedId = null;
+        var priceMatrix = [];
+        var modifiedPrices = {}; // {product_id_city_id: new_price}
+        var pendingAction = null;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', async function() {
+            var adminId = sessionStorage.getItem('backoffice_admin_id');
+            if (!adminId) {
+                window.location.href = 'backoffice-login.html';
+                return;
+            }
+
+            await loadComponents();
+
+            if (typeof setPageName === 'function') {
+                setPageName('Sehir Fiyatlari');
+            }
+
+            await loadInitialData();
+        });
+
+        // Load components
+        async function loadComponents() {
+            try {
+                var sidebarResponse = await fetch('components/backoffice-sidebar.html');
+                var sidebarHtml = await sidebarResponse.text();
+                document.getElementById('backoffice-sidebar').innerHTML = sidebarHtml;
+
+                var headerResponse = await fetch('components/backoffice-header.html');
+                var headerHtml = await headerResponse.text();
+                document.getElementById('backoffice-header').innerHTML = headerHtml;
+
+                executeScripts(document.getElementById('backoffice-sidebar'));
+                executeScripts(document.getElementById('backoffice-header'));
+            } catch (error) {
+                console.error('Component load error:', error);
+            }
+        }
+
+        function executeScripts(container) {
+            var scripts = container.querySelectorAll('script');
+            scripts.forEach(function(script) {
+                var newScript = document.createElement('script');
+                newScript.textContent = script.textContent;
+                document.body.appendChild(newScript);
+            });
+        }
+
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                // Load cities
+                var citiesResult = await LocationsService.getCities();
+                if (!citiesResult.error) {
+                    cities = citiesResult.data || [];
+                }
+
+                // Load products
+                var productsResult = await ProductsService.getAll();
+                if (!productsResult.error) {
+                    products = productsResult.data || [];
+                }
+
+                // Populate selects
+                populateCitySelects();
+                populateMainSelector();
+
+                // Load stats
+                await loadStats();
+
+            } catch (error) {
+                console.error('Load initial data error:', error);
+                showToast('Veri yuklenemedi', 'error');
+            }
+        }
+
+        // Populate city selects
+        function populateCitySelects() {
+            var selects = ['copySourceCity', 'copyTargetCity', 'percentageCity'];
+            selects.forEach(function(selectId) {
+                var select = document.getElementById(selectId);
+                select.innerHTML = '<option value="">' + (selectId === 'copySourceCity' ? 'Kaynak' : selectId === 'copyTargetCity' ? 'Hedef' : '') + ' Sehir Secin</option>';
+                cities.forEach(function(city) {
+                    select.innerHTML += '<option value="' + city.id + '">' + city.code + ' - ' + city.name + '</option>';
+                });
+            });
+        }
+
+        // Populate main selector
+        function populateMainSelector() {
+            var select = document.getElementById('mainSelector');
+            if (currentView === 'city') {
+                select.innerHTML = '<option value="">Sehir Secin</option>';
+                cities.forEach(function(city) {
+                    select.innerHTML += '<option value="' + city.id + '">' + city.code + ' - ' + city.name + '</option>';
+                });
+            } else {
+                select.innerHTML = '<option value="">Urun Secin</option>';
+                products.forEach(function(product) {
+                    select.innerHTML += '<option value="' + product.id + '">' + product.code + ' - ' + product.name + '</option>';
+                });
+            }
+        }
+
+        // Load stats
+        async function loadStats() {
+            var statsResult = await RetailPricesByCityService.getStats();
+
+            document.getElementById('statCities').textContent = cities.length;
+            document.getElementById('statProducts').textContent = products.length;
+
+            var totalPossible = cities.length * products.length;
+            var definedPrices = statsResult.data ? statsResult.data.totalPrices : 0;
+            var missingPrices = totalPossible - definedPrices;
+
+            document.getElementById('statDefinedPrices').textContent = definedPrices.toLocaleString('tr-TR');
+            document.getElementById('statMissingPrices').textContent = missingPrices.toLocaleString('tr-TR');
+        }
+
+        // Switch view
+        function switchView(view) {
+            if (view === currentView) return;
+
+            // Check for unsaved changes
+            if (Object.keys(modifiedPrices).length > 0) {
+                pendingAction = { type: 'switchView', view: view };
+                showModal('Kaydedilmemis Degisiklikler',
+                    'Kaydedilmemis degisiklikleriniz var. Gorunum degistirmek icin onaylayın.',
+                    'Devam Et');
+                return;
+            }
+
+            currentView = view;
+            currentSelectedId = null;
+
+            // Update UI
+            document.getElementById('viewCityBtn').classList.toggle('active', view === 'city');
+            document.getElementById('viewProductBtn').classList.toggle('active', view === 'product');
+
+            // Update table header
+            var tableHead = document.getElementById('tableHead');
+            if (view === 'city') {
+                tableHead.innerHTML = '<tr><th>Urun Kodu</th><th>Urun Adi</th><th>Baz Fiyat</th><th>Sehir Fiyati</th><th>Fark</th></tr>';
+            } else {
+                tableHead.innerHTML = '<tr><th>Sehir Kodu</th><th>Sehir Adi</th><th>Baz Fiyat</th><th>Sehir Fiyati</th><th>Fark</th></tr>';
+            }
+
+            // Update selector
+            populateMainSelector();
+
+            // Reset table
+            var tableBody = document.getElementById('priceTable');
+            tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+                '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                '<h3>' + (view === 'city' ? 'Sehir' : 'Urun') + ' Secin</h3>' +
+                '<p>Fiyatlari goruntulemek icin yukaridaki listeden bir ' + (view === 'city' ? 'sehir' : 'urun') + ' secin.</p>' +
+                '</div></td></tr>';
+        }
+
+        // Load price table
+        async function loadPriceTable() {
+            var selectedId = document.getElementById('mainSelector').value;
+            if (!selectedId) return;
+
+            currentSelectedId = selectedId;
+            modifiedPrices = {};
+            updateSaveBar();
+
+            var tableBody = document.getElementById('priceTable');
+            tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-loading"><div class="bo-loading-spinner"></div></div></td></tr>';
+
+            try {
+                if (currentView === 'city') {
+                    var result = await RetailPricesByCityService.getPriceMatrix(selectedId);
+                    if (result.error) throw result.error;
+                    priceMatrix = result.data || [];
+                    renderCityBasedTable();
+                } else {
+                    var result = await RetailPricesByCityService.getCityPriceMatrix(selectedId);
+                    if (result.error) throw result.error;
+                    priceMatrix = result.data || [];
+                    renderProductBasedTable();
+                }
+            } catch (error) {
+                console.error('Load price table error:', error);
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px;">Veri yuklenemedi</td></tr>';
+            }
+        }
+
+        // Render city-based table
+        function renderCityBasedTable() {
+            var tableBody = document.getElementById('priceTable');
+
+            if (priceMatrix.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+                    '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>' +
+                    '<h3>Urun Bulunamadi</h3>' +
+                    '<p>Sistemde aktif urun bulunmuyor.</p>' +
+                    '</div></td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = priceMatrix.map(function(item) {
+                var basePrice = item.base_price || 0;
+                var retailPrice = item.retail_price;
+                var diff = retailPrice ? (retailPrice - basePrice) : null;
+                var diffPercent = diff !== null ? ((diff / basePrice) * 100).toFixed(1) : null;
+                var diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : '';
+                var inputClass = retailPrice === null ? 'empty' : '';
+
+                return '<tr>' +
+                    '<td><strong>' + (item.product_code || '-') + '</strong></td>' +
+                    '<td>' + (item.product_name || '-') + '</td>' +
+                    '<td>' + formatPrice(basePrice) + ' TL</td>' +
+                    '<td>' +
+                        '<input type="number" class="bo-price-input ' + inputClass + '" ' +
+                            'value="' + (retailPrice !== null ? retailPrice : '') + '" ' +
+                            'placeholder="Fiyat girin" ' +
+                            'step="0.01" min="0" ' +
+                            'data-product-id="' + item.product_id + '" ' +
+                            'data-original="' + (retailPrice !== null ? retailPrice : '') + '" ' +
+                            'onchange="handlePriceChange(this)" ' +
+                            'oninput="handlePriceInput(this)">' +
+                    '</td>' +
+                    '<td>' +
+                        (diff !== null ?
+                            '<span class="bo-diff ' + diffClass + '">' +
+                                (diff > 0 ? '+' : '') + formatPrice(diff) + ' TL (' +
+                                (diff > 0 ? '+' : '') + diffPercent + '%)' +
+                            '</span>' :
+                            '<span style="color: #999;">-</span>') +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        // Render product-based table
+        function renderProductBasedTable() {
+            var tableBody = document.getElementById('priceTable');
+            var selectedProduct = products.find(function(p) { return p.id === currentSelectedId; });
+            var basePrice = selectedProduct ? (selectedProduct.base_price || 0) : 0;
+
+            if (priceMatrix.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+                    '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                    '<h3>Sehir Bulunamadi</h3>' +
+                    '<p>Sistemde aktif sehir bulunmuyor.</p>' +
+                    '</div></td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = priceMatrix.map(function(item) {
+                var retailPrice = item.retail_price;
+                var diff = retailPrice ? (retailPrice - basePrice) : null;
+                var diffPercent = diff !== null ? ((diff / basePrice) * 100).toFixed(1) : null;
+                var diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : '';
+                var inputClass = retailPrice === null ? 'empty' : '';
+
+                return '<tr>' +
+                    '<td><strong>' + (item.city_code || '-') + '</strong></td>' +
+                    '<td>' + (item.city_name || '-') + '</td>' +
+                    '<td>' + formatPrice(basePrice) + ' TL</td>' +
+                    '<td>' +
+                        '<input type="number" class="bo-price-input ' + inputClass + '" ' +
+                            'value="' + (retailPrice !== null ? retailPrice : '') + '" ' +
+                            'placeholder="Fiyat girin" ' +
+                            'step="0.01" min="0" ' +
+                            'data-city-id="' + item.city_id + '" ' +
+                            'data-original="' + (retailPrice !== null ? retailPrice : '') + '" ' +
+                            'onchange="handlePriceChange(this)" ' +
+                            'oninput="handlePriceInput(this)">' +
+                    '</td>' +
+                    '<td>' +
+                        (diff !== null ?
+                            '<span class="bo-diff ' + diffClass + '">' +
+                                (diff > 0 ? '+' : '') + formatPrice(diff) + ' TL (' +
+                                (diff > 0 ? '+' : '') + diffPercent + '%)' +
+                            '</span>' :
+                            '<span style="color: #999;">-</span>') +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        // Handle price input
+        function handlePriceInput(input) {
+            var original = input.dataset.original;
+            var current = input.value;
+
+            if (current !== original) {
+                input.classList.add('modified');
+            } else {
+                input.classList.remove('modified');
+            }
+        }
+
+        // Handle price change
+        function handlePriceChange(input) {
+            var productId = input.dataset.productId;
+            var cityId = input.dataset.cityId;
+            var original = input.dataset.original;
+            var newPrice = input.value;
+
+            var key;
+            if (currentView === 'city') {
+                key = productId + '_' + currentSelectedId;
+                if (newPrice !== original && newPrice !== '') {
+                    modifiedPrices[key] = {
+                        product_id: productId,
+                        city_id: currentSelectedId,
+                        retail_price: parseFloat(newPrice)
+                    };
+                } else {
+                    delete modifiedPrices[key];
+                }
+            } else {
+                key = currentSelectedId + '_' + cityId;
+                if (newPrice !== original && newPrice !== '') {
+                    modifiedPrices[key] = {
+                        product_id: currentSelectedId,
+                        city_id: cityId,
+                        retail_price: parseFloat(newPrice)
+                    };
+                } else {
+                    delete modifiedPrices[key];
+                }
+            }
+
+            updateSaveBar();
+        }
+
+        // Update save bar
+        function updateSaveBar() {
+            var count = Object.keys(modifiedPrices).length;
+            var saveBar = document.getElementById('saveBar');
+            var modifiedCountBadge = document.getElementById('modifiedCount');
+
+            if (count > 0) {
+                saveBar.classList.add('show');
+                modifiedCountBadge.style.display = 'inline-block';
+                modifiedCountBadge.textContent = count + ' degisiklik';
+                modifiedCountBadge.className = 'bo-badge warning';
+                document.getElementById('pendingChanges').textContent = count;
+            } else {
+                saveBar.classList.remove('show');
+                modifiedCountBadge.style.display = 'none';
+            }
+        }
+
+        // Save changes
+        async function saveChanges() {
+            var prices = Object.values(modifiedPrices);
+            if (prices.length === 0) return;
+
+            try {
+                var result = await RetailPricesByCityService.bulkUpsert(prices);
+                if (result.error) throw result.error;
+
+                showToast(prices.length + ' fiyat kaydedildi', 'success');
+                modifiedPrices = {};
+                updateSaveBar();
+
+                // Refresh table
+                await loadPriceTable();
+                await loadStats();
+
+            } catch (error) {
+                console.error('Save error:', error);
+                showToast('Kayit sirasinda hata olustu', 'error');
+            }
+        }
+
+        // Discard changes
+        function discardChanges() {
+            modifiedPrices = {};
+            updateSaveBar();
+            loadPriceTable();
+        }
+
+        // Copy prices
+        async function copyPrices() {
+            var sourceId = document.getElementById('copySourceCity').value;
+            var targetId = document.getElementById('copyTargetCity').value;
+
+            if (!sourceId || !targetId) {
+                showToast('Lutfen kaynak ve hedef sehir secin', 'error');
+                return;
+            }
+
+            if (sourceId === targetId) {
+                showToast('Kaynak ve hedef sehir ayni olamaz', 'error');
+                return;
+            }
+
+            pendingAction = { type: 'copyPrices', sourceId: sourceId, targetId: targetId };
+            var sourceCity = cities.find(function(c) { return c.id === sourceId; });
+            var targetCity = cities.find(function(c) { return c.id === targetId; });
+            showModal('Fiyat Kopyala',
+                sourceCity.name + ' sehrindeki fiyatlar ' + targetCity.name + ' sehrine kopyalanacak. Devam etmek istiyor musunuz?',
+                'Kopyala');
+        }
+
+        // Apply percentage
+        async function applyPercentage() {
+            var cityId = document.getElementById('percentageCity').value;
+            var percentage = parseFloat(document.getElementById('percentageValue').value);
+
+            if (!cityId) {
+                showToast('Lutfen sehir secin', 'error');
+                return;
+            }
+
+            if (isNaN(percentage)) {
+                showToast('Lutfen gecerli bir yuzde girin', 'error');
+                return;
+            }
+
+            pendingAction = { type: 'applyPercentage', cityId: cityId, percentage: percentage };
+            var city = cities.find(function(c) { return c.id === cityId; });
+            var direction = percentage > 0 ? 'arttirilacak' : 'azaltilacak';
+            showModal('Yuzde Uygula',
+                city.name + ' sehrindeki tum fiyatlar %' + Math.abs(percentage) + ' ' + direction + '. Devam etmek istiyor musunuz?',
+                'Uygula');
+        }
+
+        // Modal
+        function showModal(title, message, confirmText) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modalConfirmBtn').textContent = confirmText;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+            pendingAction = null;
+        }
+
+        async function confirmAction() {
+            if (!pendingAction) return;
+
+            try {
+                if (pendingAction.type === 'copyPrices') {
+                    var result = await RetailPricesByCityService.copyPricesFromCity(
+                        pendingAction.sourceId,
+                        pendingAction.targetId
+                    );
+                    if (result.error) throw result.error;
+                    showToast((result.count || 0) + ' fiyat kopyalandi', 'success');
+
+                } else if (pendingAction.type === 'applyPercentage') {
+                    var result = await RetailPricesByCityService.applyPercentageChange(
+                        pendingAction.cityId,
+                        pendingAction.percentage
+                    );
+                    if (result.error) throw result.error;
+                    showToast((result.count || 0) + ' fiyat guncellendi', 'success');
+
+                } else if (pendingAction.type === 'switchView') {
+                    modifiedPrices = {};
+                    updateSaveBar();
+                    switchView(pendingAction.view);
+                }
+
+                await loadStats();
+                if (currentSelectedId) {
+                    await loadPriceTable();
+                }
+
+            } catch (error) {
+                console.error('Action error:', error);
+                showToast('Islem sirasinda hata olustu', 'error');
+            }
+
+            closeModal();
+        }
+
+        // Toast
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            var toastMessage = document.getElementById('toastMessage');
+            var toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            toast.className = 'bo-toast ' + (type || '');
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            }
+
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Format price
+        function formatPrice(price) {
+            return parseFloat(price).toLocaleString('tr-TR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    </script>
+</body>
+</html>
