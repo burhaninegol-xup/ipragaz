@@ -766,9 +766,12 @@ const ComponentLoader = {
                 locationSpan.textContent = savedName;
             }
 
-            // Sube degistiyse veya ilk yukleme ise bayiyi degerlendir
+            // Sube degistiyse veya ilk yukleme ise bayiyi degerlendir ve sayfayi yenile
             if (branchChanged) {
                 await evaluateDealerForBranch(savedId);
+                // Fiyatlar ve urunler dogru kurallara gore yuklensin
+                window.location.reload();
+                return;
             }
         }
     },
@@ -1317,11 +1320,14 @@ window.confirmAddressSelection = async function() {
     sessionStorage.setItem('selected_address_id', selectedAddressId);
     sessionStorage.setItem('selected_address_name', selectedAddressName);
 
-    // Veritabanina son secilen subeyi kaydet
+    // Veritabanina son secilen subeyi kaydet - AWAIT ILE BEKLE
     var userId = sessionStorage.getItem('isyerim_user_id');
     if (userId && typeof CustomerUsersService !== 'undefined' && CustomerUsersService.updateLastSelectedBranch) {
-        CustomerUsersService.updateLastSelectedBranch(userId, selectedAddressId)
-            .catch(function(err) { console.warn('Son secilen sube kaydedilemedi:', err); });
+        try {
+            await CustomerUsersService.updateLastSelectedBranch(userId, selectedAddressId);
+        } catch (err) {
+            console.warn('Son secilen sube kaydedilemedi:', err);
+        }
     }
 
     // Sube degistiyse sayfayi yenile
