@@ -199,6 +199,10 @@
             gap: 24px;
         }
 
+        .bo-bulk-op-section.full-width {
+            grid-column: 1 / -1;
+        }
+
         .bo-bulk-op-section {
             padding: 16px;
             background: var(--bo-bg-main);
@@ -668,6 +672,25 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Copy to All Cities -->
+                        <div class="bo-bulk-op-section full-width">
+                            <div class="bo-bulk-op-title">Tum Illere Kopyala</div>
+                            <div class="bo-bulk-op-row">
+                                <select class="bo-select" id="copyAllSourceCity">
+                                    <option value="">Kaynak Sehir Secin</option>
+                                </select>
+                                <button class="bo-btn bo-btn-primary bo-btn-sm" onclick="copyToAllCities()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    81 Ile Kopyala
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -860,10 +883,16 @@
 
         // Populate city selects
         function populateCitySelects() {
-            var selects = ['copySourceCity', 'copyTargetCity', 'percentageCity'];
+            var selects = ['copySourceCity', 'copyTargetCity', 'percentageCity', 'copyAllSourceCity'];
             selects.forEach(function(selectId) {
                 var select = document.getElementById(selectId);
-                select.innerHTML = '<option value="">' + (selectId === 'copySourceCity' ? 'Kaynak' : selectId === 'copyTargetCity' ? 'Hedef' : '') + ' Sehir Secin</option>';
+                var placeholder = 'Sehir Secin';
+                if (selectId === 'copySourceCity' || selectId === 'copyAllSourceCity') {
+                    placeholder = 'Kaynak Sehir Secin';
+                } else if (selectId === 'copyTargetCity') {
+                    placeholder = 'Hedef Sehir Secin';
+                }
+                select.innerHTML = '<option value="">' + placeholder + '</option>';
                 cities.forEach(function(city) {
                     select.innerHTML += '<option value="' + city.id + '">' + city.code + ' - ' + city.name + '</option>';
                 });
@@ -1207,6 +1236,22 @@
                 'Uygula');
         }
 
+        // Copy to all cities
+        async function copyToAllCities() {
+            var sourceId = document.getElementById('copyAllSourceCity').value;
+
+            if (!sourceId) {
+                showToast('Lutfen kaynak sehir secin', 'error');
+                return;
+            }
+
+            var sourceCity = cities.find(function(c) { return c.id === sourceId; });
+            pendingAction = { type: 'copyToAllCities', sourceId: sourceId };
+            showModal('Tum Illere Kopyala',
+                sourceCity.name + ' sehrindeki fiyatlar 80 ile kopyalanacak. Bu islem mevcut fiyatlarin ustune yazacaktir. Devam etmek istiyor musunuz?',
+                'Kopyala');
+        }
+
         // Modal
         function showModal(title, message, confirmText) {
             document.getElementById('modalTitle').textContent = title;
@@ -1239,6 +1284,13 @@
                     );
                     if (result.error) throw result.error;
                     showToast((result.count || 0) + ' fiyat guncellendi', 'success');
+
+                } else if (pendingAction.type === 'copyToAllCities') {
+                    var result = await RetailPricesByCityService.copyPricesToAllCities(
+                        pendingAction.sourceId
+                    );
+                    if (result.error) throw result.error;
+                    showToast(result.productCount + ' urun fiyati ' + result.cityCount + ' ile kopyalandi (' + result.count + ' kayit)', 'success');
 
                 } else if (pendingAction.type === 'switchView') {
                     modifiedPrices = {};

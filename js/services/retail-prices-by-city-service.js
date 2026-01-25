@@ -166,6 +166,81 @@ const RetailPricesByCityService = {
     },
 
     /**
+     * Bir sehrin fiyatlarini tum illere kopyala
+     */
+    async copyPricesToAllCities(sourceCityId) {
+        try {
+            // Kaynak sehrin fiyatlarini al
+            const { data: sourcePrices, error: sourceError } = await supabaseClient
+                .from('retail_prices_by_city')
+                .select('product_id, retail_price')
+                .eq('city_id', sourceCityId)
+                .eq('is_active', true);
+
+            if (sourceError) throw sourceError;
+
+            if (!sourcePrices || sourcePrices.length === 0) {
+                return { data: [], error: null, message: 'Kaynak sehirde fiyat bulunamadi', count: 0 };
+            }
+
+            // Tum sehirleri al
+            const { data: allCities, error: citiesError } = await supabaseClient
+                .from('cities')
+                .select('id')
+                .eq('is_active', true);
+
+            if (citiesError) throw citiesError;
+
+            // Kaynak sehir haric diger sehirler
+            const targetCities = allCities.filter(c => c.id !== sourceCityId);
+
+            if (targetCities.length === 0) {
+                return { data: [], error: null, message: 'Hedef sehir bulunamadi', count: 0 };
+            }
+
+            // Tum sehirler icin kayitlari olustur
+            const records = [];
+            targetCities.forEach(city => {
+                sourcePrices.forEach(p => {
+                    records.push({
+                        product_id: p.product_id,
+                        city_id: city.id,
+                        retail_price: p.retail_price,
+                        is_active: true,
+                        updated_at: new Date().toISOString()
+                    });
+                });
+            });
+
+            // Toplu upsert (batch halinde)
+            const batchSize = 500;
+            let totalInserted = 0;
+
+            for (let i = 0; i < records.length; i += batchSize) {
+                const batch = records.slice(i, i + batchSize);
+                const { error } = await supabaseClient
+                    .from('retail_prices_by_city')
+                    .upsert(batch, {
+                        onConflict: 'product_id,city_id'
+                    });
+
+                if (error) throw error;
+                totalInserted += batch.length;
+            }
+
+            return {
+                data: null,
+                error: null,
+                count: totalInserted,
+                cityCount: targetCities.length,
+                productCount: sourcePrices.length
+            };
+        } catch (error) {
+            return handleSupabaseError(error, 'RetailPricesByCityService.copyPricesToAllCities');
+        }
+    },
+
+    /**
      * Sehirdeki tum fiyatlara yuzde uygula
      * @param {string} cityId - Sehir ID
      * @param {number} percentage - Yuzde (ornegin: 10 = %10 artis, -5 = %5 azalis)
