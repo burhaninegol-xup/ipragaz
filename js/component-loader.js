@@ -1311,6 +1311,9 @@ window.selectModalAddress = function(addressId, addressName) {
 window.confirmAddressSelection = async function() {
     if (!selectedAddressId || !selectedAddressName) return;
 
+    // Onceki sube ID'sini kaydet (degisip degismedigini kontrol icin)
+    var previousBranchId = sessionStorage.getItem('selected_address_id');
+
     sessionStorage.setItem('selected_address_id', selectedAddressId);
     sessionStorage.setItem('selected_address_name', selectedAddressName);
 
@@ -1321,26 +1324,13 @@ window.confirmAddressSelection = async function() {
             .catch(function(err) { console.warn('Son secilen sube kaydedilemedi:', err); });
     }
 
-    var locationSpan = document.getElementById('headerUserLocation');
-    if (locationSpan) {
-        locationSpan.textContent = selectedAddressName;
-    }
-
-    // Sube degisti - bayiyi yeniden degerlendir
-    await evaluateDealerForBranch(selectedAddressId);
-
-    // Sube degisikligi event'i dispatch et (diger sayfalar dinleyebilir)
-    window.dispatchEvent(new CustomEvent('branchChanged', {
-        detail: { branchId: selectedAddressId }
-    }));
-
-    // Sube degisikliginde teklif iste sayfasindan teklifler listesine yonlendir
-    var currentPage = window.location.pathname.split('/').pop();
-    if (currentPage === 'isyerim-musteri-teklif-iste.html') {
-        window.location.href = 'isyerim-musteri-teklifler.html';
+    // Sube degistiyse sayfayi yenile
+    if (previousBranchId !== selectedAddressId) {
+        window.location.reload();
         return;
     }
 
+    // Ayni sube secildiyse sadece modal'i kapat
     window.closeAddressModal();
 };
 
@@ -1353,6 +1343,10 @@ var currentDealerId = sessionStorage.getItem('isyerim_dealer_id') || null;
 var currentDealerName = sessionStorage.getItem('isyerim_dealer_name') || null;
 var selectedTempDealerId = null;
 var dealerModalDealers = [];
+
+// Aktif Teklif Kilitleme Degiskenleri
+var offerLockedDealer = null;        // Aktif teklifin bayi objesi
+var isOfferDealerLocked = false;     // Teklif kilidi aktif mi?
 
 // Turkce karakterleri ASCII'ye cevir
 function normalizeTurkishForDealer(str) {
@@ -1470,6 +1464,16 @@ window.openDealerModal = async function() {
     }
 
     var dealers = dealersResult.data || [];
+
+    // ===== TEKLIF KILITLIYSE SADECE O BAYIYI GOSTER =====
+    if (isOfferDealerLocked && offerLockedDealer) {
+        var lockedDealerInList = dealers.find(function(d) {
+            return d.id === offerLockedDealer.id;
+        });
+        dealers = lockedDealerInList ? [lockedDealerInList] : [offerLockedDealer];
+    }
+    // ===== TEKLIF KILIDI KONTROLU SONU =====
+
     dealerModalDealers = dealers;
 
     // Render dealer list
@@ -1487,6 +1491,17 @@ window.openDealerModal = async function() {
     }
 
     var html = '';
+
+    // ===== KILITLI OLDUGUNU GOSTEREN BANNER =====
+    if (isOfferDealerLocked && offerLockedDealer) {
+        html += '<div class="dealer-locked-notice" style="padding: 12px 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin-bottom: 12px; font-size: 14px; color: #856404;">';
+        html += '<div style="display: flex; align-items: center; gap: 8px;">';
+        html += '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+        html += '<span><strong>Aktif teklif surecinde</strong> - Bu sube icin aktif teklif oldugu icin sadece teklif bayisi ile calisabilirsiniz.</span>';
+        html += '</div></div>';
+    }
+    // ===== BANNER SONU =====
+
     dealers.forEach(function(dealer) {
         var isSelected = dealer.id === currentDealerId;
         html += '<div class="dealer-modal-item' + (isSelected ? ' selected' : '') + '" data-id="' + dealer.id + '" onclick="selectModalDealer(\'' + dealer.id + '\')">';
@@ -1543,6 +1558,15 @@ window.closeDealerModal = function(event) {
 // Bayi Secimini Onayla
 window.confirmDealerSelection = async function() {
     if (!selectedTempDealerId) return;
+
+    // ===== KILITLIYSE BAYI DEGISTIRMEYI ENGELLE =====
+    if (isOfferDealerLocked && offerLockedDealer) {
+        if (selectedTempDealerId !== offerLockedDealer.id) {
+            alert('Aktif teklif sureci devam ederken bayi degistiremezsiniz.');
+            return;
+        }
+    }
+    // ===== KILIT KONTROLU SONU =====
 
     var customerId = sessionStorage.getItem('isyerim_customer_id');
     if (!customerId) return;
@@ -1601,21 +1625,8 @@ window.confirmDealerSelection = async function() {
         sessionStorage.setItem('isyerim_dealer_id', selectedTempDealerId);
         sessionStorage.setItem('isyerim_dealer_name', dealerName);
 
-        // Update header button
-        updateDealerButton(dealerName);
-
-        // Close modal
-        window.closeDealerModal();
-
-        // Fiyatları güncelle (anasayfada ise)
-        if (typeof window.refreshPrices === 'function') {
-            window.refreshPrices();
-        }
-
-        // Bayi degisti, sepeti temizle
-        if (typeof CartService !== 'undefined') {
-            await CartService.clearCart();
-        }
+        // Bayi degisti - sayfayi yenile
+        window.location.reload();
 
     } catch (err) {
         console.error('Error confirming dealer:', err);
@@ -1643,6 +1654,14 @@ function clearDealerSelection() {
     if (customerId && typeof CustomersService !== 'undefined') {
         CustomersService.update(customerId, { dealer_id: null });
     }
+
+    // ===== TEKLIF KILIDINI TEMIZLE =====
+    isOfferDealerLocked = false;
+    offerLockedDealer = null;
+    sessionStorage.removeItem('isyerim_offer_locked_dealer_id');
+    sessionStorage.removeItem('isyerim_offer_locked_dealer_name');
+    sessionStorage.setItem('isyerim_is_offer_locked', 'false');
+    // ===== KILIT TEMIZLEME SONU =====
 }
 
 // Tek bayiyi otomatik sec
@@ -1716,6 +1735,50 @@ async function evaluateDealerForBranch(branchId) {
             districtId = districtLookup.data ? districtLookup.data.id : null;
         }
 
+        // ===== AKTIF TEKLIF KONTROLU =====
+        var activeOfferDealer = null;
+        try {
+            if (typeof OffersService !== 'undefined') {
+                var offersResult = await OffersService.getByBranchId(customerId, branchId, {});
+                var offers = offersResult.data || [];
+
+                // Aktif durumda teklif bul (cancelled ve rejected haric)
+                var activeOffer = offers.find(function(o) {
+                    return ['requested', 'pending', 'accepted', 'passive'].includes(o.status);
+                });
+
+                if (activeOffer && activeOffer.dealer) {
+                    activeOfferDealer = activeOffer.dealer;
+
+                    // Kilit bayraglarini ayarla
+                    isOfferDealerLocked = true;
+                    offerLockedDealer = activeOfferDealer;
+
+                    // SessionStorage'a kaydet
+                    sessionStorage.setItem('isyerim_offer_locked_dealer_id', activeOfferDealer.id);
+                    sessionStorage.setItem('isyerim_offer_locked_dealer_name', activeOfferDealer.name);
+                    sessionStorage.setItem('isyerim_is_offer_locked', 'true');
+
+                    // Bu bayiyi otomatik sec
+                    await autoSelectDealer(activeOfferDealer, customerId);
+                    console.log('Aktif teklif bayisi otomatik secildi:', activeOfferDealer.name);
+                    return; // Erken cik - diger bayilere gerek yok
+                } else {
+                    // Aktif teklif yok - kilidi kaldir
+                    isOfferDealerLocked = false;
+                    offerLockedDealer = null;
+                    sessionStorage.removeItem('isyerim_offer_locked_dealer_id');
+                    sessionStorage.removeItem('isyerim_offer_locked_dealer_name');
+                    sessionStorage.setItem('isyerim_is_offer_locked', 'false');
+                }
+            }
+        } catch (offerErr) {
+            console.warn('Teklif kontrolu sirasinda hata:', offerErr);
+            isOfferDealerLocked = false;
+            offerLockedDealer = null;
+        }
+        // ===== AKTIF TEKLIF KONTROLU SONU =====
+
         // 3. Eslesen bayileri al
         var dealersResult = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
         var dealers = dealersResult.data || [];
@@ -1784,6 +1847,18 @@ async function loadCurrentDealer() {
     var customerId = sessionStorage.getItem('isyerim_customer_id');
     var branchId = sessionStorage.getItem('selected_address_id');
     if (!customerId) return;
+
+    // ===== SESSIONSTORAGE'DAN KILIT DURUMUNU YUKLE =====
+    var savedOfferLocked = sessionStorage.getItem('isyerim_is_offer_locked');
+    if (savedOfferLocked === 'true') {
+        var lockedDealerId = sessionStorage.getItem('isyerim_offer_locked_dealer_id');
+        var lockedDealerName = sessionStorage.getItem('isyerim_offer_locked_dealer_name');
+        if (lockedDealerId && lockedDealerName) {
+            isOfferDealerLocked = true;
+            offerLockedDealer = { id: lockedDealerId, name: lockedDealerName };
+        }
+    }
+    // ===== KILIT YUKLEME SONU =====
 
     // Secili sube varsa, subeye gore bayi degerlendir
     if (branchId) {
