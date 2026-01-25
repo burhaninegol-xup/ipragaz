@@ -6,6 +6,8 @@
 	<title>Üye Ol - İpragaz</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="css/components/security-overlay.css">
+	<link rel="stylesheet" href="css/components/vkn-duplicate-overlay.css">
 	<style>
 		* {
 			margin: 0;
@@ -639,6 +641,13 @@
 				return;
 			}
 
+			// VKN duplicate kontrolu
+			var existingCustomer = await CustomersService.getByVkn(vergiNo);
+			if (existingCustomer.data) {
+				showVknDuplicateOverlay(existingCustomer.data);
+				return;
+			}
+
 			if (!sozlesmeKabul) {
 				alert('Devam etmek için üyelik sözleşmesini kabul etmelisiniz.');
 				return;
@@ -734,6 +743,70 @@
 				submitBtn.textContent = 'Devam';
 			}
 		});
+	</script>
+
+	<!-- VKN Duplicate Overlay Container -->
+	<div id="vknDuplicateOverlayContainer"></div>
+
+	<script>
+		// VKN Duplicate Overlay icin degiskenler
+		var vknDuplicateOverlayHtml = '';
+		var existingCustomerData = null;
+
+		// Overlay HTML'i yukle
+		fetch('./components/vkn-duplicate-overlay.html')
+			.then(function(response) { return response.text(); })
+			.then(function(html) {
+				vknDuplicateOverlayHtml = html;
+				document.getElementById('vknDuplicateOverlayContainer').innerHTML = html;
+			});
+
+		// Isim maskeleme fonksiyonu
+		function maskName(name) {
+			if (!name) return '****';
+			var parts = name.trim().split(' ');
+			return parts.map(function(part) {
+				if (part.length <= 2) return part[0] + '*';
+				return part.substring(0, 2) + '*'.repeat(Math.min(part.length - 2, 4));
+			}).join(' ');
+		}
+
+		// VKN Duplicate Overlay'i goster
+		function showVknDuplicateOverlay(customer) {
+			existingCustomerData = customer;
+			var maskedNameEl = document.getElementById('maskedOwnerName');
+			if (maskedNameEl) {
+				maskedNameEl.textContent = maskName(customer.name);
+			}
+			var overlay = document.getElementById('vknDuplicateOverlay');
+			if (overlay) {
+				overlay.classList.add('active');
+				document.body.style.overflow = 'hidden';
+			}
+		}
+
+		// VKN Duplicate Overlay'i kapat
+		function closeVknDuplicateOverlay() {
+			var overlay = document.getElementById('vknDuplicateOverlay');
+			if (overlay) {
+				overlay.classList.remove('active');
+				document.body.style.overflow = '';
+			}
+			existingCustomerData = null;
+			// VKN inputuna fokusla
+			document.getElementById('vergiNo').focus();
+		}
+
+		// VKN Dogrulama sayfasina git
+		function goToVknVerification() {
+			if (existingCustomerData) {
+				// VKN ve mevcut musteri ID'sini sessionStorage'a kaydet
+				sessionStorage.setItem('vkn_verification_vkn', existingCustomerData.vkn);
+				sessionStorage.setItem('vkn_verification_existing_customer_id', existingCustomerData.id);
+				sessionStorage.setItem('vkn_verification_existing_customer_name', existingCustomerData.name);
+			}
+			window.location.href = 'isyerim-vkn-dogrulama.html';
+		}
 	</script>
 </body>
 </html>

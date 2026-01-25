@@ -1,0 +1,146 @@
+/* ==========================================================================
+   VKN Duplicate Overlay Styles
+   Shown when user tries to register with an already existing VKN
+   ========================================================================== */
+
+/* VKN Duplicate Content */
+.vkn-duplicate-content {
+    max-width: 440px;
+    text-align: center;
+}
+
+/* VKN Duplicate Header */
+.vkn-duplicate-header {
+    margin-bottom: 24px;
+}
+
+.vkn-duplicate-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.vkn-duplicate-icon svg {
+    width: 36px;
+    height: 36px;
+    color: #d97706;
+}
+
+.vkn-duplicate-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* VKN Duplicate Body */
+.vkn-duplicate-body {
+    margin-bottom: 24px;
+}
+
+.existing-owner-label {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.masked-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+    padding: 12px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.info-message {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border: 1px solid #0ea5e9;
+    border-radius: 10px;
+}
+
+.alternative-message {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* VKN Duplicate Actions */
+.vkn-duplicate-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.vkn-duplicate-actions .btn-secondary {
+    flex: 1;
+    padding: 14px 20px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.vkn-duplicate-actions .btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+.vkn-duplicate-actions .btn-primary {
+    flex: 1;
+    padding: 14px 20px;
+    background: #e31e24;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.vkn-duplicate-actions .btn-primary:hover {
+    background: #c41a1f;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .vkn-duplicate-content {
+        padding: 20px;
+    }
+
+    .vkn-duplicate-header h3 {
+        font-size: 16px;
+    }
+
+    .masked-name {
+        font-size: 18px;
+        padding: 10px 16px;
+    }
+
+    .vkn-duplicate-actions {
+        flex-direction: column;
+    }
+
+    .vkn-duplicate-actions .btn-secondary,
+    .vkn-duplicate-actions .btn-primary {
+        width: 100%;
+    }
+}
