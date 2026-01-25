@@ -6,6 +6,8 @@
 	<title>Subelerim - Ipragaz IsYerim</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<link rel="stylesheet" href="./css/components/security-overlay.css">
+	<link rel="stylesheet" href="./css/components/delete-account-overlay.css">
 	<style>
 		* { margin: 0; padding: 0; box-sizing: border-box; }
 		body { font-family: 'Poppins', sans-serif; background: #f5f5f5; color: #333; }
@@ -186,6 +188,10 @@
 					<input type="text" class="form-input" id="branchName" placeholder="Ornegin: Merkez, Depo, vb." required>
 				</div>
 				<div class="form-group">
+					<label class="form-label">VKN *</label>
+					<input type="text" class="form-input" id="branchVkn" placeholder="Vergi Kimlik Numarasi" maxlength="11" required>
+				</div>
+				<div class="form-group">
 					<label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
 						<input type="checkbox" id="isMerkez" style="width: 18px; height: 18px; accent-color: #e31e24;">
 						<span class="form-label" style="margin: 0;">Merkez Sube</span>
@@ -224,12 +230,16 @@
 		</div>
 	</div>
 
+	<!-- Delete Account Overlay Container -->
+	<div id="delete-account-overlay-container"></div>
+
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/locations-service.js"></script>
+	<script src="./js/services/account-deletion-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
 	<script>
@@ -255,6 +265,10 @@
 				var response = await fetch('./components/isyerim-settings-sidebar.html');
 				var html = await response.text();
 				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				// Delete account overlay'i yukle
+				var overlayResponse = await fetch('./components/delete-account-overlay.html');
+				var overlayHtml = await overlayResponse.text();
+				document.getElementById('delete-account-overlay-container').innerHTML = overlayHtml;
 				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('adreslerim'); }, 100);
 			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
 
@@ -461,6 +475,7 @@
 		function clearForm() {
 			document.getElementById('addressForm').reset();
 			document.getElementById('addressId').value = '';
+			document.getElementById('branchVkn').value = '';
 			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
 			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
 			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
@@ -501,6 +516,7 @@
 			document.getElementById('apartment').value = addr.apartment || '';
 			document.getElementById('branchDescription').value = addr.branch_description || '';
 			document.getElementById('branchName').value = addr.branch_name || '';
+			document.getElementById('branchVkn').value = addr.vkn || '';
 			document.getElementById('isMerkez').checked = addr.is_default || false;
 			document.getElementById('pointsCollectionMode').value = addr.points_collection_mode || 'customer';
 		}
@@ -508,6 +524,7 @@
 		// Sube kaydet
 		async function saveAddress() {
 			var branchName = document.getElementById('branchName').value.trim();
+			var vkn = document.getElementById('branchVkn').value.trim();
 			var cityId = document.getElementById('citySelect').value;
 			var districtId = document.getElementById('districtSelect').value;
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
@@ -524,11 +541,22 @@
 				return;
 			}
 
+			// VKN validasyonu
+			if (!vkn) {
+				alert('VKN zorunludur');
+				return;
+			}
+			if (!/^[0-9]{10,11}$/.test(vkn)) {
+				alert('VKN 10 veya 11 haneli rakam olmalidir');
+				return;
+			}
+
 			var isMerkez = document.getElementById('isMerkez').checked;
 
 			var branchData = {
 				customer_id: customerId,
 				branch_name: branchName,
+				vkn: vkn,
 				is_default: isMerkez,
 				// Yeni FK kolonlari
 				city_id: cityId || null,

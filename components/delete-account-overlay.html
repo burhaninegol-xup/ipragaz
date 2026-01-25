@@ -1,0 +1,66 @@
+<!-- Delete Account Warning Overlay -->
+<div class="overlay" id="deleteAccountOverlay">
+    <div class="overlay-content delete-account-content">
+        <div class="delete-header">
+            <div class="delete-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <h3>Hesabinizi Silmek Istediginize Emin Misiniz?</h3>
+        </div>
+
+        <div class="delete-warning">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p>Bu islem geri alinamaz. Asagidaki verileriniz kalici olarak silinecektir:</p>
+        </div>
+
+        <div class="delete-impact-list" id="deletionImpactList">
+            <!-- Yukleniyor -->
+            <div class="impact-loading">
+                <div class="impact-spinner"></div>
+                <span>Hesap bilgileri yukleniyor...</span>
+            </div>
+        </div>
+
+        <div class="delete-confirmation">
+            <label>
+                <input type="checkbox" id="deleteConfirmCheckbox" onchange="toggleDeleteButton()">
+                <span>Yukardaki bilgileri okudum ve hesabimin silinmesini onayliyorum.</span>
+            </label>
+        </div>
+
+        <div class="delete-buttons">
+            <button class="btn-cancel-delete" onclick="closeDeleteAccountOverlay()">Vazgec</button>
+            <button class="btn-confirm-delete" id="btnConfirmDelete" disabled onclick="confirmAccountDeletion()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                Hesabimi Sil
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Success Overlay -->
+<div class="overlay" id="deleteSuccessOverlay">
+    <div class="overlay-content success-modal">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+        </div>
+        <h3>Hesabiniz Silindi</h3>
+        <p>Giris sayfasina yonlendiriliyorsunuz...</p>
+        <div class="redirect-progress">
+            <div class="redirect-progress-bar"></div>
+        </div>
+    </div>
+</div>

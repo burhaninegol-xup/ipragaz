@@ -327,13 +327,14 @@
 		// Müşterileri yükle (Hızlı Giriş için)
 		async function loadCustomersForQuickLogin() {
 			try {
-				const { data: customers, error } = await CustomersService.getAll();
+				// Sadece aktif müşterileri getir (backend'de filtreleme)
+				const { data: customers, error } = await CustomersService.getAll(null, true);
 				if (error || !customers) return;
 
 				const list = document.getElementById('customer-list');
 				list.innerHTML = '';
 
-				customers.filter(function(c) { return c.is_active; }).forEach(function(customer) {
+				customers.forEach(function(customer) {
 					const item = document.createElement('div');
 					item.className = 'customer-item';
 					item.innerHTML =
@@ -351,21 +352,31 @@
 		// Hızlı giriş
 		async function quickLoginAsCustomer(customer) {
 			try {
+				// Müşteri aktif mi kontrol et
+				if (!customer.is_active) {
+					alert('Bu hesap silinmiş. Giriş yapılamıyor.');
+					return;
+				}
+
 				// Owner kullanıcısını bul veya oluştur
 				let userId;
 				const { data: users } = await CustomerUsersService.getByCustomerId(customer.id);
-				const owner = users && users.find(function(u) { return u.role === 'owner'; });
+				const owner = users && users.find(function(u) { return u.role === 'owner' && u.is_active; });
 
 				if (owner) {
 					userId = owner.id;
 				} else {
-					// Owner yoksa oluştur
+					// Aktif owner yoksa oluştur
 					const { data: newOwner } = await CustomerUsersService.createOwner(
 						customer.id,
 						customer.name,
 						customer.phone
 					);
-					userId = newOwner ? newOwner.id : customer.id;
+					if (!newOwner) {
+						alert('Bu hesapta aktif kullanıcı bulunamadı.');
+						return;
+					}
+					userId = newOwner.id;
 				}
 
 				// SessionStorage'a kaydet

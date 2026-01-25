@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Kategoriler - Ipragaz Back Office</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bo-primary: #e31e24;
+			--bo-primary-dark: #b91820;
+			--bo-sidebar-width: 260px;
+			--bo-sidebar-collapsed: 72px;
+			--bo-header-height: 64px;
+			--bo-bg-main: #f5f5f5;
+			--bo-bg-paper: #ffffff;
+			--bo-text-primary: #262626;
+			--bo-text-secondary: #525252;
+			--bo-border: #e5e5e5;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: var(--bo-bg-main);
+			min-height: 100vh;
+		}
+
+		.bo-main-content {
+			margin-left: var(--bo-sidebar-width);
+			padding-top: var(--bo-header-height);
+			min-height: 100vh;
+			transition: margin-left 0.3s ease;
+		}
+		.bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+		.bo-content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 24px;
+			color: var(--bo-text-primary);
+			font-weight: 600;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: var(--bo-text-secondary);
+			font-size: 14px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+			text-decoration: none;
+			font-family: inherit;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-primary {
+			background: var(--bo-primary);
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			background: var(--bo-primary-dark);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+		}
+
+		/* Table Container */
+		.table-container {
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			overflow: hidden;
+		}
+
+		.table-wrapper {
+			overflow-x: auto;
+		}
+
+		.data-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.data-table th,
+		.data-table td {
+			padding: 16px 20px;
+			text-align: left;
+		}
+
+		.data-table th {
+			background: #f8f9fa;
+			font-size: 12px;
+			font-weight: 600;
+			color: var(--bo-text-secondary);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-bottom: 1px solid var(--bo-border);
+		}
+
+		.data-table td {
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 14px;
+			color: var(--bo-text-primary);
+		}
+
+		.data-table tr:last-child td {
+			border-bottom: none;
+		}
+
+		.data-table tr:hover td {
+			background: #f8f9fa;
+		}
+
+		/* Sort Order */
+		.sort-order-cell {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.sort-order-badge {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 32px;
+			height: 32px;
+			background: #f0f0f0;
+			border-radius: 8px;
+			font-weight: 600;
+			color: var(--bo-text-secondary);
+		}
+
+		.sort-btns {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		.sort-btn {
+			width: 20px;
+			height: 14px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: none;
+			border: 1px solid var(--bo-border);
+			border-radius: 3px;
+			cursor: pointer;
+			color: #999;
+			transition: all 0.2s;
+		}
+
+		.sort-btn:hover {
+			background: var(--bo-primary);
+			border-color: var(--bo-primary);
+			color: #fff;
+		}
+
+		.sort-btn svg {
+			width: 12px;
+			height: 12px;
+		}
+
+		/* Category Name */
+		.category-name {
+			font-weight: 600;
+			color: var(--bo-text-primary);
+		}
+
+		.category-slug {
+			font-size: 12px;
+			color: var(--bo-text-secondary);
+			font-family: monospace;
+		}
+
+		/* Product Count Badge */
+		.product-count-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: #f0f0f0;
+			border-radius: 20px;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--bo-text-secondary);
+		}
+
+		.product-count-badge svg {
+			width: 14px;
+			height: 14px;
+		}
+
+		/* Status Badge */
+		.status-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+
+		.status-badge.active {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.status-badge.passive {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		/* Action Buttons */
+		.action-btns {
+			display: flex;
+			gap: 8px;
+		}
+
+		.action-btn {
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 8px;
+			border: 1px solid var(--bo-border);
+			background: #fff;
+			color: var(--bo-text-secondary);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.action-btn:hover {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+		}
+
+		.action-btn.danger:hover {
+			border-color: #e53935;
+			color: #e53935;
+			background: #ffebee;
+		}
+
+		.action-btn.success:hover {
+			border-color: #2e7d32;
+			color: #2e7d32;
+			background: #e8f5e9;
+		}
+
+		.action-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: var(--bo-text-secondary);
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #999;
+		}
+
+		/* Modal */
+		.modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.modal-overlay.active {
+			display: flex;
+		}
+
+		.modal {
+			background: #fff;
+			border-radius: 16px;
+			width: 90%;
+			max-width: 500px;
+			max-height: 90vh;
+			overflow-y: auto;
+		}
+
+		.modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 20px 24px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.modal-header h2 {
+			font-size: 18px;
+			color: var(--bo-text-primary);
+		}
+
+		.modal-close {
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 50%;
+			border: none;
+			background: #f5f5f5;
+			color: var(--bo-text-secondary);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.modal-close:hover {
+			background: #eee;
+		}
+
+		.modal-close svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.modal-body {
+			padding: 24px;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--bo-text-primary);
+		}
+
+		.form-group label span.required {
+			color: #e53935;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 12px 16px;
+			border: 1px solid var(--bo-border);
+			border-radius: 10px;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.form-control:focus {
+			outline: none;
+			border-color: var(--bo-primary);
+			box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+		}
+
+		textarea.form-control {
+			min-height: 100px;
+			resize: vertical;
+		}
+
+		.form-helper {
+			font-size: 12px;
+			color: var(--bo-text-secondary);
+			margin-top: 6px;
+		}
+
+		.modal-footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 12px;
+			padding: 20px 24px;
+			border-top: 1px solid #eee;
+		}
+
+		.btn-secondary {
+			background: #f5f5f5;
+			color: var(--bo-text-secondary);
+		}
+
+		.btn-secondary:hover {
+			background: #eee;
+		}
+
+		/* Toast */
+		.toast {
+			position: fixed;
+			bottom: 30px;
+			right: 30px;
+			padding: 16px 24px;
+			background: #333;
+			color: #fff;
+			border-radius: 12px;
+			font-size: 14px;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			display: none;
+			z-index: 1001;
+			animation: slideIn 0.3s ease;
+		}
+
+		.toast.success {
+			background: #2e7d32;
+		}
+
+		.toast.error {
+			background: #c62828;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		/* Loading */
+		.loading-placeholder {
+			text-align: center;
+			padding: 60px 20px;
+			color: var(--bo-text-secondary);
+		}
+
+		.spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f3f3f3;
+			border-top: 3px solid var(--bo-primary);
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 15px;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.bo-main-content {
+				margin-left: 0;
+			}
+
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.data-table th,
+			.data-table td {
+				padding: 12px 16px;
+			}
+
+			.action-btns {
+				flex-wrap: wrap;
+			}
+
+			.sort-btns {
+				display: none;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.bo-content {
+				padding: 16px;
+			}
+
+			.page-header-left h1 {
+				font-size: 20px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Sidebar Component -->
+	<div id="backoffice-sidebar"></div>
+
+	<!-- Main Content -->
+	<main class="bo-main-content">
+		<!-- Header Component -->
+		<div id="backoffice-header"></div>
+
+		<div class="bo-content">
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="page-header-left">
+					<h1>Kategoriler</h1>
+					<p>Urun kategorilerini yonetin</p>
+				</div>
+				<button class="btn btn-primary" onclick="openCreateModal()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="12" y1="5" x2="12" y2="19"></line>
+						<line x1="5" y1="12" x2="19" y2="12"></line>
+					</svg>
+					Yeni Kategori
+				</button>
+			</div>
+
+			<!-- Table Container -->
+			<div class="table-container">
+				<div class="table-wrapper">
+					<table class="data-table" id="categories-table">
+						<thead>
+							<tr>
+								<th style="width: 100px;">Sira</th>
+								<th>Kategori Adi</th>
+								<th>Urun Sayisi</th>
+								<th style="width: 120px;">Durum</th>
+								<th style="width: 140px;">Islem</th>
+							</tr>
+						</thead>
+						<tbody id="categories-tbody">
+							<tr>
+								<td colspan="5">
+									<div class="loading-placeholder">
+										<div class="spinner"></div>
+										<p>Kategoriler yukleniyor...</p>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Toast -->
+	<div class="toast" id="toast"></div>
+
+	<!-- Category Modal -->
+	<div class="modal-overlay" id="category-modal">
+		<div class="modal">
+			<div class="modal-header">
+				<h2 id="modal-title">Yeni Kategori</h2>
+				<button class="modal-close" onclick="closeModal()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form id="category-form">
+					<input type="hidden" id="category-id">
+
+					<div class="form-group">
+						<label for="category-name">Kategori Adi <span class="required">*</span></label>
+						<input type="text" class="form-control" id="category-name" placeholder="Ornek: Tup Gazlar" required>
+					</div>
+
+					<div class="form-group">
+						<label for="category-slug">Slug (URL)</label>
+						<input type="text" class="form-control" id="category-slug" placeholder="Otomatik olusturulur">
+						<p class="form-helper">Bos birakirsaniz kategori adindan otomatik olusturulur.</p>
+					</div>
+
+					<div class="form-group">
+						<label for="category-description">Aciklama</label>
+						<textarea class="form-control" id="category-description" placeholder="Kategori hakkinda kisa bir aciklama..."></textarea>
+					</div>
+
+					<div class="form-group">
+						<label for="category-sort-order">Siralama</label>
+						<input type="number" class="form-control" id="category-sort-order" value="0" min="0">
+						<p class="form-helper">Dusuk degerler once gosterilir.</p>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" onclick="closeModal()">Iptal</button>
+				<button class="btn btn-primary" onclick="saveCategory()">Kaydet</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/product-categories-service.js"></script>
+	<script>
+		// Auth kontrol
+		document.addEventListener('DOMContentLoaded', async function() {
+			var adminId = sessionStorage.getItem('backoffice_admin_id');
+			if (!adminId) {
+				window.location.href = 'backoffice-login.html';
+				return;
+			}
+
+			await loadComponents();
+			if (typeof setPageName === 'function') setPageName('Kategoriler');
+
+			loadCategories();
+
+			// Close modal on overlay click
+			document.getElementById('category-modal').onclick = function(e) {
+				if (e.target === this) {
+					closeModal();
+				}
+			};
+		});
+
+		async function loadComponents() {
+			try {
+				var sidebarRes = await fetch('components/backoffice-sidebar.html');
+				document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+				var headerRes = await fetch('components/backoffice-header.html');
+				document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+				executeScripts(document.getElementById('backoffice-sidebar'));
+				executeScripts(document.getElementById('backoffice-header'));
+			} catch (e) { console.error('Component load error:', e); }
+		}
+
+		function executeScripts(container) {
+			container.querySelectorAll('script').forEach(function(script) {
+				var newScript = document.createElement('script');
+				newScript.textContent = script.textContent;
+				document.body.appendChild(newScript);
+			});
+		}
+
+		// Global state
+		var allCategories = [];
+		var editingCategoryId = null;
+
+		// Toast notification
+		function showToast(message, type) {
+			var toast = document.getElementById('toast');
+			toast.className = 'toast ' + (type || '');
+			toast.textContent = message;
+			toast.style.display = 'block';
+			setTimeout(function() {
+				toast.style.display = 'none';
+			}, 3000);
+		}
+
+		// Load categories
+		async function loadCategories() {
+			try {
+				const { data, error } = await ProductCategoriesService.getAllWithProductCounts();
+				if (error) throw new Error(error);
+
+				allCategories = data || [];
+				renderCategories();
+
+			} catch (err) {
+				console.error('Kategori yukleme hatasi:', err);
+				document.getElementById('categories-tbody').innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>Kategoriler yuklenirken hata olustu</p></div></td></tr>';
+			}
+		}
+
+		// Render categories
+		function renderCategories() {
+			var tbody = document.getElementById('categories-tbody');
+			tbody.innerHTML = '';
+
+			if (allCategories.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>' +
+					'<h3>Kategori bulunamadi</h3>' +
+					'<p>Henuz kategori eklenmemis. "Yeni Kategori" butonuna tiklayarak ekleyebilirsiniz.</p>' +
+				'</div></td></tr>';
+				return;
+			}
+
+			allCategories.forEach(function(category, index) {
+				var statusClass = category.is_active ? 'active' : 'passive';
+				var statusText = category.is_active ? 'Aktif' : 'Pasif';
+				var toggleBtnClass = category.is_active ? 'danger' : 'success';
+				var toggleBtnIcon = category.is_active ?
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>' :
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+				var toggleBtnTitle = category.is_active ? 'Pasife Al' : 'Aktif Yap';
+
+				var row = document.createElement('tr');
+				row.setAttribute('data-id', category.id);
+				row.innerHTML =
+					'<td>' +
+						'<div class="sort-order-cell">' +
+							'<span class="sort-order-badge">' + category.sort_order + '</span>' +
+							'<div class="sort-btns">' +
+								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', -1)" title="Yukari">' +
+									'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>' +
+								'</button>' +
+								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', 1)" title="Asagi">' +
+									'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>' +
+								'</button>' +
+							'</div>' +
+						'</div>' +
+					'</td>' +
+					'<td>' +
+						'<div class="category-name">' + category.name + '</div>' +
+						'<div class="category-slug">' + (category.slug || '-') + '</div>' +
+					'</td>' +
+					'<td>' +
+						'<span class="product-count-badge">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>' +
+							category.product_count + ' urun' +
+						'</span>' +
+					'</td>' +
+					'<td>' +
+						'<span class="status-badge ' + statusClass + '">' + statusText + '</span>' +
+					'</td>' +
+					'<td>' +
+						'<div class="action-btns">' +
+							'<button class="action-btn" onclick="openEditModal(\'' + category.id + '\')" title="Duzenle">' +
+								'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' +
+							'</button>' +
+							'<button class="action-btn ' + toggleBtnClass + '" onclick="toggleCategoryStatus(\'' + category.id + '\', ' + category.is_active + ')" title="' + toggleBtnTitle + '">' +
+								toggleBtnIcon +
+							'</button>' +
+						'</div>' +
+					'</td>';
+
+				tbody.appendChild(row);
+			});
+		}
+
+		// Open create modal
+		function openCreateModal() {
+			editingCategoryId = null;
+			document.getElementById('modal-title').textContent = 'Yeni Kategori';
+			document.getElementById('category-form').reset();
+			document.getElementById('category-id').value = '';
+			document.getElementById('category-sort-order').value = allCategories.length;
+			document.getElementById('category-modal').classList.add('active');
+		}
+
+		// Open edit modal
+		function openEditModal(categoryId) {
+			var category = allCategories.find(function(c) { return c.id === categoryId; });
+			if (!category) return;
+
+			editingCategoryId = categoryId;
+			document.getElementById('modal-title').textContent = 'Kategori Duzenle';
+			document.getElementById('category-id').value = category.id;
+			document.getElementById('category-name').value = category.name;
+			document.getElementById('category-slug').value = category.slug || '';
+			document.getElementById('category-description').value = category.description || '';
+			document.getElementById('category-sort-order').value = category.sort_order || 0;
+			document.getElementById('category-modal').classList.add('active');
+		}
+
+		// Close modal
+		function closeModal() {
+			document.getElementById('category-modal').classList.remove('active');
+			editingCategoryId = null;
+		}
+
+		// Save category
+		async function saveCategory() {
+			var name = document.getElementById('category-name').value.trim();
+			var slug = document.getElementById('category-slug').value.trim();
+			var description = document.getElementById('category-description').value.trim();
+			var sortOrder = parseInt(document.getElementById('category-sort-order').value) || 0;
+
+			if (!name) {
+				showToast('Kategori adi zorunludur', 'error');
+				return;
+			}
+
+			var categoryData = {
+				name: name,
+				slug: slug || null,
+				description: description || null,
+				sort_order: sortOrder
+			};
+
+			try {
+				var result;
+				if (editingCategoryId) {
+					result = await ProductCategoriesService.update(editingCategoryId, categoryData);
+				} else {
+					result = await ProductCategoriesService.create(categoryData);
+				}
+
+				if (result.error) throw new Error(result.error);
+
+				showToast(editingCategoryId ? 'Kategori guncellendi' : 'Kategori olusturuldu', 'success');
+				closeModal();
+				loadCategories();
+
+			} catch (err) {
+				console.error('Kaydetme hatasi:', err);
+				showToast('Bir hata olustu: ' + err.message, 'error');
+			}
+		}
+
+		// Toggle category status
+		async function toggleCategoryStatus(categoryId, currentStatus) {
+			try {
+				var result;
+				if (currentStatus) {
+					result = await ProductCategoriesService.deactivate(categoryId);
+				} else {
+					result = await ProductCategoriesService.activate(categoryId);
+				}
+
+				if (result.error) throw new Error(result.error);
+
+				showToast(currentStatus ? 'Kategori pasife alindi' : 'Kategori aktif edildi', 'success');
+				loadCategories();
+
+			} catch (err) {
+				console.error('Durum degistirme hatasi:', err);
+				showToast('Bir hata olustu', 'error');
+			}
+		}
+
+		// Change sort order
+		async function changeSortOrder(categoryId, direction) {
+			var category = allCategories.find(function(c) { return c.id === categoryId; });
+			if (!category) return;
+
+			var newOrder = (category.sort_order || 0) + direction;
+			if (newOrder < 0) newOrder = 0;
+
+			try {
+				const { error } = await ProductCategoriesService.updateSortOrder(categoryId, newOrder);
+				if (error) throw new Error(error);
+
+				loadCategories();
+
+			} catch (err) {
+				console.error('Siralama hatasi:', err);
+				showToast('Siralama degistirilemedi', 'error');
+			}
+		}
+	</script>
+</body>
+</html>

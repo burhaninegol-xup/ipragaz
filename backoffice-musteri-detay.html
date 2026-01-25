@@ -455,6 +455,12 @@
                         <input type="text" class="bo-form-input" id="branchTitle" placeholder="Ornek: Merkez, Depo">
                     </div>
                 </div>
+                <div class="bo-form-row single">
+                    <div class="bo-form-group">
+                        <label class="bo-form-label">VKN <span style="color: var(--bo-error);">*</span></label>
+                        <input type="text" class="bo-form-input" id="branchVkn" placeholder="Vergi Kimlik Numarasi" maxlength="11" pattern="[0-9]{10,11}" required>
+                    </div>
+                </div>
                 <div class="bo-form-row">
                     <div class="bo-form-group">
                         <label class="bo-form-label">Il</label>
@@ -866,7 +872,7 @@
                     var result = await LocationsService.getCities();
                     if (result.data) {
                         citySelect.innerHTML = '<option value="">Il seciniz</option>';
-                        result.data.forEach(function(city) { citySelect.innerHTML += '<option value="' + city.name + '" data-id="' + city.id + '">' + city.name + '</option>'; });
+                        result.data.forEach(function(city) { citySelect.innerHTML += '<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>'; });
                         return;
                     }
                 }
@@ -879,18 +885,17 @@
         async function loadBranchDistricts() {
             var citySelect = document.getElementById('branchCity');
             var districtSelect = document.getElementById('branchDistrict');
-            var selectedOption = citySelect.options[citySelect.selectedIndex];
-            var cityId = selectedOption ? selectedOption.getAttribute('data-id') : null;
+            var cityId = citySelect.value; // value is now city.id
 
             districtSelect.innerHTML = '<option value="">Yukleniyor...</option>';
-            if (!citySelect.value) { districtSelect.innerHTML = '<option value="">Ilce seciniz</option>'; return; }
+            if (!cityId) { districtSelect.innerHTML = '<option value="">Ilce seciniz</option>'; return; }
 
             try {
                 if (typeof LocationsService !== 'undefined' && cityId) {
                     var result = await LocationsService.getDistricts(cityId);
                     if (result.data) {
                         districtSelect.innerHTML = '<option value="">Ilce seciniz</option>';
-                        result.data.forEach(function(d) { districtSelect.innerHTML += '<option value="' + d.name + '">' + d.name + '</option>'; });
+                        result.data.forEach(function(d) { districtSelect.innerHTML += '<option value="' + d.id + '" data-name="' + d.name + '">' + d.name + '</option>'; });
                         return;
                     }
                 }
@@ -912,9 +917,10 @@
             document.getElementById('branchModalTitle').textContent = 'Subeyi Duzenle';
             document.getElementById('branchId').value = id;
             document.getElementById('branchTitle').value = addr.branch_name || '';
-            document.getElementById('branchCity').value = addr.city || '';
+            document.getElementById('branchVkn').value = addr.vkn || '';
+            document.getElementById('branchCity').value = addr.city_id || '';
             loadBranchDistricts().then(function() {
-                document.getElementById('branchDistrict').value = addr.district || '';
+                document.getElementById('branchDistrict').value = addr.district_id || '';
             });
             document.getElementById('branchNeighborhood').value = addr.neighborhood || '';
             document.getElementById('branchStreet').value = addr.street || '';
@@ -927,14 +933,32 @@
 
         function closeBranchModal() { document.getElementById('branchModal').classList.remove('show'); }
 
+        // Helper function to get selected option's data-name attribute
+        function getSelectedOptionName(selectId) {
+            var select = document.getElementById(selectId);
+            var selectedOption = select.options[select.selectedIndex];
+            return selectedOption ? selectedOption.getAttribute('data-name') : null;
+        }
+
         async function saveBranch(e) {
             e.preventDefault();
             var id = document.getElementById('branchId').value;
+            var vkn = document.getElementById('branchVkn').value.trim();
+
+            // VKN validasyonu
+            if (!vkn) { showToast('VKN zorunludur', 'error'); return; }
+            if (!/^[0-9]{10,11}$/.test(vkn)) { showToast('VKN 10 veya 11 haneli rakam olmalidir', 'error'); return; }
+
             var branchData = {
                 customer_id: customerId,
                 branch_name: document.getElementById('branchTitle').value.trim() || 'Sube',
-                city: document.getElementById('branchCity').value,
-                district: document.getElementById('branchDistrict').value,
+                vkn: vkn,
+                // Yeni: ID kolonlari
+                city_id: document.getElementById('branchCity').value || null,
+                district_id: document.getElementById('branchDistrict').value || null,
+                // Eski: Isim kolonlari (backward compatibility)
+                city: getSelectedOptionName('branchCity'),
+                district: getSelectedOptionName('branchDistrict'),
                 neighborhood: document.getElementById('branchNeighborhood').value.trim() || null,
                 street: document.getElementById('branchStreet').value.trim() || null,
                 building_no: document.getElementById('branchBuildingNo').value.trim() || null,
@@ -944,7 +968,7 @@
                 is_active: true
             };
 
-            if (!branchData.city || !branchData.district) { showToast('Il ve Ilce secimi zorunludur', 'error'); return; }
+            if (!branchData.city_id || !branchData.district_id) { showToast('Il ve Ilce secimi zorunludur', 'error'); return; }
 
             try {
                 var result;

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Urunler - Ipragaz Back Office</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bo-primary: #e31e24;
+			--bo-primary-dark: #b91820;
+			--bo-sidebar-width: 260px;
+			--bo-sidebar-collapsed: 72px;
+			--bo-header-height: 64px;
+			--bo-bg-main: #f5f5f5;
+			--bo-bg-paper: #ffffff;
+			--bo-text-primary: #262626;
+			--bo-text-secondary: #525252;
+			--bo-border: #e5e5e5;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: var(--bo-bg-main);
+			min-height: 100vh;
+		}
+
+		.bo-main-content {
+			margin-left: var(--bo-sidebar-width);
+			padding-top: var(--bo-header-height);
+			min-height: 100vh;
+			transition: margin-left 0.3s ease;
+		}
+		.bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+		.bo-content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left h1 {
+			font-size: 24px;
+			color: var(--bo-text-primary);
+			font-weight: 600;
+			margin-bottom: 5px;
+		}
+
+		.page-header-left p {
+			color: var(--bo-text-secondary);
+			font-size: 14px;
+		}
+
+		.page-header-right {
+			display: flex;
+			gap: 12px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+			text-decoration: none;
+			font-family: inherit;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-primary {
+			background: var(--bo-primary);
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			background: var(--bo-primary-dark);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+		}
+
+		.btn-secondary {
+			background: #fff;
+			color: var(--bo-text-primary);
+			border: 1px solid var(--bo-border);
+		}
+
+		.btn-secondary:hover {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+		}
+
+		/* Filter Section */
+		.filter-section {
+			background: #fff;
+			border-radius: 16px;
+			padding: 20px;
+			margin-bottom: 20px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.filter-row {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			flex-wrap: wrap;
+		}
+
+		.search-box {
+			flex: 1;
+			min-width: 250px;
+			position: relative;
+		}
+
+		.search-box input {
+			width: 100%;
+			padding: 12px 16px 12px 45px;
+			border: 1px solid var(--bo-border);
+			border-radius: 10px;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.search-box input:focus {
+			outline: none;
+			border-color: var(--bo-primary);
+			box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+		}
+
+		.search-box svg {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 18px;
+			height: 18px;
+			color: #999;
+		}
+
+		.filter-select {
+			position: relative;
+		}
+
+		.filter-select select {
+			padding: 12px 40px 12px 16px;
+			border: 1px solid var(--bo-border);
+			border-radius: 10px;
+			font-size: 14px;
+			font-family: inherit;
+			color: var(--bo-text-primary);
+			background: #fff;
+			cursor: pointer;
+			appearance: none;
+			min-width: 180px;
+		}
+
+		.filter-select select:focus {
+			outline: none;
+			border-color: var(--bo-primary);
+		}
+
+		.filter-select svg {
+			position: absolute;
+			right: 12px;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 16px;
+			height: 16px;
+			color: #666;
+			pointer-events: none;
+		}
+
+		.filter-buttons {
+			display: flex;
+			background: var(--bo-bg-main);
+			border-radius: 10px;
+			padding: 4px;
+		}
+
+		.filter-btn {
+			padding: 10px 18px;
+			border: none;
+			background: transparent;
+			border-radius: 8px;
+			font-size: 13px;
+			font-family: inherit;
+			color: var(--bo-text-secondary);
+			cursor: pointer;
+			transition: all 0.2s;
+			font-weight: 500;
+		}
+
+		.filter-btn.active {
+			background: #fff;
+			color: var(--bo-primary);
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		}
+
+		.filter-btn:hover:not(.active) {
+			color: var(--bo-text-primary);
+		}
+
+		.filter-btn .count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			background: #e0e0e0;
+			border-radius: 10px;
+			font-size: 11px;
+			margin-left: 6px;
+		}
+
+		.filter-btn.active .count {
+			background: var(--bo-primary);
+			color: #fff;
+		}
+
+		/* Table Container */
+		.table-container {
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+			overflow: hidden;
+		}
+
+		.table-wrapper {
+			overflow-x: auto;
+		}
+
+		.data-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.data-table th,
+		.data-table td {
+			padding: 16px 20px;
+			text-align: left;
+		}
+
+		.data-table th {
+			background: #f8f9fa;
+			font-size: 12px;
+			font-weight: 600;
+			color: var(--bo-text-secondary);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-bottom: 1px solid var(--bo-border);
+		}
+
+		.data-table td {
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 14px;
+			color: var(--bo-text-primary);
+		}
+
+		.data-table tr:last-child td {
+			border-bottom: none;
+		}
+
+		.data-table tr:hover td {
+			background: #f8f9fa;
+		}
+
+		/* Product Image */
+		.product-image {
+			width: 50px;
+			height: 50px;
+			border-radius: 8px;
+			object-fit: cover;
+			background: #f5f5f5;
+		}
+
+		.product-image-placeholder {
+			width: 50px;
+			height: 50px;
+			border-radius: 8px;
+			background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #bbb;
+		}
+
+		.product-image-placeholder svg {
+			width: 24px;
+			height: 24px;
+		}
+
+		/* Product Info */
+		.product-info {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.product-details {
+			min-width: 0;
+		}
+
+		.product-name {
+			font-weight: 600;
+			color: var(--bo-text-primary);
+			margin-bottom: 2px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 250px;
+		}
+
+		.product-code {
+			font-size: 12px;
+			color: var(--bo-text-secondary);
+			font-family: monospace;
+		}
+
+		/* Category Badge */
+		.category-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			background: #e8f4fd;
+			color: #1565c0;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		.category-badge.no-category {
+			background: #f5f5f5;
+			color: #999;
+		}
+
+		/* Weight/Price */
+		.weight-text {
+			font-weight: 500;
+		}
+
+		.price-text {
+			font-weight: 600;
+			color: var(--bo-primary);
+		}
+
+		/* Status Badge */
+		.status-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+
+		.status-badge.active {
+			background: #e8f5e9;
+			color: #2e7d32;
+		}
+
+		.status-badge.passive {
+			background: #ffebee;
+			color: #c62828;
+		}
+
+		/* Action Button */
+		.action-btn {
+			width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 8px;
+			border: 1px solid var(--bo-border);
+			background: #fff;
+			color: var(--bo-text-secondary);
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+
+		.action-btn:hover {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+			background: #fef2f2;
+		}
+
+		.action-btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 60px 20px;
+		}
+
+		.empty-state svg {
+			width: 80px;
+			height: 80px;
+			color: #ccc;
+			margin-bottom: 20px;
+		}
+
+		.empty-state h3 {
+			font-size: 18px;
+			color: var(--bo-text-secondary);
+			margin-bottom: 10px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+			color: #999;
+		}
+
+		/* Pagination */
+		.pagination-container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+			margin-top: 20px;
+			padding: 15px 20px;
+			background: #fff;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+		}
+
+		.pagination-info {
+			font-size: 14px;
+			color: var(--bo-text-secondary);
+		}
+
+		.pagination-controls {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.pagination-btn {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 8px 16px;
+			border: 1px solid var(--bo-border);
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			font-family: inherit;
+			color: var(--bo-text-primary);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-btn:hover:not(:disabled) {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+		}
+
+		.pagination-btn:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		.pagination-pages {
+			display: flex;
+			gap: 4px;
+		}
+
+		.pagination-page {
+			min-width: 36px;
+			height: 36px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid var(--bo-border);
+			background: #fff;
+			border-radius: 8px;
+			font-size: 13px;
+			font-family: inherit;
+			color: var(--bo-text-primary);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.pagination-page:hover:not(.ellipsis) {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+		}
+
+		.pagination-page.active {
+			background: var(--bo-primary);
+			border-color: var(--bo-primary);
+			color: #fff;
+		}
+
+		.pagination-page.ellipsis {
+			border: none;
+			cursor: default;
+			background: transparent;
+		}
+
+		/* Toast */
+		.toast {
+			position: fixed;
+			bottom: 30px;
+			right: 30px;
+			padding: 16px 24px;
+			background: #333;
+			color: #fff;
+			border-radius: 12px;
+			font-size: 14px;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			display: none;
+			z-index: 1001;
+			animation: slideIn 0.3s ease;
+		}
+
+		.toast.success {
+			background: #2e7d32;
+		}
+
+		.toast.error {
+			background: #c62828;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		/* Loading */
+		.loading-placeholder {
+			text-align: center;
+			padding: 60px 20px;
+			color: var(--bo-text-secondary);
+		}
+
+		.spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f3f3f3;
+			border-top: 3px solid var(--bo-primary);
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+			margin: 0 auto 15px;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Responsive */
+		@media (max-width: 1024px) {
+			.product-name {
+				max-width: 180px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.bo-main-content {
+				margin-left: 0;
+			}
+
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.filter-row {
+				flex-direction: column;
+			}
+
+			.search-box {
+				width: 100%;
+			}
+
+			.filter-select select {
+				width: 100%;
+			}
+
+			.filter-buttons {
+				width: 100%;
+				overflow-x: auto;
+			}
+
+			.data-table th,
+			.data-table td {
+				padding: 12px 16px;
+			}
+
+			.product-name {
+				max-width: 150px;
+			}
+
+			.pagination-pages {
+				display: none;
+			}
+
+			.pagination-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			.pagination-controls {
+				justify-content: center;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.bo-content {
+				padding: 16px;
+			}
+
+			.page-header-left h1 {
+				font-size: 20px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Sidebar Component -->
+	<div id="backoffice-sidebar"></div>
+
+	<!-- Main Content -->
+	<main class="bo-main-content">
+		<!-- Header Component -->
+		<div id="backoffice-header"></div>
+
+		<div class="bo-content">
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="page-header-left">
+					<h1>Urunler</h1>
+					<p>Tum urunleri yonetin ve duzenleyin</p>
+				</div>
+				<div class="page-header-right">
+					<a href="backoffice-kategoriler.html" class="btn btn-secondary">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+						</svg>
+						Kategoriler
+					</a>
+					<a href="backoffice-urun-detay.html" class="btn btn-primary">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="12" y1="5" x2="12" y2="19"></line>
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+						</svg>
+						Yeni Urun
+					</a>
+				</div>
+			</div>
+
+			<!-- Filter Section -->
+			<div class="filter-section">
+				<div class="filter-row">
+					<div class="search-box">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+						</svg>
+						<input type="text" id="search-input" placeholder="Urun kodu veya adi ile ara...">
+					</div>
+					<div class="filter-select">
+						<select id="category-filter">
+							<option value="">Tum Kategoriler</option>
+						</select>
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+					</div>
+					<div class="filter-buttons">
+						<button class="filter-btn active" data-filter="all">
+							Tumu
+							<span class="count" id="count-all">0</span>
+						</button>
+						<button class="filter-btn" data-filter="active">
+							Aktif
+							<span class="count" id="count-active">0</span>
+						</button>
+						<button class="filter-btn" data-filter="passive">
+							Pasif
+							<span class="count" id="count-passive">0</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Table Container -->
+			<div class="table-container">
+				<div class="table-wrapper">
+					<table class="data-table" id="products-table">
+						<thead>
+							<tr>
+								<th style="width: 60px;">Gorsel</th>
+								<th>Urun</th>
+								<th>Kategori</th>
+								<th style="width: 100px;">Agirlik</th>
+								<th style="width: 120px;">Fiyat</th>
+								<th style="width: 100px;">Durum</th>
+								<th style="width: 80px;">Islem</th>
+							</tr>
+						</thead>
+						<tbody id="products-tbody">
+							<tr>
+								<td colspan="7">
+									<div class="loading-placeholder">
+										<div class="spinner"></div>
+										<p>Urunler yukleniyor...</p>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- Pagination -->
+			<div class="pagination-container" id="pagination-container" style="display: none;">
+				<div class="pagination-info">
+					<span id="pagination-info-text">1-20 / 0 urun</span>
+				</div>
+				<div class="pagination-controls">
+					<button class="pagination-btn" id="prev-page" disabled>
+						<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+						Onceki
+					</button>
+					<div class="pagination-pages" id="pagination-pages"></div>
+					<button class="pagination-btn" id="next-page">
+						Sonraki
+						<svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- Toast -->
+	<div class="toast" id="toast"></div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/product-categories-service.js"></script>
+	<script>
+		// Auth kontrol
+		document.addEventListener('DOMContentLoaded', async function() {
+			var adminId = sessionStorage.getItem('backoffice_admin_id');
+			if (!adminId) {
+				window.location.href = 'backoffice-login.html';
+				return;
+			}
+
+			await loadComponents();
+			if (typeof setPageName === 'function') setPageName('Urunler');
+
+			// Load initial data
+			loadCategories();
+			loadProducts();
+
+			// Event listeners
+			initEventListeners();
+		});
+
+		async function loadComponents() {
+			try {
+				var sidebarRes = await fetch('components/backoffice-sidebar.html');
+				document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+				var headerRes = await fetch('components/backoffice-header.html');
+				document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+				executeScripts(document.getElementById('backoffice-sidebar'));
+				executeScripts(document.getElementById('backoffice-header'));
+			} catch (e) { console.error('Component load error:', e); }
+		}
+
+		function executeScripts(container) {
+			container.querySelectorAll('script').forEach(function(script) {
+				var newScript = document.createElement('script');
+				newScript.textContent = script.textContent;
+				document.body.appendChild(newScript);
+			});
+		}
+
+		// Global state
+		var allProducts = [];
+		var allCategories = [];
+		var currentFilter = 'all';
+		var currentCategoryFilter = '';
+		var currentPage = 0;
+		var pageSize = 20;
+		var totalCount = 0;
+		var searchTimeout = null;
+
+		// Toast notification
+		function showToast(message, type) {
+			var toast = document.getElementById('toast');
+			toast.className = 'toast ' + (type || '');
+			toast.textContent = message;
+			toast.style.display = 'block';
+			setTimeout(function() {
+				toast.style.display = 'none';
+			}, 3000);
+		}
+
+		// Format price
+		function formatPrice(amount) {
+			return parseFloat(amount || 0).toLocaleString('tr-TR', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			}) + ' TL';
+		}
+
+		// Load categories for filter
+		async function loadCategories() {
+			try {
+				const { data, error } = await ProductCategoriesService.getAllActive();
+				if (error) throw new Error(error);
+
+				allCategories = data || [];
+				renderCategoryFilter();
+
+			} catch (err) {
+				console.error('Kategori yukleme hatasi:', err);
+			}
+		}
+
+		// Render category filter dropdown
+		function renderCategoryFilter() {
+			var select = document.getElementById('category-filter');
+			var options = select.querySelectorAll('option:not(:first-child)');
+			options.forEach(function(opt) { opt.remove(); });
+
+			allCategories.forEach(function(category) {
+				var option = document.createElement('option');
+				option.value = category.id;
+				option.textContent = category.name;
+				select.appendChild(option);
+			});
+		}
+
+		// Load products
+		async function loadProducts() {
+			try {
+				// Get counts first
+				const { data: counts } = await ProductsService.getProductCountsByStatus();
+				if (counts) {
+					document.getElementById('count-all').textContent = counts.total || 0;
+					document.getElementById('count-active').textContent = counts.active || 0;
+					document.getElementById('count-passive').textContent = counts.inactive || 0;
+				}
+
+				// Build filter options
+				var options = {
+					page: currentPage,
+					pageSize: pageSize,
+					search: document.getElementById('search-input').value.trim()
+				};
+
+				if (currentFilter === 'active') {
+					options.isActive = true;
+				} else if (currentFilter === 'passive') {
+					options.isActive = false;
+				}
+
+				if (currentCategoryFilter) {
+					options.categoryId = currentCategoryFilter;
+				}
+
+				// Get paginated products
+				const result = await ProductsService.getPaginated(options);
+				if (result.error) throw new Error(result.error);
+
+				allProducts = result.data || [];
+				totalCount = result.count || 0;
+				renderProducts();
+				updatePagination(result);
+
+			} catch (err) {
+				console.error('Urun yukleme hatasi:', err);
+				document.getElementById('products-tbody').innerHTML = '<tr><td colspan="7"><div class="empty-state"><p>Urunler yuklenirken hata olustu</p></div></td></tr>';
+			}
+		}
+
+		// Render products table
+		function renderProducts() {
+			var tbody = document.getElementById('products-tbody');
+			tbody.innerHTML = '';
+
+			if (allProducts.length === 0) {
+				tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>' +
+					'<h3>Urun bulunamadi</h3>' +
+					'<p>Arama kriterlerinize uygun urun yok</p>' +
+				'</div></td></tr>';
+				return;
+			}
+
+			allProducts.forEach(function(product) {
+				var imageHtml = product.image_url ?
+					'<img src="' + product.image_url + '" alt="' + product.name + '" class="product-image" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="product-image-placeholder" style="display:none"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>' :
+					'<div class="product-image-placeholder"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>';
+
+				var categoryHtml = product.product_categories ?
+					'<span class="category-badge">' + product.product_categories.name + '</span>' :
+					'<span class="category-badge no-category">Kategorisiz</span>';
+
+				var statusClass = product.is_active ? 'active' : 'passive';
+				var statusText = product.is_active ? 'Aktif' : 'Pasif';
+
+				var row = document.createElement('tr');
+				row.setAttribute('data-id', product.id);
+				row.innerHTML =
+					'<td>' + imageHtml + '</td>' +
+					'<td>' +
+						'<div class="product-info">' +
+							'<div class="product-details">' +
+								'<div class="product-name" title="' + product.name + '">' + product.name + '</div>' +
+								'<div class="product-code">' + product.code + '</div>' +
+							'</div>' +
+						'</div>' +
+					'</td>' +
+					'<td>' + categoryHtml + '</td>' +
+					'<td><span class="weight-text">' + (product.weight_kg ? product.weight_kg + ' kg' : '-') + '</span></td>' +
+					'<td><span class="price-text">' + formatPrice(product.base_price) + '</span></td>' +
+					'<td><span class="status-badge ' + statusClass + '">' + statusText + '</span></td>' +
+					'<td>' +
+						'<a href="backoffice-urun-detay.html?id=' + product.id + '" class="action-btn" title="Detay">' +
+							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>' +
+						'</a>' +
+					'</td>';
+
+				tbody.appendChild(row);
+			});
+		}
+
+		// Update pagination
+		function updatePagination(result) {
+			var totalPages = result.totalPages || 0;
+			var start = currentPage * pageSize + 1;
+			var end = Math.min(start + pageSize - 1, totalCount);
+
+			if (totalCount > pageSize) {
+				document.getElementById('pagination-container').style.display = 'flex';
+				document.getElementById('pagination-info-text').textContent = start + '-' + end + ' / ' + totalCount + ' urun';
+				document.getElementById('prev-page').disabled = currentPage === 0;
+				document.getElementById('next-page').disabled = currentPage >= totalPages - 1;
+				renderPageNumbers(totalPages);
+			} else {
+				document.getElementById('pagination-container').style.display = 'none';
+			}
+		}
+
+		// Render page numbers
+		function renderPageNumbers(totalPages) {
+			var pagesContainer = document.getElementById('pagination-pages');
+			pagesContainer.innerHTML = '';
+
+			var pages = [];
+			if (totalPages <= 7) {
+				for (var i = 0; i < totalPages; i++) pages.push(i);
+			} else {
+				pages = [0];
+				if (currentPage > 2) pages.push('...');
+				for (var j = Math.max(1, currentPage - 1); j <= Math.min(totalPages - 2, currentPage + 1); j++) {
+					pages.push(j);
+				}
+				if (currentPage < totalPages - 3) pages.push('...');
+				pages.push(totalPages - 1);
+			}
+
+			pages.forEach(function(p) {
+				if (p === '...') {
+					var ellipsis = document.createElement('span');
+					ellipsis.className = 'pagination-page ellipsis';
+					ellipsis.textContent = '...';
+					pagesContainer.appendChild(ellipsis);
+				} else {
+					var pageBtn = document.createElement('button');
+					pageBtn.className = 'pagination-page' + (p === currentPage ? ' active' : '');
+					pageBtn.setAttribute('data-page', p);
+					pageBtn.textContent = p + 1;
+					pageBtn.onclick = function() {
+						currentPage = parseInt(this.getAttribute('data-page'));
+						loadProducts();
+					};
+					pagesContainer.appendChild(pageBtn);
+				}
+			});
+		}
+
+		// Initialize event listeners
+		function initEventListeners() {
+			// Filter buttons
+			document.querySelectorAll('.filter-btn').forEach(function(btn) {
+				btn.onclick = function() {
+					document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+					this.classList.add('active');
+					currentFilter = this.getAttribute('data-filter');
+					currentPage = 0;
+					loadProducts();
+				};
+			});
+
+			// Category filter
+			document.getElementById('category-filter').onchange = function() {
+				currentCategoryFilter = this.value;
+				currentPage = 0;
+				loadProducts();
+			};
+
+			// Search with debounce
+			document.getElementById('search-input').oninput = function() {
+				clearTimeout(searchTimeout);
+				searchTimeout = setTimeout(function() {
+					currentPage = 0;
+					loadProducts();
+				}, 300);
+			};
+
+			// Pagination
+			document.getElementById('prev-page').onclick = function() {
+				if (currentPage > 0) {
+					currentPage--;
+					loadProducts();
+				}
+			};
+
+			document.getElementById('next-page').onclick = function() {
+				currentPage++;
+				loadProducts();
+			};
+		}
+	</script>
+</body>
+</html>

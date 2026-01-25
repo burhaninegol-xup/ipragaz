@@ -729,14 +729,12 @@
                             <tr>
                                 <th>Urun Kodu</th>
                                 <th>Urun Adi</th>
-                                <th>Baz Fiyat</th>
                                 <th>Sehir Fiyati</th>
-                                <th>Fark</th>
                             </tr>
                         </thead>
                         <tbody id="priceTable">
                             <tr>
-                                <td colspan="5">
+                                <td colspan="3">
                                     <div class="bo-empty-state">
                                         <svg viewBox="0 0 24 24">
                                             <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/>
@@ -953,9 +951,9 @@
             // Update table header
             var tableHead = document.getElementById('tableHead');
             if (view === 'city') {
-                tableHead.innerHTML = '<tr><th>Urun Kodu</th><th>Urun Adi</th><th>Baz Fiyat</th><th>Sehir Fiyati</th><th>Fark</th></tr>';
+                tableHead.innerHTML = '<tr><th>Urun Kodu</th><th>Urun Adi</th><th>Sehir Fiyati</th></tr>';
             } else {
-                tableHead.innerHTML = '<tr><th>Sehir Kodu</th><th>Sehir Adi</th><th>Baz Fiyat</th><th>Sehir Fiyati</th><th>Fark</th></tr>';
+                tableHead.innerHTML = '<tr><th>Sehir Kodu</th><th>Sehir Adi</th><th>Sehir Fiyati</th></tr>';
             }
 
             // Update selector
@@ -963,7 +961,7 @@
 
             // Reset table
             var tableBody = document.getElementById('priceTable');
-            tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+            tableBody.innerHTML = '<tr><td colspan="3"><div class="bo-empty-state">' +
                 '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>' +
                 '<h3>' + (view === 'city' ? 'Sehir' : 'Urun') + ' Secin</h3>' +
                 '<p>Fiyatlari goruntulemek icin yukaridaki listeden bir ' + (view === 'city' ? 'sehir' : 'urun') + ' secin.</p>' +
@@ -980,7 +978,7 @@
             updateSaveBar();
 
             var tableBody = document.getElementById('priceTable');
-            tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-loading"><div class="bo-loading-spinner"></div></div></td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="3"><div class="bo-loading"><div class="bo-loading-spinner"></div></div></td></tr>';
 
             try {
                 if (currentView === 'city') {
@@ -996,7 +994,7 @@
                 }
             } catch (error) {
                 console.error('Load price table error:', error);
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 24px;">Veri yuklenemedi</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 24px;">Veri yuklenemedi</td></tr>';
             }
         }
 
@@ -1005,7 +1003,7 @@
             var tableBody = document.getElementById('priceTable');
 
             if (priceMatrix.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+                tableBody.innerHTML = '<tr><td colspan="3"><div class="bo-empty-state">' +
                     '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>' +
                     '<h3>Urun Bulunamadi</h3>' +
                     '<p>Sistemde aktif urun bulunmuyor.</p>' +
@@ -1014,17 +1012,12 @@
             }
 
             tableBody.innerHTML = priceMatrix.map(function(item) {
-                var basePrice = item.base_price || 0;
                 var retailPrice = item.retail_price;
-                var diff = retailPrice ? (retailPrice - basePrice) : null;
-                var diffPercent = diff !== null ? ((diff / basePrice) * 100).toFixed(1) : null;
-                var diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : '';
                 var inputClass = retailPrice === null ? 'empty' : '';
 
                 return '<tr>' +
                     '<td><strong>' + (item.product_code || '-') + '</strong></td>' +
                     '<td>' + (item.product_name || '-') + '</td>' +
-                    '<td>' + formatPrice(basePrice) + ' TL</td>' +
                     '<td>' +
                         '<input type="number" class="bo-price-input ' + inputClass + '" ' +
                             'value="' + (retailPrice !== null ? retailPrice : '') + '" ' +
@@ -1035,14 +1028,6 @@
                             'onchange="handlePriceChange(this)" ' +
                             'oninput="handlePriceInput(this)">' +
                     '</td>' +
-                    '<td>' +
-                        (diff !== null ?
-                            '<span class="bo-diff ' + diffClass + '">' +
-                                (diff > 0 ? '+' : '') + formatPrice(diff) + ' TL (' +
-                                (diff > 0 ? '+' : '') + diffPercent + '%)' +
-                            '</span>' :
-                            '<span style="color: #999;">-</span>') +
-                    '</td>' +
                 '</tr>';
             }).join('');
         }
@@ -1050,11 +1035,9 @@
         // Render product-based table
         function renderProductBasedTable() {
             var tableBody = document.getElementById('priceTable');
-            var selectedProduct = products.find(function(p) { return p.id === currentSelectedId; });
-            var basePrice = selectedProduct ? (selectedProduct.base_price || 0) : 0;
 
             if (priceMatrix.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5"><div class="bo-empty-state">' +
+                tableBody.innerHTML = '<tr><td colspan="3"><div class="bo-empty-state">' +
                     '<svg viewBox="0 0 24 24"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>' +
                     '<h3>Sehir Bulunamadi</h3>' +
                     '<p>Sistemde aktif sehir bulunmuyor.</p>' +
@@ -1064,15 +1047,11 @@
 
             tableBody.innerHTML = priceMatrix.map(function(item) {
                 var retailPrice = item.retail_price;
-                var diff = retailPrice ? (retailPrice - basePrice) : null;
-                var diffPercent = diff !== null ? ((diff / basePrice) * 100).toFixed(1) : null;
-                var diffClass = diff > 0 ? 'positive' : diff < 0 ? 'negative' : '';
                 var inputClass = retailPrice === null ? 'empty' : '';
 
                 return '<tr>' +
                     '<td><strong>' + (item.city_code || '-') + '</strong></td>' +
                     '<td>' + (item.city_name || '-') + '</td>' +
-                    '<td>' + formatPrice(basePrice) + ' TL</td>' +
                     '<td>' +
                         '<input type="number" class="bo-price-input ' + inputClass + '" ' +
                             'value="' + (retailPrice !== null ? retailPrice : '') + '" ' +
@@ -1082,14 +1061,6 @@
                             'data-original="' + (retailPrice !== null ? retailPrice : '') + '" ' +
                             'onchange="handlePriceChange(this)" ' +
                             'oninput="handlePriceInput(this)">' +
-                    '</td>' +
-                    '<td>' +
-                        (diff !== null ?
-                            '<span class="bo-diff ' + diffClass + '">' +
-                                (diff > 0 ? '+' : '') + formatPrice(diff) + ' TL (' +
-                                (diff > 0 ? '+' : '') + diffPercent + '%)' +
-                            '</span>' :
-                            '<span style="color: #999;">-</span>') +
                     '</td>' +
                 '</tr>';
             }).join('');

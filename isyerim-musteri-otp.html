@@ -431,6 +431,14 @@
 					var user = userResult.data;
 					var customer = user.customer;
 
+					// Kullanicinin aktif olup olmadigini kontrol et
+					if (!user.is_active) {
+						alert('Hesabiniz silinmis. Giris yapilamiyor.');
+						submitBtn.disabled = false;
+						submitBtn.textContent = 'Devam';
+						return;
+					}
+
 					// Musterinin aktif olup olmadigini kontrol et
 					if (!customer || !customer.is_active) {
 						alert('Hesabiniz aktif degil. Lutfen bayi ile iletisime gecin.');

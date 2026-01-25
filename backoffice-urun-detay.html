@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Urun Detay - Ipragaz Back Office</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--bo-primary: #e31e24;
+			--bo-primary-dark: #b91820;
+			--bo-sidebar-width: 260px;
+			--bo-sidebar-collapsed: 72px;
+			--bo-header-height: 64px;
+			--bo-bg-main: #f5f5f5;
+			--bo-bg-paper: #ffffff;
+			--bo-text-primary: #262626;
+			--bo-text-secondary: #525252;
+			--bo-border: #e5e5e5;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: var(--bo-bg-main);
+			min-height: 100vh;
+		}
+
+		.bo-main-content {
+			margin-left: var(--bo-sidebar-width);
+			padding-top: var(--bo-header-height);
+			min-height: 100vh;
+			transition: margin-left 0.3s ease;
+		}
+		.bo-main-content.sidebar-collapsed { margin-left: var(--bo-sidebar-collapsed); }
+		.bo-content { padding: 24px; max-width: 1000px; margin: 0 auto; }
+
+		/* Page Header */
+		.page-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 25px;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		.page-header-left {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+		}
+
+		.back-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 40px;
+			height: 40px;
+			border-radius: 10px;
+			background: #fff;
+			color: #666;
+			text-decoration: none;
+			transition: all 0.2s;
+			border: 1px solid var(--bo-border);
+		}
+
+		.back-btn:hover {
+			background: var(--bo-primary);
+			color: #fff;
+			border-color: var(--bo-primary);
+		}
+
+		.back-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.page-header-left h1 {
+			font-size: 24px;
+			color: var(--bo-text-primary);
+			font-weight: 600;
+		}
+
+		.page-header-right {
+			display: flex;
+			gap: 10px;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 12px 24px;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			transition: all 0.2s;
+			border: none;
+			cursor: pointer;
+			text-decoration: none;
+			font-family: inherit;
+		}
+
+		.btn svg {
+			width: 18px;
+			height: 18px;
+		}
+
+		.btn-primary {
+			background: var(--bo-primary);
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			background: var(--bo-primary-dark);
+			transform: translateY(-2px);
+			box-shadow: 0 4px 15px rgba(227, 30, 36, 0.3);
+		}
+
+		.btn-primary:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+			transform: none;
+		}
+
+		.btn-secondary {
+			background: #fff;
+			color: var(--bo-text-primary);
+			border: 1px solid var(--bo-border);
+		}
+
+		.btn-secondary:hover {
+			border-color: var(--bo-primary);
+			color: var(--bo-primary);
+		}
+
+		.btn-danger {
+			background: #fff;
+			color: #e53935;
+			border: 1px solid #ffcdd2;
+		}
+
+		.btn-danger:hover {
+			background: #ffebee;
+		}
+
+		.btn-success {
+			background: #fff;
+			color: #2e7d32;
+			border: 1px solid #c8e6c9;
+		}
+
+		.btn-success:hover {
+			background: #e8f5e9;
+		}
+
+		/* Form Container */
+		.form-container {
+			background: #fff;
+			border-radius: 16px;
+			padding: 30px;
+			box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+		}
+
+		.form-section {
+			margin-bottom: 30px;
+		}
+
+		.form-section:last-child {
+			margin-bottom: 0;
+		}
+
+		.form-section-title {
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--bo-text-primary);
+			margin-bottom: 20px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #eee;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 20px;
+		}
+
+		.form-row.three-cols {
+			grid-template-columns: repeat(3, 1fr);
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-group.full-width {
+			grid-column: 1 / -1;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--bo-text-primary);
+		}
+
+		.form-group label .required {
+			color: #e53935;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 12px 16px;
+			border: 1px solid var(--bo-border);
+			border-radius: 10px;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
+
+		.form-control:focus {
+			outline: none;
+			border-color: var(--bo-primary);
+			box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+		}
+
+		.form-control:disabled {
+			background: #f5f5f5;
+			color: #999;
+		}
+
+		textarea.form-control {
+			min-height: 100px;
+			resize: vertical;
+		}
+
+		select.form-control {
+			cursor: pointer;
+			appearance: none;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+			background-repeat: no-repeat;
+			background-position: right 12px center;
+			padding-right: 35px;
+		}
+
+		.form-helper {
+			font-size: 12px;
+			color: var(--bo-text-secondary);
+			margin-top: 6px;
+		}
+
+		.form-error {
+			font-size: 12px;
+			color: #e53935;
+			margin-top: 6px;
+			display: none;
+		}
+
+		.form-control.error {
+			border-color: #e53935;
+		}
+
+		/* Image Preview */
+		.image-preview-container {
+			display: flex;
+			align-items: flex-start;
+			gap: 20px;
+		}
+
+		.image-preview {
+			width: 120px;
+			height: 120px;
+			border-radius: 12px;
+			background: #f5f5f5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			flex-shrink: 0;
+			border: 2px dashed #ddd;
+		}
+
+		.image-preview img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.image-preview svg {
+			width: 40px;
+			height: 40px;
+			color: #ccc;
+		}
+
+		.image-input-wrapper {
+			flex: 1;
+		}
+
+		/* Status Toggle */
+		.status-toggle {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			padding: 15px 20px;
+			background: #f8f9fa;
+			border-radius: 12px;
+		}
+
+		.status-toggle-label {
+			font-weight: 500;
+			color: var(--bo-text-primary);
+		}
+
+		.toggle-switch {
+			position: relative;
+			width: 52px;
+			height: 28px;
+		}
+
+		.toggle-switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.toggle-slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: #ccc;
+			transition: 0.3s;
+			border-radius: 28px;
+		}
+
+		.toggle-slider:before {
+			position: absolute;
+			content: "";
+			height: 22px;
+			width: 22px;
+			left: 3px;
+			bottom: 3px;
+			background-color: white;
+			transition: 0.3s;
+			border-radius: 50%;
+		}
+
+		.toggle-switch input:checked + .toggle-slider {
+			background-color: #4caf50;
+		}
+
+		.toggle-switch input:checked + .toggle-slider:before {
+			transform: translateX(24px);
+		}
+
+		.status-text {
+			font-size: 14px;
+			font-weight: 500;
+		}
+
+		.status-text.active {
+			color: #2e7d32;
+		}
+
+		.status-text.passive {
+			color: #c62828;
+		}
+
+		/* Form Actions */
+		.form-actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: 12px;
+			padding-top: 20px;
+			border-top: 1px solid #eee;
+			margin-top: 30px;
+		}
+
+		/* Toast */
+		.toast {
+			position: fixed;
+			bottom: 30px;
+			right: 30px;
+			padding: 16px 24px;
+			background: #333;
+			color: #fff;
+			border-radius: 12px;
+			font-size: 14px;
+			box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			display: none;
+			z-index: 1001;
+			animation: slideIn 0.3s ease;
+		}
+
+		.toast.success {
+			background: #2e7d32;
+		}
+
+		.toast.error {
+			background: #c62828;
+		}
+
+		@keyframes slideIn {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		/* Loading */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255,255,255,0.8);
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+		}
+
+		.loading-overlay.active {
+			display: flex;
+		}
+
+		.spinner {
+			width: 40px;
+			height: 40px;
+			border: 3px solid #f3f3f3;
+			border-top: 3px solid var(--bo-primary);
+			border-radius: 50%;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		/* Confirm Modal */
+		.confirm-modal-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.5);
+			z-index: 1000;
+			display: none;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.confirm-modal-overlay.active {
+			display: flex;
+		}
+
+		.confirm-modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 30px;
+			max-width: 400px;
+			width: 90%;
+			text-align: center;
+		}
+
+		.confirm-modal h3 {
+			font-size: 18px;
+			color: var(--bo-text-primary);
+			margin-bottom: 10px;
+		}
+
+		.confirm-modal p {
+			font-size: 14px;
+			color: var(--bo-text-secondary);
+			margin-bottom: 25px;
+		}
+
+		.confirm-modal-actions {
+			display: flex;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.confirm-modal-btn {
+			padding: 12px 24px;
+			border: none;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-family: inherit;
+		}
+
+		.confirm-modal-btn.cancel {
+			background: #f5f5f5;
+			color: #666;
+		}
+
+		.confirm-modal-btn.cancel:hover {
+			background: #eee;
+		}
+
+		.confirm-modal-btn.confirm {
+			background: var(--bo-primary);
+			color: #fff;
+		}
+
+		.confirm-modal-btn.confirm:hover {
+			background: var(--bo-primary-dark);
+		}
+
+		.confirm-modal-btn.danger {
+			background: #e53935;
+			color: #fff;
+		}
+
+		.confirm-modal-btn.danger:hover {
+			background: #c62828;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.bo-main-content {
+				margin-left: 0;
+			}
+
+			.page-header {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.page-header-right {
+				width: 100%;
+				justify-content: flex-start;
+			}
+
+			.form-row {
+				grid-template-columns: 1fr;
+			}
+
+			.form-row.three-cols {
+				grid-template-columns: 1fr;
+			}
+
+			.image-preview-container {
+				flex-direction: column;
+			}
+
+			.image-preview {
+				width: 100%;
+				height: 150px;
+			}
+
+			.form-actions {
+				flex-direction: column;
+			}
+
+			.form-actions .btn {
+				width: 100%;
+				justify-content: center;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.bo-content {
+				padding: 16px;
+			}
+
+			.page-header-left h1 {
+				font-size: 20px;
+			}
+
+			.form-container {
+				padding: 20px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Sidebar Component -->
+	<div id="backoffice-sidebar"></div>
+
+	<!-- Main Content -->
+	<main class="bo-main-content">
+		<!-- Header Component -->
+		<div id="backoffice-header"></div>
+
+		<div class="bo-content">
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="page-header-left">
+					<a href="backoffice-urunler.html" class="back-btn">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+					</a>
+					<h1 id="page-title">Yeni Urun</h1>
+				</div>
+				<div class="page-header-right" id="header-actions" style="display: none;">
+					<button class="btn btn-danger" id="btn-deactivate" onclick="confirmDeactivate()">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+							<line x1="12" y1="2" x2="12" y2="12"></line>
+						</svg>
+						Pasife Al
+					</button>
+					<button class="btn btn-success" id="btn-activate" onclick="activateProduct()" style="display: none;">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polygon points="5 3 19 12 5 21 5 3"></polygon>
+						</svg>
+						Aktif Yap
+					</button>
+				</div>
+			</div>
+
+			<!-- Form Container -->
+			<div class="form-container">
+				<form id="product-form">
+					<!-- Basic Info -->
+					<div class="form-section">
+						<h3 class="form-section-title">Temel Bilgiler</h3>
+						<div class="form-row">
+							<div class="form-group">
+								<label for="product-code">Urun Kodu <span class="required">*</span></label>
+								<input type="text" class="form-control" id="product-code" placeholder="Ornek: TUP-12KG" required>
+								<p class="form-helper">Benzersiz urun kodu</p>
+							</div>
+							<div class="form-group">
+								<label for="product-name">Urun Adi <span class="required">*</span></label>
+								<input type="text" class="form-control" id="product-name" placeholder="Ornek: 12 Kg Tup Gaz" required>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label for="product-category">Kategori</label>
+								<select class="form-control" id="product-category">
+									<option value="">Kategori Seciniz</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="product-base-price">Baz Fiyat (TL) <span class="required">*</span></label>
+								<input type="number" class="form-control" id="product-base-price" placeholder="0.00" step="0.01" min="0" required>
+							</div>
+						</div>
+					</div>
+
+					<!-- Physical Properties -->
+					<div class="form-section">
+						<h3 class="form-section-title">Fiziksel Ozellikler</h3>
+						<div class="form-row three-cols">
+							<div class="form-group">
+								<label for="product-weight">Agirlik (kg)</label>
+								<input type="number" class="form-control" id="product-weight" placeholder="0.00" step="0.01" min="0">
+							</div>
+							<div class="form-group">
+								<label for="product-height">Yukseklik (mm)</label>
+								<input type="number" class="form-control" id="product-height" placeholder="0" min="0">
+							</div>
+							<div class="form-group">
+								<label for="product-diameter">Cap (mm)</label>
+								<input type="number" class="form-control" id="product-diameter" placeholder="0" min="0">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label for="product-color">Renk</label>
+								<input type="text" class="form-control" id="product-color" placeholder="Ornek: Kirmizi">
+							</div>
+							<div class="form-group">
+								<label for="product-points">Puan/Birim</label>
+								<input type="number" class="form-control" id="product-points" placeholder="0" min="0">
+								<p class="form-helper">Bu urun satin alindiginda kazanilacak puan</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Image -->
+					<div class="form-section">
+						<h3 class="form-section-title">Gorsel</h3>
+						<div class="image-preview-container">
+							<div class="image-preview" id="image-preview">
+								<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+							</div>
+							<div class="image-input-wrapper">
+								<div class="form-group" style="margin-bottom: 0;">
+									<label for="product-image-url">Gorsel URL</label>
+									<input type="url" class="form-control" id="product-image-url" placeholder="https://example.com/image.jpg">
+									<p class="form-helper">Urun gorseli icin gecerli bir URL girin</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Description -->
+					<div class="form-section">
+						<h3 class="form-section-title">Aciklama ve Uyarilar</h3>
+						<div class="form-group">
+							<label for="product-description">Aciklama</label>
+							<textarea class="form-control" id="product-description" placeholder="Urun hakkinda detayli aciklama..."></textarea>
+						</div>
+						<div class="form-group">
+							<label for="product-warnings">Uyarilar</label>
+							<textarea class="form-control" id="product-warnings" placeholder="Urunle ilgili onemli uyarilar..."></textarea>
+						</div>
+					</div>
+
+					<!-- Status -->
+					<div class="form-section">
+						<h3 class="form-section-title">Durum</h3>
+						<div class="status-toggle">
+							<span class="status-toggle-label">Urun Durumu:</span>
+							<label class="toggle-switch">
+								<input type="checkbox" id="product-is-active" checked>
+								<span class="toggle-slider"></span>
+							</label>
+							<span class="status-text active" id="status-text">Aktif</span>
+						</div>
+					</div>
+
+					<!-- Form Actions -->
+					<div class="form-actions">
+						<a href="backoffice-urunler.html" class="btn btn-secondary">Iptal</a>
+						<button type="submit" class="btn btn-primary" id="btn-save">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+								<polyline points="17 21 17 13 7 13 7 21"></polyline>
+								<polyline points="7 3 7 8 15 8"></polyline>
+							</svg>
+							Kaydet
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<!-- Toast -->
+	<div class="toast" id="toast"></div>
+
+	<!-- Loading Overlay -->
+	<div class="loading-overlay" id="loading-overlay">
+		<div class="spinner"></div>
+	</div>
+
+	<!-- Confirm Modal -->
+	<div class="confirm-modal-overlay" id="confirm-modal">
+		<div class="confirm-modal">
+			<h3 id="confirm-title">Urunu Pasife Al</h3>
+			<p id="confirm-message">Bu urunu pasife almak istediginize emin misiniz?</p>
+			<div class="confirm-modal-actions">
+				<button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Iptal</button>
+				<button class="confirm-modal-btn danger" id="confirm-btn" onclick="executeConfirmAction()">Pasife Al</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/product-categories-service.js"></script>
+	<script>
+		// Auth kontrol
+		document.addEventListener('DOMContentLoaded', async function() {
+			var adminId = sessionStorage.getItem('backoffice_admin_id');
+			if (!adminId) {
+				window.location.href = 'backoffice-login.html';
+				return;
+			}
+
+			await loadComponents();
+			if (typeof setPageName === 'function') setPageName('Urun Detay');
+
+			// Load categories first, then product
+			loadCategories().then(function() {
+				if (isEditMode) {
+					loadProduct();
+				}
+			});
+
+			// Form submit
+			document.getElementById('product-form').onsubmit = saveProduct;
+
+			// Status toggle change
+			document.getElementById('product-is-active').onchange = function() {
+				updateStatusText(this.checked);
+			};
+
+			// Image URL change - update preview
+			document.getElementById('product-image-url').oninput = function() {
+				var url = this.value.trim();
+				updateImagePreview(url);
+			};
+
+			// Close modal on overlay click
+			document.getElementById('confirm-modal').onclick = function(e) {
+				if (e.target === this) {
+					closeConfirmModal();
+				}
+			};
+		});
+
+		async function loadComponents() {
+			try {
+				var sidebarRes = await fetch('components/backoffice-sidebar.html');
+				document.getElementById('backoffice-sidebar').innerHTML = await sidebarRes.text();
+				var headerRes = await fetch('components/backoffice-header.html');
+				document.getElementById('backoffice-header').innerHTML = await headerRes.text();
+				executeScripts(document.getElementById('backoffice-sidebar'));
+				executeScripts(document.getElementById('backoffice-header'));
+			} catch (e) { console.error('Component load error:', e); }
+		}
+
+		function executeScripts(container) {
+			container.querySelectorAll('script').forEach(function(script) {
+				var newScript = document.createElement('script');
+				newScript.textContent = script.textContent;
+				document.body.appendChild(newScript);
+			});
+		}
+
+		// Global state
+		var productId = null;
+		var currentProduct = null;
+		var isEditMode = false;
+		var pendingAction = null;
+
+		// Get product ID from URL
+		var urlParams = new URLSearchParams(window.location.search);
+		productId = urlParams.get('id');
+		isEditMode = !!productId;
+
+		// Toast notification
+		function showToast(message, type) {
+			var toast = document.getElementById('toast');
+			toast.className = 'toast ' + (type || '');
+			toast.textContent = message;
+			toast.style.display = 'block';
+			setTimeout(function() {
+				toast.style.display = 'none';
+			}, 3000);
+		}
+
+		// Show/hide loading
+		function showLoading() {
+			document.getElementById('loading-overlay').classList.add('active');
+		}
+
+		function hideLoading() {
+			document.getElementById('loading-overlay').classList.remove('active');
+		}
+
+		// Confirm modal
+		function showConfirmModal(title, message, action, isDanger) {
+			pendingAction = action;
+			document.getElementById('confirm-title').textContent = title;
+			document.getElementById('confirm-message').textContent = message;
+			var confirmBtn = document.getElementById('confirm-btn');
+			confirmBtn.className = 'confirm-modal-btn ' + (isDanger ? 'danger' : 'confirm');
+			confirmBtn.textContent = isDanger ? 'Pasife Al' : 'Onayla';
+			document.getElementById('confirm-modal').classList.add('active');
+		}
+
+		function closeConfirmModal() {
+			document.getElementById('confirm-modal').classList.remove('active');
+			pendingAction = null;
+		}
+
+		function executeConfirmAction() {
+			if (pendingAction) {
+				pendingAction();
+			}
+			closeConfirmModal();
+		}
+
+		// Load categories
+		async function loadCategories() {
+			try {
+				const { data, error } = await ProductCategoriesService.getAllActive();
+				if (error) throw new Error(error);
+
+				var select = document.getElementById('product-category');
+				var options = select.querySelectorAll('option:not(:first-child)');
+				options.forEach(function(opt) { opt.remove(); });
+
+				(data || []).forEach(function(category) {
+					var option = document.createElement('option');
+					option.value = category.id;
+					option.textContent = category.name;
+					select.appendChild(option);
+				});
+
+			} catch (err) {
+				console.error('Kategori yukleme hatasi:', err);
+			}
+		}
+
+		// Load product for editing
+		async function loadProduct() {
+			if (!productId) return;
+
+			showLoading();
+
+			try {
+				const { data, error } = await ProductsService.getById(productId);
+				if (error) throw new Error(error);
+
+				if (!data) {
+					showToast('Urun bulunamadi', 'error');
+					setTimeout(function() {
+						window.location.href = 'backoffice-urunler.html';
+					}, 1500);
+					return;
+				}
+
+				currentProduct = data;
+				populateForm(data);
+
+				// Update page title
+				document.getElementById('page-title').textContent = 'Urun Duzenle';
+				document.title = data.name + ' - Ipragaz Back Office';
+
+				// Show header actions
+				document.getElementById('header-actions').style.display = 'flex';
+				updateStatusButtons(data.is_active);
+
+			} catch (err) {
+				console.error('Urun yukleme hatasi:', err);
+				showToast('Urun yuklenirken hata olustu', 'error');
+			} finally {
+				hideLoading();
+			}
+		}
+
+		// Populate form with product data
+		function populateForm(product) {
+			document.getElementById('product-code').value = product.code || '';
+			document.getElementById('product-name').value = product.name || '';
+			document.getElementById('product-category').value = product.category_id || '';
+			document.getElementById('product-base-price').value = product.base_price || '';
+			document.getElementById('product-weight').value = product.weight_kg || '';
+			document.getElementById('product-height').value = product.height_mm || '';
+			document.getElementById('product-diameter').value = product.diameter_mm || '';
+			document.getElementById('product-color').value = product.color || '';
+			document.getElementById('product-points').value = product.points_per_unit || '';
+			document.getElementById('product-image-url').value = product.image_url || '';
+			document.getElementById('product-description').value = product.description || '';
+			document.getElementById('product-warnings').value = product.warnings || '';
+			document.getElementById('product-is-active').checked = product.is_active !== false;
+
+			// Update status text
+			updateStatusText(product.is_active !== false);
+
+			// Update image preview
+			updateImagePreview(product.image_url);
+		}
+
+		// Update status text
+		function updateStatusText(isActive) {
+			var statusText = document.getElementById('status-text');
+			statusText.className = 'status-text ' + (isActive ? 'active' : 'passive');
+			statusText.textContent = isActive ? 'Aktif' : 'Pasif';
+		}
+
+		// Update status buttons
+		function updateStatusButtons(isActive) {
+			if (isActive) {
+				document.getElementById('btn-deactivate').style.display = 'inline-flex';
+				document.getElementById('btn-activate').style.display = 'none';
+			} else {
+				document.getElementById('btn-deactivate').style.display = 'none';
+				document.getElementById('btn-activate').style.display = 'inline-flex';
+			}
+		}
+
+		// Update image preview
+		function updateImagePreview(url) {
+			var preview = document.getElementById('image-preview');
+			if (url) {
+				preview.innerHTML = '<img src="' + url + '" alt="Urun Gorseli" onerror="this.parentElement.innerHTML=\'<svg viewBox=\\\'0 0 24 24\\\' fill=\\\'currentColor\\\'><path d=\\\'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z\\\'/></svg>\'">';
+			} else {
+				preview.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>';
+			}
+		}
+
+		// Get form data
+		function getFormData() {
+			return {
+				code: document.getElementById('product-code').value.trim(),
+				name: document.getElementById('product-name').value.trim(),
+				category_id: document.getElementById('product-category').value || null,
+				base_price: parseFloat(document.getElementById('product-base-price').value) || 0,
+				weight_kg: parseFloat(document.getElementById('product-weight').value) || null,
+				height_mm: parseInt(document.getElementById('product-height').value) || null,
+				diameter_mm: parseInt(document.getElementById('product-diameter').value) || null,
+				color: document.getElementById('product-color').value.trim() || null,
+				points_per_unit: parseInt(document.getElementById('product-points').value) || 0,
+				image_url: document.getElementById('product-image-url').value.trim() || null,
+				description: document.getElementById('product-description').value.trim() || null,
+				warnings: document.getElementById('product-warnings').value.trim() || null,
+				is_active: document.getElementById('product-is-active').checked
+			};
+		}
+
+		// Validate form
+		function validateForm(data) {
+			var errors = [];
+
+			if (!data.code) {
+				errors.push('Urun kodu zorunludur');
+			}
+
+			if (!data.name) {
+				errors.push('Urun adi zorunludur');
+			}
+
+			if (!data.base_price || data.base_price <= 0) {
+				errors.push('Gecerli bir baz fiyat girin');
+			}
+
+			return errors;
+		}
+
+		// Save product
+		async function saveProduct(e) {
+			e.preventDefault();
+
+			var data = getFormData();
+			var errors = validateForm(data);
+
+			if (errors.length > 0) {
+				showToast(errors[0], 'error');
+				return;
+			}
+
+			showLoading();
+			document.getElementById('btn-save').disabled = true;
+
+			try {
+				var result;
+				if (isEditMode) {
+					data.updated_at = new Date().toISOString();
+					result = await ProductsService.update(productId, data);
+				} else {
+					result = await ProductsService.create(data);
+				}
+
+				if (result.error) throw new Error(result.error);
+
+				showToast(isEditMode ? 'Urun guncellendi' : 'Urun olusturuldu', 'success');
+
+				// Redirect to list or stay on page
+				if (!isEditMode && result.data) {
+					setTimeout(function() {
+						window.location.href = 'backoffice-urun-detay.html?id=' + result.data.id;
+					}, 1000);
+				} else {
+					// Reload product data
+					loadProduct();
+				}
+
+			} catch (err) {
+				console.error('Kaydetme hatasi:', err);
+				showToast('Bir hata olustu: ' + err.message, 'error');
+			} finally {
+				hideLoading();
+				document.getElementById('btn-save').disabled = false;
+			}
+		}
+
+		// Confirm deactivate
+		function confirmDeactivate() {
+			showConfirmModal(
+				'Urunu Pasife Al',
+				'Bu urunu pasife almak istediginize emin misiniz? Pasif urunler musterilere gosterilmez.',
+				deactivateProduct,
+				true
+			);
+		}
+
+		// Deactivate product
+		async function deactivateProduct() {
+			showLoading();
+
+			try {
+				const { error } = await ProductsService.deactivate(productId);
+				if (error) throw new Error(error);
+
+				showToast('Urun pasife alindi', 'success');
+				loadProduct();
+
+			} catch (err) {
+				console.error('Pasife alma hatasi:', err);
+				showToast('Bir hata olustu', 'error');
+			} finally {
+				hideLoading();
+			}
+		}
+
+		// Activate product
+		async function activateProduct() {
+			showLoading();
+
+			try {
+				const { error } = await ProductsService.activate(productId);
+				if (error) throw new Error(error);
+
+				showToast('Urun aktif edildi', 'success');
+				loadProduct();
+
+			} catch (err) {
+				console.error('Aktif etme hatasi:', err);
+				showToast('Bir hata olustu', 'error');
+			} finally {
+				hideLoading();
+			}
+		}
+	</script>
+</body>
+</html>

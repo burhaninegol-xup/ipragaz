@@ -8,6 +8,8 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="./css/components/security-overlay.css">
+	<link rel="stylesheet" href="./css/components/delete-account-overlay.css">
 	<style>
 		* {
 			margin: 0;
@@ -787,6 +789,9 @@
 		</div>
 	</div>
 
+	<!-- Delete Account Overlay Container -->
+	<div id="delete-account-overlay-container"></div>
+
 	<!-- Scripts -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
@@ -795,6 +800,7 @@
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/component-loader.js"></script>
+	<script src="./js/services/account-deletion-service.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
 
 	<script>
@@ -818,6 +824,11 @@
 				var html = await response.text();
 				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
 				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('siparislerim'); }, 100);
+
+				// Delete account overlay'i yukle
+				var overlayResponse = await fetch('./components/delete-account-overlay.html');
+				var overlayHtml = await overlayResponse.text();
+				document.getElementById('delete-account-overlay-container').innerHTML = overlayHtml;
 			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
 
 			loadOrderDetail();

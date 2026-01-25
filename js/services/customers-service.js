@@ -5,9 +5,11 @@
 
 const CustomersService = {
     /**
-     * Tüm müşterileri getir (opsiyonel bayi filtresi)
+     * Tüm müşterileri getir (opsiyonel bayi filtresi ve aktiflik filtresi)
+     * @param {string|null} dealerId - Bayi ID filtresi
+     * @param {boolean} onlyActive - Sadece aktif müşterileri getir
      */
-    async getAll(dealerId = null) {
+    async getAll(dealerId = null, onlyActive = false) {
         try {
             let query = supabaseClient
                 .from('customers')
@@ -19,6 +21,10 @@ const CustomersService = {
 
             if (dealerId) {
                 query = query.eq('dealer_id', dealerId);
+            }
+
+            if (onlyActive) {
+                query = query.eq('is_active', true);
             }
 
             const { data, error } = await query;

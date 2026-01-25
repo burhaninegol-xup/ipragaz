@@ -1,0 +1,388 @@
+/* ==========================================================================
+   Delete Account Overlay Styles
+   ========================================================================== */
+
+/* Delete Account Content */
+.delete-account-content {
+    max-width: 480px;
+}
+
+/* Delete Header */
+.delete-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.delete-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.delete-icon svg {
+    width: 36px;
+    height: 36px;
+    color: #dc2626;
+}
+
+.delete-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* Delete Warning */
+.delete-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.delete-warning svg {
+    width: 20px;
+    height: 20px;
+    color: #d97706;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.delete-warning p {
+    font-size: 13px;
+    color: #92400e;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Delete Impact List */
+.delete-impact-list {
+    max-height: 240px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 8px;
+}
+
+.delete-impact-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.delete-impact-list::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 3px;
+}
+
+.delete-impact-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.delete-impact-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* Impact Loading */
+.impact-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    gap: 12px;
+}
+
+.impact-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f0f0f0;
+    border-top-color: #dc2626;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.impact-loading span {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Impact Item */
+.impact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.impact-item:last-child {
+    margin-bottom: 0;
+}
+
+.impact-item.danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.impact-item.warning {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.impact-item.info {
+    background: #f0f9ff;
+    border-color: #bae6fd;
+}
+
+.impact-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.impact-icon.danger {
+    background: #fee2e2;
+}
+
+.impact-icon.warning {
+    background: #fef3c7;
+}
+
+.impact-icon.info {
+    background: #e0f2fe;
+}
+
+.impact-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.impact-icon.danger svg {
+    color: #dc2626;
+}
+
+.impact-icon.warning svg {
+    color: #d97706;
+}
+
+.impact-icon.info svg {
+    color: #0284c7;
+}
+
+.impact-content {
+    flex: 1;
+}
+
+.impact-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.impact-detail {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.impact-detail ul {
+    margin: 6px 0 0 0;
+    padding-left: 16px;
+}
+
+.impact-detail li {
+    margin-bottom: 3px;
+}
+
+/* Delete Confirmation */
+.delete-confirmation {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f5f5f5 100%);
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.delete-confirmation label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.delete-confirmation input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #dc2626;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.delete-confirmation span {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Delete Buttons */
+.delete-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-cancel-delete {
+    flex: 1;
+    padding: 14px 20px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.btn-cancel-delete:hover {
+    background: #e5e7eb;
+}
+
+.btn-confirm-delete {
+    flex: 1;
+    padding: 14px 20px;
+    background: #dc2626;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-confirm-delete:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+.btn-confirm-delete:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn-confirm-delete svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Success Modal */
+.success-modal {
+    max-width: 360px;
+    text-align: center;
+    padding: 40px 30px;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.success-icon svg {
+    width: 40px;
+    height: 40px;
+    color: #059669;
+}
+
+.success-modal h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.success-modal p {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 20px 0;
+}
+
+/* Redirect Progress */
+.redirect-progress {
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.redirect-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    border-radius: 2px;
+    animation: progressFill 2.5s linear forwards;
+}
+
+@keyframes progressFill {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .delete-account-content {
+        padding: 20px;
+    }
+
+    .delete-header h3 {
+        font-size: 16px;
+    }
+
+    .delete-warning {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .delete-impact-list {
+        max-height: 200px;
+    }
+
+    .delete-buttons {
+        flex-direction: column;
+    }
+
+    .btn-cancel-delete,
+    .btn-confirm-delete {
+        width: 100%;
+    }
+}
