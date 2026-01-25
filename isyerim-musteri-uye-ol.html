@@ -368,6 +368,20 @@
 			</div>
 
 			<div class="form-group">
+				<label class="form-label required">İl</label>
+				<select class="form-select" id="citySelect" onchange="loadDistricts()">
+					<option value="">İl Seçiniz</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label required">İlçe</label>
+				<select class="form-select" id="districtSelect" disabled>
+					<option value="">Önce il seçiniz</option>
+				</select>
+			</div>
+
+			<div class="form-group">
 				<label class="form-label required">Vergi / TC Kimlik Numarası</label>
 				<input type="text" class="form-input" id="vergiNo" placeholder="" maxlength="11" required>
 			</div>
@@ -506,6 +520,7 @@
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/locations-service.js"></script>
 	<!-- Component Loader -->
 	<script src="./js/component-loader.js"></script>
 
@@ -552,6 +567,40 @@
 			}
 		});
 
+		// Illeri yukle
+		async function loadCities() {
+			var select = document.getElementById('citySelect');
+			var result = await LocationsService.getCities();
+			select.innerHTML = '<option value="">İl Seçiniz</option>';
+			result.data.forEach(function(city) {
+				select.innerHTML += '<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>';
+			});
+		}
+
+		// Ilceleri yukle
+		async function loadDistricts() {
+			var citySelect = document.getElementById('citySelect');
+			var districtSelect = document.getElementById('districtSelect');
+			var cityId = citySelect.value;
+
+			if (!cityId) {
+				districtSelect.innerHTML = '<option value="">Önce il seçiniz</option>';
+				districtSelect.disabled = true;
+				return;
+			}
+
+			districtSelect.innerHTML = '<option value="">İlçe Yükleniyor...</option>';
+			var result = await LocationsService.getDistrictsByCityId(cityId);
+			districtSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
+			districtSelect.disabled = false;
+			result.data.forEach(function(district) {
+				districtSelect.innerHTML += '<option value="' + district.id + '" data-name="' + district.name + '">' + district.name + '</option>';
+			});
+		}
+
+		// Sayfa yuklendiginde illeri getir
+		loadCities();
+
 		// Form submission
 		document.getElementById('registerForm').addEventListener('submit', async function(e) {
 			e.preventDefault();
@@ -568,6 +617,20 @@
 			// Validasyon
 			if (!sektor) {
 				alert('Lütfen sektör seçiniz.');
+				return;
+			}
+
+			// Il kontrolu
+			var citySelect = document.getElementById('citySelect');
+			if (!citySelect.value) {
+				alert('Lütfen il seçiniz.');
+				return;
+			}
+
+			// Ilce kontrolu
+			var districtSelect = document.getElementById('districtSelect');
+			if (!districtSelect.value) {
+				alert('Lütfen ilçe seçiniz.');
 				return;
 			}
 
@@ -632,6 +695,31 @@
 					// Fallback - owner olmadan devam et
 					sessionStorage.setItem('isyerim_user_role', 'owner');
 					sessionStorage.setItem('isyerim_user_name', customerData.name);
+				}
+
+				// Merkez subesi olustur
+				var cityOption = citySelect.options[citySelect.selectedIndex];
+				var districtOption = districtSelect.options[districtSelect.selectedIndex];
+
+				var branchData = {
+					customer_id: customer.id,
+					branch_name: 'Merkez',
+					city_id: citySelect.value,
+					district_id: districtSelect.value,
+					city: cityOption.getAttribute('data-name'),
+					district: districtOption.getAttribute('data-name'),
+					is_default: true
+				};
+				var branchResult = await BranchesService.create(branchData);
+
+				// Sube bilgilerini sessionStorage'a kaydet
+				if (branchResult.data) {
+					sessionStorage.setItem('selected_address_id', branchResult.data.id);
+					sessionStorage.setItem('selected_address_name', 'Merkez');
+					sessionStorage.setItem('isyerim_user_city_id', citySelect.value);
+					sessionStorage.setItem('isyerim_user_district_id', districtSelect.value);
+					sessionStorage.setItem('isyerim_user_city', cityOption.getAttribute('data-name'));
+					sessionStorage.setItem('isyerim_user_district', districtOption.getAttribute('data-name'));
 				}
 
 				sessionStorage.setItem('isNewUser', 'false');
