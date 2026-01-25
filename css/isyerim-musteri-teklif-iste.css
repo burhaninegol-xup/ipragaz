@@ -2388,3 +2388,270 @@ a {
 		flex: none;
 	}
 }
+
+/* ==========================================================================
+   Security Questions Overlay Styles
+   ========================================================================== */
+
+/* Generic Overlay Base */
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.6);
+	z-index: 2000;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.overlay.active {
+	display: flex;
+}
+
+.overlay-content {
+	background: #fff;
+	border-radius: 16px;
+	max-width: 500px;
+	width: 100%;
+	max-height: 90vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+	padding: 24px;
+}
+
+/* Security Overlay Specific */
+.security-overlay-content {
+	max-width: 520px;
+}
+
+.security-header {
+	margin-bottom: 20px;
+}
+
+.security-header h3 {
+	font-size: 20px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 16px;
+}
+
+.security-progress-bar {
+	height: 6px;
+	background: #eee;
+	border-radius: 3px;
+	overflow: hidden;
+}
+
+.security-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #e31e24 0%, #ff6b6b 100%);
+	border-radius: 3px;
+	transition: width 0.3s ease;
+	width: 0%;
+}
+
+.security-questions-scroll {
+	max-height: 320px;
+	overflow-y: auto;
+	margin-bottom: 20px;
+	padding-right: 8px;
+}
+
+.security-questions-scroll::-webkit-scrollbar {
+	width: 6px;
+}
+
+.security-questions-scroll::-webkit-scrollbar-track {
+	background: #f5f5f5;
+	border-radius: 3px;
+}
+
+.security-questions-scroll::-webkit-scrollbar-thumb {
+	background: #ddd;
+	border-radius: 3px;
+}
+
+.security-questions-scroll::-webkit-scrollbar-thumb:hover {
+	background: #ccc;
+}
+
+.security-question-item {
+	padding: 16px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.security-question-item:last-child {
+	border-bottom: none;
+}
+
+.security-question-number {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	background: linear-gradient(135deg, #e31e24 0%, #c41a1f 100%);
+	color: #fff;
+	border-radius: 50%;
+	font-size: 13px;
+	font-weight: 600;
+	margin-right: 10px;
+	flex-shrink: 0;
+	vertical-align: middle;
+}
+
+.security-question-text {
+	font-size: 14px;
+	color: #444;
+	line-height: 1.7;
+	margin-bottom: 14px;
+}
+
+.security-radio-group {
+	display: flex;
+	gap: 24px;
+	margin-left: 36px;
+}
+
+.security-radio-group label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	color: #333;
+	padding: 8px 16px;
+	border-radius: 8px;
+	transition: background 0.2s;
+}
+
+.security-radio-group label:hover {
+	background: #f9f9f9;
+}
+
+.security-radio-group input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #e31e24;
+	cursor: pointer;
+}
+
+.security-checkbox-container {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 16px;
+	background: linear-gradient(135deg, #f8f9fa 0%, #f5f5f5 100%);
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+.security-checkbox-container input[type="checkbox"] {
+	width: 20px;
+	height: 20px;
+	accent-color: #e31e24;
+	cursor: pointer;
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.security-checkbox-container label {
+	font-size: 14px;
+	color: #333;
+	cursor: pointer;
+	line-height: 1.5;
+}
+
+/* Security Error Modal */
+.error-modal {
+	max-width: 400px;
+	text-align: center;
+	padding: 40px 30px;
+}
+
+.error-icon {
+	width: 70px;
+	height: 70px;
+	background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 20px;
+}
+
+.error-icon svg {
+	width: 36px;
+	height: 36px;
+	color: #e31e24;
+}
+
+.error-message {
+	font-size: 15px;
+	color: #444;
+	line-height: 1.7;
+	margin-bottom: 24px;
+}
+
+.error-phone {
+	display: inline-block;
+	background: #e31e24;
+	color: #fff;
+	padding: 4px 12px;
+	border-radius: 6px;
+	font-weight: 600;
+	margin: 0 2px;
+}
+
+.btn-close-overlay {
+	background: #e31e24;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 14px 40px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.2s;
+}
+
+.btn-close-overlay:hover {
+	background: #c91a1f;
+}
+
+@media (max-width: 576px) {
+	.overlay-content {
+		max-height: 95vh;
+		padding: 20px;
+	}
+
+	.security-header h3 {
+		font-size: 18px;
+	}
+
+	.security-questions-scroll {
+		max-height: 280px;
+	}
+
+	.security-question-text {
+		font-size: 13px;
+	}
+
+	.security-radio-group {
+		margin-left: 0;
+		gap: 16px;
+	}
+
+	.security-radio-group label {
+		padding: 6px 12px;
+		font-size: 13px;
+	}
+}

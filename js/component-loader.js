@@ -27,6 +27,42 @@ const ComponentLoader = {
     },
 
     /**
+     * Security Overlay componentini yukle
+     * HTML'i body'ye ekler ve JS init'i calistirir
+     */
+    async loadSecurityOverlay() {
+        // Zaten yuklenmis mi kontrol et
+        if (document.getElementById('securityQuestionsOverlay')) {
+            // Sadece init et
+            if (typeof SecurityOverlay !== 'undefined') {
+                SecurityOverlay.init();
+            }
+            return;
+        }
+
+        try {
+            const response = await fetch('./components/security-overlay.html');
+            if (!response.ok) {
+                throw new Error('Security overlay yuklenemedi');
+            }
+            const html = await response.text();
+
+            // Body'nin sonuna ekle
+            const container = document.createElement('div');
+            container.id = 'security-overlay-container';
+            container.innerHTML = html;
+            document.body.appendChild(container);
+
+            // JS init
+            if (typeof SecurityOverlay !== 'undefined') {
+                SecurityOverlay.init();
+            }
+        } catch (error) {
+            console.error('Security overlay yukleme hatasi:', error);
+        }
+    },
+
+    /**
      * Tum componentleri yukle
      */
     async loadAll() {

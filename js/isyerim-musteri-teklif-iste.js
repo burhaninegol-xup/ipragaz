@@ -970,9 +970,114 @@
 			document.getElementById('offerSummaryOverlay').classList.remove('active');
 		}
 
-		// Teklif Iste butonuna tiklandiginda overlay'i goster
-		function submitOfferRequest() {
+		// Teklif Iste butonuna tiklandiginda (guvenlik kontrolu ile)
+		async function submitOfferRequest() {
+			var branchId = sessionStorage.getItem('selected_address_id');
+
+			if (!branchId) {
+				alert('Lutfen bir sube seciniz.');
+				return;
+			}
+
+			// Sube guvenlik cevaplarini kontrol et
+			var hasAnswers = await BranchesService.hasSecurityAnswers(branchId);
+
+			if (!hasAnswers) {
+				// Guvenlik sorulari overlay'ini goster
+				showSecurityQuestionsOverlay();
+				return;
+			}
+
+			// Zaten cevaplanmis, direkt teklif ozeti goster
 			showOfferSummary();
+		}
+
+		// ==================== GUVENLIK SORULARI FONKSIYONLARI ====================
+
+		// Guvenlik sorulari overlay'ini goster
+		function showSecurityQuestionsOverlay() {
+			// Onceki cevaplari temizle
+			document.querySelectorAll('input[name^="secQ"]').forEach(function(radio) {
+				radio.checked = false;
+			});
+			document.getElementById('securityAcceptCheckbox').checked = false;
+			updateSecurityProgress();
+
+			document.getElementById('securityQuestionsOverlay').classList.add('active');
+		}
+
+		// Guvenlik sorulari overlay'ini kapat
+		function closeSecurityQuestionsOverlay() {
+			document.getElementById('securityQuestionsOverlay').classList.remove('active');
+		}
+
+		// Guvenlik progress bar'ini guncelle
+		function updateSecurityProgress() {
+			var questions = ['secQ1', 'secQ2', 'secQ3', 'secQ4'];
+			var answered = 0;
+			questions.forEach(function(q) {
+				if (document.querySelector('input[name="' + q + '"]:checked')) answered++;
+			});
+			var progress = (answered / 4) * 100;
+			document.getElementById('securityProgressFill').style.width = progress + '%';
+		}
+
+		// Guvenlik cevaplarini gonder
+		async function submitSecurityAnswers() {
+			var questions = ['secQ1', 'secQ2', 'secQ3', 'secQ4'];
+			var answers = {};
+			var allAnswered = true;
+			var hasNoAnswer = false;
+
+			questions.forEach(function(q, i) {
+				var selected = document.querySelector('input[name="' + q + '"]:checked');
+				if (!selected) {
+					allAnswered = false;
+				} else {
+					answers['q' + (i + 1)] = selected.value === 'yes';
+					if (selected.value === 'no') hasNoAnswer = true;
+				}
+			});
+
+			if (!allAnswered) {
+				alert('Lutfen tum sorulari cevaplayiniz.');
+				return;
+			}
+
+			if (!document.getElementById('securityAcceptCheckbox').checked) {
+				alert('Lutfen beyanlarinizin dogrulugunu kabul ediniz.');
+				return;
+			}
+
+			if (hasNoAnswer) {
+				closeSecurityQuestionsOverlay();
+				document.getElementById('securityErrorOverlay').classList.add('active');
+				return;
+			}
+
+			// Cevaplari kaydet
+			var branchId = sessionStorage.getItem('selected_address_id');
+			var result = await BranchesService.updateSecurityAnswers(branchId, answers);
+
+			if (result.error) {
+				alert('Bir hata olustu. Lutfen tekrar deneyiniz.');
+				return;
+			}
+
+			closeSecurityQuestionsOverlay();
+			showOfferSummary();
+		}
+
+		// Guvenlik hata overlay'ini kapat
+		function closeSecurityError() {
+			document.getElementById('securityErrorOverlay').classList.remove('active');
+		}
+
+		// Radio degisikliklerini dinle
+		function initSecurityQuestionListeners() {
+			document.querySelectorAll('input[name^="secQ"]').forEach(function(radio) {
+				radio.addEventListener('change', updateSecurityProgress);
+			});
 		}
 
 		// Teklif talebini onayla ve gonder
@@ -1577,6 +1682,9 @@
 
 			// Branch extension event'lerini kaydet
 			initBranchExtensionEvents();
+
+			// Guvenlik sorulari event'lerini kaydet
+			initSecurityQuestionListeners();
 
 			// Musteri bilgilerini yukle
 			var hasDealer = await loadCustomerData();

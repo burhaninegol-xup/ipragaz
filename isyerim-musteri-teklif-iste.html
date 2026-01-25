@@ -302,6 +302,68 @@
 		</div>
 	</div>
 
+	<!-- Security Questions Overlay -->
+	<div class="overlay" id="securityQuestionsOverlay">
+		<div class="overlay-content security-overlay-content">
+			<div class="security-header">
+				<h3>Guvenlik Beyanlari</h3>
+				<div class="security-progress-bar">
+					<div class="security-progress-fill" id="securityProgressFill"></div>
+				</div>
+			</div>
+			<div class="security-questions-scroll">
+				<div class="security-question-item">
+					<p class="security-question-text"><span class="security-question-number">1</span>Kullanilan ve depolanan LPG tupleri farkli alanlardadir. Depolama ve kullanim alanlari zemin seviyesi altinda (bodrum v.s.) degildir. Bu ortamlarda havalandirma menfezi vardir.</p>
+					<div class="security-radio-group">
+						<label><input type="radio" name="secQ1" value="yes"> Evet</label>
+						<label><input type="radio" name="secQ1" value="no"> Hayir</label>
+					</div>
+				</div>
+				<div class="security-question-item">
+					<p class="security-question-text"><span class="security-question-number">2</span>Kullandigimiz LPG Dedantoru, LPG hortumu, LPG boru tesisati ve diger ekipmanlar yasal standartlara uygundur ve LPG hortum uzunlugu 150 cm'den kisadir.</p>
+					<div class="security-radio-group">
+						<label><input type="radio" name="secQ2" value="yes"> Evet</label>
+						<label><input type="radio" name="secQ2" value="no"> Hayir</label>
+					</div>
+				</div>
+				<div class="security-question-item">
+					<p class="security-question-text"><span class="security-question-number">3</span>LPG tuplerinin depolanacagi ve kullanilacagi alanlara 1 m den daha az mesafede gaz kaçaklarinin toplanarak tehlikeli olabilecegi yerler bulunmamaktadir.</p>
+					<div class="security-radio-group">
+						<label><input type="radio" name="secQ3" value="yes"> Evet</label>
+						<label><input type="radio" name="secQ3" value="no"> Hayir</label>
+					</div>
+				</div>
+				<div class="security-question-item">
+					<p class="security-question-text"><span class="security-question-number">4</span>LPG Tuplerinin depolanacagi veya kullanilacagi alanlara 3 m den daha az mesafede elektrikli cihaz, yanici ve/veya kolay tutusabilen madde bulunmamaktadir.</p>
+					<div class="security-radio-group">
+						<label><input type="radio" name="secQ4" value="yes"> Evet</label>
+						<label><input type="radio" name="secQ4" value="no"> Hayir</label>
+					</div>
+				</div>
+			</div>
+			<div class="security-checkbox-container">
+				<input type="checkbox" id="securityAcceptCheckbox">
+				<label for="securityAcceptCheckbox">Yukaridaki beyanlarimin dogrulugunu kabul ederim.</label>
+			</div>
+			<button class="btn-submit" id="securitySubmitBtn" onclick="submitSecurityAnswers()">Devam Et</button>
+		</div>
+	</div>
+
+	<!-- Security Error Overlay -->
+	<div class="overlay" id="securityErrorOverlay">
+		<div class="overlay-content error-modal">
+			<div class="error-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="8" x2="12" y2="12"/>
+					<line x1="12" y1="16" x2="12.01" y2="16"/>
+				</svg>
+			</div>
+			<p class="error-message">Uyelik isleminize devam edemezsiniz. <span class="error-phone">444 47 72</span> numarali cagri merkezini arayabilirsiniz.</p>
+			<button class="btn-close-overlay" onclick="closeSecurityError()">Tamam</button>
+		</div>
+	</div>
+
 	<!-- Branch Select Overlay -->
 	<div class="branch-select-overlay" id="branchSelectOverlay">
 		<div class="branch-select-modal">

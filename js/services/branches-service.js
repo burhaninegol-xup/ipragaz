@@ -261,6 +261,48 @@ const BranchesService = {
         } catch (error) {
             return handleSupabaseError(error, 'BranchesService.getByCustomerIdOutsideDealerCoverage');
         }
+    },
+
+    // ==========================================
+    // GUVENLIK SORULARI
+    // ==========================================
+
+    /**
+     * Subenin guvenlik sorularini cevaplama durumunu kontrol et
+     * @param {string} branchId - Sube ID
+     * @returns {boolean} - Guvenlik sorulari cevaplanmis mi?
+     */
+    async hasSecurityAnswers(branchId) {
+        const result = await this.getById(branchId);
+        if (result.error || !result.data) return false;
+        return result.data.security_accepted_at !== null;
+    },
+
+    /**
+     * Sube icin guvenlik cevaplarini kaydet
+     * @param {string} branchId - Sube ID
+     * @param {object} answers - Cevaplar {q1: boolean, q2: boolean, q3: boolean, q4: boolean}
+     */
+    async updateSecurityAnswers(branchId, answers) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('customer_branches')
+                .update({
+                    security_q1: answers.q1,
+                    security_q2: answers.q2,
+                    security_q3: answers.q3,
+                    security_q4: answers.q4,
+                    security_accepted_at: new Date().toISOString()
+                })
+                .eq('id', branchId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'BranchesService.updateSecurityAnswers');
+        }
     }
 };
 

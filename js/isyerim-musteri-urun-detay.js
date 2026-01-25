@@ -637,9 +637,18 @@ window.addEventListener('cartUpdated', function() {
 // TEKLIF DURUMU FONKSIYONLARI
 // =============================================
 
-// Teklif sayfasına git
+// Teklif sayfasına git (guvenlik kontrolu ile)
 function goToOfferPage() {
-	window.location.href = 'isyerim-musteri-teklif-iste.html';
+	var branchId = sessionStorage.getItem('selected_address_id');
+	if (!branchId) {
+		alert('Lutfen bir sube seciniz.');
+		return;
+	}
+
+	// SecurityOverlay ile kontrol et
+	SecurityOverlay.checkAndProceed(branchId, function() {
+		window.location.href = 'isyerim-musteri-teklif-iste.html';
+	});
 }
 
 // Bayi yok overlay'ı göster
@@ -725,5 +734,10 @@ document.addEventListener('DOMContentLoaded', function() {
 				closeActiveOfferOverlay();
 			}
 		});
+	}
+
+	// Security overlay componentini yukle
+	if (typeof ComponentLoader !== 'undefined') {
+		ComponentLoader.loadSecurityOverlay();
 	}
 });

@@ -301,11 +301,21 @@ window.refreshPrices = refreshPrices;
 // TEKLIF DURUMU FONKSIYONLARI
 // =============================================
 
-// Teklif sayfasına git
-function goToOfferPage(e) {
+// Teklif sayfasına git (guvenlik kontrolu ile)
+async function goToOfferPage(e) {
 	e.preventDefault();
 	e.stopPropagation();
-	window.location.href = 'isyerim-musteri-teklif-iste.html';
+
+	var branchId = sessionStorage.getItem('selected_address_id');
+	if (!branchId) {
+		alert('Lutfen bir sube seciniz.');
+		return;
+	}
+
+	// SecurityOverlay ile kontrol et
+	SecurityOverlay.checkAndProceed(branchId, function() {
+		window.location.href = 'isyerim-musteri-teklif-iste.html';
+	});
 }
 
 // Bayi yok overlay'ı göster
@@ -994,3 +1004,17 @@ function updateCountdownDisplay(deadline) {
 	var displayText = hours + ' saat ' + minutes + ' dk';
 	timerElement.textContent = displayText;
 }
+
+// =============================================
+// GUVENLIK SORULARI - SecurityOverlay Component
+// =============================================
+
+// Security overlay componentini yukle
+(function() {
+	document.addEventListener('DOMContentLoaded', function() {
+		// ComponentLoader uzerinden security overlay'i yukle
+		if (typeof ComponentLoader !== 'undefined') {
+			ComponentLoader.loadSecurityOverlay();
+		}
+	});
+})();
