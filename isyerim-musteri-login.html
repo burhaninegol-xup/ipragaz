@@ -219,6 +219,47 @@
 		.customer-item .customer-name { font-weight: 500; color: #1a1a2e; }
 		.customer-item .customer-company { font-size: 11px; color: #666; }
 		.customer-item .customer-location { font-size: 11px; color: #888; }
+		.no-user-badge {
+			display: inline-block;
+			background: #fee;
+			color: #e31e24;
+			font-size: 10px;
+			padding: 2px 6px;
+			border-radius: 4px;
+			margin-left: 8px;
+		}
+		.customer-item {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.customer-item-info {
+			flex: 1;
+			min-width: 0;
+		}
+		.customer-delete-btn {
+			width: 28px;
+			height: 28px;
+			border: none;
+			background: transparent;
+			color: #999;
+			cursor: pointer;
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			margin-left: 8px;
+			transition: all 0.2s;
+		}
+		.customer-delete-btn:hover {
+			background: #fee;
+			color: #e31e24;
+		}
+		.customer-delete-btn svg {
+			width: 16px;
+			height: 16px;
+		}
 	</style>
 </head>
 <body>
@@ -334,18 +375,112 @@
 				const list = document.getElementById('customer-list');
 				list.innerHTML = '';
 
-				customers.forEach(function(customer) {
-					const item = document.createElement('div');
-					item.className = 'customer-item';
-					item.innerHTML =
-						'<div class="customer-name">' + customer.name + '</div>' +
-						(customer.company_name ? '<div class="customer-company">' + customer.company_name + '</div>' : '') +
-						(customer.address ? '<div class="customer-location">' + customer.address.substring(0, 50) + '...</div>' : '');
-					item.onclick = function() { quickLoginAsCustomer(customer); };
-					list.appendChild(item);
+				// Tüm müşteriler için paralel olarak kullanıcı durumunu kontrol et
+				const userChecks = await Promise.all(
+					customers.map(async function(customer) {
+						const { data: users } = await CustomerUsersService.getByCustomerId(customer.id);
+						const hasActiveOwner = users && users.some(function(u) { return u.role === 'owner' && u.is_active; });
+						return { customer, hasActiveOwner };
+					})
+				);
+
+				// Sırala: Önce kullanıcısı olanlar (alfabetik), sonra olmayanlar (alfabetik)
+				userChecks.sort(function(a, b) {
+					if (a.hasActiveOwner !== b.hasActiveOwner) {
+						return a.hasActiveOwner ? -1 : 1; // Kullanıcısı olanlar önce
+					}
+					return a.customer.name.localeCompare(b.customer.name, 'tr'); // Alfabetik sıra
+				});
+
+				// Listeye ekle
+				userChecks.forEach(function(item) {
+					const customer = item.customer;
+					const noUserBadge = item.hasActiveOwner ? '' : '<span class="no-user-badge">Kullanıcısı Yok</span>';
+
+					const el = document.createElement('div');
+					el.className = 'customer-item';
+					el.innerHTML =
+						'<div class="customer-item-info">' +
+							'<div class="customer-name">' + customer.name + noUserBadge + '</div>' +
+							(customer.company_name ? '<div class="customer-company">' + customer.company_name + '</div>' : '') +
+							(customer.address ? '<div class="customer-location">' + customer.address.substring(0, 50) + '...</div>' : '') +
+						'</div>' +
+						'<button class="customer-delete-btn" title="Kalıcı Sil">' +
+							'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>' +
+						'</button>';
+
+					// Info kısmına tıklayınca giriş yap
+					el.querySelector('.customer-item-info').onclick = function() { quickLoginAsCustomer(customer); };
+
+					// Silme butonuna tıklayınca hard delete
+					el.querySelector('.customer-delete-btn').onclick = function(e) {
+						e.stopPropagation();
+						hardDeleteCustomer(customer);
+					};
+
+					list.appendChild(el);
 				});
 			} catch (err) {
 				console.error('Müşteriler yüklenemedi:', err);
+			}
+		}
+
+		// Müşteriyi kalıcı olarak sil (hard delete)
+		async function hardDeleteCustomer(customer) {
+			var confirmed = confirm('DİKKAT!\n\n"' + customer.name + '" müşterisi ve tüm verileri (kullanıcılar, şubeler, puanlar) kalıcı olarak silinecek.\n\nBu işlem geri alınamaz!\n\nEmin misiniz?');
+			if (!confirmed) return;
+
+			try {
+				// Sırayla sil (CASCADE ilişkileri nedeniyle sadece customers silmek yeterli olabilir ama güvenlik için hepsini silelim)
+
+				// 1. Puanları sil
+				await supabaseClient
+					.from('customer_points')
+					.delete()
+					.eq('customer_id', customer.id);
+
+				// 2. Kullanıcı-şube ilişkilerini sil (customer_user_branches)
+				const { data: users } = await supabaseClient
+					.from('customer_users')
+					.select('id')
+					.eq('customer_id', customer.id);
+
+				if (users && users.length > 0) {
+					const userIds = users.map(function(u) { return u.id; });
+					await supabaseClient
+						.from('customer_user_branches')
+						.delete()
+						.in('customer_user_id', userIds);
+				}
+
+				// 3. Kullanıcıları sil
+				await supabaseClient
+					.from('customer_users')
+					.delete()
+					.eq('customer_id', customer.id);
+
+				// 4. Şubeleri sil
+				await supabaseClient
+					.from('customer_branches')
+					.delete()
+					.eq('customer_id', customer.id);
+
+				// 5. Müşteriyi sil
+				const { error } = await supabaseClient
+					.from('customers')
+					.delete()
+					.eq('id', customer.id);
+
+				if (error) {
+					alert('Silme hatası: ' + error.message);
+					return;
+				}
+
+				alert('Müşteri ve tüm verileri kalıcı olarak silindi.');
+				loadCustomersForQuickLogin(); // Listeyi yenile
+			} catch (err) {
+				console.error('Hard delete hatası:', err);
+				alert('Silme işlemi başarısız: ' + err.message);
 			}
 		}
 

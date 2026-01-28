@@ -160,6 +160,9 @@ const ComponentLoader = {
         // Sepet badge guncelle
         this.updateCartBadge();
 
+        // Sepet linkini aktif teklif durumuna gore ayarla
+        this.updateCartLink();
+
         // Kullanici adini yukle
         this.loadUserName();
 
@@ -693,6 +696,38 @@ const ComponentLoader = {
             const count = CartService.getItemCount();
             badge.textContent = count;
             badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    },
+
+    /**
+     * Sepet linkini aktif teklif durumuna gore yonlendir
+     * Aktif (accepted) teklif yoksa -> teklif iste sayfasina yonlendir
+     */
+    async updateCartLink() {
+        var cartLink = document.getElementById('cartLink');
+        if (!cartLink) return;
+
+        var customerId = sessionStorage.getItem('isyerim_customer_id');
+        if (!customerId) return;
+
+        try {
+            // Aktif (accepted) teklif var mi kontrol et
+            var { data: activeOffer } = await supabaseClient
+                .from('offers')
+                .select('id')
+                .eq('customer_id', customerId)
+                .eq('status', 'accepted')
+                .limit(1);
+
+            if (!activeOffer || activeOffer.length === 0) {
+                // Aktif teklif yok - teklif iste sayfasina yonlendir
+                cartLink.href = 'isyerim-musteri-teklif-iste.html';
+            } else {
+                // Aktif teklif var - sepet sayfasina yonlendir
+                cartLink.href = 'isyerim-musteri-sepet.html';
+            }
+        } catch (err) {
+            console.error('Cart link kontrol hatasi:', err);
         }
     },
 

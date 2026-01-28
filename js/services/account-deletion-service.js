@@ -96,12 +96,8 @@ const AccountDeletionService = {
                 }
             }
 
-            // 4. Eger kullanici owner ise ve merkez sube silinecekse, musteri kaydini da sil
+            // 4. Eger kullanici owner ise ve baska owner yoksa, musteri kaydini da sil
             if (user.role === 'owner') {
-                var defaultBranchWillBeDeleted = impact.branchesToDelete.some(function(b) {
-                    return b.isDefault;
-                });
-
                 // Baska aktif owner var mi kontrol et
                 const { data: otherOwners } = await supabaseClient
                     .from('customer_users')
@@ -113,7 +109,8 @@ const AccountDeletionService = {
 
                 var hasOtherOwner = otherOwners && otherOwners.length > 0;
 
-                if (defaultBranchWillBeDeleted && !hasOtherOwner) {
+                // Tek owner ise tum musteri kaydi silinecek
+                if (!hasOtherOwner) {
                     impact.willDeleteCustomer = true;
                 }
             }
@@ -165,8 +162,29 @@ const AccountDeletionService = {
                 }
             }
 
-            // 2. Gerekirse musteri kaydini soft-delete yap
+            // 2. Gerekirse musteri kaydini ve altindaki tum kayitlari soft-delete yap
             if (impact.willDeleteCustomer) {
+                // 2a. Musterinin TUM subelerini soft-delete yap
+                const { error: allBranchesError } = await supabaseClient
+                    .from('customer_branches')
+                    .update({ is_active: false })
+                    .eq('customer_id', impact.customerId);
+
+                if (allBranchesError) {
+                    console.error('All branches deactivation error:', allBranchesError);
+                }
+
+                // 2b. Musterinin TUM kullanicilarini soft-delete yap
+                const { error: allUsersError } = await supabaseClient
+                    .from('customer_users')
+                    .update({ is_active: false })
+                    .eq('customer_id', impact.customerId);
+
+                if (allUsersError) {
+                    console.error('All users deactivation error:', allUsersError);
+                }
+
+                // 2c. Musteri kaydini soft-delete yap
                 const { error: customerError } = await supabaseClient
                     .from('customers')
                     .update({ is_active: false })
@@ -175,6 +193,11 @@ const AccountDeletionService = {
                 if (customerError) {
                     console.error('Customer deactivation error:', customerError);
                 }
+
+                // Not: Puanlar (customer_points) silinmiyor - musteriye bagli kalir
+                // Zaten musteri is_active=false oldugu icin listelerde gorunmez
+
+                return { data: true, error: null };
             }
 
             // 3. Kullanici sube yetkilerini sil

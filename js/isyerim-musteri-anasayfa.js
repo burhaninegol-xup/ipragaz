@@ -564,6 +564,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 	// Pending teklif countdown kontrolu (sadece owner icin)
 	loadPendingOfferCountdown();
+
+	// Hos geldin puani kontrolu
+	checkWelcomePoints();
 });
 
 // Sepet güncellendiğinde badge'i güncelle
@@ -1018,3 +1021,86 @@ function updateCountdownDisplay(deadline) {
 		}
 	});
 })();
+
+// =============================================
+// HOS GELDIN PUANI
+// =============================================
+
+/**
+ * Yeni uye olan musteriye 200 hos geldin puani ver ve banner goster
+ */
+async function checkWelcomePoints() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	if (!customerId) return;
+
+	try {
+		// Daha once hediye puani verilmis mi kontrol et
+		var { data: existingPoints } = await supabaseClient
+			.from('customer_points')
+			.select('id')
+			.eq('customer_id', customerId)
+			.eq('description', 'Hediye Puani')
+			.limit(1);
+
+		if (existingPoints && existingPoints.length > 0) {
+			// Hediye puani zaten verilmis - banner kapatilmadiysa goster
+			showWelcomePointsBanner();
+			return;
+		}
+
+		// Yeni uye mi kontrol et (isNewUser flag'i)
+		var isNewUser = sessionStorage.getItem('isNewUser');
+		if (isNewUser !== 'true') return;
+
+		// 200 hediye puani ekle
+		var { error } = await supabaseClient
+			.from('customer_points')
+			.insert([{
+				customer_id: customerId,
+				points: 200,
+				description: 'Hediye Puani'
+			}]);
+
+		if (error) {
+			console.error('Hediye puani ekleme hatasi:', error);
+			return;
+		}
+
+		console.log('200 Hediye Puani eklendi');
+		showWelcomePointsBanner();
+
+	} catch (err) {
+		console.error('Hos geldin puani kontrol hatasi:', err);
+	}
+}
+
+/**
+ * Hos geldin puani banner'ini goster (kullanici kapatmadiysa)
+ */
+function showWelcomePointsBanner() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	var bannerKey = 'welcomePointsBannerClosed_' + customerId;
+
+	// Kullanici daha once kapatmis mi
+	if (localStorage.getItem(bannerKey) === 'true') return;
+
+	var banner = document.getElementById('welcomePointsBanner');
+	if (banner) {
+		banner.style.display = 'block';
+	}
+}
+
+/**
+ * Banner'i kapat ve localStorage'a kaydet
+ */
+function closeWelcomePointsBanner() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	var bannerKey = 'welcomePointsBannerClosed_' + customerId;
+
+	localStorage.setItem(bannerKey, 'true');
+
+	var banner = document.getElementById('welcomePointsBanner');
+	if (banner) {
+		banner.style.display = 'none';
+	}
+}

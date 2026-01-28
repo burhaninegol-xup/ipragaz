@@ -1150,6 +1150,21 @@
             document.getElementById('userRole').value = 'staff';
             document.getElementById('userActive').value = 'true';
             document.getElementById('userModalTitle').textContent = 'Yeni Kullanici Ekle';
+
+            // Musteri zaten owner'a sahipse, yeni owner eklenemez
+            var roleSelect = document.getElementById('userRole');
+            var hasOwner = usersData && usersData.some(function(u) { return u.role === 'owner' && u.is_active; });
+            var ownerOption = roleSelect.querySelector('option[value="owner"]');
+            if (hasOwner && ownerOption) {
+                ownerOption.disabled = true;
+                ownerOption.textContent = 'Ana Kullanici (Owner) - Zaten mevcut';
+            } else if (ownerOption) {
+                ownerOption.disabled = false;
+                ownerOption.textContent = 'Ana Kullanici (Owner)';
+            }
+            roleSelect.disabled = false;
+            roleSelect.title = '';
+
             renderBranchCheckboxes([]);
             toggleBranchPermissions();
             document.getElementById('userModal').classList.add('show');
@@ -1196,6 +1211,16 @@
             document.getElementById('userActive').value = user.is_active !== false ? 'true' : 'false';
             document.getElementById('userModalTitle').textContent = 'Kullaniciyi Duzenle';
 
+            // Owner ise rol degistirilemez
+            var roleSelect = document.getElementById('userRole');
+            if (user.role === 'owner') {
+                roleSelect.disabled = true;
+                roleSelect.title = 'Ana kullanici rolu degistirilemez';
+            } else {
+                roleSelect.disabled = false;
+                roleSelect.title = '';
+            }
+
             // Get branch permissions
             var selectedBranchIds = [];
             if (user.customer_user_branches && user.customer_user_branches.length > 0) {
@@ -1232,6 +1257,15 @@
             var userId = editUserIdEl ? editUserIdEl.value : '';
             var role = userRoleEl ? userRoleEl.value : 'staff';
 
+            // Yeni kullanici olarak owner eklenmek isteniyorsa ve zaten owner varsa engelle
+            if (!userId && role === 'owner') {
+                var hasOwner = usersData && usersData.some(function(u) { return u.role === 'owner' && u.is_active; });
+                if (hasOwner) {
+                    showToast('Bu musterinin zaten bir Ana Kullanicisi (Owner) var. Sadece 1 owner olabilir.', 'error');
+                    return;
+                }
+            }
+
             var userData = {
                 customer_id: customerId,
                 name: userNameEl.value.trim(),
@@ -1253,6 +1287,31 @@
             }
 
             try {
+                // Yeni kullanici ekliyorsa ve staff ise, sube basina max 3 kullanici kontrolu
+                var MAX_USERS_PER_BRANCH = 3;
+                if (!userId && role === 'staff' && selectedBranchIds.length > 0) {
+                    for (var i = 0; i < selectedBranchIds.length; i++) {
+                        var branchId = selectedBranchIds[i];
+                        var branchInfo = branchesData.find(function(b) { return b.id === branchId; });
+                        var branchName = branchInfo ? branchInfo.branch_name : 'Sube';
+
+                        // Bu subedeki aktif kullanici sayisini al
+                        var { data: branchUsers } = await supabaseClient
+                            .from('customer_user_branches')
+                            .select('id, customer_user:customer_users(id, is_active)')
+                            .eq('branch_id', branchId);
+
+                        var activeCount = (branchUsers || []).filter(function(ub) {
+                            return ub.customer_user && ub.customer_user.is_active;
+                        }).length;
+
+                        if (activeCount >= MAX_USERS_PER_BRANCH) {
+                            showToast('"' + branchName + '" subesinde maksimum ' + MAX_USERS_PER_BRANCH + ' kullanici olabilir. Mevcut: ' + activeCount, 'error');
+                            return;
+                        }
+                    }
+                }
+
                 var result;
                 if (userId) {
                     result = await CustomerUsersService.update(userId, userData);

@@ -315,6 +315,45 @@
 			margin-bottom: 10px;
 		}
 
+		/* CAPTCHA */
+		.captcha-group {
+			margin-bottom: 25px;
+		}
+		.captcha-group .form-label {
+			margin-bottom: 10px;
+		}
+		.captcha-row {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			margin-bottom: 10px;
+		}
+		.captcha-canvas {
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			cursor: pointer;
+		}
+		.captcha-refresh {
+			width: 40px;
+			height: 40px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			background: #f9f9f9;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: background 0.2s;
+		}
+		.captcha-refresh:hover {
+			background: #eee;
+		}
+		.captcha-refresh svg {
+			width: 18px;
+			height: 18px;
+			color: #666;
+		}
+
 		/* Responsive */
 		@media (max-width: 520px) {
 			.card {
@@ -431,6 +470,21 @@
 				</label>
 			</div>
 
+			<!-- CAPTCHA -->
+			<div class="captcha-group">
+				<label class="form-label required">Güvenlik Doğrulaması</label>
+				<div class="captcha-row">
+					<canvas id="captchaCanvas" class="captcha-canvas" width="160" height="48" title="Yenilemek için tıklayın"></canvas>
+					<button type="button" class="captcha-refresh" onclick="generateCaptcha()" title="Yenile">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="23 4 23 10 17 10"/>
+							<path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+						</svg>
+					</button>
+				</div>
+				<input type="text" class="form-input" id="captchaInput" placeholder="Yukarıdaki kodu giriniz" autocomplete="off" maxlength="5">
+			</div>
+
 			<!-- Submit Button -->
 			<button type="submit" class="btn-submit">Devam</button>
 		</form>
@@ -527,6 +581,58 @@
 	<script src="./js/component-loader.js"></script>
 
 	<script>
+		// CAPTCHA
+		var captchaCode = '';
+
+		function generateCaptcha() {
+			var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+			captchaCode = '';
+			for (var i = 0; i < 5; i++) {
+				captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
+			}
+
+			var canvas = document.getElementById('captchaCanvas');
+			var ctx = canvas.getContext('2d');
+			var w = canvas.width;
+			var h = canvas.height;
+
+			// Arka plan
+			ctx.fillStyle = '#f0f0f0';
+			ctx.fillRect(0, 0, w, h);
+
+			// Noise cizgiler
+			for (var i = 0; i < 5; i++) {
+				ctx.beginPath();
+				ctx.moveTo(Math.random() * w, Math.random() * h);
+				ctx.lineTo(Math.random() * w, Math.random() * h);
+				ctx.strokeStyle = 'rgba(' + Math.floor(Math.random()*200) + ',' + Math.floor(Math.random()*200) + ',' + Math.floor(Math.random()*200) + ',0.4)';
+				ctx.lineWidth = 1;
+				ctx.stroke();
+			}
+
+			// Karakterleri ciz
+			var colors = ['#e31e24','#2e7d32','#1565c0','#6a1b9a','#e65100','#00695c'];
+			for (var i = 0; i < captchaCode.length; i++) {
+				ctx.save();
+				var fontSize = 22 + Math.floor(Math.random() * 7);
+				ctx.font = 'bold ' + fontSize + 'px Poppins, sans-serif';
+				ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+				var x = 12 + i * 28;
+				var y = 28 + Math.floor(Math.random() * 10);
+				var angle = (Math.random() - 0.5) * (30 * Math.PI / 180);
+				ctx.translate(x, y);
+				ctx.rotate(angle);
+				ctx.fillText(captchaCode[i], 0, 0);
+				ctx.restore();
+			}
+		}
+
+		// Canvas tiklandiginda yenile
+		document.getElementById('captchaCanvas').addEventListener('click', generateCaptcha);
+
+		// Sayfa yuklendiginde CAPTCHA olustur
+		generateCaptcha();
+
 		// Telefon numarasını sessionStorage'dan al
 		var phone = sessionStorage.getItem('isyerim_phone');
 
@@ -653,6 +759,16 @@
 				return;
 			}
 
+			// CAPTCHA kontrolu
+			var captchaInput = document.getElementById('captchaInput').value.trim().toUpperCase();
+			if (captchaInput !== captchaCode) {
+				alert('Güvenlik kodu hatalı. Lütfen tekrar deneyiniz.');
+				generateCaptcha();
+				document.getElementById('captchaInput').value = '';
+				document.getElementById('captchaInput').focus();
+				return;
+			}
+
 			// Submit butonunu devre dışı bırak
 			var submitBtn = document.querySelector('.btn-submit');
 			submitBtn.disabled = true;
@@ -731,7 +847,7 @@
 					sessionStorage.setItem('isyerim_user_district', districtOption.getAttribute('data-name'));
 				}
 
-				sessionStorage.setItem('isNewUser', 'false');
+				sessionStorage.setItem('isNewUser', 'true');
 
 				// Anasayfaya yonlendir (guvenlik sorulari artik Teklif Al akisinda)
 				window.location.href = 'isyerim-musteri-anasayfa.html';

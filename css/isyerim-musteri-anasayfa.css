@@ -4,6 +4,40 @@
 	box-sizing: border-box;
 }
 
+/* Welcome Points Banner */
+.welcome-points-banner {
+	background: linear-gradient(135deg, #1565c0, #1e88e5);
+	color: #fff;
+	padding: 12px 0;
+}
+.welcome-points-content {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.welcome-points-text {
+	flex: 1;
+	font-size: 14px;
+	line-height: 1.4;
+}
+.welcome-points-close {
+	background: rgba(255,255,255,0.15);
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	border-radius: 50%;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: background 0.2s;
+}
+.welcome-points-close:hover {
+	background: rgba(255,255,255,0.3);
+}
+
 body {
 	font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	background: #f5f5f5;
@@ -1387,7 +1421,7 @@ a {
 	bottom: 0;
 	background: rgba(0, 0, 0, 0.6);
 	z-index: 2000;
-	display: flex;
+	display: none; /* Geçici olarak devre dışı - tekrar açmak için: flex */
 	align-items: center;
 	justify-content: center;
 	padding: 20px;

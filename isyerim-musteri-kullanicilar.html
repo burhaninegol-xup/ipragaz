@@ -492,7 +492,31 @@
 						await CustomerUsersService.updateBranchPermissions(currentUserId, selectedBranches);
 					}
 				} else {
-					// Yeni kullanici
+					// Yeni kullanici - sube basina max 3 kullanici kontrolu
+					var MAX_USERS_PER_BRANCH = 3;
+					for (var i = 0; i < selectedBranches.length; i++) {
+						var branchId = selectedBranches[i];
+						var branchName = allBranches.find(function(b) { return b.id === branchId; });
+						branchName = branchName ? branchName.branch_name : 'Sube';
+
+						// Bu subedeki aktif kullanici sayisini al
+						var { data: branchUsers } = await supabaseClient
+							.from('customer_user_branches')
+							.select('id, customer_user:customer_users(id, is_active)')
+							.eq('branch_id', branchId);
+
+						var activeCount = (branchUsers || []).filter(function(ub) {
+							return ub.customer_user && ub.customer_user.is_active;
+						}).length;
+
+						if (activeCount >= MAX_USERS_PER_BRANCH) {
+							alert('"' + branchName + '" subesinde maksimum ' + MAX_USERS_PER_BRANCH + ' kullanici olabilir. Mevcut: ' + activeCount);
+							saveBtn.disabled = false;
+							saveBtn.textContent = 'Kaydet';
+							return;
+						}
+					}
+
 					result = await CustomerUsersService.create({
 						customer_id: customerId,
 						name: userName,

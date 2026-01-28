@@ -54,6 +54,27 @@
 	<!-- Header (Component) -->
 	<div id="isyerim-header"></div>
 
+	<!-- Hoş Geldin Puanı Banner -->
+	<div class="welcome-points-banner" id="welcomePointsBanner" style="display: none;">
+		<div class="container">
+			<div class="welcome-points-content">
+				<svg viewBox="0 0 24 24" fill="currentColor" style="width: 22px; height: 22px; flex-shrink: 0;">
+					<path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" transform="rotate(-90 12 12)"/>
+					<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+					<text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" stroke="none">P</text>
+				</svg>
+				<div class="welcome-points-text">
+					<strong>Hos geldiniz!</strong> IsYerim'e uye oldugunuz icin <strong>200 Hediye Puan</strong> kazandiniz!
+				</div>
+				<button class="welcome-points-close" id="welcomePointsClose" onclick="closeWelcomePointsBanner()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;">
+						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Hero Banner / Slider -->
 	<section class="hero">
 		<div class="hero-slider">
