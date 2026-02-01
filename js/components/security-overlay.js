@@ -211,14 +211,11 @@ var SecurityOverlay = (function() {
 
 		var branch = branchResult.data;
 
-		// Guvenlik cevaplari var mi kontrol et
-		var securityAnswers = branch.security_answers;
-
-		if (securityAnswers &&
-			securityAnswers.q1 === true &&
-			securityAnswers.q2 === true &&
-			securityAnswers.q3 === true &&
-			securityAnswers.q4 === true) {
+		// Guvenlik cevaplari var mi kontrol et - bireysel kolonlari kontrol et
+		if (branch.security_q1 === true &&
+			branch.security_q2 === true &&
+			branch.security_q3 === true &&
+			branch.security_q4 === true) {
 			// Guvenlik cevaplari zaten var ve hepsi Evet - direkt devam et
 			if (typeof callback === 'function') {
 				callback();
