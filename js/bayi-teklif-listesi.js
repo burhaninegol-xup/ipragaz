@@ -53,7 +53,7 @@ $(document).ready(async function() {
 
 	// Tek bir teklif icin sayac baslat
 	function startCountdownForOffer(offerId, sentTimestamp, $badge) {
-		var endTime = new Date(sentTimestamp).getTime() + (24 * 60 * 60 * 1000);
+		var endTime = new Date(sentTimestamp).getTime() + (72 * 60 * 60 * 1000);
 
 		function updateDisplay() {
 			var now = Date.now();
@@ -77,8 +77,8 @@ $(document).ready(async function() {
 
 			$time.text(timeStr);
 
-			// Son 1 saat kontrolu
-			if (remaining < 60 * 60 * 1000) {
+			// Son 6 saat kontrolu
+			if (remaining < 6 * 60 * 60 * 1000) {
 				$badge.addClass('warning');
 			} else {
 				$badge.removeClass('warning');

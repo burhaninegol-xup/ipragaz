@@ -991,7 +991,7 @@ a {
 }
 
 .btn-repeat-order {
-	display: flex;
+	display: none;
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
@@ -1003,6 +1003,10 @@ a {
 	cursor: pointer;
 	transition: all 0.3s ease;
 	box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+}
+
+.btn-repeat-order.visible {
+	display: flex;
 }
 
 .btn-repeat-order:hover {
@@ -1672,10 +1676,23 @@ a {
 	height: 24px;
 }
 
+/* Tek kutu olduğunda ortalama ve %50 genişlik */
+.offer-countdown-wrapper:has(.btn-offer-countdown.visible):not(:has(.btn-repeat-order.visible)) .btn-offer-countdown,
+.offer-countdown-wrapper:has(.btn-repeat-order.visible):not(:has(.btn-offer-countdown.visible)) .btn-repeat-order {
+	max-width: 50%;
+	margin: 0 auto;
+}
+
 /* Responsive: Mobile - stack vertically */
 @media (max-width: 768px) {
 	.offer-countdown-wrapper {
 		flex-direction: column;
+	}
+
+	/* Mobilde tek kutu tam genişlikte olsun */
+	.offer-countdown-wrapper:has(.btn-offer-countdown.visible):not(:has(.btn-repeat-order.visible)) .btn-offer-countdown,
+	.offer-countdown-wrapper:has(.btn-repeat-order.visible):not(:has(.btn-offer-countdown.visible)) .btn-repeat-order {
+		max-width: 100%;
 	}
 }
 

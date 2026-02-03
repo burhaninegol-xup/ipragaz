@@ -44,6 +44,8 @@
 			background: #fff; transition: all 0.2s ease; cursor: pointer;
 		}
 		.offer-card:hover { border-color: #e31e24; box-shadow: 0 4px 16px rgba(227, 30, 36, 0.1); }
+		.offer-card.disabled { cursor: default; }
+		.offer-card.disabled:hover { border-color: #e8ecf1; box-shadow: none; }
 		.offer-card-left { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 		.offer-card-right { display: flex; flex-direction: column; align-items: center; justify-content: space-between; min-width: 140px; gap: 12px; }
 
@@ -173,7 +175,7 @@
 					<div class="tab" data-status="requested" onclick="switchTab('requested')">Talep Edildi <span class="tab-count" id="count-requested">(0)</span></div>
 					<div class="tab" data-status="pending" onclick="switchTab('pending')">Inceleniyor <span class="tab-count" id="count-pending">(0)</span></div>
 					<div class="tab" data-status="accepted" onclick="switchTab('accepted')">Onaylandi <span class="tab-count" id="count-accepted">(0)</span></div>
-					<div class="tab" data-status="closed" onclick="switchTab('closed')">Kapali <span class="tab-count" id="count-closed">(0)</span></div>
+					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">Iptal <span class="tab-count" id="count-cancelled">(0)</span></div>
 				</div>
 
 				<!-- Offers List -->
@@ -280,9 +282,10 @@
 			var filtered = allOffers.filter(function(offer) {
 				// Tab filtresi
 				if (currentTab === 'all') {
-					// Tum teklifler
-				} else if (currentTab === 'closed') {
-					// Kapali: rejected, cancelled, passive
+					// Tum teklifler - iptal olanlari haric tut
+					if (['rejected', 'cancelled', 'passive'].includes(offer.status)) return false;
+				} else if (currentTab === 'cancelled') {
+					// Iptal: rejected, cancelled, passive
 					if (!['rejected', 'cancelled', 'passive'].includes(offer.status)) return false;
 				} else {
 					// Spesifik durum
@@ -355,7 +358,10 @@
 					}
 				}
 
-				html += '<div class="offer-card" onclick="goToOfferDetail(\'' + offer.id + '\')">';
+				var isCancelled = ['rejected', 'cancelled', 'passive'].includes(offer.status);
+				var cardClass = 'offer-card' + (isCancelled ? ' disabled' : '');
+				var cardClick = isCancelled ? '' : ' onclick="goToOfferDetail(\'' + offer.id + '\')"';
+				html += '<div class="' + cardClass + '"' + cardClick + '>';
 				html += '<div class="offer-card-left">';
 
 				// Header: Icon + Number (tarih artik bayi altinda)
@@ -419,12 +425,13 @@
 		// ============================================
 
 		function updateTabCounts() {
+			var cancelledStatuses = ['rejected', 'cancelled', 'passive'];
 			var counts = {
-				'all': allOffers.length,
+				'all': allOffers.filter(function(o) { return !cancelledStatuses.includes(o.status); }).length,
 				'requested': allOffers.filter(function(o) { return o.status === 'requested'; }).length,
 				'pending': allOffers.filter(function(o) { return o.status === 'pending'; }).length,
 				'accepted': allOffers.filter(function(o) { return o.status === 'accepted'; }).length,
-				'closed': allOffers.filter(function(o) { return ['rejected', 'cancelled', 'passive'].includes(o.status); }).length
+				'cancelled': allOffers.filter(function(o) { return cancelledStatuses.includes(o.status); }).length
 			};
 
 			// Her tab icin sayiyi guncelle
@@ -477,7 +484,7 @@
 			if (!timerEl) return;
 
 			var sentTime = new Date(sentTimestamp).getTime();
-			var endTime = sentTime + (24 * 60 * 60 * 1000);
+			var endTime = sentTime + (72 * 60 * 60 * 1000);
 
 			// Onceki interval'i temizle
 			if (countdownIntervals[offerId]) {
@@ -505,8 +512,8 @@
 					String(minutes).padStart(2, '0') + ':' +
 					String(seconds).padStart(2, '0');
 
-				// Son 1 saat kaldığında uyarı rengi
-				if (remaining < 60 * 60 * 1000) {
+				// Son 6 saat kaldığında uyarı rengi
+				if (remaining < 6 * 60 * 60 * 1000) {
 					if (container) container.classList.add('warning');
 				}
 			}

@@ -621,6 +621,7 @@ async function loadLastOrder() {
 			lastOrder = orders[0];
 			// Butonu goster
 			document.getElementById('repeatOrderSection').classList.add('visible');
+			document.getElementById('btnRepeatOrder').classList.add('visible');
 			console.log('Son siparis yuklendi, buton gosteriliyor:', lastOrder);
 
 			// Dinamik metin olustur
@@ -936,7 +937,7 @@ async function loadPendingOfferCountdown() {
 							return log.action === 'price_updated' || log.action === 'created';
 						});
 						if (lastSentLog) {
-							var deadline = new Date(new Date(lastSentLog.created_at).getTime() + (24 * 60 * 60 * 1000));
+							var deadline = new Date(new Date(lastSentLog.created_at).getTime() + (72 * 60 * 60 * 1000));
 							if (!earliestDeadline || deadline < earliestDeadline) {
 								earliestDeadline = deadline;
 							}

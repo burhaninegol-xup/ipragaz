@@ -188,10 +188,10 @@
 			// Status banner'i goster (iptal butonu olmadan)
 			showStatusBanner(activeOffer.status, activeOffer.dealer);
 
-			// Iptal butonunu gizle (yeni teklif isteyebilecegi icin)
-			var cancelBtn = document.getElementById('btnCancelOffer');
-			if (cancelBtn) {
-				cancelBtn.style.display = 'none';
+			// Iptal linkini gizle (yeni teklif isteyebilecegi icin)
+			var cancelLinkWrapper = document.getElementById('cancelOfferLinkWrapper');
+			if (cancelLinkWrapper) {
+				cancelLinkWrapper.style.display = 'none';
 			}
 
 			// Cancelled tekliflerde gecmis gosterme
@@ -263,16 +263,16 @@
 
 			// Buton gorunurluk kontrolu
 			var acceptBtn = document.getElementById('btnAcceptOffer');
-			var cancelBtn = document.getElementById('btnCancelOffer');
+			var cancelLinkWrapper = document.getElementById('cancelOfferLinkWrapper');
 
 			// Kabul Et butonu: sadece 'pending' durumunda goster (bayi fiyat girmis)
 			if (acceptBtn) {
 				acceptBtn.style.display = (status === 'pending') ? 'flex' : 'none';
 			}
 
-			// Iptal Et butonu: requested, pending ve accepted durumlarinda goster
-			if (cancelBtn) {
-				cancelBtn.style.display = ['requested', 'pending', 'accepted'].includes(status) ? 'flex' : 'none';
+			// Iptal Et linki: requested, pending ve accepted durumlarinda goster
+			if (cancelLinkWrapper) {
+				cancelLinkWrapper.style.display = ['requested', 'pending', 'accepted'].includes(status) ? 'block' : 'none';
 			}
 		}
 
@@ -284,9 +284,9 @@
 			var container = document.getElementById('offerCountdownContainer');
 			if (!container) return;
 
-			// 24 saat = 86400000 ms
+			// 72 saat = 259200000 ms
 			var sentTime = new Date(sentTimestamp).getTime();
-			countdownEndTime = sentTime + (24 * 60 * 60 * 1000);
+			countdownEndTime = sentTime + (72 * 60 * 60 * 1000);
 
 			// Önceki interval'i temizle
 			if (countdownInterval) {
@@ -322,8 +322,8 @@
 				String(minutes).padStart(2, '0') + ':' +
 				String(seconds).padStart(2, '0');
 
-			// Son 1 saat kaldığında uyarı rengi
-			if (remaining < 60 * 60 * 1000) {
+			// Son 6 saat kaldığında uyarı rengi
+			if (remaining < 6 * 60 * 60 * 1000) {
 				container.classList.add('warning');
 			} else {
 				container.classList.remove('warning');
@@ -432,6 +432,40 @@
 				return;
 			}
 
+			// İl bazlı fiyatları al (tavan fiyat için)
+			var cityRetailPrices = {};
+			var branchCityId = null;
+			if (activeOffer && activeOffer.customer_branch && activeOffer.customer_branch.city_id) {
+				branchCityId = activeOffer.customer_branch.city_id;
+			} else {
+				// Fallback: sessionStorage'dan seçili şube ID'sini al
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+				if (selectedBranchId) {
+					try {
+						const { data: branch } = await BranchesService.getById(selectedBranchId);
+						if (branch && branch.city_id) {
+							branchCityId = branch.city_id;
+						}
+					} catch (err) {
+						console.warn('Şube bilgisi alınamadı:', err);
+					}
+				}
+			}
+			if (branchCityId) {
+				try {
+					const { data: cityPrices } = await RetailPricesByCityService.getByCityId(branchCityId);
+					if (cityPrices) {
+						cityPrices.forEach(function(cp) {
+							if (cp.product_id && cp.retail_price) {
+								cityRetailPrices[cp.product_id] = cp.retail_price;
+							}
+						});
+					}
+				} catch (err) {
+					console.warn('İl bazlı fiyatlar yüklenemedi:', err);
+				}
+			}
+
 			grid.innerHTML = '';
 			grid.className = 'products-grid readonly-grid';
 
@@ -440,6 +474,16 @@
 				if (!product) return;
 
 				var imageUrl = product.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
+
+				// TAVAN FİYAT kutusu
+				var ceilingPriceHtml = '';
+				var ceilingPrice = cityRetailPrices[product.id] || product.base_price || 0;
+				if (ceilingPrice > 0) {
+					ceilingPriceHtml = '<div class="ceiling-price-display">' +
+						'<div class="ceiling-price-label">Tavan Fiyat</div>' +
+						'<div class="ceiling-price-value">' + formatCurrency(ceilingPrice) + ' <span class="unit">/ adet</span></div>' +
+					'</div>';
+				}
 
 				// Fiyat gosterimi - kosullu
 				var priceHtml = '';
@@ -475,6 +519,7 @@
 								'<div class="consumption-display-label">Ortalama Tüketim</div>' +
 								'<div class="consumption-display-value">' + detail.commitment_quantity + '<span>adet/ay</span></div>' +
 							'</div>' +
+							ceilingPriceHtml +
 							priceHtml +
 						'</div>' +
 					'</div>' +
@@ -497,12 +542,12 @@
 							'<line x1="8" y1="12" x2="16" y2="12"/>' +
 						'</svg>' +
 					'</div>' +
-					'<div class="notice-content">' +
+					'<div class="notice-text">' +
 						'<p>Mevcut teklifinize yeni bir urun eklemek icin bayinizi aramalisiniz.</p>' +
-						'<div class="dealer-contact">' +
-							'<strong>' + dealerInfo + '</strong>' +
-							(dealerPhone ? '<span class="phone">📞 ' + dealerPhone + '</span>' : '') +
-						'</div>' +
+					'</div>' +
+					'<div class="dealer-contact-vertical">' +
+						'<strong>' + dealerInfo + '</strong>' +
+						(dealerPhone ? '<a href="tel:' + dealerPhone + '" class="phone-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ' + dealerPhone + '</a>' : '') +
 					'</div>' +
 				'</div>';
 			}
@@ -719,8 +764,8 @@
 					hideLoading();
 					alert('Teklif talebiniz iptal edildi.');
 
-					// Sayfayi yenile
-					window.location.reload();
+					// Tekliflerim sayfasina yonlendir
+					window.location.href = 'isyerim-musteri-teklifler.html';
 
 				} catch (err) {
 					hideLoading();

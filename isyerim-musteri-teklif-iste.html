@@ -49,11 +49,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- Countdown Timer -->
-				<div class="offer-countdown-container" id="offerCountdownContainer" style="display: none;">
-					<span class="countdown-label">Kalan Süre:</span>
-					<span class="countdown-timer" id="offerCountdownTimer">24:00:00</span>
-				</div>
 				<div class="offer-buttons">
 					<button class="btn-accept-offer" id="btnAcceptOffer" onclick="acceptActiveOffer()" style="display: none;">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,19 +56,16 @@
 						</svg>
 						Teklifi Kabul Et
 					</button>
+					<!-- Countdown Timer - butonun altına taşındı -->
+					<div class="offer-countdown-container" id="offerCountdownContainer" style="display: none;">
+						<span class="countdown-label">Onay Vermeniz için Kalan Süre:</span>
+						<span class="countdown-timer" id="offerCountdownTimer">72:00:00</span>
+					</div>
 					<button class="btn-extend-branch-sm" id="btnExtendBranchInline" style="display: none;">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M12 5v14M5 12h14"/>
 						</svg>
 						Baska Subeye Uygula
-					</button>
-					<button class="btn-cancel-offer" id="btnCancelOffer" onclick="cancelActiveOffer()">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<circle cx="12" cy="12" r="10"/>
-							<line x1="15" y1="9" x2="9" y2="15"/>
-							<line x1="9" y1="9" x2="15" y2="15"/>
-						</svg>
-						Teklifi Iptal Et
 					</button>
 				</div>
 			</div>
@@ -153,6 +145,12 @@
 					<button class="dealer-continue-btn" id="dealerContinueBtn" disabled onclick="confirmPageDealerSelection()">
 						Devam Et
 					</button>
+				</div>
+
+				<!-- Teklif Iptal Link -->
+				<div class="cancel-offer-link-wrapper" id="cancelOfferLinkWrapper" style="display: none;">
+					<p class="cancel-offer-description">Mevcut teklifinizi iptal ederek yeniden teklif almak icin alttaki linke tiklayabilirsiniz</p>
+					<a href="javascript:void(0)" class="cancel-offer-link" id="btnCancelOffer" onclick="cancelActiveOffer()">Teklifi Iptal Et</a>
 				</div>
 
 				<!-- Teklif Gecmisi Timeline -->

@@ -1965,8 +1965,8 @@
 				clearInterval(countdownInterval);
 			}
 
-			// 24 saat = 86400000 ms
-			countdownEndTime = new Date(sentTimestamp).getTime() + (24 * 60 * 60 * 1000);
+			// 72 saat = 259200000 ms
+			countdownEndTime = new Date(sentTimestamp).getTime() + (72 * 60 * 60 * 1000);
 
 			updateCountdownDisplay();
 			countdownInterval = setInterval(updateCountdownDisplay, 1000);
@@ -1999,8 +1999,8 @@
 
 			$timer.text(timeStr);
 
-			// Son 1 saatten az kaldıysa uyarı stili
-			if (remaining < 60 * 60 * 1000) {
+			// Son 6 saatten az kaldıysa uyarı stili
+			if (remaining < 6 * 60 * 60 * 1000) {
 				$container.addClass('warning');
 			} else {
 				$container.removeClass('warning');
