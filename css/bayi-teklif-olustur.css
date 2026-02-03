@@ -421,6 +421,98 @@ body {
 	font-style: italic;
 }
 
+/* City/District Selector for New Customer */
+.city-district-selector {
+	background: #f0f7ff;
+	border: 1px solid #bbdefb;
+	border-radius: 12px;
+	padding: 18px;
+	margin-top: 15px;
+}
+
+.city-district-selector .selector-label {
+	font-size: 12px;
+	color: #1565c0;
+	font-weight: 600;
+	margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.city-district-selector .selector-label svg {
+	width: 16px;
+	height: 16px;
+	fill: #1565c0;
+}
+
+.city-district-selector .location-row {
+	display: flex;
+	gap: 15px;
+}
+
+.city-district-selector .location-field {
+	flex: 1;
+}
+
+.city-district-selector .location-field label {
+	display: block;
+	font-size: 12px;
+	font-weight: 500;
+	color: #666;
+	margin-bottom: 6px;
+}
+
+.city-district-selector select {
+	width: 100%;
+	padding: 12px 15px;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	font-size: 14px;
+	color: #333;
+	background: #fff;
+	cursor: pointer;
+	transition: border-color 0.2s;
+}
+
+.city-district-selector select:focus {
+	outline: none;
+	border-color: #1565c0;
+	box-shadow: 0 0 0 2px rgba(21, 101, 192, 0.1);
+}
+
+.city-district-selector select:disabled {
+	background: #f5f5f5;
+	color: #999;
+	cursor: not-allowed;
+}
+
+.city-district-selector .location-hint {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 12px;
+	padding: 10px 12px;
+	background: #e3f2fd;
+	border-radius: 8px;
+	font-size: 12px;
+	color: #1565c0;
+}
+
+.city-district-selector .location-hint svg {
+	width: 16px;
+	height: 16px;
+	fill: #1565c0;
+	flex-shrink: 0;
+}
+
+@media (max-width: 576px) {
+	.city-district-selector .location-row {
+		flex-direction: column;
+		gap: 12px;
+	}
+}
+
 /* Products Section */
 .products-form {
 	display: none;

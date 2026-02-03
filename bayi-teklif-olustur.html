@@ -105,6 +105,36 @@
 					Bu müşterinin sorumluluk alanınızdaki şubesi bulunmuyor.
 				</div>
 			</div>
+
+			<!-- City/District Selector for New Customer (VKN YOK durumu) -->
+			<div class="city-district-selector" id="city-district-selector" style="display: none;">
+				<div class="selector-label">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+					</svg>
+					Müşteri Lokasyonu
+				</div>
+				<div class="location-row">
+					<div class="location-field">
+						<label for="new-customer-city">İl</label>
+						<select id="new-customer-city" required>
+							<option value="">İl seçiniz...</option>
+						</select>
+					</div>
+					<div class="location-field">
+						<label for="new-customer-district">İlçe</label>
+						<select id="new-customer-district" required disabled>
+							<option value="">Önce il seçiniz...</option>
+						</select>
+					</div>
+				</div>
+				<p class="location-hint">
+					<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+					</svg>
+					Müşterinin merkez şubesi bu lokasyonda oluşturulacaktır.
+				</p>
+			</div>
 		</div>
 
 		<!-- Offer Summary Section -->
@@ -455,6 +485,7 @@
 	<script src="./js/services/locations-service.js"></script>
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/dealer-districts-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/bayi-teklif-olustur.js"></script>
 </body>

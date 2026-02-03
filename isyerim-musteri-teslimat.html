@@ -1059,6 +1059,7 @@
 	<script src="./js/services/cart-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 
 	<script>
 		// Global değişkenler
@@ -1110,6 +1111,50 @@
 					bayiListContainer.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Lütfen önce bir şube seçin.</div>';
 					return;
 				}
+
+				// ============ Aktif teklif kontrolü ============
+				var customerId = sessionStorage.getItem('isyerim_customer_id');
+				if (customerId) {
+					var offerResult = await OffersService.getLatestOfferByCustomerId(customerId);
+
+					if (offerResult.data && offerResult.data.dealer) {
+						var offer = offerResult.data;
+						// Aktif teklif durumları: accepted, pending, requested
+						var activeStatuses = ['accepted', 'pending', 'requested'];
+
+						if (activeStatuses.includes(offer.status)) {
+							// Aktif teklif var - sadece bu bayiyi göster ve otomatik seç
+							var dealer = offer.dealer;
+							dealersList = [dealer];
+
+							// Bayiyi otomatik seç
+							bayiSelect.value = dealer.id;
+							bayiSelectorText.textContent = dealer.name;
+							bayiSelectorText.classList.remove('placeholder');
+
+							// Bayi listesini güncelle (modal açılırsa göster)
+							var location = [dealer.district, dealer.city].filter(Boolean).join(', ') || 'Adres bilgisi yok';
+							bayiListContainer.innerHTML = '<div class="bayi-item selected" data-value="' + dealer.id + '" data-name="' + dealer.name + '">' +
+								'<div class="bayi-item-info">' +
+									'<div class="bayi-item-name">' + dealer.name + '</div>' +
+									'<div class="bayi-item-address">' + location + '</div>' +
+								'</div>' +
+							'</div>';
+
+							attachBayiItemEvents();
+
+							// Teslimat seçiciyi aktif et
+							var deliverySelector = document.getElementById('deliverySelector');
+							var deliveryNotice = document.getElementById('deliveryNotice');
+							if (deliverySelector) deliverySelector.classList.remove('disabled');
+							if (deliveryNotice) deliveryNotice.style.display = 'none';
+
+							console.log('Aktif teklif bulundu, bayi otomatik seçildi:', dealer.name);
+							return;
+						}
+					}
+				}
+				// ============ Aktif teklif kontrolü sonu ============
 
 				// Şube bilgilerini getir
 				var branchResult = await BranchesService.getById(selectedBranchId);

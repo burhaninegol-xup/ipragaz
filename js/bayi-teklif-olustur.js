@@ -67,6 +67,12 @@
 					$('#branch-selector').addClass('visible');
 					$select.hide();
 					$('#no-branches-message').show();
+					// ÜRÜNLERİ VE FORM ACTIONS'I GİZLE
+					$('#products-form').removeClass('visible');
+					$('#form-actions').hide();
+					$('#city-district-selector').hide();
+					$('#existing-notice').removeClass('visible');
+					$('#passive-status-banner').removeClass('visible');
 					return;
 				}
 
@@ -97,6 +103,48 @@
 		// Sube secimi degistiginde
 		$('#branch-select').on('change', function() {
 			selectedBranchId = $(this).val() || null;
+		});
+
+		// İl değişince ilçeleri yükle (yeni müşteri için) - Sadece bayinin mikropazarlarındaki ilçeler
+		$('#new-customer-city').on('change', async function() {
+			var cityId = $(this).val();
+			var $districtSelect = $('#new-customer-district');
+
+			if (!cityId) {
+				$districtSelect.prop('disabled', true).empty()
+					.append('<option value="">Önce il seçiniz...</option>');
+				return;
+			}
+
+			$districtSelect.prop('disabled', true).empty()
+				.append('<option value="">Yükleniyor...</option>');
+
+			// 1. Bayinin mikropazar ilçelerini al
+			const { data: dealerDistricts } = await DealerDistrictsService.getByDealerId(currentDealerId);
+
+			// 2. Seçili ile ait ve bayinin mikropazarında olan ilçeleri filtrele
+			var dealerDistrictIdsInCity = (dealerDistricts || [])
+				.filter(function(item) {
+					return item.districts && item.districts.city_id === cityId;
+				})
+				.map(function(item) {
+					return {
+						id: item.district_id,
+						name: item.districts.name
+					};
+				});
+
+			// 3. Alfabetik sırala
+			dealerDistrictIdsInCity.sort(function(a, b) {
+				return a.name.localeCompare(b.name, 'tr');
+			});
+
+			// 4. Select'i doldur
+			$districtSelect.prop('disabled', false).empty()
+				.append('<option value="">İlçe seçiniz...</option>');
+			dealerDistrictIdsInCity.forEach(function(district) {
+				$districtSelect.append('<option value="' + district.id + '" data-name="' + district.name + '">' + district.name + '</option>');
+			});
 		});
 
 		// Sayfa yüklendiğinde ürünleri ve bayi bilgisini al
@@ -366,231 +414,405 @@
 			}
 		}
 
-		// Supabase ile VKN sorgulama
+		// Supabase ile VKN sorgulama - Yeni mikropazar mantığı
 		async function searchVkn(vkn) {
 			currentVkn = vkn;
 			showLoading('Müşteri sorgulanıyor...');
 
 			try {
-				// Önce bu VKN'li müşterinin başka bayilerle aktif teklifi var mı kontrol et
-				const { data: offerCheck, error: offerCheckError } = await OffersService.hasActiveOfferWithOtherDealer(vkn, currentDealerId);
+				// ADIM 1: Bu VKN'li şubeleri bul (customer_branches tablosundan)
+				const { data: branchesWithVkn, error: branchError } = await BranchesService.getByVkn(vkn);
 
-				if (offerCheckError) {
+				if (branchError) {
 					hideLoading();
-					showError('Kontrol sırasında hata oluştu');
+					showError('Şube sorgulanırken hata oluştu');
 					return;
 				}
 
-				// Başka bayi ile anlaşması varsa uyarı göster ve devam etme
-				if (offerCheck && offerCheck.hasOffer) {
-					hideLoading();
-					$('#customer-info-box').addClass('visible error');
-					$('#customer-name').text('Bu VKN\'li müşterinin başka bayi ile anlaşması olduğu için müşteriyi ekleyemez ve fiyat oluşturamazsınız.');
-					$('#products-form').removeClass('visible');
-					$('#form-actions').hide();
-					$('#existing-notice').removeClass('visible');
-					$('#passive-status-banner').removeClass('visible');
-					return;
-				}
+				// DURUM 1: VKN YOK (Hiç şube kaydı yok)
+				if (!branchesWithVkn || branchesWithVkn.length === 0) {
+					// Customers tablosunda da kontrol et (dealer_created olanlar için)
+					const { data: existingCustomer, error: customerError } = await CustomersService.getByVkn(vkn);
 
-				console.log('Current Dealer ID:', currentDealerId);
-				console.log('Offer Check Result:', offerCheck);
-
-				// Supabase'den müşteriyi sorgula
-				const { data: customer, error } = await CustomersService.getByVkn(vkn);
-
-				if (error) {
-					hideLoading();
-					showError('Müşteri sorgulanırken hata oluştu');
-					return;
-				}
-
-				hideLoading();
-
-				if (customer) {
-					// Mevcut müşteri bulundu
-					currentCustomer = customer;
-					isEditMode = true;
-
-					// Musterinin bayi coverage'indaki subelerini yukle
-					await loadCustomerBranches(customer.id);
-
-					// Bu bayi-müşteri için en son teklifi çek (tüm durumlar dahil)
-					const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
-
-					// Cancelled/rejected teklif döndüyse yeni teklif oluşturulabilmesi için null yap
-					if (offer && (offer.status === 'cancelled' || offer.status === 'rejected')) {
-						currentOffer = null; // Kaydetince yeni teklif oluşturulacak
-					} else {
-						currentOffer = offer; // Aktif teklif varsa güncelle
+					if (customerError) {
+						hideLoading();
+						showError('Müşteri sorgulanırken hata oluştu');
+						return;
 					}
 
-					// Save buton metnini guncelle
-					updateSaveButtonText();
+					if (existingCustomer && existingCustomer.registration_status === 'dealer_created') {
+						// Bayi daha önce oluşturmuş - mevcut müşteriyi kullan
+						currentCustomer = existingCustomer;
+						isEditMode = true;
 
-					// Chat'i baslat
-					initializeChat();
-
-					// offer_details'ı customer_prices formatına dönüştür (uyumluluk için)
-					// Sadece aktif teklif varsa (currentOffer set) fiyatları göster
-					// Cancelled/rejected ise currentOffer null, boş form açılacak
-					var customerPrices = [];
-					if (currentOffer && currentOffer.offer_details) {
-						customerPrices = currentOffer.offer_details;
-					}
-					customer.customer_prices = customerPrices;
-
-					$('#customer-info-box').removeClass('error').addClass('visible');
-					$('#customer-name').text(customer.name + (customer.company_name ? ' - ' + customer.company_name : ''));
-					$('#page-title').text('Teklif Düzenleme');
-					$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
-
-					// Fiyat tanımlanmış mı kontrolü
-					var customerPrices = customer.customer_prices || [];
-					var hasPrices = customerPrices.some(function(p) { return p.unit_price !== undefined; });
-
-					if (!hasPrices) {
-						$('#existing-notice').addClass('visible');
-						$('#existing-notice-text').text('Bu müşteriniz için henüz fiyat tanımlamadınız.');
-						$('#passive-status-banner').removeClass('visible');
-						$('#passive-customer-btn').hide();
-						$('#activate-customer-btn').hide();
-						$('#cancel-offer-btn').hide();
-					} else {
-						$('#existing-notice').removeClass('visible');
-
-						// Teklif durumuna gore buton kontrolu
-						// Not: cancelled/rejected teklifler icin currentOffer = null
-						// Bu durumda yeni teklif olusturma modu aktif, butonlar gizli
-						if (currentOffer && currentOffer.status === 'passive') {
-							$('#passive-status-banner').addClass('visible');
-							$('#passive-customer-btn').hide();
-							$('#activate-customer-btn').show();
-							$('#cancel-offer-btn').show();
-						} else if (currentOffer && currentOffer.status === 'accepted') {
-							$('#passive-status-banner').removeClass('visible');
-							$('#passive-customer-btn').show();
-							$('#activate-customer-btn').hide();
-							$('#cancel-offer-btn').show();
+						// Şubesi var mı kontrol et
+						const { data: existingBranches } = await BranchesService.getByCustomerId(existingCustomer.id);
+						if (existingBranches && existingBranches.length > 0) {
+							// Şube var, dropdown'a yükle
+							customerBranches = existingBranches;
+							loadBranchDropdown(existingBranches);
+							$('#branch-selector').addClass('visible');
+							$('#city-district-selector').hide();
 						} else {
-							// Yeni teklif olusturma modu (cancelled/rejected veya hic teklif yok)
-							$('#passive-status-banner').removeClass('visible');
-							$('#cancelled-status-banner').removeClass('visible');
-							$('#passive-customer-btn').hide();
-							$('#activate-customer-btn').hide();
-							$('#cancel-offer-btn').hide();
+							// Şube yok, il/ilçe seçim formu göster
+							$('#branch-selector').removeClass('visible');
+							showCityDistrictSelector();
 						}
-					}
 
-					// Ürün satırlarını temizle
-					$('#product-rows').empty();
-					// Teklif özetini güncelle
-					updateOfferSummary();
+						await showNewCustomerForm(vkn, existingCustomer);
+						hideLoading();
+						return;
+					} else if (!existingCustomer) {
+						// Tamamen yeni müşteri - il/ilçe seçimi göster
+						// NOT: Müşteri ve şube kaydı KAYDET butonunda oluşturulacak
+						currentCustomer = null;
+						isEditMode = false;
 
-					// Teklif detayları varsa sadece onları göster
-					if (customerPrices && customerPrices.length > 0) {
-						customerPrices.forEach(function(detail) {
-							var product = detail.product;
-							if (product) {
-								// Ürün bilgilerini products dizisinden tamamla (image için)
-								var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
-								addProductRow(
-									{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
-									detail.commitment_quantity || '',
-									detail.unit_price || '',
-									detail.this_month_quantity,
-									detail.last_month_quantity,
-									detail.pricing_type || 'retail_price',
-									detail.discount_value || 0
-								);
-							}
-						});
+						$('#branch-selector').removeClass('visible');
+						showCityDistrictSelector();
+
+						await showNewCustomerForm(vkn, null);
+						hideLoading();
+						return;
 					} else {
-						// Teklif yoksa tüm ürünleri göster
-						products.forEach(function(product) {
-							addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
-						});
+						// Müşteri var ve customer_registered ama şubesi yok - edge case
+						// Bu durumda müşterinin kendisi şube eklemeli
+						hideLoading();
+						$('#customer-info-box').addClass('visible error');
+						$('#customer-name').html('<strong>Bu VKN ile kayıtlı müşteri var ancak şubesi bulunmuyor.</strong><br>Müşterinin kendi panelinden şube eklemesi gerekmektedir.');
+						$('#products-form').removeClass('visible');
+						$('#form-actions').hide();
+						$('#branch-selector').removeClass('visible');
+						$('#city-district-selector').hide();
+						return;
 					}
+				}
 
-					$('#products-form').addClass('visible');
-					$('#form-actions').show();
+				// ADIM 2: VKN VAR - Bayinin mikropazar alanlarını al
+				const { data: dealerDistricts, error: districtError } = await DealerDistrictsService.getByDealerId(currentDealerId);
 
-					// Save options - sadece yeni teklif oluşturulurken göster
-					if (currentOffer) {
-						$('#save-options').hide();
-					} else {
-						$('#save-options').show();
-					}
+				if (districtError) {
+					hideLoading();
+					showError('Bayi bölge bilgisi alınamadı');
+					return;
+				}
 
-					// Teklif gecmisini yukle
-					loadOfferLogs(currentOffer ? currentOffer.id : null);
+				var dealerDistrictIds = (dealerDistricts || []).map(function(d) { return d.district_id; });
 
-					// Teklif varsa "Yeni Ürün Ekle" butonunu göster
-					if (customerPrices && customerPrices.length > 0) {
-						$('#addProductSection').show();
-					} else {
-						$('#addProductSection').hide();
-					}
+				// ADIM 3: Şubeleri filtrele - bayinin bölgesinde olanlar
+				var branchesInCoverage = branchesWithVkn.filter(function(branch) {
+					return dealerDistrictIds.includes(branch.district_id);
+				});
 
-					// 24 saat geri sayım - teklif onaylanmadıysa sayacı başlat
-					if (currentOffer && currentOffer.status !== 'accepted' && currentOffer.status !== 'cancelled' && currentOffer.status !== 'rejected') {
-						// Son 'created' veya 'price_updated' action'ını bul
-						const logsResult = await OfferLogsService.getByOfferId(currentOffer.id);
-						if (logsResult.data && logsResult.data.length > 0) {
-							var lastSentLog = logsResult.data.find(function(log) {
-								return log.action === 'price_updated' || log.action === 'created';
-							});
-							if (lastSentLog) {
-								startCountdown(lastSentLog.created_at);
-							}
-						}
-					} else {
-						stopCountdown();
-					}
+				// DURUM 2: VKN VAR + Mikropazar eşleşmesi YOK
+				if (branchesInCoverage.length === 0) {
+					hideLoading();
+					showNotInCoverageError(vkn);
+					return;
+				}
+
+				// DURUM 3: VKN VAR + Mikropazar eşleşmesi VAR
+				// Başka bayi ile aktif teklifi olmayan şubeleri filtrele
+				var branchIdsInCoverage = branchesInCoverage.map(function(b) { return b.id; });
+				const { data: availableBranchIds, error: filterError } = await OffersService.filterBranchesWithoutActiveOffers(branchIdsInCoverage, currentDealerId);
+
+				if (filterError) {
+					hideLoading();
+					showError('Teklif kontrolü sırasında hata oluştu');
+					return;
+				}
+
+				// Uygun şubeleri bul
+				var availableBranches = branchesInCoverage.filter(function(b) {
+					return availableBranchIds.includes(b.id);
+				});
+
+				if (availableBranches.length === 0) {
+					hideLoading();
+					showAllBranchesHaveOffersError(vkn);
+					return;
+				}
+
+				// Müşteri bilgisini al
+				var customerId = branchesInCoverage[0].customer_id;
+				const { data: customer, error: customerFetchError } = await CustomersService.getById(customerId);
+
+				if (customerFetchError || !customer) {
+					hideLoading();
+					showError('Müşteri bilgisi alınamadı');
+					return;
+				}
+
+				currentCustomer = customer;
+				isEditMode = true;
+				customerBranches = availableBranches;
+
+				// Dropdown'a şubeleri yükle
+				loadBranchDropdown(availableBranches);
+				$('#branch-selector').addClass('visible');
+				$('#city-district-selector').hide();
+
+				// Bu bayi-müşteri için en son teklifi çek
+				const { data: offer } = await OffersService.getLatestOfferForDealerCustomer(currentDealerId, customer.id);
+
+				// Cancelled/rejected teklif döndüyse yeni teklif oluşturulabilmesi için null yap
+				if (offer && (offer.status === 'cancelled' || offer.status === 'rejected')) {
+					currentOffer = null;
 				} else {
-					// Yeni müşteri
-					currentCustomer = null;
-					isEditMode = false;
+					currentOffer = offer;
+				}
 
-					// Yeni musterinin henuz subesi yok - sube seciciyi gizle
-					$('#branch-selector').removeClass('visible');
-					selectedBranchId = null;
-					customerBranches = [];
+				// Save buton metnini guncelle
+				updateSaveButtonText();
 
-					$('#customer-info-box').removeClass('error').addClass('visible');
-					$('#customer-name').text('YENİ MÜŞTERİ - Şirket Ünvanı (VKN: ' + vkn + ')');
+				// Chat'i baslat
+				initializeChat();
 
-					$('#page-title').text('Yeni Müşteri Fiyat Tanımlama');
-					$('#page-subtitle').text('Müşteri için özel fiyat ve taahhüt tanımlayın');
+				// offer_details'ı customer_prices formatına dönüştür
+				var customerPrices = [];
+				if (currentOffer && currentOffer.offer_details) {
+					customerPrices = currentOffer.offer_details;
+				}
+				customer.customer_prices = customerPrices;
+
+				$('#customer-info-box').removeClass('error').addClass('visible');
+				$('#customer-name').text(customer.name + (customer.company_name ? ' - ' + customer.company_name : ''));
+				$('#page-title').text('Teklif Düzenleme');
+				$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
+
+				// Fiyat tanımlanmış mı kontrolü
+				var hasPrices = customerPrices.some(function(p) { return p.unit_price !== undefined; });
+
+				if (!hasPrices) {
 					$('#existing-notice').addClass('visible');
-					$('#existing-notice-text').text('Bu VKN ile kayıtlı müşteri bulunamadı. Yeni müşteri olarak eklenecektir.');
+					$('#existing-notice-text').text('Bu müşteriniz için henüz fiyat tanımlamadınız.');
 					$('#passive-status-banner').removeClass('visible');
 					$('#passive-customer-btn').hide();
 					$('#activate-customer-btn').hide();
 					$('#cancel-offer-btn').hide();
+				} else {
+					$('#existing-notice').removeClass('visible');
 
-					// Tüm ürünleri varsayılan perakende fiyatla göster
-					$('#product-rows').empty();
-					// Teklif özetini güncelle
-					updateOfferSummary();
+					if (currentOffer && currentOffer.status === 'passive') {
+						$('#passive-status-banner').addClass('visible');
+						$('#passive-customer-btn').hide();
+						$('#activate-customer-btn').show();
+						$('#cancel-offer-btn').show();
+					} else if (currentOffer && currentOffer.status === 'accepted') {
+						$('#passive-status-banner').removeClass('visible');
+						$('#passive-customer-btn').show();
+						$('#activate-customer-btn').hide();
+						$('#cancel-offer-btn').show();
+					} else {
+						$('#passive-status-banner').removeClass('visible');
+						$('#cancelled-status-banner').removeClass('visible');
+						$('#passive-customer-btn').hide();
+						$('#activate-customer-btn').hide();
+						$('#cancel-offer-btn').hide();
+					}
+				}
 
+				// Ürün satırlarını temizle
+				$('#product-rows').empty();
+				updateOfferSummary();
+
+				// Teklif detayları varsa sadece onları göster
+				if (customerPrices && customerPrices.length > 0) {
+					customerPrices.forEach(function(detail) {
+						var product = detail.product;
+						if (product) {
+							var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
+							addProductRow(
+								{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
+								detail.commitment_quantity || '',
+								detail.unit_price || '',
+								detail.this_month_quantity,
+								detail.last_month_quantity,
+								detail.pricing_type || 'retail_price',
+								detail.discount_value || 0
+							);
+						}
+					});
+				} else {
 					products.forEach(function(product) {
 						addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
 					});
+				}
 
-					$('#products-form').addClass('visible');
-					$('#form-actions').show();
-					$('#save-options').show(); // Yeni müşteri için save options göster
-					$('#addProductSection').hide(); // Yeni müşteri için gösterme
+				$('#products-form').addClass('visible');
+				$('#form-actions').show();
 
-					// Yeni müşteri - sayacı gizle
+				if (currentOffer) {
+					$('#save-options').hide();
+				} else {
+					$('#save-options').show();
+				}
+
+				loadOfferLogs(currentOffer ? currentOffer.id : null);
+
+				if (customerPrices && customerPrices.length > 0) {
+					$('#addProductSection').show();
+				} else {
+					$('#addProductSection').hide();
+				}
+
+				// 24 saat geri sayım
+				if (currentOffer && currentOffer.status !== 'accepted' && currentOffer.status !== 'cancelled' && currentOffer.status !== 'rejected') {
+					const logsResult = await OfferLogsService.getByOfferId(currentOffer.id);
+					if (logsResult.data && logsResult.data.length > 0) {
+						var lastSentLog = logsResult.data.find(function(log) {
+							return log.action === 'price_updated' || log.action === 'created';
+						});
+						if (lastSentLog) {
+							startCountdown(lastSentLog.created_at);
+						}
+					}
+				} else {
 					stopCountdown();
 				}
+
+				hideLoading();
 			} catch (err) {
 				hideLoading();
 				showError('Bir hata oluştu: ' + err.message);
 				console.error(err);
 			}
+		}
+
+		// Şubeleri dropdown'a yükle
+		function loadBranchDropdown(branches) {
+			var $select = $('#branch-select');
+			$select.empty().append('<option value="">Şube seçiniz...</option>');
+
+			branches.forEach(function(branch) {
+				var label = branch.branch_name || branch.full_address || 'Şube';
+				if (branch.is_default) label += ' (Varsayılan)';
+				$select.append('<option value="' + branch.id + '">' + label + '</option>');
+			});
+
+			$select.show();
+			$('#no-branches-message').hide();
+
+			// Varsayilan subeyi sec
+			var defaultBranch = branches.find(function(b) { return b.is_default; });
+			if (defaultBranch) {
+				$select.val(defaultBranch.id);
+				selectedBranchId = defaultBranch.id;
+			} else if (branches.length === 1) {
+				$select.val(branches[0].id);
+				selectedBranchId = branches[0].id;
+			}
+		}
+
+		// İl/İlçe seçici göster
+		function showCityDistrictSelector() {
+			$('#city-district-selector').show();
+			loadCitiesForNewCustomer();
+		}
+
+		// İlleri yükle (yeni müşteri için) - Sadece bayinin mikropazarlarındaki iller
+		async function loadCitiesForNewCustomer() {
+			// 1. Bayinin mikropazar ilçelerini al
+			const { data: dealerDistricts } = await DealerDistrictsService.getByDealerId(currentDealerId);
+
+			// 2. Benzersiz city_id'leri çıkart
+			var dealerCityIds = [];
+			(dealerDistricts || []).forEach(function(item) {
+				if (item.districts && item.districts.city_id) {
+					if (!dealerCityIds.includes(item.districts.city_id)) {
+						dealerCityIds.push(item.districts.city_id);
+					}
+				}
+			});
+
+			// 3. Tüm illeri al
+			const { data: allCities } = await LocationsService.getCities();
+
+			// 4. Sadece bayinin mikropazarlarında olan illeri filtrele
+			var filteredCities = (allCities || []).filter(function(city) {
+				return dealerCityIds.includes(city.id);
+			});
+
+			// 5. Select'i doldur
+			var $select = $('#new-customer-city');
+			$select.empty().append('<option value="">İl seçiniz...</option>');
+			filteredCities.forEach(function(city) {
+				$select.append('<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>');
+			});
+		}
+
+		// Yeni müşteri formu göster
+		async function showNewCustomerForm(vkn, existingCustomer) {
+			currentOffer = null;
+			selectedBranchId = null;
+
+			// Save buton metnini guncelle
+			updateSaveButtonText();
+
+			if (existingCustomer) {
+				$('#customer-info-box').removeClass('error').addClass('visible');
+				$('#customer-name').text(existingCustomer.name + (existingCustomer.company_name ? ' - ' + existingCustomer.company_name : ''));
+				$('#page-title').text('Teklif Düzenleme');
+				$('#page-subtitle').text('Mevcut müşteri fiyatlarını düzenleyin');
+			} else {
+				$('#customer-info-box').removeClass('error').addClass('visible');
+				$('#customer-name').text('YENİ MÜŞTERİ - Şirket Ünvanı (VKN: ' + vkn + ')');
+				$('#page-title').text('Yeni Müşteri Fiyat Tanımlama');
+				$('#page-subtitle').text('Müşteri için özel fiyat ve taahhüt tanımlayın');
+			}
+
+			$('#existing-notice').addClass('visible');
+			$('#existing-notice-text').text('Bu VKN ile kayıtlı müşteri bulunamadı. Yeni müşteri olarak eklenecektir.');
+			$('#passive-status-banner').removeClass('visible');
+			$('#passive-customer-btn').hide();
+			$('#activate-customer-btn').hide();
+			$('#cancel-offer-btn').hide();
+
+			// Tüm ürünleri varsayılan perakende fiyatla göster
+			$('#product-rows').empty();
+			updateOfferSummary();
+
+			products.forEach(function(product) {
+				addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
+			});
+
+			$('#products-form').addClass('visible');
+			$('#form-actions').show();
+			$('#save-options').show();
+			$('#addProductSection').hide();
+
+			// Yeni müşteri - sayacı gizle
+			stopCountdown();
+		}
+
+		// "Bölgenizde Değil" hata mesajı
+		function showNotInCoverageError(vkn) {
+			$('#customer-info-box').addClass('visible error');
+			$('#customer-name').html(
+				'<strong>Bu VKN sizin bölgenizde değil!</strong><br>' +
+				'Bu VKN\'li müşterinin şubeleri sizin sorumluluk alanınızda bulunmamaktadır.'
+			);
+			$('#products-form').removeClass('visible');
+			$('#form-actions').hide();
+			$('#branch-selector').removeClass('visible');
+			$('#city-district-selector').hide();
+			$('#existing-notice').removeClass('visible');
+			$('#passive-status-banner').removeClass('visible');
+		}
+
+		// "Tüm Şubelerde Aktif Teklif Var" hata mesajı
+		function showAllBranchesHaveOffersError(vkn) {
+			$('#customer-info-box').addClass('visible error');
+			$('#customer-name').html(
+				'<strong>Uygun şube bulunamadı!</strong><br>' +
+				'Bu VKN\'li müşterinin bölgenizdeki tüm şubelerinde başka bayilerle aktif teklif bulunmaktadır.'
+			);
+			$('#products-form').removeClass('visible');
+			$('#form-actions').hide();
+			$('#branch-selector').removeClass('visible');
+			$('#city-district-selector').hide();
+			$('#existing-notice').removeClass('visible');
+			$('#passive-status-banner').removeClass('visible');
 		}
 
 		function addProductRow(product, quantity, price, thisMonth, lastMonth, pricingType, discountValue) {
@@ -1145,24 +1367,65 @@
 
 			try {
 				var customerId;
+				var branchIdToUse = selectedBranchId;
 
 				// Yeni müşteri mi yoksa mevcut mu?
 				if (!isEditMode || !currentCustomer) {
-					// Yeni müşteri oluştur
+					// VKN YOK durumu - Yeni müşteri oluşturulacak
+					// İl/ilçe seçimi kontrolü
+					var cityId = $('#new-customer-city').val();
+					var districtId = $('#new-customer-district').val();
+
+					if (!cityId || !districtId) {
+						hideLoading();
+						showError('Lütfen müşteri için il ve ilçe seçiniz.');
+						return;
+					}
+
+					// 1. Müşteri oluştur (registration_status = 'dealer_created')
 					var customerData = {
 						vkn: currentVkn,
 						name: 'Müşteri ' + currentVkn,
 						company_name: $('#customer-name').text().replace('YENİ MÜŞTERİ - ', '').split(' (VKN')[0],
 						phone: '',
-						dealer_id: currentDealerId,
+						registration_status: 'dealer_created',
 						is_active: true
 					};
 
 					const { data: newCustomer, error: customerError } = await CustomersService.create(customerData);
 					if (customerError) throw new Error(customerError);
 					customerId = newCustomer.id;
+
+					// 2. İl ve ilçe isimlerini al
+					var cityName = $('#new-customer-city option:selected').attr('data-name') || '';
+					var districtName = $('#new-customer-district option:selected').attr('data-name') || '';
+
+					// 3. Merkez şube oluştur
+					var branchData = {
+						customer_id: newCustomer.id,
+						branch_name: 'Merkez',
+						city_id: cityId,
+						district_id: districtId,
+						city: cityName,
+						district: districtName,
+						is_default: true,
+						is_active: true
+					};
+
+					const { data: newBranch, error: branchError } = await BranchesService.create(branchData);
+					if (branchError) throw new Error(branchError);
+
+					branchIdToUse = newBranch.id;
+					currentCustomer = newCustomer;
 				} else {
 					customerId = currentCustomer.id;
+
+					// Mevcut müşteri - şube seçimi kontrolü
+					if (!branchIdToUse && customerBranches.length > 0) {
+						hideLoading();
+						showError('Lütfen teklif verilecek şubeyi seçiniz.');
+						return;
+					}
 				}
 
 				// Teklif detaylarını topla - yeni fiyatlandırma yapısı ile
@@ -1196,7 +1459,13 @@
 						finalPrice = basePrice * (1 - inputVal / 100);
 					}
 
-					if (finalPrice > 0) {
+					// Ürünü teklife dahil etme koşulu:
+					// - İndirim uygulandıysa (retail_price dışında bir seçenek) VEYA
+					// - Aylık ortalama tüketim girilmişse (quantity > 0)
+					var hasDiscount = pricingType !== 'retail_price';
+					var hasQuantity = quantity > 0;
+
+					if (finalPrice > 0 && (hasDiscount || hasQuantity)) {
 						offerDetails.push({
 							product_id: productId,
 							unit_price: finalPrice,
@@ -1232,18 +1501,11 @@
 						}
 					} else {
 						// Yeni teklif oluştur
-						// Sube secimi kontrolu
-						if (!selectedBranchId && customerBranches.length > 0) {
-							hideLoading();
-							showError('Lütfen teklif verilecek şubeyi seçiniz.');
-							return;
-						}
-
 						const saveAsAccepted = $('#save-as-accepted').is(':checked');
 						const offerData = {
 							dealer_id: currentDealerId,
 							customer_id: customerId,
-							customer_branch_id: selectedBranchId || null,
+							customer_branch_id: branchIdToUse || null,
 							status: saveAsAccepted ? 'accepted' : 'pending',
 							notes: 'Bayi panelinden oluşturuldu'
 						};

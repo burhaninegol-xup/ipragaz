@@ -747,9 +747,16 @@
 				return;
 			}
 
-			// VKN duplicate kontrolu
+			// VKN kontrolu
 			var existingCustomer = await CustomersService.getByVkn(vergiNo);
 			if (existingCustomer.data) {
+				// Bayi tarafından oluşturulmuş ama müşteri henüz kayıt olmamış
+				if (existingCustomer.data.registration_status === 'dealer_created') {
+					// GÜNCELLEME MODU: Mevcut kaydı güncelle, yeni kayıt açma
+					await updateDealerCreatedCustomer(existingCustomer.data, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect);
+					return;
+				}
+				// Normal duplicate - uyarı göster
 				showVknDuplicateOverlay(existingCustomer.data);
 				return;
 			}
@@ -922,6 +929,112 @@
 				sessionStorage.setItem('vkn_verification_existing_customer_name', existingCustomerData.name);
 			}
 			window.location.href = 'isyerim-vkn-dogrulama.html';
+		}
+
+		// Bayi tarafından oluşturulan müşteriyi güncelle
+		async function updateDealerCreatedCustomer(existingCustomer, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect) {
+			// Submit butonunu devre dışı bırak
+			var submitBtn = document.querySelector('.btn-submit');
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Kaydediliyor...';
+
+			try {
+				// Müşteri verisini güncelle
+				var updateData = {
+					phone: phone,
+					name: (ad && soyad) ? (ad + ' ' + soyad) : (ad || soyad || sirketUnvani || existingCustomer.name),
+					company_name: sirketUnvani || existingCustomer.company_name || null,
+					email: email || existingCustomer.email || null,
+					sector: sektor,
+					tabela_unvani: tabelaUnvani || existingCustomer.tabela_unvani || null,
+					registration_status: 'customer_registered' // Artık müşteri kayıt oldu
+				};
+
+				// Supabase'de güncelle
+				var result = await CustomersService.update(existingCustomer.id, updateData);
+
+				if (result.error) {
+					console.error('Güncelleme hatası:', result.error);
+					alert('Güncelleme sırasında bir hata oluştu: ' + (result.error.message || result.error));
+					submitBtn.disabled = false;
+					submitBtn.textContent = 'Devam';
+					return;
+				}
+
+				var customer = result.data;
+
+				// Musteri icin owner kullanici olustur (yoksa)
+				var ownerResult = await CustomerUsersService.createOwner(
+					customer.id,
+					updateData.name,
+					phone
+				);
+
+				// Basarili - customer ve user bilgilerini kaydet
+				sessionStorage.setItem('isyerim_customer_id', customer.id);
+				sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || updateData.name);
+
+				if (ownerResult.data) {
+					sessionStorage.setItem('isyerim_user_id', ownerResult.data.id);
+					sessionStorage.setItem('isyerim_user_role', 'owner');
+					sessionStorage.setItem('isyerim_user_name', updateData.name);
+				} else {
+					sessionStorage.setItem('isyerim_user_role', 'owner');
+					sessionStorage.setItem('isyerim_user_name', updateData.name);
+				}
+
+				// Mevcut şubeyi kontrol et, yoksa oluştur
+				var branchesResult = await BranchesService.getByCustomerId(customer.id);
+				var cityOption = citySelect.options[citySelect.selectedIndex];
+				var districtOption = districtSelect.options[districtSelect.selectedIndex];
+
+				if (!branchesResult.data || branchesResult.data.length === 0) {
+					// Şube yok, merkez şubesi oluştur
+					var branchData = {
+						customer_id: customer.id,
+						branch_name: 'Merkez',
+						city_id: citySelect.value,
+						district_id: districtSelect.value,
+						city: cityOption.getAttribute('data-name'),
+						district: districtOption.getAttribute('data-name'),
+						is_default: true
+					};
+					var branchResult = await BranchesService.create(branchData);
+
+					if (branchResult.data) {
+						sessionStorage.setItem('selected_address_id', branchResult.data.id);
+						sessionStorage.setItem('selected_address_name', 'Merkez');
+					}
+				} else {
+					// Mevcut şubeyi kullan (bayi tarafından oluşturulan)
+					var defaultBranch = branchesResult.data.find(function(b) { return b.is_default; }) || branchesResult.data[0];
+					sessionStorage.setItem('selected_address_id', defaultBranch.id);
+					sessionStorage.setItem('selected_address_name', defaultBranch.branch_name || 'Merkez');
+
+					// Şube lokasyonunu güncelle (kullanıcının seçtiği ile)
+					await BranchesService.update(defaultBranch.id, {
+						city_id: citySelect.value,
+						district_id: districtSelect.value,
+						city: cityOption.getAttribute('data-name'),
+						district: districtOption.getAttribute('data-name')
+					});
+				}
+
+				sessionStorage.setItem('isyerim_user_city_id', citySelect.value);
+				sessionStorage.setItem('isyerim_user_district_id', districtSelect.value);
+				sessionStorage.setItem('isyerim_user_city', cityOption.getAttribute('data-name'));
+				sessionStorage.setItem('isyerim_user_district', districtOption.getAttribute('data-name'));
+				sessionStorage.setItem('isNewUser', 'true');
+
+				// Anasayfaya yönlendir
+				window.location.href = 'isyerim-musteri-anasayfa.html';
+
+			} catch (error) {
+				console.error('Güncelleme hatası:', error);
+				alert('Güncelleme sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Devam';
+			}
 		}
 	</script>
 </body>

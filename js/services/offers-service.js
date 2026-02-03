@@ -1214,6 +1214,45 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getAll');
         }
+    },
+
+    /**
+     * Şubelerin başka bayi ile aktif teklifi var mı kontrol et
+     * Aktif teklifi olmayan şubeleri döndür
+     * @param {Array} branchIds - Kontrol edilecek şube ID'leri
+     * @param {string} currentDealerId - Mevcut bayi ID (bu bayi hariç tutulur)
+     * @returns {Promise<{data: Array, error: Object}>}
+     */
+    async filterBranchesWithoutActiveOffers(branchIds, currentDealerId) {
+        try {
+            if (!branchIds || branchIds.length === 0) {
+                return { data: [], error: null };
+            }
+
+            // Bu şubeler için aktif teklifleri bul (başka bayilerden)
+            const { data: activeOffers, error } = await supabaseClient
+                .from('offers')
+                .select('customer_branch_id, dealer_id')
+                .in('customer_branch_id', branchIds)
+                .in('status', ['accepted', 'pending', 'requested'])
+                .neq('dealer_id', currentDealerId);
+
+            if (error) throw error;
+
+            // Aktif teklifi olan şube ID'leri
+            var branchesWithActiveOffers = new Set(
+                (activeOffers || []).map(function(o) { return o.customer_branch_id; })
+            );
+
+            // Aktif teklifi olmayan şubeleri filtrele
+            var availableBranchIds = branchIds.filter(function(id) {
+                return !branchesWithActiveOffers.has(id);
+            });
+
+            return { data: availableBranchIds, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.filterBranchesWithoutActiveOffers');
+        }
     }
 };
 

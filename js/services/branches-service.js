@@ -303,6 +303,30 @@ const BranchesService = {
         } catch (error) {
             return handleSupabaseError(error, 'BranchesService.updateSecurityAnswers');
         }
+    },
+
+    /**
+     * VKN'ye göre şubeleri getir (customer'ın VKN'si üzerinden)
+     * Bayi teklif oluşturma sayfasında kullanılır
+     * @param {string} vkn - Müşteri VKN
+     * @returns {Promise<{data: Array, error: Object}>}
+     */
+    async getByVkn(vkn) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('customer_branches')
+                .select(`
+                    *,
+                    customer:customers!inner(id, vkn, name, company_name, registration_status)
+                `)
+                .eq('customer.vkn', vkn)
+                .eq('is_active', true);
+
+            if (error) throw error;
+            return { data: data || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'BranchesService.getByVkn');
+        }
     }
 };
 
