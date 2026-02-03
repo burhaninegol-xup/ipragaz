@@ -180,12 +180,14 @@
 					</label>
 				</div>
 
-				<!-- Branch Permissions (only for staff) -->
+				<!-- User Permissions (only for staff) -->
 				<div class="permissions-section" id="permissionsSection" style="display: none;">
-					<h3 class="permissions-title">Sube Yetkileri</h3>
-					<p style="font-size: 13px; color: #666; margin-bottom: 15px;">Bu kullanicinin siparis verebilecegi subeleri secin:</p>
-					<div class="permissions-list" id="branchesList">
-						<div class="loading">Subeler yukleniyor...</div>
+					<h3 class="permissions-title">Kullanici Yetkileri</h3>
+					<div class="permissions-list">
+						<label class="permission-item">
+							<input type="checkbox" id="canConvertPoints">
+							<label>Toplanan Puanlari Ceke Donusturebilir</label>
+						</label>
 					</div>
 				</div>
 			</form>
@@ -219,7 +221,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
-	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/account-deletion-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
@@ -227,7 +228,6 @@
 		var customerId = null;
 		var currentUserId = null;
 		var deleteUserId = null;
-		var allBranches = [];
 		var isEditMode = false;
 		var editingUserRole = null;
 		var isManagementRestricted = false;
@@ -262,30 +262,25 @@
 			// Yonetim kisitlamasini kontrol et
 			await checkManagementRestriction();
 
-			// Subeleri yukle (yetki secimi icin)
-			await loadBranches();
 			await loadUsers();
 		});
 
 		// Yonetim kisitlamasini kontrol et
 		async function checkManagementRestriction() {
 			try {
-				var result = await CustomersService.getById(customerId);
-				if (result.data && result.data.management_restricted) {
+				var { data, error } = await supabaseClient
+					.from('customers')
+					.select('management_restricted')
+					.eq('id', customerId)
+					.single();
+
+				if (!error && data && data.management_restricted) {
 					isManagementRestricted = true;
 					document.getElementById('btnAddUser').style.display = 'none';
 					document.getElementById('restrictionNotice').style.display = 'flex';
 				}
 			} catch (err) {
 				console.error('Musteri bilgisi alinamadi:', err);
-			}
-		}
-
-		// Subeleri yukle
-		async function loadBranches() {
-			var result = await BranchesService.getByCustomerId(customerId);
-			if (!result.error && result.data) {
-				allBranches = result.data;
 			}
 		}
 
@@ -328,8 +323,11 @@
 				// Kisitlama yoksa action butonlarini goster
 				if (!isManagementRestricted) {
 					html += '<div class="user-actions">';
-					html += '<button class="user-action" onclick="openUserPanel(\'edit\', \'' + user.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
-					if (!isOwner) {
+					if (isOwner) {
+						// Owner icin Uyelik Bilgilerim sayfasina yonlendir
+						html += '<a href="isyerim-musteri-bilgileri-guncelle.html" class="user-action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</a>';
+					} else {
+						html += '<button class="user-action" onclick="openUserPanel(\'edit\', \'' + user.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
 						html += '<button class="user-action" onclick="openDeleteModal(\'' + user.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
 					}
 					html += '</div>';
@@ -337,9 +335,6 @@
 				html += '</div>';
 				html += '<div class="user-info">';
 				html += '<span class="user-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> ' + formatPhone(user.phone) + '</span>';
-				if (!isOwner) {
-					html += '<span class="user-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ' + (user.branch_count || 0) + ' sube yetkisi</span>';
-				}
 				html += '</div>';
 				html += '</div>';
 			});
@@ -354,13 +349,29 @@
 			return '0' + phone.substring(0, 3) + ' ' + phone.substring(3, 6) + ' ' + phone.substring(6, 8) + ' ' + phone.substring(8, 10);
 		}
 
+		// Maksimum kullanici sayisi (ana kullanici dahil)
+		var MAX_USERS_PER_CUSTOMER = 3;
+
 		// Panel ac/kapat
-		function openUserPanel(mode, userId) {
+		async function openUserPanel(mode, userId) {
+			isEditMode = mode === 'edit';
+
+			// Yeni kullanici ekleme modunda kullanici sayisini kontrol et
+			if (!isEditMode) {
+				var { data: existingUsers, error } = await supabaseClient
+					.from('customer_users')
+					.select('id')
+					.eq('customer_id', customerId);
+
+				if (!error && existingUsers && existingUsers.length >= MAX_USERS_PER_CUSTOMER) {
+					alert('Maksimum ' + MAX_USERS_PER_CUSTOMER + ' kullanici ekleyebilirsiniz (1 ana kullanici + ' + (MAX_USERS_PER_CUSTOMER - 1) + ' alt kullanici). Yeni kullanici eklemek icin mevcut bir kullaniciyi silmeniz gerekmektedir.');
+					return;
+				}
+			}
+
 			document.getElementById('panelOverlay').classList.add('active');
 			document.getElementById('userPanel').classList.add('active');
 			document.body.style.overflow = 'hidden';
-
-			isEditMode = mode === 'edit';
 
 			if (isEditMode && userId) {
 				document.getElementById('panelTitle').textContent = 'Kullanici Duzenle';
@@ -371,9 +382,8 @@
 				currentUserId = null;
 				editingUserRole = null;
 				clearForm();
-				// Yeni kullanici eklerkenyetki secimi goster
+				// Yeni kullanici eklerken yetki secimi goster
 				document.getElementById('permissionsSection').style.display = 'block';
-				renderBranchCheckboxes([]);
 			}
 		}
 
@@ -388,6 +398,7 @@
 			document.getElementById('userForm').reset();
 			document.getElementById('userId').value = '';
 			document.getElementById('userActive').checked = true;
+			document.getElementById('canConvertPoints').checked = false;
 			document.getElementById('permissionsSection').style.display = 'none';
 			editingUserRole = null;
 		}
@@ -410,36 +421,8 @@
 			} else {
 				document.getElementById('permissionsSection').style.display = 'block';
 				document.getElementById('activeToggleGroup').style.display = 'flex';
-
-				// Mevcut yetkileri al
-				var branchResult = await CustomerUsersService.getBranchIds(userId);
-				var authorizedBranchIds = branchResult.data || [];
-				renderBranchCheckboxes(authorizedBranchIds);
+				document.getElementById('canConvertPoints').checked = user.can_convert_points || false;
 			}
-		}
-
-		// Sube checkboxlarini render et
-		function renderBranchCheckboxes(authorizedBranchIds) {
-			var container = document.getElementById('branchesList');
-
-			if (allBranches.length === 0) {
-				container.innerHTML = '<p style="font-size: 14px; color: #666; text-align: center;">Henuz sube bulunmuyor</p>';
-				return;
-			}
-
-			var html = '';
-			allBranches.forEach(function(branch) {
-				var isChecked = authorizedBranchIds.includes(branch.id);
-				html += '<label class="permission-item">';
-				html += '<input type="checkbox" name="branchPermission" value="' + branch.id + '"' + (isChecked ? ' checked' : '') + '>';
-				html += '<label>' + branch.branch_name + '</label>';
-				if (branch.is_default) {
-					html += '<span class="branch-badge">Merkez</span>';
-				}
-				html += '</label>';
-			});
-
-			container.innerHTML = html;
 		}
 
 		// Kullanici kaydet
@@ -447,6 +430,7 @@
 			var userName = document.getElementById('userName').value.trim();
 			var userPhone = document.getElementById('userPhone').value.trim().replace(/\D/g, '');
 			var userActive = document.getElementById('userActive').checked;
+			var canConvertPoints = document.getElementById('canConvertPoints').checked;
 
 			if (!userName) {
 				alert('Lutfen kullanici adini girin');
@@ -458,15 +442,47 @@
 				return;
 			}
 
-			// Secili subeleri al
-			var selectedBranches = [];
-			var checkboxes = document.querySelectorAll('input[name="branchPermission"]:checked');
-			checkboxes.forEach(function(cb) {
-				selectedBranches.push(cb.value);
-			});
-
 			var saveBtn = document.querySelector('.save-btn');
 			saveBtn.disabled = true;
+			saveBtn.textContent = 'Kontrol ediliyor...';
+
+			// Telefon numarasinin baska bir kullanicida kayitli olup olmadigini kontrol et
+			var phoneCheckQuery = supabaseClient
+				.from('customer_users')
+				.select('id')
+				.eq('phone', userPhone);
+
+			// Guncelleme modundaysa mevcut kullaniciyi haric tut
+			if (currentUserId) {
+				phoneCheckQuery = phoneCheckQuery.neq('id', currentUserId);
+			}
+
+			var { data: existingUsers, error: phoneCheckError } = await phoneCheckQuery;
+
+			if (phoneCheckError) {
+				console.error('Telefon kontrolu hatasi:', phoneCheckError);
+			} else if (existingUsers && existingUsers.length > 0) {
+				alert('Bu telefon numarasi baska bir kullanici tarafindan kullaniliyor.');
+				saveBtn.disabled = false;
+				saveBtn.textContent = 'Kaydet';
+				return;
+			}
+
+			// Yeni kullanici eklerken maksimum kullanici sayisini kontrol et
+			if (!currentUserId) {
+				var { data: allUsers, error: countError } = await supabaseClient
+					.from('customer_users')
+					.select('id')
+					.eq('customer_id', customerId);
+
+				if (!countError && allUsers && allUsers.length >= MAX_USERS_PER_CUSTOMER) {
+					alert('Maksimum ' + MAX_USERS_PER_CUSTOMER + ' kullanici ekleyebilirsiniz. Yeni kullanici eklemek icin mevcut bir kullaniciyi silmeniz gerekmektedir.');
+					saveBtn.disabled = false;
+					saveBtn.textContent = 'Kaydet';
+					return;
+				}
+			}
+
 			saveBtn.textContent = 'Kaydediliyor...';
 
 			try {
@@ -474,11 +490,18 @@
 
 				if (currentUserId) {
 					// Guncelleme
-					result = await CustomerUsersService.update(currentUserId, {
+					var updateData = {
 						name: userName,
 						phone: userPhone,
 						is_active: userActive
-					});
+					};
+
+					// Eger staff ise can_convert_points yetkisini de guncelle
+					if (editingUserRole === 'staff') {
+						updateData.can_convert_points = canConvertPoints;
+					}
+
+					result = await CustomerUsersService.update(currentUserId, updateData);
 
 					if (result.error) {
 						alert('Kullanici guncellenemedi: ' + result.error.message);
@@ -486,43 +509,15 @@
 						saveBtn.textContent = 'Kaydet';
 						return;
 					}
-
-					// Eger staff ise yetkileri guncelle
-					if (editingUserRole === 'staff') {
-						await CustomerUsersService.updateBranchPermissions(currentUserId, selectedBranches);
-					}
 				} else {
-					// Yeni kullanici - sube basina max 3 kullanici kontrolu
-					var MAX_USERS_PER_BRANCH = 3;
-					for (var i = 0; i < selectedBranches.length; i++) {
-						var branchId = selectedBranches[i];
-						var branchName = allBranches.find(function(b) { return b.id === branchId; });
-						branchName = branchName ? branchName.branch_name : 'Sube';
-
-						// Bu subedeki aktif kullanici sayisini al
-						var { data: branchUsers } = await supabaseClient
-							.from('customer_user_branches')
-							.select('id, customer_user:customer_users(id, is_active)')
-							.eq('branch_id', branchId);
-
-						var activeCount = (branchUsers || []).filter(function(ub) {
-							return ub.customer_user && ub.customer_user.is_active;
-						}).length;
-
-						if (activeCount >= MAX_USERS_PER_BRANCH) {
-							alert('"' + branchName + '" subesinde maksimum ' + MAX_USERS_PER_BRANCH + ' kullanici olabilir. Mevcut: ' + activeCount);
-							saveBtn.disabled = false;
-							saveBtn.textContent = 'Kaydet';
-							return;
-						}
-					}
-
+					// Yeni kullanici
 					result = await CustomerUsersService.create({
 						customer_id: customerId,
 						name: userName,
 						phone: userPhone,
 						role: 'staff',
-						is_active: userActive
+						is_active: userActive,
+						can_convert_points: canConvertPoints
 					});
 
 					if (result.error) {
@@ -530,11 +525,6 @@
 						saveBtn.disabled = false;
 						saveBtn.textContent = 'Kaydet';
 						return;
-					}
-
-					// Yetkileri ekle
-					if (result.data && selectedBranches.length > 0) {
-						await CustomerUsersService.updateBranchPermissions(result.data.id, selectedBranches);
 					}
 				}
 

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Subelerim - Ipragaz IsYerim</title>
+	<title>Adreslerim - Ipragaz IsYerim</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<link rel="stylesheet" href="./css/components/security-overlay.css">
@@ -102,7 +102,7 @@
 		<div class="settings-layout">
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
-				<h1 class="content-title">Subelerim</h1>
+				<h1 class="content-title">Adreslerim</h1>
 				<div id="addresses-container">
 					<div class="loading">Subeler yukleniyor...</div>
 				</div>
@@ -119,7 +119,7 @@
 						<line x1="12" y1="5" x2="12" y2="19"/>
 						<line x1="5" y1="12" x2="19" y2="12"/>
 					</svg>
-					Yeni Sube Ekle
+					Yeni Adres Ekle
 				</button>
 			</div>
 		</div>
@@ -130,7 +130,7 @@
 	<div class="panel-overlay" id="panelOverlay" onclick="closeAddressPanel()"></div>
 	<div class="slide-panel" id="addressPanel">
 		<div class="panel-header">
-			<h2 class="panel-title" id="panelTitle">Sube Ekle</h2>
+			<h2 class="panel-title" id="panelTitle">Adres Ekle</h2>
 			<button class="panel-close" onclick="closeAddressPanel()">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<line x1="18" y1="6" x2="6" y2="18"/>
@@ -184,28 +184,16 @@
 					<input type="text" class="form-input" id="branchDescription" placeholder="Adres tarifi giriniz">
 				</div>
 				<div class="form-group">
-					<label class="form-label">Sube Adi *</label>
+					<label class="form-label">Adres Adı *</label>
 					<input type="text" class="form-input" id="branchName" placeholder="Ornegin: Merkez, Depo, vb." required>
 				</div>
-				<div class="form-group">
-					<label class="form-label">VKN *</label>
-					<input type="text" class="form-input" id="branchVkn" placeholder="Vergi Kimlik Numarasi" maxlength="11" required>
-				</div>
-				<div class="form-group">
+					<div class="form-group">
 					<label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
 						<input type="checkbox" id="isMerkez" style="width: 18px; height: 18px; accent-color: #e31e24;">
-						<span class="form-label" style="margin: 0;">Merkez Sube</span>
+						<span class="form-label" style="margin: 0;">Merkez</span>
 					</label>
 				</div>
-				<div class="form-group">
-					<label class="form-label">Puan Toplama Tercihi</label>
-					<select class="form-input" id="pointsCollectionMode" style="padding: 12px;">
-						<option value="customer">Ana Musteri Hesabinda</option>
-						<option value="branch">Bu Subede</option>
-					</select>
-					<span style="font-size: 12px; color: #888; margin-top: 5px; display: block;">Bu subeden verilen siparislerin puanlari sectiginiz yerde toplanir. Degisiklik sadece gelecek siparisler icin gecerlidir.</span>
-				</div>
-			</form>
+				</form>
 		</div>
 		<div class="panel-footer">
 			<button class="save-btn" onclick="saveAddress()">Kaydet</button>
@@ -455,11 +443,11 @@
 			document.body.style.overflow = 'hidden';
 
 			if (mode === 'edit' && addressId) {
-				document.getElementById('panelTitle').textContent = 'Sube Duzenle';
+				document.getElementById('panelTitle').textContent = 'Adres Düzenle';
 				currentAddressId = addressId;
 				loadAddressData(addressId);
 			} else {
-				document.getElementById('panelTitle').textContent = 'Sube Ekle';
+				document.getElementById('panelTitle').textContent = 'Adres Ekle';
 				currentAddressId = null;
 				clearForm();
 			}
@@ -475,7 +463,6 @@
 		function clearForm() {
 			document.getElementById('addressForm').reset();
 			document.getElementById('addressId').value = '';
-			document.getElementById('branchVkn').value = '';
 			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
 			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
 			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
@@ -516,15 +503,12 @@
 			document.getElementById('apartment').value = addr.apartment || '';
 			document.getElementById('branchDescription').value = addr.branch_description || '';
 			document.getElementById('branchName').value = addr.branch_name || '';
-			document.getElementById('branchVkn').value = addr.vkn || '';
 			document.getElementById('isMerkez').checked = addr.is_default || false;
-			document.getElementById('pointsCollectionMode').value = addr.points_collection_mode || 'customer';
-		}
+					}
 
 		// Sube kaydet
 		async function saveAddress() {
 			var branchName = document.getElementById('branchName').value.trim();
-			var vkn = document.getElementById('branchVkn').value.trim();
 			var cityId = document.getElementById('citySelect').value;
 			var districtId = document.getElementById('districtSelect').value;
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
@@ -541,22 +525,11 @@
 				return;
 			}
 
-			// VKN validasyonu
-			if (!vkn) {
-				alert('VKN zorunludur');
-				return;
-			}
-			if (!/^[0-9]{10,11}$/.test(vkn)) {
-				alert('VKN 10 veya 11 haneli rakam olmalidir');
-				return;
-			}
-
-			var isMerkez = document.getElementById('isMerkez').checked;
+		var isMerkez = document.getElementById('isMerkez').checked;
 
 			var branchData = {
 				customer_id: customerId,
 				branch_name: branchName,
-				vkn: vkn,
 				is_default: isMerkez,
 				// Yeni FK kolonlari
 				city_id: cityId || null,
@@ -573,7 +546,7 @@
 				floor: document.getElementById('floor').value.trim() || null,
 				apartment: document.getElementById('apartment').value.trim() || null,
 				branch_description: document.getElementById('branchDescription').value.trim() || null,
-				points_collection_mode: document.getElementById('pointsCollectionMode').value || 'customer'
+				points_collection_mode: 'customer'
 			};
 
 			var result;

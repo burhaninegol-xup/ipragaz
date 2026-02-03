@@ -33,37 +33,6 @@
 
 		/* Filter Row */
 		.filter-row { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-		.branch-filter-wrapper { position: relative; min-width: 200px; }
-		.branch-filter-btn {
-			display: flex; align-items: center; gap: 8px;
-			padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 8px;
-			background: #fafafa; cursor: pointer; font-family: inherit; font-size: 14px; color: #333;
-			transition: all 0.2s;
-		}
-		.branch-filter-btn:hover { border-color: #e31e24; }
-		.branch-filter-btn svg { width: 18px; height: 18px; color: #e31e24; }
-		.branch-count-badge {
-			background: #e31e24; color: #fff; font-size: 11px; font-weight: 600;
-			padding: 2px 6px; border-radius: 10px; min-width: 20px; text-align: center;
-		}
-		.branch-dropdown {
-			position: absolute; top: calc(100% + 5px); right: 0; min-width: 280px;
-			background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
-			box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 100;
-			display: none; max-height: 300px; overflow: hidden;
-		}
-		.branch-dropdown.active { display: block; }
-		.branch-dropdown-header { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; background: #f9f9f9; }
-		.branch-dropdown-list { max-height: 220px; overflow-y: auto; padding: 8px 0; }
-		.branch-checkbox-item {
-			display: flex; align-items: center; gap: 10px;
-			padding: 10px 15px; cursor: pointer; transition: background 0.2s;
-		}
-		.branch-checkbox-item:hover { background: #f5f5f5; }
-		.branch-checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: #e31e24; cursor: pointer; }
-		.branch-checkbox-item span { font-size: 14px; color: #333; }
-		.branch-checkbox-item.select-all { font-weight: 600; }
-		.branch-checkbox-item.select-all span { color: #e31e24; }
 
 		/* Offers List */
 		.offers-list { display: flex; flex-direction: column; gap: 12px; }
@@ -175,9 +144,6 @@
 		@media (max-width: 600px) {
 			.filter-row { flex-direction: column; align-items: stretch; }
 			.search-box { width: 100%; }
-			.branch-filter-wrapper { width: 100%; min-width: auto; }
-			.branch-filter-btn { width: 100%; justify-content: center; }
-			.branch-dropdown { left: 0; right: 0; min-width: auto; }
 			/* Responsive Offer Card */
 			.offer-card { flex-direction: column; gap: 12px; padding: 16px; }
 			.offer-card-right { flex-direction: row; justify-content: space-between; align-items: center; width: 100%; min-width: auto; }
@@ -194,34 +160,10 @@
 			<div class="settings-content">
 				<h1 class="content-title">Tekliflerim</h1>
 
-				<!-- Filter Row: Search + Branch -->
+				<!-- Search -->
 				<div class="filter-row">
 					<div class="search-box">
 						<input type="text" class="search-input" id="searchInput" placeholder="Teklif ara (bayi adi, urun adi...)" oninput="filterOffers()">
-					</div>
-					<div class="branch-filter-wrapper">
-						<button type="button" class="branch-filter-btn" onclick="toggleBranchDropdown()">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-								<circle cx="12" cy="10" r="3"/>
-							</svg>
-							<span id="branchFilterLabel">Tum Subeler</span>
-							<span class="branch-count-badge" id="branchCountBadge">0</span>
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#666">
-								<polyline points="6 9 12 15 18 9"/>
-							</svg>
-						</button>
-						<div class="branch-dropdown" id="branchDropdown">
-							<div class="branch-dropdown-header">
-								<label class="branch-checkbox-item select-all">
-									<input type="checkbox" id="selectAllBranches" onchange="toggleAllBranches()">
-									<span>Tumunu Sec</span>
-								</label>
-							</div>
-							<div class="branch-dropdown-list" id="branchList">
-								<!-- Dinamik olarak doldurulacak -->
-							</div>
-						</div>
 					</div>
 				</div>
 
@@ -249,7 +191,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/offers-service.js"></script>
-	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
@@ -264,10 +205,6 @@
 		var userRole = null;
 		var allOffers = [];
 		var currentTab = 'all';
-
-		// Sube filtresi icin
-		var allBranches = [];
-		var selectedBranchIds = [];
 
 		// Durum mapping
 		var statusMap = {
@@ -298,20 +235,8 @@
 				setTimeout(function() { if (typeof initSettingsSidebar === 'function') initSettingsSidebar('tekliflerim'); }, 100);
 			} catch (err) { console.error('Sidebar yukleme hatasi:', err); }
 
-			// Sube filtresini yukle
-			await loadBranchFilter();
-
 			// Teklifleri yukle
 			await loadOffers();
-
-			// Dropdown disina tiklaninca kapat
-			document.addEventListener('click', function(e) {
-				var dropdown = document.getElementById('branchDropdown');
-				var btn = document.querySelector('.branch-filter-btn');
-				if (dropdown && !dropdown.contains(e.target) && !btn.contains(e.target)) {
-					dropdown.classList.remove('active');
-				}
-			});
 		});
 
 		async function loadOffers() {
@@ -362,17 +287,6 @@
 				} else {
 					// Spesifik durum
 					if (offer.status !== currentTab) return false;
-				}
-
-				// Sube filtresi (tumu secili degilse uygula)
-				if (selectedBranchIds.length > 0 && selectedBranchIds.length < allBranches.length) {
-					// Eger teklif belirli bir subeye aitse
-					if (offer.customer_branch_id) {
-						if (!selectedBranchIds.includes(offer.customer_branch_id)) {
-							return false;
-						}
-					}
-					// customer_branch_id null ise "Tum Subeler" teklifi - her zaman goster
 				}
 
 				// Arama filtresi
@@ -498,115 +412,6 @@
 				sessionStorage.setItem('selected_address_id', offer.customer_branch_id);
 			}
 			window.location.href = 'isyerim-musteri-teklif-iste.html';
-		}
-
-		// ============================================
-		// SUBE FILTRESI FONKSIYONLARI
-		// ============================================
-
-		async function loadBranchFilter() {
-			try {
-				if (userRole === 'owner') {
-					var result = await BranchesService.getByCustomerId(customerId);
-					allBranches = result.data || [];
-				} else {
-					var result = await CustomerUsersService.getBranches(userId);
-					allBranches = result.data || [];
-				}
-
-				renderBranchDropdown();
-				selectAllBranches();
-			} catch (err) {
-				console.error('Sube listesi yukleme hatasi:', err);
-			}
-		}
-
-		function renderBranchDropdown() {
-			var listContainer = document.getElementById('branchList');
-
-			if (allBranches.length === 0) {
-				listContainer.innerHTML = '<div style="padding:15px;color:#888;text-align:center">Sube bulunamadi</div>';
-				return;
-			}
-
-			var html = '';
-			allBranches.forEach(function(branch) {
-				var branchId = branch.id;
-				var branchName = branch.branch_name || branch.address_name || 'Sube';
-				html += '<label class="branch-checkbox-item">';
-				html += '<input type="checkbox" value="' + branchId + '" onchange="onBranchSelectionChange(\'' + branchId + '\')">';
-				html += '<span>' + branchName + '</span>';
-				html += '</label>';
-			});
-
-			listContainer.innerHTML = html;
-		}
-
-		function toggleBranchDropdown() {
-			var dropdown = document.getElementById('branchDropdown');
-			dropdown.classList.toggle('active');
-		}
-
-		function toggleAllBranches() {
-			var selectAll = document.getElementById('selectAllBranches');
-			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
-
-			checkboxes.forEach(function(cb) {
-				cb.checked = selectAll.checked;
-			});
-
-			if (selectAll.checked) {
-				selectedBranchIds = allBranches.map(function(b) { return b.id; });
-			} else {
-				selectedBranchIds = [];
-			}
-
-			updateBranchFilterLabel();
-			filterOffers();
-		}
-
-		function selectAllBranches() {
-			document.getElementById('selectAllBranches').checked = true;
-			var checkboxes = document.querySelectorAll('#branchList input[type="checkbox"]');
-			checkboxes.forEach(function(cb) { cb.checked = true; });
-			selectedBranchIds = allBranches.map(function(b) { return b.id; });
-			updateBranchFilterLabel();
-		}
-
-		function onBranchSelectionChange(branchId) {
-			var checkbox = document.querySelector('#branchList input[value="' + branchId + '"]');
-
-			if (checkbox.checked) {
-				if (!selectedBranchIds.includes(branchId)) {
-					selectedBranchIds.push(branchId);
-				}
-			} else {
-				selectedBranchIds = selectedBranchIds.filter(function(id) { return id !== branchId; });
-			}
-
-			// Tumunu Sec checkbox'ini guncelle
-			var selectAll = document.getElementById('selectAllBranches');
-			selectAll.checked = selectedBranchIds.length === allBranches.length;
-
-			updateBranchFilterLabel();
-			filterOffers();
-		}
-
-		function updateBranchFilterLabel() {
-			var label = document.getElementById('branchFilterLabel');
-			var badge = document.getElementById('branchCountBadge');
-
-			if (selectedBranchIds.length === 0 || selectedBranchIds.length === allBranches.length) {
-				label.textContent = 'Tum Subeler';
-				badge.textContent = allBranches.length;
-			} else if (selectedBranchIds.length === 1) {
-				var branch = allBranches.find(function(b) { return b.id === selectedBranchIds[0]; });
-				label.textContent = branch ? (branch.branch_name || 'Sube') : 'Sube';
-				badge.textContent = '1';
-			} else {
-				label.textContent = selectedBranchIds.length + ' Sube';
-				badge.textContent = selectedBranchIds.length;
-			}
 		}
 
 		// ============================================

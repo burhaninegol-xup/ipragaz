@@ -222,8 +222,10 @@ function createProductCard(product) {
 				'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
 			'</div>';
 
-		strikeThroughHtml = '<div class="product-original-price"><del>₺' + retailPriceFormatted + '</del></div>';
-		advantageLabelHtml = '<div class="product-advantage-label">Avantajli Fiyat</div>';
+		strikeThroughHtml = '<div class="product-original-price"><del>₺' + retailPriceFormatted + '</del></div>' +
+			'<div class="price-label-below">Tavan Fiyattır</div>';
+		// Avantajlı Fiyat badge'i kaldırıldı - Tavan Fiyattır etiketi kullanılacak
+		advantageLabelHtml = '';
 		cardClass = ' in-offer';
 		buttonHtml = '<button class="btn-add-cart">Sepete Ekle</button>';
 	} else if (branchOfferStatus === 'accepted' && !priceInfo.isInOffer) {
@@ -244,6 +246,12 @@ function createProductCard(product) {
 		cardClass = ' no-offer';
 	}
 
+	// Teklifsiz kartlarda fiyatın altına "Tavan Fiyattır" etiketi ekle
+	var priceLabelBelowHtml = '';
+	if (!priceInfo.isInOffer || branchOfferStatus !== 'accepted') {
+		priceLabelBelowHtml = '<div class="price-label-below">Tavan Fiyattır</div>';
+	}
+
 	return '<div class="product-card' + cardClass + '" data-product-id="' + product.id + '" style="cursor: pointer;">' +
 		campaignBadgeHtml +
 		'<button class="' + favoriteClass + '">' +
@@ -255,7 +263,8 @@ function createProductCard(product) {
 		'<div class="product-name">' + product.name + '</div>' +
 		strikeThroughHtml +
 		advantageLabelHtml +
-		'<div class="product-price">₺' + formattedPrice + ' <span class="price-label ' + priceInfo.cssClass + '">' + priceInfo.label + '</span></div>' +
+		'<div class="product-price">₺' + formattedPrice + '</div>' +
+		priceLabelBelowHtml +
 		buttonHtml +
 	'</div>';
 }
