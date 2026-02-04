@@ -2,13 +2,12 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Bayi Girişi - İpragaz</title>
+	<title>Proje Girişi - İpragaz</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
-	<script src="js/project-auth-check.js"></script>
-	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 
 	<style>
 		* {
@@ -18,8 +17,8 @@
 		}
 
 		body {
-			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-			background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: linear-gradient(135deg, #002c77 0%, #001a4d 100%);
 			min-height: 100vh;
 			display: flex;
 			align-items: center;
@@ -36,7 +35,7 @@
 			background: #fff;
 			border-radius: 20px;
 			padding: 40px;
-			box-shadow: 0 10px 40px rgba(0,44,119,0.12);
+			box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 		}
 
 		.login-header {
@@ -48,8 +47,9 @@
 			margin-bottom: 20px;
 		}
 
-		.login-logo img {
-			height: 50px;
+		.login-logo svg {
+			width: 140px;
+			height: auto;
 		}
 
 		.login-title {
@@ -202,41 +202,6 @@
 				font-size: 20px;
 			}
 		}
-
-		/* Quick Login Section */
-		.quick-login-section {
-			margin-top: 25px;
-			padding-top: 20px;
-			border-top: 1px solid #eee;
-		}
-		.quick-login-title {
-			font-size: 13px;
-			color: #666;
-			margin-bottom: 12px;
-			text-align: center;
-		}
-		.dealer-list {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			max-height: 200px;
-			overflow-y: auto;
-		}
-		.dealer-item {
-			padding: 10px 14px;
-			background: #f8f9fa;
-			border: 1px solid #e0e0e0;
-			border-radius: 8px;
-			cursor: pointer;
-			font-size: 13px;
-			transition: all 0.2s;
-		}
-		.dealer-item:hover {
-			background: #e8f4fd;
-			border-color: #002c77;
-		}
-		.dealer-item .dealer-name { font-weight: 500; color: #1a1a2e; }
-		.dealer-item .dealer-location { font-size: 11px; color: #888; margin-left: 6px; }
 	</style>
 </head>
 
@@ -245,10 +210,14 @@
 		<div class="login-card">
 			<div class="login-header">
 				<div class="login-logo">
-					<img src="./İpragaz Bayi_files/ipragaz-logo.svg" alt="İpragaz">
+					<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="25" cy="25" r="20" fill="none" stroke="#002c77" stroke-width="3"/>
+						<path d="M25 10 L25 25" stroke="#002c77" stroke-width="3" stroke-linecap="round"/>
+						<text x="55" y="32" font-family="Poppins, sans-serif" font-size="24" font-weight="700" fill="#002c77">iPRAGAZ</text>
+					</svg>
 				</div>
-				<h1 class="login-title">Bayi Girişi</h1>
-				<p class="login-subtitle">Bayi panelinize erişmek için giriş yapın</p>
+				<h1 class="login-title">Proje Girişi</h1>
+				<p class="login-subtitle">Projeye erişmek için giriş yapın</p>
 			</div>
 
 			<div class="error-message" id="error-message">
@@ -279,24 +248,15 @@
 				</button>
 			</form>
 
-			<div class="quick-login-section">
-				<p class="quick-login-title">Hızlı Giriş</p>
-				<div class="dealer-list" id="dealer-list">
-					<div style="text-align:center;color:#999;font-size:12px;">Yükleniyor...</div>
-				</div>
-			</div>
-
 			<div class="login-footer">
 				<p>&copy; 2025 İpragaz - Tüm hakları saklıdır</p>
 			</div>
 		</div>
 	</div>
 
-	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
-	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
-	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/project-access-service.js"></script>
 	<script>
 		/**
 		 * SHA-256 hash fonksiyonu (SubtleCrypto API)
@@ -309,53 +269,54 @@
 			return hashHex;
 		}
 
-		$(document).ready(function() {
-			// Zaten giriş yapmışsa anasayfaya yönlendir
-			if (sessionStorage.getItem('bayi_dealer_id')) {
-				window.location.href = 'bayi-anasayfa.html';
+		document.addEventListener('DOMContentLoaded', function() {
+			// Zaten giriş yapmışsa ana sayfaya yönlendir
+			if (sessionStorage.getItem('project_authenticated') === 'true') {
+				window.location.href = 'default.html';
 				return;
 			}
 
-			const $form = $('#login-form');
-			const $username = $('#username');
-			const $password = $('#password');
-			const $loginBtn = $('#login-btn');
-			const $errorMessage = $('#error-message');
-			const $errorText = $('#error-text');
+			const form = document.getElementById('login-form');
+			const usernameInput = document.getElementById('username');
+			const passwordInput = document.getElementById('password');
+			const loginBtn = document.getElementById('login-btn');
+			const errorMessage = document.getElementById('error-message');
+			const errorText = document.getElementById('error-text');
 
 			function showError(message) {
-				$errorText.text(message);
-				$errorMessage.addClass('visible');
-				$username.addClass('error');
-				$password.addClass('error');
+				errorText.textContent = message;
+				errorMessage.classList.add('visible');
+				usernameInput.classList.add('error');
+				passwordInput.classList.add('error');
 			}
 
 			function hideError() {
-				$errorMessage.removeClass('visible');
-				$username.removeClass('error');
-				$password.removeClass('error');
+				errorMessage.classList.remove('visible');
+				usernameInput.classList.remove('error');
+				passwordInput.classList.remove('error');
 			}
 
 			function setLoading(loading) {
 				if (loading) {
-					$loginBtn.addClass('loading').prop('disabled', true);
+					loginBtn.classList.add('loading');
+					loginBtn.disabled = true;
 				} else {
-					$loginBtn.removeClass('loading').prop('disabled', false);
+					loginBtn.classList.remove('loading');
+					loginBtn.disabled = false;
 				}
 			}
 
 			// Input değiştiğinde hata mesajını gizle
-			$username.add($password).on('input', function() {
-				hideError();
-			});
+			usernameInput.addEventListener('input', hideError);
+			passwordInput.addEventListener('input', hideError);
 
 			// Form submit
-			$form.on('submit', async function(e) {
+			form.addEventListener('submit', async function(e) {
 				e.preventDefault();
 				hideError();
 
-				const username = $username.val().trim();
-				const password = $password.val();
+				const username = usernameInput.value.trim();
+				const password = passwordInput.value;
 
 				if (!username || !password) {
 					showError('Kullanıcı adı ve şifre gereklidir');
@@ -369,21 +330,20 @@
 					const passwordHash = await sha256(password);
 
 					// Giriş yap
-					const { data: dealer, error } = await DealersService.login(username, passwordHash);
+					const { data, error } = await ProjectAccessService.login(username, passwordHash);
 
-					if (error || !dealer) {
-						showError(error || 'Kullanıcı adı veya şifre hatalı');
+					if (error || !data) {
+						showError(error || 'Geçersiz kullanıcı adı veya şifre');
 						setLoading(false);
 						return;
 					}
 
 					// Session'a kaydet
-					sessionStorage.setItem('bayi_dealer_id', dealer.id);
-					sessionStorage.setItem('bayi_dealer_name', dealer.name);
-					sessionStorage.setItem('bayi_dealer_code', dealer.code);
+					sessionStorage.setItem('project_authenticated', 'true');
+					sessionStorage.setItem('project_username', data.username);
 
-					// Anasayfaya yönlendir
-					window.location.href = 'bayi-anasayfa.html';
+					// Ana sayfaya yönlendir
+					window.location.href = 'default.html';
 
 				} catch (err) {
 					console.error('Login error:', err);
@@ -391,53 +351,6 @@
 					setLoading(false);
 				}
 			});
-
-			// Enter tuşu ile submit
-			$password.on('keypress', function(e) {
-				if (e.which === 13) {
-					$form.submit();
-				}
-			});
-
-			// Hızlı giriş için bayileri yükle
-			loadDealersForQuickLogin();
-		});
-
-		// Hızlı giriş - bayileri listele
-		async function loadDealersForQuickLogin() {
-			try {
-				const { data: dealers, error } = await DealersService.getAll();
-				if (error || !dealers) return;
-
-				const $list = $('#dealer-list');
-				$list.empty();
-
-				dealers.forEach(dealer => {
-					const location = [dealer.district, dealer.city].filter(Boolean).join(', ');
-					const $item = $(`
-						<div class="dealer-item" data-id="${dealer.id}" data-name="${dealer.name}" data-code="${dealer.code || ''}">
-							<span class="dealer-name">${dealer.name}</span>
-							${location ? `<span class="dealer-location">(${location})</span>` : ''}
-						</div>
-					`);
-					$list.append($item);
-				});
-			} catch (err) {
-				console.error('Bayiler yüklenemedi:', err);
-			}
-		}
-
-		// Bayi tıklama ile hızlı giriş
-		$(document).on('click', '.dealer-item', function() {
-			const id = $(this).data('id');
-			const name = $(this).data('name');
-			const code = $(this).data('code');
-
-			sessionStorage.setItem('bayi_dealer_id', id);
-			sessionStorage.setItem('bayi_dealer_name', name);
-			sessionStorage.setItem('bayi_dealer_code', code || '');
-
-			window.location.href = 'bayi-anasayfa.html';
 		});
 	</script>
 </body>

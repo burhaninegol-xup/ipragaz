@@ -44,11 +44,11 @@ const PointsService = {
                 .from('customer_points')
                 .select('id')
                 .eq('order_id', orderId)
-                .single();
+                .limit(1);
 
-            if (existingPoints) {
+            if (existingPoints && existingPoints.length > 0) {
                 // Zaten puan verilmis, hata donme
-                return { data: existingPoints, error: null };
+                return { data: existingPoints[0], error: null };
             }
 
             // Toplam puani hesapla
@@ -557,12 +557,13 @@ const PointsService = {
             }
 
             // Verilmemis, 200 puan ekle
+            // Hosgeldin puani siparise bagli degil, musteriye verilen hediye puanidir
             const { data: welcomeRecord, error: insertError } = await supabaseClient
                 .from('customer_points')
                 .insert([{
                     customer_id: customerId,
                     customer_branch_id: branchId,
-                    order_id: orderId,
+                    order_id: null,  // Hosgeldin puani siparise bagli degil
                     dealer_id: dealerId,
                     points: 200,
                     description: 'Hediye Puani'
@@ -575,7 +576,7 @@ const PointsService = {
                 return { awarded: false, error: insertError };
             }
 
-            console.log('200 Hosgeldin puani eklendi, customer_id:', customerId, 'order_id:', orderId);
+            console.log('200 Hosgeldin puani eklendi, customer_id:', customerId);
             return { awarded: true, error: null };
         } catch (error) {
             console.error('Award welcome points error:', error);

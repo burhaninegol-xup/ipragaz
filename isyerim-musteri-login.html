@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>İşyerim Giriş - İpragaz</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<style>
 		* {
@@ -427,7 +428,7 @@
 
 		// Müşteriyi kalıcı olarak sil (hard delete)
 		async function hardDeleteCustomer(customer) {
-			var confirmed = confirm('DİKKAT!\n\n"' + customer.name + '" müşterisi ve tüm verileri (kullanıcılar, şubeler, puanlar) kalıcı olarak silinecek.\n\nBu işlem geri alınamaz!\n\nEmin misiniz?');
+			var confirmed = confirm('DİKKAT!\n\n"' + customer.name + '" müşterisi ve tüm verileri (kullanıcılar, şubeler, siparişler, puanlar) kalıcı olarak silinecek.\n\nBu işlem geri alınamaz!\n\nEmin misiniz?');
 			if (!confirmed) return;
 
 			try {
@@ -465,7 +466,13 @@
 					.delete()
 					.eq('customer_id', customer.id);
 
-				// 5. Müşteriyi sil
+				// 5. Siparişleri sil (orders_customer_id_fkey constraint için)
+				await supabaseClient
+					.from('orders')
+					.delete()
+					.eq('customer_id', customer.id);
+
+				// 6. Müşteriyi sil
 				const { error } = await supabaseClient
 					.from('customers')
 					.delete()

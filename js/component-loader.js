@@ -761,35 +761,9 @@ const ComponentLoader = {
         var customerId = sessionStorage.getItem('isyerim_customer_id');
         var branchChanged = false;
 
-        // Staff kullanici icin yetki kontrolu
-        if (userRole === 'staff' && userId && typeof CustomerUsersService !== 'undefined') {
-            try {
-                var result = await CustomerUsersService.getBranches(userId);
-
-                if (!result.error && result.data && result.data.length > 0) {
-                    var authorizedBranches = result.data;
-                    var authorizedIds = authorizedBranches.map(function(b) { return b.id; });
-
-                    // Secili sube yetkili mi kontrol et
-                    if (!savedId || authorizedIds.indexOf(savedId) === -1) {
-                        // Yetkisiz veya secim yok - ilk yetkili subeyi sec
-                        var firstBranch = authorizedBranches[0];
-                        savedId = firstBranch.id;
-                        savedName = firstBranch.branch_name;
-
-                        // SessionStorage'i guncelle
-                        sessionStorage.setItem('selected_address_id', savedId);
-                        sessionStorage.setItem('selected_address_name', savedName);
-                        branchChanged = true;
-                    }
-                }
-            } catch (e) {
-                console.warn('Staff sube yetki kontrolu hatasi:', e);
-            }
-        }
-        // Owner kullanici icin sube atama
+        // Tum kullanicilar (staff ve owner) icin sube atama
         // Oncelik sirasi: 1) last_selected_branch_id (DB), 2) is_default=true (Merkez sube)
-        else if (userRole === 'owner' && customerId && !savedId && typeof BranchesService !== 'undefined') {
+        if (customerId && !savedId && typeof BranchesService !== 'undefined') {
             try {
                 // 1. Kullanicinin son sectigi subeyi veritabanindan al
                 if (userId && typeof CustomerUsersService !== 'undefined') {
@@ -806,7 +780,7 @@ const ComponentLoader = {
                             sessionStorage.setItem('selected_address_id', savedId);
                             sessionStorage.setItem('selected_address_name', savedName);
                             branchChanged = true;
-                            console.log('Owner icin son secilen sube yuklendi:', savedName);
+                            console.log('Kullanici icin son secilen sube yuklendi:', savedName);
                         }
                     }
                 }
@@ -822,11 +796,11 @@ const ComponentLoader = {
                         sessionStorage.setItem('selected_address_id', savedId);
                         sessionStorage.setItem('selected_address_name', savedName);
                         branchChanged = true;
-                        console.log('Owner icin Merkez sube atandi:', savedName);
+                        console.log('Kullanici icin Merkez sube atandi:', savedName);
                     }
                 }
             } catch (e) {
-                console.warn('Owner sube yukleme hatasi:', e);
+                console.warn('Sube yukleme hatasi:', e);
             }
         }
 
@@ -1276,24 +1250,16 @@ window.openAddressModal = async function() {
     var addresses = [];
     var result;
 
-    // Staff kullanicilar icin sadece yetkili subeleri goster
-    if (userRole === 'staff' && userId && typeof CustomerUsersService !== 'undefined') {
-        result = await CustomerUsersService.getBranches(userId);
-        if (!result.error && result.data) {
-            addresses = result.data;
+    // Tum kullanicilar (staff ve owner) musterinin tum subelerine erisebilir
+    if (typeof AddressesService === 'undefined') {
+        if (listContainer) {
+            listContainer.innerHTML = '<div class="address-empty">Sube servisi yuklenemedi</div>';
         }
-    } else {
-        // Owner veya fallback - tum subeleri goster
-        if (typeof AddressesService === 'undefined') {
-            if (listContainer) {
-                listContainer.innerHTML = '<div class="address-empty">Sube servisi yuklenemedi</div>';
-            }
-            return;
-        }
-        result = await AddressesService.getByCustomerId(customerId);
-        if (!result.error && result.data) {
-            addresses = result.data;
-        }
+        return;
+    }
+    result = await AddressesService.getByCustomerId(customerId);
+    if (!result.error && result.data) {
+        addresses = result.data;
     }
 
     if (result && result.error) {
@@ -1305,13 +1271,7 @@ window.openAddressModal = async function() {
 
     if (addresses.length === 0) {
         if (listContainer) {
-            var emptyMessage = 'Henuz kayitli subeniz yok.';
-            // Staff kullanicilar icin farkli mesaj
-            if (userRole === 'staff') {
-                emptyMessage = 'Yetkili oldugunuz sube bulunmuyor.<br>Lutfen yonetici ile iletisime gecin.';
-            } else {
-                emptyMessage += '<br><a href="isyerim-musteri-adreslerim.html">Sube eklemek icin tiklayin</a>';
-            }
+            var emptyMessage = 'Henuz kayitli subeniz yok.<br><a href="isyerim-musteri-adreslerim.html">Sube eklemek icin tiklayin</a>';
             listContainer.innerHTML = '<div class="address-empty">' + emptyMessage + '</div>';
         }
         return;
@@ -1574,7 +1534,7 @@ window.openDealerModal = async function() {
         html += '<div class="dealer-locked-notice" style="padding: 12px 16px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin-bottom: 12px; font-size: 14px; color: #856404;">';
         html += '<div style="display: flex; align-items: center; gap: 8px;">';
         html += '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
-        html += '<span><strong>Aktif teklif surecinde</strong> - Bu sube icin aktif teklif oldugu icin sadece teklif bayisi ile calisabilirsiniz.</span>';
+        html += '<span>Aktif teklif sürecinde olduğunuz bayiniz</span>';
         html += '</div></div>';
     }
     // ===== BANNER SONU =====

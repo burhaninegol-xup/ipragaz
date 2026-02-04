@@ -44,7 +44,8 @@
       "Bash(du:*)",
       "Bash(lsof:*)",
       "Bash(kill:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(shasum:*)"
     ]
   }
 }

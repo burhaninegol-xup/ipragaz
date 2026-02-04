@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Üye Ol - İpragaz</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<link rel="stylesheet" href="css/components/security-overlay.css">
 	<link rel="stylesheet" href="css/components/vkn-duplicate-overlay.css">
@@ -18,7 +19,12 @@
 		body {
 			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			min-height: 100vh;
-			background-color: #f5f5f5;
+			background-color: #e31e24;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			overflow-x: hidden;
 		}
 
 		a {
@@ -26,12 +32,47 @@
 			color: inherit;
 		}
 
+		/* B Pattern Background */
+		.bg-pattern {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			pointer-events: none;
+		}
+
+		.bg-pattern::before {
+			content: 'B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B';
+			position: absolute;
+			top: -50px;
+			left: -50px;
+			width: calc(100% + 100px);
+			height: calc(100% + 100px);
+			font-size: 80px;
+			font-weight: 700;
+			color: rgba(255, 255, 255, 0.08);
+			word-spacing: 30px;
+			line-height: 1.2;
+			letter-spacing: 20px;
+			word-break: break-all;
+		}
+
+		/* Login Container */
+		.login-container {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			max-width: 480px;
+			padding: 20px;
+		}
+
 		/* Card Container */
-		.card {
+		.login-card {
 			background: #fff;
 			border-radius: 16px;
 			width: 100%;
-			max-width: 480px;
 			padding: 40px;
 			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 		}
@@ -356,24 +397,27 @@
 
 		/* Responsive */
 		@media (max-width: 520px) {
-			.card {
+			.login-card {
 				padding: 30px 20px;
 			}
 
 			.slide-panel {
 				max-width: 100%;
 			}
+
+			.bg-pattern::before {
+				font-size: 50px;
+			}
 		}
 	</style>
 </head>
 <body>
-	<!-- Top Bar (Component) -->
-	<div id="isyerim-top-bar"></div>
+	<!-- Background Pattern -->
+	<div class="bg-pattern"></div>
 
-	<!-- Header (Component) -->
-	<div id="isyerim-header"></div>
-
-	<div class="card" style="margin: 30px auto;">
+	<!-- Login Container -->
+	<div class="login-container">
+		<div class="login-card">
 		<!-- Logo -->
 		<div class="logo">
 			<svg viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
@@ -409,7 +453,12 @@
 			</div>
 
 			<div class="form-group">
-				<label class="form-label required">İl</label>
+				<div style="display: flex; justify-content: space-between; align-items: center;">
+					<label class="form-label required">İl</label>
+					<a href="#" id="fillByLocationLink" onclick="fillByLocation(); return false;" style="font-size: 12px; color: #e31e24; text-decoration: none;">
+						📍 Konumuma Göre Doldur
+					</a>
+				</div>
 				<select class="form-select" id="citySelect" onchange="loadDistricts()">
 					<option value="">İl Seçiniz</option>
 				</select>
@@ -417,8 +466,15 @@
 
 			<div class="form-group">
 				<label class="form-label required">İlçe</label>
-				<select class="form-select" id="districtSelect" disabled>
+				<select class="form-select" id="districtSelect" onchange="loadNeighborhoods()" disabled>
 					<option value="">Önce il seçiniz</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label class="form-label">Mahalle</label>
+				<select class="form-select" id="neighborhoodSelect" disabled>
+					<option value="">Önce ilçe seçiniz</option>
 				</select>
 			</div>
 
@@ -488,10 +544,8 @@
 			<!-- Submit Button -->
 			<button type="submit" class="btn-submit">Devam</button>
 		</form>
+		</div>
 	</div>
-
-	<!-- Footer (Component) -->
-	<div id="isyerim-footer"></div>
 
 	<!-- Üyelik Sözleşmesi Panel -->
 	<div class="panel-overlay" id="sozlesmePanel">
@@ -577,8 +631,6 @@
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/services/locations-service.js"></script>
-	<!-- Component Loader -->
-	<script src="./js/component-loader.js"></script>
 
 	<script>
 		// CAPTCHA
@@ -689,15 +741,21 @@
 		async function loadDistricts() {
 			var citySelect = document.getElementById('citySelect');
 			var districtSelect = document.getElementById('districtSelect');
+			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
 			var cityId = citySelect.value;
 
 			if (!cityId) {
 				districtSelect.innerHTML = '<option value="">Önce il seçiniz</option>';
 				districtSelect.disabled = true;
+				neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+				neighborhoodSelect.disabled = true;
 				return;
 			}
 
 			districtSelect.innerHTML = '<option value="">İlçe Yükleniyor...</option>';
+			neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+			neighborhoodSelect.disabled = true;
+
 			var result = await LocationsService.getDistrictsByCityId(cityId);
 			districtSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
 			districtSelect.disabled = false;
@@ -706,8 +764,71 @@
 			});
 		}
 
+		// Mahalleleri yukle
+		async function loadNeighborhoods() {
+			var districtSelect = document.getElementById('districtSelect');
+			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+			var districtId = districtSelect.value;
+
+			if (!districtId) {
+				neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+				neighborhoodSelect.disabled = true;
+				return;
+			}
+
+			neighborhoodSelect.innerHTML = '<option value="">Mahalle Yükleniyor...</option>';
+			var result = await LocationsService.getNeighborhoodsByDistrictId(districtId);
+
+			if (result.data && result.data.length > 0) {
+				neighborhoodSelect.innerHTML = '<option value="">Mahalle Seçiniz (Opsiyonel)</option>';
+				neighborhoodSelect.disabled = false;
+				result.data.forEach(function(n) {
+					neighborhoodSelect.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
+				});
+			} else {
+				neighborhoodSelect.innerHTML = '<option value="">Mahalle bulunamadı</option>';
+				neighborhoodSelect.disabled = true;
+			}
+		}
+
 		// Sayfa yuklendiginde illeri getir
 		loadCities();
+
+		// Konumuma gore doldur - simdilik sabit Istanbul - Kadikoy - Fenerbahce
+		async function fillByLocation() {
+			var citySelect = document.getElementById('citySelect');
+			var districtSelect = document.getElementById('districtSelect');
+			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+
+			// Istanbul'u bul ve sec
+			var istanbulOption = Array.from(citySelect.options).find(function(opt) {
+				return opt.text === 'İstanbul' || opt.text === 'ISTANBUL' || opt.text === 'Istanbul';
+			});
+
+			if (istanbulOption) {
+				citySelect.value = istanbulOption.value;
+				await loadDistricts();
+
+				// Kadikoy'u bul ve sec
+				var kadikoyOption = Array.from(districtSelect.options).find(function(opt) {
+					return opt.text === 'Kadıköy' || opt.text === 'KADIKÖY' || opt.text === 'Kadikoy';
+				});
+
+				if (kadikoyOption) {
+					districtSelect.value = kadikoyOption.value;
+					await loadNeighborhoods();
+
+					// Fenerbahce'yi bul ve sec
+					var fenerbahceOption = Array.from(neighborhoodSelect.options).find(function(opt) {
+						return opt.text === 'Fenerbahçe' || opt.text === 'FENERBAHÇE' || opt.text === 'Fenerbahce';
+					});
+
+					if (fenerbahceOption) {
+						neighborhoodSelect.value = fenerbahceOption.value;
+					}
+				}
+			}
+		}
 
 		// Form submission
 		document.getElementById('registerForm').addEventListener('submit', async function(e) {
@@ -753,7 +874,8 @@
 				// Bayi tarafından oluşturulmuş ama müşteri henüz kayıt olmamış
 				if (existingCustomer.data.registration_status === 'dealer_created') {
 					// GÜNCELLEME MODU: Mevcut kaydı güncelle, yeni kayıt açma
-					await updateDealerCreatedCustomer(existingCustomer.data, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect);
+					var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+					await updateDealerCreatedCustomer(existingCustomer.data, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect, neighborhoodSelect);
 					return;
 				}
 				// Normal duplicate - uyarı göster
@@ -832,14 +954,18 @@
 				// Merkez subesi olustur
 				var cityOption = citySelect.options[citySelect.selectedIndex];
 				var districtOption = districtSelect.options[districtSelect.selectedIndex];
+				var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+				var neighborhoodOption = neighborhoodSelect.value ? neighborhoodSelect.options[neighborhoodSelect.selectedIndex] : null;
 
 				var branchData = {
 					customer_id: customer.id,
 					branch_name: 'Merkez',
 					city_id: citySelect.value,
 					district_id: districtSelect.value,
+					neighborhood_id: neighborhoodSelect.value || null,
 					city: cityOption.getAttribute('data-name'),
 					district: districtOption.getAttribute('data-name'),
+					neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null,
 					is_default: true
 				};
 				var branchResult = await BranchesService.create(branchData);
@@ -932,7 +1058,7 @@
 		}
 
 		// Bayi tarafından oluşturulan müşteriyi güncelle
-		async function updateDealerCreatedCustomer(existingCustomer, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect) {
+		async function updateDealerCreatedCustomer(existingCustomer, vergiNo, sektor, email, sirketUnvani, ad, soyad, tabelaUnvani, citySelect, districtSelect, neighborhoodSelect) {
 			// Submit butonunu devre dışı bırak
 			var submitBtn = document.querySelector('.btn-submit');
 			submitBtn.disabled = true;
@@ -987,6 +1113,7 @@
 				var branchesResult = await BranchesService.getByCustomerId(customer.id);
 				var cityOption = citySelect.options[citySelect.selectedIndex];
 				var districtOption = districtSelect.options[districtSelect.selectedIndex];
+				var neighborhoodOption = neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.options[neighborhoodSelect.selectedIndex] : null;
 
 				if (!branchesResult.data || branchesResult.data.length === 0) {
 					// Şube yok, merkez şubesi oluştur
@@ -995,8 +1122,10 @@
 						branch_name: 'Merkez',
 						city_id: citySelect.value,
 						district_id: districtSelect.value,
+						neighborhood_id: neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.value : null,
 						city: cityOption.getAttribute('data-name'),
 						district: districtOption.getAttribute('data-name'),
+						neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null,
 						is_default: true
 					};
 					var branchResult = await BranchesService.create(branchData);
@@ -1015,8 +1144,10 @@
 					await BranchesService.update(defaultBranch.id, {
 						city_id: citySelect.value,
 						district_id: districtSelect.value,
+						neighborhood_id: neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.value : null,
 						city: cityOption.getAttribute('data-name'),
-						district: districtOption.getAttribute('data-name')
+						district: districtOption.getAttribute('data-name'),
+						neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null
 					});
 				}
 
