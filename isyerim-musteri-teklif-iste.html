@@ -34,19 +34,6 @@
 					<p class="status-message" id="statusMessage">Teklif talebiniz bayiye iletildi</p>
 					<div class="status-dealer" id="statusDealer">
 						<span>Bayi:</span> <strong id="statusDealerName">-</strong>
-						<!-- Şube bilgisi inline -->
-						<span class="dealer-branch-separator" id="branchSeparator" style="display: none;">|</span>
-						<span class="branch-inline" id="branchInline" style="display: none;">
-							<svg viewBox="0 0 24 24" fill="currentColor">
-								<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-							</svg>
-							<span id="branchDisplayText">-</span>
-						</span>
-						<!-- Tooltip -->
-						<div class="branch-tooltip" id="branchTooltip">
-							<div class="branch-tooltip-header">Teklif Gecerli Subeler</div>
-							<ul class="branch-tooltip-list" id="branchTooltipList"></ul>
-						</div>
 					</div>
 				</div>
 				<div class="offer-buttons">
@@ -61,34 +48,11 @@
 						<span class="countdown-label">Onay Vermeniz için Kalan Süre:</span>
 						<span class="countdown-timer" id="offerCountdownTimer">72:00:00</span>
 					</div>
-					<button class="btn-extend-branch-sm" id="btnExtendBranchInline" style="display: none;">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M12 5v14M5 12h14"/>
-						</svg>
-						Baska Subeye Uygula
-					</button>
 				</div>
 			</div>
 
 			<!-- Main Column -->
 			<div class="main-column">
-				<!-- Branch Extension Section (sadece accepted status'ta görünür) -->
-				<div class="branch-extension-section" id="branchExtensionSection" style="display: none;">
-					<div class="branch-extension-header">
-						<svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-						<span class="branch-extension-title">Teklifi Başka Şubeye Uygula</span>
-					</div>
-					<div class="current-branch-info" id="currentBranchInfo">
-						Bu teklif <strong id="currentBranchName">-</strong> şubesi için geçerlidir.
-					</div>
-					<button class="btn-extend-branch" id="btnExtendBranch">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M12 5v14M5 12h14"/>
-						</svg>
-						Başka Şubeye Uygula
-					</button>
-				</div>
-
 				<!-- Info Card -->
 				<div class="info-card">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -362,29 +326,6 @@
 		</div>
 	</div>
 
-	<!-- Branch Select Overlay -->
-	<div class="branch-select-overlay" id="branchSelectOverlay">
-		<div class="branch-select-modal">
-			<div class="branch-select-header">
-				<h3>Şube Seçin</h3>
-				<button class="branch-modal-close" id="branchModalClose">
-					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<line x1="18" y1="6" x2="6" y2="18"/>
-						<line x1="6" y1="6" x2="18" y2="18"/>
-					</svg>
-				</button>
-			</div>
-			<p class="branch-select-description">Teklifin uygulanmasını istediğiniz şubeyi seçin. Bayi onayladıktan sonra seçilen şube için de aynı fiyatlar geçerli olacaktır.</p>
-			<div class="branch-list" id="branchList">
-				<div class="no-branches-message">Şubeler yükleniyor...</div>
-			</div>
-			<div class="branch-modal-actions">
-				<button class="btn-modal-cancel" id="branchModalCancel">İptal</button>
-				<button class="btn-modal-confirm" id="branchModalConfirm" disabled>Talep Gönder</button>
-			</div>
-		</div>
-	</div>
-
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
@@ -398,6 +339,7 @@
 	<script src="./js/services/messages-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
+	<script src="./js/services/cart-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/isyerim-musteri-teklif-iste.js"></script>
 </body>

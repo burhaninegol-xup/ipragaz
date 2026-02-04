@@ -17,8 +17,6 @@
 		var isLoading = false;
 		var messageSubscription = null;
 		var currentUserType = 'dealer';
-		var selectedBranchId = null; // Secili sube ID
-		var customerBranches = []; // Musterinin bayi coverage'indaki subeleri
 		var countdownInterval = null; // 24 saat geri sayim interval
 		var countdownEndTime = null; // Geri sayim bitis zamani
 
@@ -48,62 +46,6 @@
 			$('#error-toast').fadeIn(300);
 			setTimeout(function() { $('#error-toast').fadeOut(300); }, 4000);
 		}
-
-		// Musterinin bayi coverage'indaki subelerini yukle
-		async function loadCustomerBranches(customerId) {
-			try {
-				const { data: branches, error } = await BranchesService.getByCustomerIdInDealerCoverage(customerId, currentDealerId);
-
-				if (error) {
-					console.error('Sube yukleme hatasi:', error);
-					return;
-				}
-
-				customerBranches = branches || [];
-				var $select = $('#branch-select');
-				$select.empty().append('<option value="">Şube seçiniz...</option>');
-
-				if (customerBranches.length === 0) {
-					$('#branch-selector').addClass('visible');
-					$select.hide();
-					$('#no-branches-message').show();
-					// ÜRÜNLERİ VE FORM ACTIONS'I GİZLE
-					$('#products-form').removeClass('visible');
-					$('#form-actions').hide();
-					$('#city-district-selector').hide();
-					$('#existing-notice').removeClass('visible');
-					$('#passive-status-banner').removeClass('visible');
-					return;
-				}
-
-				customerBranches.forEach(function(branch) {
-					var label = branch.branch_name || branch.full_address || 'Şube';
-					if (branch.is_default) label += ' (Varsayılan)';
-					$select.append('<option value="' + branch.id + '">' + label + '</option>');
-				});
-
-				$select.show();
-				$('#no-branches-message').hide();
-				$('#branch-selector').addClass('visible');
-
-				// Varsayilan subeyi sec
-				var defaultBranch = customerBranches.find(function(b) { return b.is_default; });
-				if (defaultBranch) {
-					$select.val(defaultBranch.id);
-					selectedBranchId = defaultBranch.id;
-				} else if (customerBranches.length === 1) {
-					$select.val(customerBranches[0].id);
-					selectedBranchId = customerBranches[0].id;
-				}
-			} catch (err) {
-				console.error('Sube yukleme hatasi:', err);
-			}
-		}
-
-		// Sube secimi degistiginde
-		$('#branch-select').on('change', function() {
-			selectedBranchId = $(this).val() || null;
-		});
 
 		// İl değişince ilçeleri yükle (yeni müşteri için) - Sadece bayinin mikropazarlarındaki ilçeler
 		$('#new-customer-city').on('change', async function() {
@@ -280,15 +222,6 @@
 				// Save buton metnini guncelle
 				updateSaveButtonText();
 
-				// Musterinin bayi coverage'indaki subelerini yukle
-				await loadCustomerBranches(offer.customer.id);
-
-				// Mevcut teklifin sube bilgisini sec
-				if (offer.customer_branch_id && customerBranches.length > 0) {
-					$('#branch-select').val(offer.customer_branch_id);
-					selectedBranchId = offer.customer_branch_id;
-				}
-
 				// Chat'i baslat
 				initializeChat();
 
@@ -448,14 +381,10 @@
 						// Şubesi var mı kontrol et
 						const { data: existingBranches } = await BranchesService.getByCustomerId(existingCustomer.id);
 						if (existingBranches && existingBranches.length > 0) {
-							// Şube var, dropdown'a yükle
-							customerBranches = existingBranches;
-							loadBranchDropdown(existingBranches);
-							$('#branch-selector').addClass('visible');
+							// Şube var - teklifler artık müşteri bazlı
 							$('#city-district-selector').hide();
 						} else {
 							// Şube yok, il/ilçe seçim formu göster
-							$('#branch-selector').removeClass('visible');
 							showCityDistrictSelector();
 						}
 
@@ -468,7 +397,6 @@
 						currentCustomer = null;
 						isEditMode = false;
 
-						$('#branch-selector').removeClass('visible');
 						showCityDistrictSelector();
 
 						await showNewCustomerForm(vkn, null);
@@ -545,11 +473,8 @@
 
 				currentCustomer = customer;
 				isEditMode = true;
-				customerBranches = availableBranches;
 
-				// Dropdown'a şubeleri yükle
-				loadBranchDropdown(availableBranches);
-				$('#branch-selector').addClass('visible');
+				// Teklifler artık müşteri bazlı - şube seçimi yok
 				$('#city-district-selector').hide();
 
 				// Bu bayi-müşteri için en son teklifi çek
@@ -679,31 +604,6 @@
 			}
 		}
 
-		// Şubeleri dropdown'a yükle
-		function loadBranchDropdown(branches) {
-			var $select = $('#branch-select');
-			$select.empty().append('<option value="">Şube seçiniz...</option>');
-
-			branches.forEach(function(branch) {
-				var label = branch.branch_name || branch.full_address || 'Şube';
-				if (branch.is_default) label += ' (Varsayılan)';
-				$select.append('<option value="' + branch.id + '">' + label + '</option>');
-			});
-
-			$select.show();
-			$('#no-branches-message').hide();
-
-			// Varsayilan subeyi sec
-			var defaultBranch = branches.find(function(b) { return b.is_default; });
-			if (defaultBranch) {
-				$select.val(defaultBranch.id);
-				selectedBranchId = defaultBranch.id;
-			} else if (branches.length === 1) {
-				$select.val(branches[0].id);
-				selectedBranchId = branches[0].id;
-			}
-		}
-
 		// İl/İlçe seçici göster
 		function showCityDistrictSelector() {
 			$('#city-district-selector').show();
@@ -744,7 +644,6 @@
 		// Yeni müşteri formu göster
 		async function showNewCustomerForm(vkn, existingCustomer) {
 			currentOffer = null;
-			selectedBranchId = null;
 
 			// Save buton metnini guncelle
 			updateSaveButtonText();
@@ -794,7 +693,6 @@
 			);
 			$('#products-form').removeClass('visible');
 			$('#form-actions').hide();
-			$('#branch-selector').removeClass('visible');
 			$('#city-district-selector').hide();
 			$('#existing-notice').removeClass('visible');
 			$('#passive-status-banner').removeClass('visible');
@@ -809,7 +707,6 @@
 			);
 			$('#products-form').removeClass('visible');
 			$('#form-actions').hide();
-			$('#branch-selector').removeClass('visible');
 			$('#city-district-selector').hide();
 			$('#existing-notice').removeClass('visible');
 			$('#passive-status-banner').removeClass('visible');
@@ -1248,9 +1145,7 @@
 		function populateOfferPreview() {
 			// Müşteri bilgisi
 			var customerName = $('#customer-name').text();
-			var branchName = $('#branch-select option:selected').text();
 			$('#preview-customer-name').text(customerName);
-			$('#preview-customer-branch').text(branchName !== 'Şube seçiniz...' ? branchName : '');
 
 			// Ürün listesi
 			var productsHtml = '';
@@ -1367,7 +1262,7 @@
 
 			try {
 				var customerId;
-				var branchIdToUse = selectedBranchId;
+				var branchIdToUse = null; // Teklifler artık müşteri bazlı, şube bağımsız
 
 				// Yeni müşteri mi yoksa mevcut mu?
 				if (!isEditMode || !currentCustomer) {
@@ -1419,13 +1314,7 @@
 					currentCustomer = newCustomer;
 				} else {
 					customerId = currentCustomer.id;
-
-					// Mevcut müşteri - şube seçimi kontrolü
-					if (!branchIdToUse && customerBranches.length > 0) {
-						hideLoading();
-						showError('Lütfen teklif verilecek şubeyi seçiniz.');
-						return;
-					}
+					// Teklifler artık müşteri bazlı, şube bağımsız
 				}
 
 				// Teklif detaylarını topla - yeni fiyatlandırma yapısı ile
@@ -1505,7 +1394,7 @@
 						const offerData = {
 							dealer_id: currentDealerId,
 							customer_id: customerId,
-							customer_branch_id: branchIdToUse || null,
+							customer_branch_id: branchIdToUse, // Yeni müşteri için şube ID, mevcut müşteri için null (teklifler müşteri bazlı)
 							status: saveAsAccepted ? 'accepted' : 'pending',
 							notes: 'Bayi panelinden oluşturuldu'
 						};

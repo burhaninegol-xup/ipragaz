@@ -26,8 +26,8 @@ const PriceResolverService = {
      */
     async resolvePrice(productId, customerId, branchId, dealerId, basePrice) {
         try {
-            // 1. Aktif teklif kontrolu
-            if (customerId && branchId && dealerId) {
+            // 1. Aktif teklif kontrolu (musteri bazli - branchId artik gerekli degil)
+            if (customerId && dealerId) {
                 var offerPrice = await this._getOfferPrice(productId, customerId, branchId, dealerId);
                 if (offerPrice !== null) {
                     return {
@@ -73,9 +73,9 @@ const PriceResolverService = {
         var cityPrices = {};
 
         try {
-            // 1. Aktif teklif fiyatlarini al (tek sorguda)
-            if (customerId && branchId && dealerId) {
-                offerPrices = await this._getOfferPricesForBranch(customerId, branchId, dealerId);
+            // 1. Aktif teklif fiyatlarini al (tek sorguda) - musteri bazli
+            if (customerId && dealerId) {
+                offerPrices = await this._getOfferPricesForCustomer(customerId, dealerId);
             }
 
             // 2. Sehir bazli perakende fiyatlarini al
@@ -170,12 +170,13 @@ const PriceResolverService = {
     },
 
     /**
-     * Tekliften urun fiyatini al
+     * Tekliften urun fiyatini al (musteri bazli)
      * @private
      */
     async _getOfferPrice(productId, customerId, branchId, dealerId) {
         try {
-            var result = await OffersService.getAcceptedOfferForBranch(dealerId, customerId, branchId);
+            // Musteri bazli teklif sistemi - getAcceptedOffer kullan
+            var result = await OffersService.getAcceptedOffer(dealerId, customerId);
 
             if (result.error || !result.data) {
                 return null;
@@ -199,14 +200,15 @@ const PriceResolverService = {
     },
 
     /**
-     * Sube icin tum teklif fiyatlarini al (toplu)
+     * Musteri icin tum teklif fiyatlarini al (toplu) - musteri bazli
      * @private
      */
-    async _getOfferPricesForBranch(customerId, branchId, dealerId) {
+    async _getOfferPricesForCustomer(customerId, dealerId) {
         var prices = {};
 
         try {
-            var result = await OffersService.getAcceptedOfferForBranch(dealerId, customerId, branchId);
+            // Musteri bazli teklif sistemi - getAcceptedOffer kullan
+            var result = await OffersService.getAcceptedOffer(dealerId, customerId);
 
             if (result.error || !result.data) {
                 return prices;
@@ -223,7 +225,7 @@ const PriceResolverService = {
 
             return prices;
         } catch (error) {
-            console.error('_getOfferPricesForBranch error:', error);
+            console.error('_getOfferPricesForCustomer error:', error);
             return prices;
         }
     },

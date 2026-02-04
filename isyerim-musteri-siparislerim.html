@@ -224,7 +224,7 @@
 								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
 								<circle cx="12" cy="10" r="3"/>
 							</svg>
-							<span id="branchFilterLabel">Tum Subeler</span>
+							<span id="branchFilterLabel">Tum Adresler</span>
 							<span class="branch-count-badge" id="branchCountBadge">0</span>
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#666">
 								<polyline points="6 9 12 15 18 9"/>
@@ -583,7 +583,7 @@
 			if (selectedBranchIds.length === 0) {
 				label.textContent = 'Sube Secin';
 			} else if (selectedBranchIds.length === allBranches.length) {
-				label.textContent = 'Tum Subeler';
+				label.textContent = 'Tum Adresler';
 			} else if (selectedBranchIds.length === 1) {
 				var branch = allBranches.find(function(b) { return b.id === selectedBranchIds[0]; });
 				label.textContent = branch ? (branch.branch_name || branch.address_name) : '1 Sube';

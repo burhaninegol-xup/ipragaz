@@ -110,6 +110,9 @@ const PointsService = {
                 return { data: null, error: pointError };
             }
 
+            // Hosgeldin puani kontrolu - musteri basina 1 kez, ilk siparis tesliminde
+            await this.checkAndAwardWelcomePoints(order.customer_id, orderId, order.dealer_id, targetBranchId);
+
             return { data: pointRecord, error: null };
         } catch (error) {
             console.error('Award points error:', error);
@@ -521,6 +524,62 @@ const PointsService = {
         } catch (error) {
             console.error('Get grouped history error:', error);
             return { data: {}, error: { message: error.message } };
+        }
+    },
+
+    /**
+     * Hosgeldin puani kontrolu - musteri basina 1 kez, ilk siparis tesliminde verilir
+     * @param {string} customerId - Musteri ID
+     * @param {string} orderId - Siparis ID (ilk siparisin ID'si olarak kaydedilir)
+     * @param {string} dealerId - Bayi ID
+     * @param {string|null} branchId - Sube ID (varsa)
+     * @returns {Promise<{awarded: boolean, error: Object|null}>}
+     */
+    async checkAndAwardWelcomePoints(customerId, orderId, dealerId, branchId) {
+        try {
+            // Bu musteriye daha once 'Hediye Puani' verilmis mi kontrol et
+            const { data: existingWelcome, error: checkError } = await supabaseClient
+                .from('customer_points')
+                .select('id')
+                .eq('customer_id', customerId)
+                .eq('description', 'Hediye Puani')
+                .limit(1);
+
+            if (checkError) {
+                console.error('Welcome points check error:', checkError);
+                return { awarded: false, error: checkError };
+            }
+
+            // Zaten verilmis, atla
+            if (existingWelcome && existingWelcome.length > 0) {
+                console.log('Hosgeldin puani zaten verilmis, customer_id:', customerId);
+                return { awarded: false, error: null };
+            }
+
+            // Verilmemis, 200 puan ekle
+            const { data: welcomeRecord, error: insertError } = await supabaseClient
+                .from('customer_points')
+                .insert([{
+                    customer_id: customerId,
+                    customer_branch_id: branchId,
+                    order_id: orderId,
+                    dealer_id: dealerId,
+                    points: 200,
+                    description: 'Hediye Puani'
+                }])
+                .select()
+                .single();
+
+            if (insertError) {
+                console.error('Welcome points insert error:', insertError);
+                return { awarded: false, error: insertError };
+            }
+
+            console.log('200 Hosgeldin puani eklendi, customer_id:', customerId, 'order_id:', orderId);
+            return { awarded: true, error: null };
+        } catch (error) {
+            console.error('Award welcome points error:', error);
+            return { awarded: false, error: { message: error.message } };
         }
     }
 };

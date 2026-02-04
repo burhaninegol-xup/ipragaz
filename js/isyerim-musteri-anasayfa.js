@@ -100,10 +100,9 @@ async function loadProducts() {
 				const { data: branch } = await BranchesService.getById(currentBranchId);
 				currentBranchInfo = branch;
 
-				// 2. Şube için teklif durumunu kontrol et
-				const { data: offers } = await OffersService.getByBranchId(
+				// 2. Müşteri için teklif durumunu kontrol et (musteri bazli teklif sistemi)
+				const { data: offers } = await OffersService.getByCustomerId(
 					currentCustomerId,
-					currentBranchId,
 					{} // tüm durumlar
 				);
 
@@ -574,8 +573,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 	// Pending teklif countdown kontrolu (sadece owner icin)
 	loadPendingOfferCountdown();
 
-	// Hos geldin puani kontrolu
-	checkWelcomePoints();
+	// NOT: Hos geldin puani artik siparis tesliminde veriliyor (PointsService.awardPointsForOrder)
+	// checkWelcomePoints() kaldirildi - puan giris yapildiginda degil, ilk siparis tesliminde verilecek
 });
 
 // Sepet güncellendiğinde badge'i güncelle
@@ -643,11 +642,60 @@ async function loadLastOrder() {
 	}
 }
 
+// Repeat order modal icin guncel fiyatlar
+var repeatOrderPrices = {};
+var repeatOrderTotal = 0;
+var repeatOrderTotalPoints = 0;
+
 // Repeat order modal ac
-function openRepeatOrderModal() {
+async function openRepeatOrderModal() {
 	if (!lastOrder) {
 		alert('Son siparis bulunamadi');
 		return;
+	}
+
+	// Loading goster
+	document.getElementById('repeatOrderBody').innerHTML = '<div style="text-align: center; padding: 40px;"><p>Fiyatlar yukleniyor...</p></div>';
+	document.getElementById('repeatOrderOverlay').classList.add('active');
+	document.body.style.overflow = 'hidden';
+
+	// Fiyat bilgilerini al
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	var dealerId = sessionStorage.getItem('isyerim_dealer_id');
+	var cityId = sessionStorage.getItem('isyerim_city_id') || (currentBranchInfo ? currentBranchInfo.city_id : null);
+
+	// Urun ID'lerini topla
+	var productIds = [];
+	var productMap = {};
+	if (lastOrder.order_items && lastOrder.order_items.length > 0) {
+		lastOrder.order_items.forEach(function(item) {
+			if (item.product && item.product.id) {
+				productIds.push(item.product.id);
+				productMap[item.product.id] = item.product;
+			}
+		});
+	}
+
+	// Urunleri olustur (PriceResolverService icin gerekli format)
+	var productsForPricing = productIds.map(function(id) {
+		return {
+			id: id,
+			base_price: productMap[id] ? productMap[id].base_price : 0
+		};
+	});
+
+	// Fiyatlari coz
+	try {
+		repeatOrderPrices = await PriceResolverService.resolvePricesForProducts(
+			productsForPricing,
+			customerId,
+			currentBranchId,
+			dealerId,
+			cityId
+		);
+	} catch (err) {
+		console.error('Fiyat cozumleme hatasi:', err);
+		repeatOrderPrices = {};
 	}
 
 	// Modal icerigini olustur
@@ -697,13 +745,42 @@ function openRepeatOrderModal() {
 	bodyHtml += '<div class="repeat-order-items-title">Siparis Kalemleri</div>';
 	bodyHtml += '<div class="repeat-order-items">';
 
-	var total = 0;
+	repeatOrderTotal = 0;
+	repeatOrderTotalPoints = 0;
+
 	if (lastOrder.order_items && lastOrder.order_items.length > 0) {
 		lastOrder.order_items.forEach(function(item) {
 			var imageUrl = item.product && item.product.image_url ? item.product.image_url : './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png';
 			var productName = item.product ? item.product.name : 'Urun';
-			var itemTotal = parseFloat(item.total_price) || (item.quantity * item.unit_price);
-			total += itemTotal;
+			var productId = item.product ? item.product.id : null;
+
+			// Guncel fiyati al
+			var priceInfo = repeatOrderPrices[productId] || {
+				price: item.unit_price,
+				retailPrice: item.unit_price,
+				isInOffer: false
+			};
+
+			var currentPrice = priceInfo.price;
+			var retailPrice = priceInfo.retailPrice || currentPrice;
+			var itemTotal = currentPrice * item.quantity;
+			var itemPoints = (item.product && item.product.points_per_unit) ? item.product.points_per_unit * item.quantity : (item.points || 0);
+
+			repeatOrderTotal += itemTotal;
+			repeatOrderTotalPoints += itemPoints;
+
+			// Fiyat gosterimi - ustu cizili perakende + guncel fiyat
+			var pricesHtml = '';
+			if (priceInfo.isInOffer && retailPrice > currentPrice) {
+				// Teklif fiyati var ve perakendeden dusuk
+				pricesHtml = '<div class="repeat-order-item-prices">' +
+					'<div class="repeat-order-original-price"><del>' + formatPrice(retailPrice * item.quantity) + '</del></div>' +
+					'<div class="repeat-order-item-price">' + formatPrice(itemTotal) + '</div>' +
+				'</div>';
+			} else {
+				// Normal fiyat goster
+				pricesHtml = '<div class="repeat-order-item-price">' + formatPrice(itemTotal) + '</div>';
+			}
 
 			bodyHtml += '<div class="repeat-order-item">' +
 				'<div class="repeat-order-item-image">' +
@@ -713,7 +790,7 @@ function openRepeatOrderModal() {
 					'<div class="repeat-order-item-name">' + productName + '</div>' +
 					'<div class="repeat-order-item-qty">x' + item.quantity + '</div>' +
 				'</div>' +
-				'<div class="repeat-order-item-price">' + formatPrice(itemTotal) + '</div>' +
+				pricesHtml +
 			'</div>';
 		});
 	}
@@ -735,10 +812,27 @@ function openRepeatOrderModal() {
 	// Ilk slotu varsayilan olarak sec
 	selectedTimeSlot = timeSlots[0];
 
+	// Odeme yontemi secimi
+	var lastPaymentMethod = lastOrder.payment_method || 'cash';
+	var cashChecked = lastPaymentMethod === 'cash' ? ' checked' : '';
+	var cardChecked = lastPaymentMethod === 'card' ? ' checked' : '';
+
+	bodyHtml += '<div class="payment-method-title">Odeme Yontemi</div>';
+	bodyHtml += '<div class="payment-method-options" id="paymentMethodOptions">' +
+		'<label class="payment-method-option">' +
+			'<input type="radio" name="repeatPayment" value="cash"' + cashChecked + '>' +
+			'<span>Nakit odeyecegim</span>' +
+		'</label>' +
+		'<label class="payment-method-option">' +
+			'<input type="radio" name="repeatPayment" value="card"' + cardChecked + '>' +
+			'<span>Kredi karti ile odeyecegim</span>' +
+		'</label>' +
+	'</div>';
+
 	// Toplam
 	bodyHtml += '<div class="repeat-order-total">' +
 		'<span class="repeat-order-total-label">Toplam</span>' +
-		'<span class="repeat-order-total-value">' + formatPrice(total) + '</span>' +
+		'<span class="repeat-order-total-value">' + formatPrice(repeatOrderTotal) + '</span>' +
 	'</div>';
 
 	// Butonlar
@@ -748,8 +842,6 @@ function openRepeatOrderModal() {
 	'</div>';
 
 	document.getElementById('repeatOrderBody').innerHTML = bodyHtml;
-	document.getElementById('repeatOrderOverlay').classList.add('active');
-	document.body.style.overflow = 'hidden';
 }
 
 // Modal kapat
@@ -810,44 +902,90 @@ function formatOrderDate(dateString) {
 	return day + '.' + month + '.' + year;
 }
 
-// Siparisi gonder
+// Siparisi gonder - dogrudan siparis olustur
 async function submitRepeatOrder() {
 	if (!lastOrder || !selectedTimeSlot) {
 		alert('Lutfen bir teslimat zamani secin');
 		return;
 	}
 
+	// Odeme yontemi kontrolu
+	var paymentInput = document.querySelector('input[name="repeatPayment"]:checked');
+	if (!paymentInput) {
+		alert('Lutfen odeme yontemi secin');
+		return;
+	}
+
 	var submitBtn = document.getElementById('btnRepeatSubmit');
 	submitBtn.disabled = true;
-	submitBtn.textContent = 'Gonderiliyor...';
+	submitBtn.textContent = 'Siparis olusturuluyor...';
 
 	try {
-		// Sepete urunleri ekle
-		for (var i = 0; i < lastOrder.order_items.length; i++) {
-			var item = lastOrder.order_items[i];
-			await CartService.addItem({
-				id: item.product.id,
-				code: item.product.code,
-				name: item.product.name,
-				price: item.unit_price,
-				points: item.points || 0,
-				image_url: item.product.image_url
-			}, item.quantity);
+		// Gerekli bilgileri al
+		var customerId = sessionStorage.getItem('isyerim_customer_id');
+		var dealerId = sessionStorage.getItem('isyerim_dealer_id') || (lastOrder.dealer ? lastOrder.dealer.id : null);
+		var branchId = sessionStorage.getItem('selected_address_id') || lastOrder.customer_branch_id;
+
+		if (!customerId || !dealerId) {
+			throw new Error('Musteri veya bayi bilgisi eksik');
 		}
 
-		// Badge'i guncelle
-		updateCartBadge();
+		// Teslimat tarihini hesapla (bugun)
+		var today = new Date();
+		var deliveryDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
 
-		// Modalı kapat
+		// Siparis verisi hazirla
+		var orderData = {
+			customer_id: customerId,
+			dealer_id: dealerId,
+			customer_branch_id: branchId,
+			total_amount: repeatOrderTotal,
+			total_points: repeatOrderTotalPoints,
+			delivery_date: deliveryDate,
+			delivery_time: selectedTimeSlot.hour,
+			payment_method: paymentInput.value,
+			status: 'waiting_for_assignment'
+		};
+
+		// Siparis kalemleri (guncel fiyatlarla)
+		var orderItems = [];
+		for (var i = 0; i < lastOrder.order_items.length; i++) {
+			var item = lastOrder.order_items[i];
+			var productId = item.product ? item.product.id : null;
+
+			// Guncel fiyati al
+			var priceInfo = repeatOrderPrices[productId] || { price: item.unit_price };
+			var currentPrice = priceInfo.price;
+			var itemPoints = (item.product && item.product.points_per_unit) ? item.product.points_per_unit * item.quantity : (item.points || 0);
+
+			orderItems.push({
+				product_id: productId,
+				quantity: item.quantity,
+				unit_price: currentPrice,
+				total_price: currentPrice * item.quantity,
+				points: itemPoints
+			});
+		}
+
+		// Siparis olustur
+		var result = await OrdersService.create(orderData, orderItems);
+
+		if (result.error) {
+			throw new Error(result.error.message || 'Siparis olusturulamadi');
+		}
+
+		// Timeline kaydini olustur
+		await OrdersService.logOrderCreated(result.data.id, customerId);
+
+		// Modali kapat
 		closeRepeatOrderModal();
 
-		// Sepet sayfasina yonlendir
-		alert('Urunler sepete eklendi! Sepet sayfasina yonlendiriliyorsunuz...');
-		window.location.href = 'isyerim-musteri-sepet.html';
+		// Siparis ozet sayfasina yonlendir
+		window.location.href = 'isyerim-musteri-siparis-ozet.html?order_id=' + result.data.id;
 
 	} catch (err) {
-		console.error('Siparis gonderme hatasi:', err);
-		alert('Siparis gonderilirken bir hata olustu. Lutfen tekrar deneyin.');
+		console.error('Siparis olusturma hatasi:', err);
+		alert('Siparis olusturulurken bir hata olustu: ' + (err.message || 'Bilinmeyen hata'));
 		submitBtn.disabled = false;
 		submitBtn.textContent = 'Siparis Ver';
 	}

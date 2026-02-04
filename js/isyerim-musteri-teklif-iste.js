@@ -19,10 +19,6 @@
 		var messageSubscription = null;
 		var currentUserType = 'customer';
 
-		// Branch extension degiskenleri
-		var availableBranches = [];
-		var selectedBranchId = null;
-
 		// Loading goster
 		function showLoading(text) {
 			document.getElementById('loadingText').textContent = text || 'Yukleniyor...';
@@ -56,55 +52,12 @@
 			document.getElementById('confirmationModal').classList.remove('active');
 		}
 
-		// Mevcut teklif kontrolu (sube bazli + tum subeler)
+		// Mevcut teklif kontrolu (musteri bazli teklif sistemi)
 		async function checkExistingOffer() {
 			if (!currentCustomer) return { hasOffer: false, isActive: false };
 
-			// Secili subeyi al
-			var selectedBranchId = sessionStorage.getItem('selected_address_id');
-
 			try {
-				// 1. Once bu subeye ozel teklif ara
-				if (selectedBranchId) {
-					const { data: branchOffers, error: branchError } = await OffersService.getByBranchId(
-						currentCustomer.id,
-						selectedBranchId,
-						{} // tum durumlar
-					);
-
-					if (!branchError && branchOffers && branchOffers.length > 0) {
-						// Bu subeye ozel aktif teklif var mi?
-						var activeBranchOffer = branchOffers.find(function(o) {
-							return ['requested', 'pending', 'accepted', 'passive'].includes(o.status);
-						});
-
-						if (activeBranchOffer) {
-							// Teklif detayi kontrolu
-							if (!activeBranchOffer.offer_details || activeBranchOffer.offer_details.length === 0) {
-								console.log('Sube teklifinde detay bulunamadi, gecersiz teklif');
-							} else {
-								activeOffer = activeBranchOffer;
-								isReadOnlyMode = true;
-								await renderReadOnlyMode();
-								return { hasOffer: true, isActive: true };
-							}
-						}
-
-						// Sonuclanan teklif var mi? (yeni teklif isteyebilir)
-						var completedBranchOffer = branchOffers.find(function(o) {
-							return ['rejected', 'cancelled'].includes(o.status);
-						});
-
-						if (completedBranchOffer && completedBranchOffer.offer_details && completedBranchOffer.offer_details.length > 0) {
-							activeOffer = completedBranchOffer;
-							isReadOnlyMode = false;
-							renderCompletedOfferBanner();
-							return { hasOffer: true, isActive: false };
-						}
-					}
-				}
-
-				// 2. Subeye ozel teklif yoksa, "Tum Subeler" teklifini ara (customer_branch_id = NULL)
+				// Musteri bazli teklif ara (sube bagimsiz)
 				const { data: allOffer, error } = await OffersService.getLatestOfferByCustomerId(currentCustomer.id);
 
 				if (error) {
@@ -112,8 +65,8 @@
 					return { hasOffer: false, isActive: false };
 				}
 
-				// "Tum Subeler" teklifi (customer_branch_id = NULL) kontrolu
-				if (allOffer && !allOffer.customer_branch_id) {
+				// Teklif var mi?
+				if (allOffer) {
 					// Teklif detayi kontrolu - detay yoksa gecersiz teklif
 					if (!allOffer.offer_details || allOffer.offer_details.length === 0) {
 						console.log('Teklif detayi bulunamadi, gecersiz teklif olarak isaretlendi');
@@ -136,7 +89,7 @@
 					return { hasOffer: true, isActive: isActiveStatus };
 				}
 
-				// 3. Hic teklif yok - bos form goster
+				// Hic teklif yok - bos form goster
 				return { hasOffer: false, isActive: false };
 			} catch (err) {
 				console.error('Teklif kontrolu hatasi:', err);
@@ -175,10 +128,6 @@
 				}
 			}
 
-			// Sube genisletme bolumunu goster (sadece accepted status'ta)
-			if (activeOffer.status === 'accepted') {
-				showBranchExtensionSection();
-			}
 		}
 
 		// Sonuclanan teklif banner'i goster (rejected/cancelled - yeni teklif isteyebilir)
@@ -698,14 +647,14 @@
 			showLoading('Teklif kabul ediliyor...');
 
 			try {
-				// Teklifi kabul et
+				// 1. Teklifi kabul et
 				const { data, error } = await OffersService.update(activeOffer.id, {
 					status: 'accepted'
 				});
 
 				if (error) throw new Error(error);
 
-				// Kabul logunu kaydet
+				// 2. Kabul logunu kaydet
 				var customerName = currentCustomer.company_name || currentCustomer.name || 'Musteri';
 				await OfferLogsService.log(
 					activeOffer.id,
@@ -715,11 +664,31 @@
 					customerName
 				);
 
-				hideLoading();
-				alert('Teklif kabul edildi! Artik ozel fiyatlarla siparis verebilirsiniz.');
+				// 3. Mevcut sepeti temizle
+				CartService.clearCart();
 
-				// Sayfayi yenile
-				window.location.reload();
+				// 4. Teklifin urunlerini sepete ekle
+				if (activeOffer.offer_details && activeOffer.offer_details.length > 0) {
+					for (var i = 0; i < activeOffer.offer_details.length; i++) {
+						var detail = activeOffer.offer_details[i];
+						if (detail.product && detail.commitment_quantity > 0) {
+							await CartService.addItem({
+								id: detail.product.id,
+								code: detail.product.code,
+								name: detail.product.name,
+								price: detail.unit_price || 0,
+								image_url: detail.product.image_url,
+								priceType: 'size_ozel',
+								priceLabel: 'Teklif Fiyati'
+							}, detail.commitment_quantity);
+						}
+					}
+				}
+
+				hideLoading();
+
+				// 5. Sepet sayfasina yonlendir
+				window.location.href = 'isyerim-musteri-sepet.html';
 
 			} catch (err) {
 				hideLoading();
@@ -1478,242 +1447,6 @@
 			}
 		}
 
-		// ==================== SUBE GENISLETME FONKSIYONLARI ====================
-
-		// Sube adini formatla
-		function getBranchName(branch) {
-			if (!branch) return 'Bilinmeyen Sube';
-			return branch.branch_name ||
-				[branch.district, branch.city].filter(Boolean).join(', ') ||
-				'Bilinmeyen Sube';
-		}
-
-		// Sube listesini formatla (kisaltmali)
-		function formatBranchDisplay(branches) {
-			if (!branches || branches.length === 0) return null;
-
-			var names = branches.map(function(b) { return getBranchName(b); });
-
-			if (names.length === 1) {
-				return { text: 'Sube: ' + names[0], hasMore: false };
-			}
-			if (names.length === 2) {
-				return { text: 'Subeler: ' + names.join(', '), hasMore: false };
-			}
-			// 3+ sube
-			var remaining = names.length - 2;
-			return {
-				text: 'Subeler: ' + names[0] + ', ' + names[1] + ' + ' + remaining + ' sube',
-				hasMore: true,
-				allNames: names
-			};
-		}
-
-		// Tooltip listesini guncelle
-		function updateBranchTooltip(branches) {
-			var tooltipList = document.getElementById('branchTooltipList');
-			if (!tooltipList || !branches || branches.length === 0) return;
-
-			tooltipList.innerHTML = branches.map(function(b) {
-				return '<li>' + getBranchName(b) + '</li>';
-			}).join('');
-		}
-
-		// Sube genisletme bolumunu goster (Inline)
-		function showBranchExtensionSection() {
-			if (!activeOffer) return;
-
-			var section = document.getElementById('branchExtensionSection');
-			var branchSeparator = document.getElementById('branchSeparator');
-			var branchInline = document.getElementById('branchInline');
-			var branchDisplayText = document.getElementById('branchDisplayText');
-			var btnExtendInline = document.getElementById('btnExtendBranchInline');
-			var branchNameEl = document.getElementById('currentBranchName');
-
-			// Teklif zaten "Tum Subeler" icin gecerliyse gosterme
-			if (!activeOffer.customer_branch_id) {
-				section.style.display = 'none';
-				if (branchSeparator) branchSeparator.style.display = 'none';
-				if (branchInline) branchInline.style.display = 'none';
-				if (btnExtendInline) btnExtendInline.style.display = 'none';
-				return;
-			}
-
-			// Teklifin gecerli oldugu subeleri topla
-			var offerBranches = [];
-
-			// Ana sube
-			if (activeOffer.customer_branch) {
-				offerBranches.push(activeOffer.customer_branch);
-			}
-
-			// Genisletilmis subeler (offer_branch_extensions tablosundan)
-			if (activeOffer.offer_branch_extensions && activeOffer.offer_branch_extensions.length > 0) {
-				activeOffer.offer_branch_extensions.forEach(function(ext) {
-					if (ext.customer_branch) {
-						offerBranches.push(ext.customer_branch);
-					}
-				});
-			}
-
-			// Inline sube gosterimi
-			var displayInfo = formatBranchDisplay(offerBranches);
-			if (displayInfo && branchDisplayText) {
-				branchDisplayText.textContent = displayInfo.text;
-				if (branchSeparator) branchSeparator.style.display = 'inline';
-				if (branchInline) branchInline.style.display = 'inline-flex';
-
-				// Tooltip'i guncelle
-				if (displayInfo.hasMore || offerBranches.length > 1) {
-					updateBranchTooltip(offerBranches);
-				}
-			}
-
-			// Baska Subeye Uygula butonunu goster (sadece accepted durumunda)
-			if (btnExtendInline && activeOffer.status === 'accepted') {
-				btnExtendInline.style.display = 'flex';
-			}
-
-			// Eski section'u gizle
-			if (branchNameEl) {
-				branchNameEl.textContent = getBranchName(activeOffer.customer_branch);
-			}
-			section.style.display = 'none';
-		}
-
-		// Diger subeleri yukle
-		async function loadOtherBranches() {
-			if (!currentCustomer || !activeOffer) return;
-
-			try {
-				var branchListEl = document.getElementById('branchList');
-				branchListEl.innerHTML = '<div class="no-branches-message">Subeler yukleniyor...</div>';
-
-				// Bayinin coverage'indaki musterinin subelerini al
-				const { data: branches, error } = await BranchesService.getByCustomerIdInDealerCoverage(
-					currentCustomer.id,
-					activeOffer.dealer_id
-				);
-
-				if (error) throw new Error(error);
-
-				// Mevcut teklifin subesini cikar (zaten uygulanmis)
-				var currentBranchId = activeOffer.customer_branch_id;
-				availableBranches = (branches || []).filter(function(b) {
-					return b.id !== currentBranchId;
-				});
-
-				if (availableBranches.length === 0) {
-					branchListEl.innerHTML = '<div class="no-branches-message">Baska uygun sube bulunmuyor.</div>';
-					return;
-				}
-
-				branchListEl.innerHTML = '';
-				availableBranches.forEach(function(branch) {
-					var branchName = branch.branch_name || 'Sube';
-					var branchAddress = branch.full_address || [branch.district, branch.city].filter(Boolean).join(', ');
-
-					branchListEl.innerHTML += '<div class="branch-option" data-id="' + branch.id + '">' +
-						'<div class="branch-option-name">' + branchName + '</div>' +
-						'<div class="branch-option-address">' + branchAddress + '</div>' +
-					'</div>';
-				});
-
-				// Branch secim event'leri
-				document.querySelectorAll('#branchList .branch-option').forEach(function(opt) {
-					opt.addEventListener('click', function() {
-						document.querySelectorAll('#branchList .branch-option').forEach(function(o) {
-							o.classList.remove('selected');
-						});
-						this.classList.add('selected');
-						selectedBranchId = this.getAttribute('data-id');
-						document.getElementById('branchModalConfirm').disabled = false;
-					});
-				});
-
-			} catch (err) {
-				console.error('Sube yukleme hatasi:', err);
-				document.getElementById('branchList').innerHTML = '<div class="no-branches-message">Subeler yuklenirken hata olustu</div>';
-			}
-		}
-
-		// Genisletme talebi gonder
-		async function submitExtensionRequest() {
-			if (!activeOffer || !selectedBranchId) return;
-
-			try {
-				document.getElementById('branchModalConfirm').disabled = true;
-				document.getElementById('branchModalConfirm').textContent = 'Gonderiliyor...';
-
-				var userId = sessionStorage.getItem('isyerim_user_id');
-				const { data, error } = await OffersService.createExtensionRequest(activeOffer.id, selectedBranchId, userId);
-
-				if (error) throw new Error(error);
-
-				closeBranchModal();
-				alert('Talebiniz bayiye iletildi. Onaylandiginda bilgilendirileceksiniz.');
-
-				document.getElementById('branchModalConfirm').textContent = 'Talep Gonder';
-				document.getElementById('branchModalConfirm').disabled = true;
-
-			} catch (err) {
-				console.error('Talep gonderme hatasi:', err);
-				alert('Talep gonderilirken hata olustu: ' + err.message);
-				document.getElementById('branchModalConfirm').disabled = false;
-				document.getElementById('branchModalConfirm').textContent = 'Talep Gonder';
-			}
-		}
-
-		// Branch modal'i kapat
-		function closeBranchModal() {
-			document.getElementById('branchSelectOverlay').classList.remove('active');
-			selectedBranchId = null;
-		}
-
-		// Branch extension event handler'larini ekle
-		function initBranchExtensionEvents() {
-			var btnExtend = document.getElementById('btnExtendBranch');
-			if (btnExtend) {
-				btnExtend.addEventListener('click', function() {
-					loadOtherBranches();
-					document.getElementById('branchSelectOverlay').classList.add('active');
-				});
-			}
-
-			// Banner icindeki inline buton icin de ayni islevi ekle
-			var btnExtendInline = document.getElementById('btnExtendBranchInline');
-			if (btnExtendInline) {
-				btnExtendInline.addEventListener('click', function() {
-					loadOtherBranches();
-					document.getElementById('branchSelectOverlay').classList.add('active');
-				});
-			}
-
-			var btnClose = document.getElementById('branchModalClose');
-			if (btnClose) {
-				btnClose.addEventListener('click', closeBranchModal);
-			}
-
-			var btnCancel = document.getElementById('branchModalCancel');
-			if (btnCancel) {
-				btnCancel.addEventListener('click', closeBranchModal);
-			}
-
-			var btnConfirm = document.getElementById('branchModalConfirm');
-			if (btnConfirm) {
-				btnConfirm.addEventListener('click', submitExtensionRequest);
-			}
-
-			var overlay = document.getElementById('branchSelectOverlay');
-			if (overlay) {
-				overlay.addEventListener('click', function(e) {
-					if (e.target === this) {
-						closeBranchModal();
-					}
-				});
-			}
-		}
-
 		// ==================== SAYFA YUKLENDIGINDE ====================
 
 		// Sayfa yuklendiginde
@@ -1724,9 +1457,6 @@
 			window.addEventListener('branchChanged', function(e) {
 				location.reload();
 			});
-
-			// Branch extension event'lerini kaydet
-			initBranchExtensionEvents();
 
 			// Guvenlik sorulari event'lerini kaydet
 			initSecurityQuestionListeners();

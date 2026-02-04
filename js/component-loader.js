@@ -1812,11 +1812,12 @@ async function evaluateDealerForBranch(branchId) {
             districtId = districtLookup.data ? districtLookup.data.id : null;
         }
 
-        // ===== AKTIF TEKLIF KONTROLU =====
+        // ===== AKTIF TEKLIF KONTROLU (musteri bazli teklif sistemi) =====
         var activeOfferDealer = null;
         try {
             if (typeof OffersService !== 'undefined') {
-                var offersResult = await OffersService.getByBranchId(customerId, branchId, {});
+                // Musteri bazli teklif sistemi - getByCustomerId kullan
+                var offersResult = await OffersService.getByCustomerId(customerId, {});
                 var offers = offersResult.data || [];
 
                 // Aktif durumda teklif bul (cancelled ve rejected haric)

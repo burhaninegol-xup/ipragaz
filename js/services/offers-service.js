@@ -710,42 +710,19 @@ const OffersService = {
     /**
      * Belirli bir sube icin kabul edilmis teklifi getir
      * Siparis verirken fiyat kontrolu icin kullanilir
+     * NOT: Teklifler artik musteri bazli, branchId parametresi geriye donuk uyumluluk icin tutuluyor
      */
     async getAcceptedOfferForBranch(dealerId, customerId, branchId) {
-        try {
-            const { data, error } = await supabaseClient
-                .from('offers')
-                .select(`
-                    *,
-                    branch:customer_branches(id, branch_name, city, district),
-                    offer_details(
-                        id,
-                        unit_price,
-                        pricing_type,
-                        discount_value,
-                        commitment_quantity,
-                        product:products(id, code, name, base_price, image_url)
-                    )
-                `)
-                .eq('dealer_id', dealerId)
-                .eq('customer_id', customerId)
-                .eq('customer_branch_id', branchId)
-                .eq('status', 'accepted')
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (error) throw error;
-            return { data: data || null, error: null };
-        } catch (error) {
-            return handleSupabaseError(error, 'OffersService.getAcceptedOfferForBranch');
-        }
+        // Musteri bazli teklif sistemi - getAcceptedOffer metodunu kullan
+        return this.getAcceptedOffer(dealerId, customerId);
     },
 
     /**
      * Musterinin belirli bir subesi icin tum teklifleri getir
+     * NOT: Teklifler artik musteri bazli, branchId parametresi geriye donuk uyumluluk icin tutuluyor
      */
     async getByBranchId(customerId, branchId, filters = {}) {
+        // Musteri bazli teklif sistemi - branchId filtresini kaldirdik
         try {
             let query = supabaseClient
                 .from('offers')
@@ -762,8 +739,8 @@ const OffersService = {
                         product:products(id, code, name, base_price, image_url)
                     )
                 `)
-                .eq('customer_id', customerId)
-                .eq('customer_branch_id', branchId);
+                .eq('customer_id', customerId);
+            // customer_branch_id filtresi kaldirildi - musteri bazli teklif
 
             if (filters.status) {
                 query = query.eq('status', filters.status);

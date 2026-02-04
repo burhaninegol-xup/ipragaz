@@ -72,10 +72,9 @@ async function loadProductData(productId) {
 				const { data: branch } = await BranchesService.getById(currentBranchId);
 				currentBranchInfo = branch;
 
-				// 2. Şube için teklif durumunu kontrol et
-				const { data: offers } = await OffersService.getByBranchId(
+				// 2. Müşteri için teklif durumunu kontrol et (musteri bazli teklif sistemi)
+				const { data: offers } = await OffersService.getByCustomerId(
 					currentCustomerId,
-					currentBranchId,
 					{} // tüm durumlar
 				);
 
