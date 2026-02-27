@@ -27,9 +27,11 @@ CREATE INDEX IF NOT EXISTS "retail_prices_by_city_product_city_idx" ON "public".
 ALTER TABLE "public"."retail_prices_by_city" ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Allow all for anon" ON "public"."retail_prices_by_city";
 CREATE POLICY "Allow all for anon" ON "public"."retail_prices_by_city"
     FOR ALL TO anon USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow all for authenticated" ON "public"."retail_prices_by_city";
 CREATE POLICY "Allow all for authenticated" ON "public"."retail_prices_by_city"
     FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
