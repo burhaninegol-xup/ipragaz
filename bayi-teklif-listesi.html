@@ -11,6 +11,8 @@
 	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
 	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
 	<link rel="stylesheet" type="text/css" href="./css/bayi-teklif-listesi.css">
+	<!-- SheetJS for Excel import/export -->
+	<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -26,11 +28,17 @@
 				<p>Oluşturduğunuz tüm teklifleri görüntüleyin</p>
 			</div>
 			<div class="page-header-right">
+				<button type="button" class="btn-secondary bulk-import-btn" onclick="openBulkImportModal()">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/>
+					</svg>
+					Toplu Teklif Olustur
+				</button>
 				<a href="bayi-teklif-olustur.html" class="btn-primary">
 					<svg viewBox="0 0 24 24" fill="currentColor">
 						<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
 					</svg>
-					Yeni Teklif Oluştur
+					Yeni Teklif Olustur
 				</a>
 			</div>
 		</div>
@@ -115,6 +123,118 @@
 	<!-- Mobile Sidebar Component -->
 	<div id="bayi-mobile-sidebar"></div>
 
+	<!-- Bulk Import Modal -->
+	<div class="bulk-import-overlay" id="bulkImportOverlay">
+		<div class="bulk-import-modal">
+			<!-- Step 1: Sablon Indir / Dosya Yukle -->
+			<div class="bulk-step" id="bulkStep1">
+				<div class="bulk-step-header">
+					<h2>Toplu Teklif Olustur</h2>
+					<button type="button" class="modal-close-btn" onclick="closeBulkImportModal()">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+					</button>
+				</div>
+				<p class="bulk-step-desc">Excel sablonunu indirin, doldurun ve yukleyin.</p>
+
+				<div class="template-download">
+					<div class="template-info">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+						<div>
+							<strong>Ornek Excel Sablonu</strong>
+							<span>VKN, Urun Kodu, Fiyat bilgilerini iceren sablon</span>
+						</div>
+					</div>
+					<button type="button" class="btn-download" onclick="downloadTemplate()">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+						Indir
+					</button>
+				</div>
+
+				<div class="file-upload-area" id="bulkUploadArea">
+					<input type="file" id="bulkFileInput" accept=".xlsx,.xls" onchange="handleBulkFileSelect(event)" />
+					<div class="upload-content">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+						<p>Excel dosyasini surukleyin veya secin</p>
+						<span>.xlsx veya .xls formatinda</span>
+					</div>
+				</div>
+
+				<div class="bulk-actions">
+					<button type="button" class="btn-secondary" onclick="closeBulkImportModal()">Vazgec</button>
+				</div>
+			</div>
+
+			<!-- Step 2: Onizleme -->
+			<div class="bulk-step" id="bulkStep2" style="display:none;">
+				<div class="bulk-step-header">
+					<h2>Onizleme</h2>
+					<button type="button" class="modal-close-btn" onclick="closeBulkImportModal()">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+					</button>
+				</div>
+				<div class="bulk-summary">
+					<div class="summary-item">
+						<span class="summary-value" id="totalQuotes">0</span>
+						<span class="summary-label">Musteri</span>
+					</div>
+					<div class="summary-item">
+						<span class="summary-value" id="totalItems">0</span>
+						<span class="summary-label">Urun</span>
+					</div>
+					<div class="summary-item valid">
+						<span class="summary-value" id="validRows">0</span>
+						<span class="summary-label">Gecerli</span>
+					</div>
+					<div class="summary-item invalid">
+						<span class="summary-value" id="invalidRows">0</span>
+						<span class="summary-label">Hatali</span>
+					</div>
+				</div>
+
+				<div class="preview-table-container">
+					<table id="previewTable">
+						<thead>
+							<tr>
+								<th>Durum</th>
+								<th>VKN</th>
+								<th>Musteri Adi</th>
+								<th>Urun Kodu</th>
+								<th>Urun Adi</th>
+								<th>Birim Fiyat</th>
+								<th>Taahhut</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+
+				<div class="validation-summary" id="validationSummary"></div>
+
+				<div class="bulk-actions">
+					<button type="button" class="btn-secondary" onclick="resetStep1(); goToStep(1)">Geri</button>
+					<button type="button" class="btn-primary" id="confirmImportBtn" onclick="confirmBulkImport()" disabled>
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+						Teklifleri Olustur
+					</button>
+				</div>
+			</div>
+
+			<!-- Step 3: Sonuc -->
+			<div class="bulk-step" id="bulkStep3" style="display:none;">
+				<div class="bulk-step-header">
+					<h2>Islem Tamamlandi</h2>
+					<button type="button" class="modal-close-btn" onclick="closeBulkImportModal(); loadOffers();">
+						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+					</button>
+				</div>
+				<div id="importResults"></div>
+				<div class="bulk-actions">
+					<button type="button" class="btn-primary" onclick="closeBulkImportModal(); loadOffers();">Kapat</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -122,6 +242,7 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/products-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/component-loader.js"></script>

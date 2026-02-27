@@ -75,6 +75,108 @@ var hasDealerInDistrict = true; // İlçede bayi var mı?
 var currentBranchInfo = null; // Seçili şube bilgisi
 var currentOfferDealer = null; // Aktif teklifin bayi bilgisi
 
+// =============================================
+// DISCOUNT TRACKING BANNER
+// =============================================
+
+/**
+ * İndirim banner'ını yükle ve göster
+ */
+async function loadDiscountBanner() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	if (!customerId) {
+		return;
+	}
+
+	// Banner kapatılmış mı kontrol et
+	var dismissedKey = 'discountBannerDismissed_' + customerId;
+	var dismissedData = localStorage.getItem(dismissedKey);
+	if (dismissedData) {
+		var dismissed = JSON.parse(dismissedData);
+		var dismissedTime = new Date(dismissed.timestamp);
+		var daysSinceDismissed = (new Date() - dismissedTime) / (1000 * 60 * 60 * 24);
+
+		if (daysSinceDismissed < 7) {
+			return;
+		}
+	}
+
+	// Cache kontrol et
+	var cacheKey = 'discountTotal_' + customerId;
+	var cached = sessionStorage.getItem(cacheKey);
+	if (cached) {
+		var cacheData = JSON.parse(cached);
+		var cacheAge = Date.now() - cacheData.timestamp;
+
+		if (cacheAge < 3600000) { // 1 saat
+			displayDiscountBanner(cacheData.total);
+			return;
+		}
+	}
+
+	try {
+		const { data: totalDiscount, error } = await OrdersService.getTotalDiscountForCustomer(customerId);
+
+		if (error) {
+			console.error('Discount banner error:', error);
+			return;
+		}
+
+		sessionStorage.setItem(cacheKey, JSON.stringify({
+			total: totalDiscount,
+			timestamp: Date.now()
+		}));
+
+		displayDiscountBanner(totalDiscount);
+
+	} catch (err) {
+		console.error('Discount banner exception:', err);
+	}
+}
+
+/**
+ * Banner'ı formatlı tutar ile göster
+ */
+function displayDiscountBanner(totalDiscount) {
+	if (!totalDiscount || totalDiscount <= 0) {
+		return;
+	}
+
+	var banner = document.getElementById('discountBanner');
+	var amountEl = document.getElementById('discountAmount');
+
+	if (!banner || !amountEl) return;
+
+	var formattedAmount = '₺' + parseFloat(totalDiscount).toLocaleString('tr-TR', {
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2
+	});
+
+	amountEl.textContent = formattedAmount;
+	banner.style.display = 'block';
+}
+
+/**
+ * Banner'ı kapat ve durumu kaydet
+ */
+function closeDiscountBanner() {
+	var customerId = sessionStorage.getItem('isyerim_customer_id');
+	var banner = document.getElementById('discountBanner');
+
+	if (!banner) return;
+
+	if (customerId) {
+		var dismissedKey = 'discountBannerDismissed_' + customerId;
+		localStorage.setItem(dismissedKey, JSON.stringify({
+			timestamp: new Date().toISOString()
+		}));
+	}
+
+	banner.style.display = 'none';
+}
+
+window.closeDiscountBanner = closeDiscountBanner;
+
 // Ürünleri Supabase'den yükle
 async function loadProducts() {
 	try {
@@ -560,6 +662,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 		console.log('Sepet veritabanından yükleniyor...');
 		await CartService.loadFromDatabase(customerId);
 	}
+
+	// İndirim banner'ını yükle
+	loadDiscountBanner();
 
 	// Ürünleri yükle
 	loadProducts();

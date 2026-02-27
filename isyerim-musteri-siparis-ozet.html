@@ -1462,7 +1462,7 @@
 				currentOrder = result.data;
 
 				// Sipariş detaylarını güncelle
-				updateOrderDetailsUI(currentOrder);
+				await updateOrderDetailsUI(currentOrder);
 
 				// Rutin sipariş section'ını initialize et
 				initRoutineSection();
@@ -1505,7 +1505,7 @@
 		}
 
 		// UI'ı sipariş bilgileriyle güncelle
-		function updateOrderDetailsUI(order) {
+		async function updateOrderDetailsUI(order) {
 			// Sipariş numarası
 			var orderNumberEl = document.querySelector('.details-grid .detail-item:nth-child(1) .detail-value');
 			if (orderNumberEl && order.order_number) {
@@ -1537,10 +1537,29 @@
 				paymentEl.textContent = paymentText;
 			}
 
-			// Teslimat adresi
+			// Teslimat adresi - Header'da seçili olan şube
 			var addressEl = document.querySelector('.address-box:nth-child(1) .address-box-value');
-			if (addressEl && order.delivery_address) {
-				addressEl.textContent = order.delivery_address;
+			if (addressEl) {
+				// Önce customer_branch_id ile branch bilgisini çekmeyi dene
+				if (order.customer_branch_id && typeof BranchesService !== 'undefined') {
+					try {
+						var branchResult = await BranchesService.getById(order.customer_branch_id);
+						if (!branchResult.error && branchResult.data) {
+							var branch = branchResult.data;
+							var displayAddress = branch.branch_name + ' - ' + branch.full_address;
+							addressEl.textContent = displayAddress;
+						} else {
+							// Fallback: delivery_address kullan
+							addressEl.textContent = order.delivery_address || 'Adres bilgisi yok';
+						}
+					} catch (err) {
+						console.warn('Branch bilgisi çekilemedi:', err);
+						addressEl.textContent = order.delivery_address || 'Adres bilgisi yok';
+					}
+				} else {
+					// Fallback: delivery_address kullan
+					addressEl.textContent = order.delivery_address || 'Adres bilgisi yok';
+				}
 			}
 
 			// Sipariş notu

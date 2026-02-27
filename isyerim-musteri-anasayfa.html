@@ -55,6 +55,30 @@
 	<!-- Header (Component) -->
 	<div id="isyerim-header"></div>
 
+	<!-- Discount Tracking Banner -->
+	<div class="discount-banner" id="discountBanner" style="display: none;">
+		<div class="container">
+			<div class="discount-banner-content">
+				<div class="discount-banner-icon">💰</div>
+				<div class="discount-banner-text">
+					<div class="discount-banner-primary">
+						<span>Toplam İndiriminiz:</span>
+						<span class="discount-banner-amount" id="discountAmount">₺0,00</span>
+					</div>
+					<div class="discount-banner-subtitle">
+						Tamamlanan siparişlerinizden kazandığınız toplam tasarruf
+					</div>
+				</div>
+				<button class="discount-banner-close" id="discountBannerClose" onclick="closeDiscountBanner()">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"/>
+						<line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Hoş Geldin Puanı Banner -->
 	<div class="welcome-points-banner" id="welcomePointsBanner" style="display: none;">
 		<div class="container">

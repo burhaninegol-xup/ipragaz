@@ -494,6 +494,55 @@ const OrdersService = {
      */
     async logOrderCreated(orderId, customerId) {
         return this.logStatusChange(orderId, null, 'waiting_for_assignment', 'customer', customerId, 'Sipariş oluşturuldu');
+    },
+
+    /**
+     * Müşterinin tamamlanan siparişlerinden kazandığı toplam indirim tutarını hesapla
+     * Formül: SUM((product.base_price - order_item.unit_price) * quantity)
+     * @param {string} customerId - Müşteri ID
+     * @returns {Promise<{data: number, error: null}|{data: null, error: Object}>}
+     */
+    async getTotalDiscountForCustomer(customerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('orders')
+                .select(`
+                    id,
+                    order_items(
+                        quantity,
+                        unit_price,
+                        product:products(base_price)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .eq('status', 'completed');
+
+            if (error) throw error;
+
+            let totalDiscount = 0;
+
+            if (data && data.length > 0) {
+                data.forEach(order => {
+                    if (order.order_items) {
+                        order.order_items.forEach(item => {
+                            if (item.product && item.product.base_price) {
+                                const retailPrice = parseFloat(item.product.base_price);
+                                const paidPrice = parseFloat(item.unit_price);
+                                const discount = (retailPrice - paidPrice) * item.quantity;
+
+                                if (discount > 0) {
+                                    totalDiscount += discount;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            return { data: totalDiscount, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OrdersService.getTotalDiscountForCustomer');
+        }
     }
 };
 

@@ -38,6 +38,112 @@
 	background: rgba(255,255,255,0.3);
 }
 
+/* Discount Tracking Banner */
+.discount-banner {
+	background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+	color: #fff;
+	padding: 14px 0;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	position: relative;
+	z-index: 99;
+}
+
+.discount-banner-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	position: relative;
+}
+
+.discount-banner-icon {
+	font-size: 28px;
+	flex-shrink: 0;
+	animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+	0% { transform: scale(0); }
+	50% { transform: scale(1.1); }
+	100% { transform: scale(1); }
+}
+
+.discount-banner-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.discount-banner-primary {
+	font-size: 16px;
+	font-weight: 600;
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.discount-banner-amount {
+	font-size: 20px;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+}
+
+.discount-banner-subtitle {
+	font-size: 13px;
+	opacity: 0.9;
+	line-height: 1.3;
+}
+
+.discount-banner-close {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	transform: translateY(-50%);
+	background: rgba(255,255,255,0.15);
+	border: none;
+	color: #fff;
+	cursor: pointer;
+	border-radius: 50%;
+	width: 28px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition: background 0.2s;
+}
+
+.discount-banner-close:hover {
+	background: rgba(255,255,255,0.3);
+}
+
+.discount-banner-close svg {
+	width: 16px;
+	height: 16px;
+}
+
+@media (max-width: 768px) {
+	.discount-banner {
+		padding: 12px 0;
+	}
+
+	.discount-banner-icon {
+		font-size: 24px;
+	}
+
+	.discount-banner-primary {
+		font-size: 14px;
+	}
+
+	.discount-banner-amount {
+		font-size: 18px;
+	}
+
+	.discount-banner-subtitle {
+		display: none;
+	}
+}
+
 body {
 	font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	background: #f5f5f5;

@@ -1436,9 +1436,15 @@ window.openDealerModal = async function() {
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Get address location
-    var addressId = sessionStorage.getItem('selected_address_id');
-    if (!addressId) {
+    // Get MERKEZ address location (instead of selected address)
+    if (typeof BranchesService === 'undefined') {
+        if (locationText) locationText.textContent = 'Servis yuklenemedi';
+        return;
+    }
+
+    // 1. Get MERKEZ branch (is_default=true)
+    var branchesResult = await BranchesService.getByCustomerId(customerId);
+    if (branchesResult.error || !branchesResult.data || branchesResult.data.length === 0) {
         if (locationText) locationText.textContent = 'Adres bilgisi alinamadi';
         if (list) {
             list.innerHTML = '<div class="dealer-empty">' +
@@ -1452,24 +1458,16 @@ window.openDealerModal = async function() {
         return;
     }
 
-    // Get address details
-    if (typeof AddressesService === 'undefined') {
-        if (locationText) locationText.textContent = 'Servis yuklenemedi';
-        return;
-    }
+    // Find MERKEZ branch (is_default=true) or fallback to first branch
+    var merkezBranch = branchesResult.data.find(function(b) { return b.is_default === true; }) || branchesResult.data[0];
 
-    var addressResult = await AddressesService.getById(addressId);
-    if (addressResult.error || !addressResult.data) {
-        if (locationText) locationText.textContent = 'Adres bilgisi alinamadi';
-        return;
-    }
-
-    var address = addressResult.data;
-    var city = address.city;
-    var district = address.district;
+    // 2. Use MERKEZ branch location
+    var city = merkezBranch.city;
+    var district = merkezBranch.district;
+    var districtId = merkezBranch.district_id;
 
     if (locationText) {
-        locationText.textContent = district + ', ' + city;
+        locationText.textContent = district + ', ' + city + ' (MERKEZ)';
     }
 
     // Load dealers for this location (Mikro Pazar dahil)
@@ -1478,19 +1476,20 @@ window.openDealerModal = async function() {
         return;
     }
 
-    // İlçe ID'sini bul (dealer_districts kontrolü için)
-    var districtId = null;
-    try {
-        var districtResult = await supabaseClient
-            .from('districts')
-            .select('id')
-            .ilike('name', district)
-            .single();
-        if (districtResult.data) {
-            districtId = districtResult.data.id;
+    // İlçe ID'sini bul (dealer_districts kontrolü için) - districtId zaten var, ama UUID'den cozme lazimsa
+    if (!districtId && district) {
+        try {
+            var districtResult = await supabaseClient
+                .from('districts')
+                .select('id')
+                .ilike('name', district)
+                .single();
+            if (districtResult.data) {
+                districtId = districtResult.data.id;
+            }
+        } catch (e) {
+            console.warn('İlçe ID bulunamadı:', e);
         }
-    } catch (e) {
-        console.warn('İlçe ID bulunamadı:', e);
     }
 
     // Mikro Pazar destekli bayi arama
@@ -1731,28 +1730,30 @@ async function evaluateDealerForBranch(branchId) {
     }
 
     try {
-        // 1. Sube bilgilerini al
-        var branchResult = await BranchesService.getById(branchId);
-        if (!branchResult.data) {
+        // 1. MERKEZ branch'ini al (seçili branch yerine)
+        var branchesResult = await BranchesService.getByCustomerId(customerId);
+        if (!branchesResult.data || branchesResult.data.length === 0) {
             updateDealerButton(null, 'no-dealers');
             return;
         }
 
-        var branch = branchResult.data;
-        var city = branch.city;
-        var district = branch.district;
-        var districtId = branch.district_id;
+        // MERKEZ branch'ini bul (is_default=true) veya ilk branch'i kullan
+        var merkezBranch = branchesResult.data.find(function(b) { return b.is_default === true; }) || branchesResult.data[0];
+
+        var city = merkezBranch.city;
+        var district = merkezBranch.district;
+        var districtId = merkezBranch.district_id;
 
         // UUID'den isim cekme (gerekirse)
-        if ((!city || !district) && (branch.city_id || branch.district_id)) {
-            if (branch.city_id && !city) {
-                var cityResult = await supabaseClient.from('cities').select('name').eq('id', branch.city_id).single();
+        if ((!city || !district) && (merkezBranch.city_id || merkezBranch.district_id)) {
+            if (merkezBranch.city_id && !city) {
+                var cityResult = await supabaseClient.from('cities').select('name').eq('id', merkezBranch.city_id).single();
                 if (cityResult.data) city = cityResult.data.name;
             }
-            if (branch.district_id && !district) {
-                var districtResult = await supabaseClient.from('districts').select('name').eq('id', branch.district_id).single();
+            if (merkezBranch.district_id && !district) {
+                var districtResult = await supabaseClient.from('districts').select('name').eq('id', merkezBranch.district_id).single();
                 if (districtResult.data) district = districtResult.data.name;
-                districtId = branch.district_id;
+                districtId = merkezBranch.district_id;
             }
         }
 
