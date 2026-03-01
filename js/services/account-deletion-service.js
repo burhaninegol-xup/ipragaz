@@ -38,8 +38,12 @@ const AccountDeletionService = {
                 branchesToDelete: [],
                 branchesToKeep: [],
                 willDeleteCustomer: false,
+                willDeletePoints: false,
                 totalPoints: 0,
-                isOwner: user.role === 'owner'
+                isOwner: user.role === 'owner',
+                subUsers: [],
+                needsOwnerSelection: false,
+                autoPromoteUser: null
             };
 
             // 2. Kullanicinin yetkili oldugu subeleri bul
@@ -96,22 +100,31 @@ const AccountDeletionService = {
                 }
             }
 
-            // 4. Eger kullanici owner ise ve baska owner yoksa, musteri kaydini da sil
+            // 4. Eger kullanici owner ise, alt kullanicilara gore senaryo belirle
             if (user.role === 'owner') {
-                // Baska aktif owner var mi kontrol et
-                const { data: otherOwners } = await supabaseClient
+                // Aktif alt kullanicilari (staff) getir
+                const { data: activeSubUsers } = await supabaseClient
                     .from('customer_users')
-                    .select('id')
+                    .select('id, name, phone')
                     .eq('customer_id', user.customer_id)
-                    .eq('role', 'owner')
                     .eq('is_active', true)
                     .neq('id', userId);
 
-                var hasOtherOwner = otherOwners && otherOwners.length > 0;
+                var subUsers = activeSubUsers || [];
+                impact.subUsers = subUsers;
 
-                // Tek owner ise tum musteri kaydi silinecek
-                if (!hasOtherOwner) {
+                if (subUsers.length === 0) {
+                    // Senaryo 1: Owner + 0 alt kullanici → her seyi sil
                     impact.willDeleteCustomer = true;
+                    impact.willDeletePoints = true;
+                } else if (subUsers.length === 1) {
+                    // Senaryo 3: Owner + 1 alt kullanici → otomatik merkez yap
+                    impact.willDeleteCustomer = false;
+                    impact.autoPromoteUser = { id: subUsers[0].id, name: subUsers[0].name };
+                } else {
+                    // Senaryo 4: Owner + 2+ alt kullanici → secim yaptir
+                    impact.willDeleteCustomer = false;
+                    impact.needsOwnerSelection = true;
                 }
             }
 
@@ -137,9 +150,10 @@ const AccountDeletionService = {
     /**
      * Silme islemini gerceklestir
      * @param {string} userId - Kullanici ID
+     * @param {string|null} newOwnerId - Yeni merkez kullanici yapilacak kullanici ID (opsiyonel)
      * @returns {Promise<{data: boolean, error: Object|null}>}
      */
-    async executeAccountDeletion(userId) {
+    async executeAccountDeletion(userId, newOwnerId) {
         try {
             // Once etki analizini yap
             var impactResult = await this.calculateDeletionImpact(userId);
@@ -149,22 +163,9 @@ const AccountDeletionService = {
 
             var impact = impactResult.data;
 
-            // 1. Silinecek subeleri soft-delete yap
-            for (var i = 0; i < impact.branchesToDelete.length; i++) {
-                var branch = impact.branchesToDelete[i];
-                const { error: branchError } = await supabaseClient
-                    .from('customer_branches')
-                    .update({ is_active: false })
-                    .eq('id', branch.id);
-
-                if (branchError) {
-                    console.error('Branch deactivation error:', branchError);
-                }
-            }
-
-            // 2. Gerekirse musteri kaydini ve altindaki tum kayitlari soft-delete yap
+            // Senaryo 1: Owner + 0 alt kullanici → her seyi sil (puanlar dahil)
             if (impact.willDeleteCustomer) {
-                // 2a. Musterinin TUM subelerini soft-delete yap
+                // 1a. Musterinin TUM subelerini soft-delete yap
                 const { error: allBranchesError } = await supabaseClient
                     .from('customer_branches')
                     .update({ is_active: false })
@@ -174,7 +175,7 @@ const AccountDeletionService = {
                     console.error('All branches deactivation error:', allBranchesError);
                 }
 
-                // 2b. Musterinin TUM kullanicilarini soft-delete yap
+                // 1b. Musterinin TUM kullanicilarini soft-delete yap
                 const { error: allUsersError } = await supabaseClient
                     .from('customer_users')
                     .update({ is_active: false })
@@ -184,7 +185,17 @@ const AccountDeletionService = {
                     console.error('All users deactivation error:', allUsersError);
                 }
 
-                // 2c. Musteri kaydini soft-delete yap
+                // 1c. Puanlari sil
+                const { error: pointsError } = await supabaseClient
+                    .from('customer_points')
+                    .delete()
+                    .eq('customer_id', impact.customerId);
+
+                if (pointsError) {
+                    console.error('Points deletion error:', pointsError);
+                }
+
+                // 1d. Musteri kaydini soft-delete yap
                 const { error: customerError } = await supabaseClient
                     .from('customers')
                     .update({ is_active: false })
@@ -194,13 +205,49 @@ const AccountDeletionService = {
                     console.error('Customer deactivation error:', customerError);
                 }
 
-                // Not: Puanlar (customer_points) silinmiyor - musteriye bagli kalir
-                // Zaten musteri is_active=false oldugu icin listelerde gorunmez
+                return { data: true, error: null };
+            }
+
+            // Senaryo 3/4: Owner + alt kullanici var → yeni owner ata
+            var promoteUserId = newOwnerId || (impact.autoPromoteUser ? impact.autoPromoteUser.id : null);
+            if (impact.isOwner && promoteUserId) {
+                // Yeni owner'i ata
+                const { error: promoteError } = await supabaseClient
+                    .from('customer_users')
+                    .update({ role: 'owner' })
+                    .eq('id', promoteUserId);
+
+                if (promoteError) {
+                    console.error('Owner promotion error:', promoteError);
+                    return { data: false, error: promoteError };
+                }
+
+                // Mevcut owner'in sube yetkilerini sil
+                const { error: permError } = await supabaseClient
+                    .from('customer_user_branches')
+                    .delete()
+                    .eq('customer_user_id', userId);
+
+                if (permError) {
+                    console.error('Permission deletion error:', permError);
+                }
+
+                // Mevcut owner'i tamamen sil (hard-delete)
+                const { error: userError } = await supabaseClient
+                    .from('customer_users')
+                    .delete()
+                    .eq('id', userId);
+
+                if (userError) {
+                    console.error('User deactivation error:', userError);
+                    return { data: false, error: userError };
+                }
 
                 return { data: true, error: null };
             }
 
-            // 3. Kullanici sube yetkilerini sil
+            // Senaryo 2: Staff kullanici → sadece kendini sil
+            // Kullanici sube yetkilerini sil
             const { error: permError } = await supabaseClient
                 .from('customer_user_branches')
                 .delete()
@@ -210,10 +257,10 @@ const AccountDeletionService = {
                 console.error('Permission deletion error:', permError);
             }
 
-            // 4. Kullanici kaydini soft-delete yap
+            // Kullanici kaydini tamamen sil (hard-delete)
             const { error: userError } = await supabaseClient
                 .from('customer_users')
-                .update({ is_active: false })
+                .delete()
                 .eq('id', userId);
 
             if (userError) {

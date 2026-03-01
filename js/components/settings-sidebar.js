@@ -43,6 +43,9 @@ function handleLogout() {
 // HESABIMI SIL OVERLAY FONKSIYONLARI
 // ===========================================
 
+// Global: Mevcut silme etki objesi
+var currentDeletionImpact = null;
+
 // Delete account overlay'i ac
 async function openDeleteAccountOverlay() {
 	var overlay = document.getElementById('deleteAccountOverlay');
@@ -106,6 +109,7 @@ async function loadDeletionImpact() {
 			return;
 		}
 
+		currentDeletionImpact = result.data;
 		renderDeletionImpact(result.data);
 	} catch (err) {
 		console.error('loadDeletionImpact error:', err);
@@ -120,7 +124,7 @@ function renderDeletionImpact(impact) {
 
 	var html = '';
 
-	// 1. Kullanici hesabi silinecek
+	// 1. Kullanici hesabi silinecek (tum senaryolarda)
 	html += '<div class="impact-item danger">';
 	html += '<div class="impact-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>';
 	html += '<div class="impact-content">';
@@ -128,38 +132,35 @@ function renderDeletionImpact(impact) {
 	html += '<div class="impact-detail">' + impact.userName + ' hesabi silinecek</div>';
 	html += '</div></div>';
 
-	// 2. Silinecek subeler
-	if (impact.branchesToDelete.length > 0) {
-		html += '<div class="impact-item danger">';
-		html += '<div class="impact-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>';
-		html += '<div class="impact-content">';
-		html += '<div class="impact-title">Silinecek Subeler (' + impact.branchesToDelete.length + ')</div>';
-		html += '<div class="impact-detail"><ul>';
-		for (var i = 0; i < impact.branchesToDelete.length; i++) {
-			var branch = impact.branchesToDelete[i];
-			var label = branch.name || 'Sube';
-			if (branch.isDefault) label += ' (Merkez)';
-			html += '<li>' + label + ' - ' + (branch.district || '') + ', ' + (branch.city || '') + '</li>';
-		}
-		html += '</ul></div></div></div>';
-	}
-
-	// 3. Korunacak subeler (baska kullanici var)
-	if (impact.branchesToKeep.length > 0) {
-		html += '<div class="impact-item info">';
-		html += '<div class="impact-icon info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>';
-		html += '<div class="impact-content">';
-		html += '<div class="impact-title">Korunacak Subeler (' + impact.branchesToKeep.length + ')</div>';
-		html += '<div class="impact-detail">Bu subeler baska kullanicilar tarafindan yonetilmeye devam edecek:<ul>';
-		for (var j = 0; j < impact.branchesToKeep.length; j++) {
-			var keptBranch = impact.branchesToKeep[j];
-			html += '<li>' + (keptBranch.name || 'Sube') + '</li>';
-		}
-		html += '</ul></div></div></div>';
-	}
-
-	// 4. Musteri kaydi silinecek mi?
+	// Senaryo 1: Owner + 0 alt kullanici → her sey silinecek
 	if (impact.willDeleteCustomer) {
+		// Silinecek subeler
+		if (impact.branchesToDelete.length > 0) {
+			html += '<div class="impact-item danger">';
+			html += '<div class="impact-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>';
+			html += '<div class="impact-content">';
+			html += '<div class="impact-title">Subeler (' + impact.branchesToDelete.length + ')</div>';
+			html += '<div class="impact-detail">Tum subeler silinecek:<ul>';
+			for (var i = 0; i < impact.branchesToDelete.length; i++) {
+				var branch = impact.branchesToDelete[i];
+				var label = branch.name || 'Sube';
+				if (branch.isDefault) label += ' (Merkez)';
+				html += '<li>' + label + ' - ' + (branch.district || '') + ', ' + (branch.city || '') + '</li>';
+			}
+			html += '</ul></div></div></div>';
+		}
+
+		// Puanlar silinecek
+		if (impact.totalPoints > 0) {
+			html += '<div class="impact-item danger">';
+			html += '<div class="impact-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>';
+			html += '<div class="impact-content">';
+			html += '<div class="impact-title">Kazanilmis Puanlar</div>';
+			html += '<div class="impact-detail">' + impact.totalPoints.toLocaleString('tr-TR') + ' puan silinecek</div>';
+			html += '</div></div>';
+		}
+
+		// Isletme hesabi silinecek
 		html += '<div class="impact-item danger">';
 		html += '<div class="impact-icon danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg></div>';
 		html += '<div class="impact-content">';
@@ -168,17 +169,62 @@ function renderDeletionImpact(impact) {
 		html += '</div></div>';
 	}
 
-	// 5. Puanlar
-	if (impact.totalPoints > 0) {
-		html += '<div class="impact-item warning">';
-		html += '<div class="impact-icon warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>';
+	// Senaryo 3: Owner + 1 alt kullanici → otomatik merkez atama
+	else if (impact.autoPromoteUser) {
+		html += '<div class="impact-item info">';
+		html += '<div class="impact-icon info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></div>';
 		html += '<div class="impact-content">';
-		html += '<div class="impact-title">Kazanilmis Puanlar</div>';
-		html += '<div class="impact-detail">' + impact.totalPoints.toLocaleString('tr-TR') + ' puan hesabinizda kalacak (silinmeyecek)</div>';
+		html += '<div class="impact-title">Yeni Merkez Kullanici</div>';
+		html += '<div class="impact-detail"><strong>' + impact.autoPromoteUser.name + '</strong> otomatik olarak yeni Merkez Kullanici olacak</div>';
 		html += '</div></div>';
 	}
 
+	// Senaryo 4: Owner + 2+ alt kullanici → secim yaptir
+	else if (impact.needsOwnerSelection) {
+		html += '<div class="impact-item info">';
+		html += '<div class="impact-icon info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg></div>';
+		html += '<div class="impact-content">';
+		html += '<div class="impact-title">Yeni Merkez Kullanici Secin</div>';
+		html += '<div class="impact-detail">Hesabiniz silindikten sonra yeni Merkez Kullanici olacak kisiyi secin:</div>';
+		html += '<div class="owner-selection">';
+		for (var k = 0; k < impact.subUsers.length; k++) {
+			var subUser = impact.subUsers[k];
+			html += '<div class="owner-option" onclick="selectOwnerOption(this)">';
+			html += '<input type="radio" name="newOwner" id="owner_' + subUser.id + '" value="' + subUser.id + '" onchange="onOwnerSelected()">';
+			html += '<label for="owner_' + subUser.id + '">';
+			html += '<span class="owner-name">' + subUser.name + '</span>';
+			html += '<span class="owner-phone">' + subUser.phone + '</span>';
+			html += '</label>';
+			html += '</div>';
+		}
+		html += '</div>';
+		html += '</div></div>';
+	}
+
+	// Senaryo 2 (Staff): Sadece kullanici hesabi bilgisi gosterilir (ek bilgi yok)
+	// Zaten yukarida kullanici hesabi silinecek bilgisi var
+
 	container.innerHTML = html;
+}
+
+// Radio secim - owner option tiklandiginda
+function selectOwnerOption(element) {
+	// Onceki secimi kaldir
+	var allOptions = document.querySelectorAll('.owner-option');
+	for (var i = 0; i < allOptions.length; i++) {
+		allOptions[i].classList.remove('selected');
+	}
+	// Yeni secimi isaretle
+	element.classList.add('selected');
+	var radio = element.querySelector('input[type="radio"]');
+	if (radio) radio.checked = true;
+	onOwnerSelected();
+}
+
+// Owner secildiginde checkbox durumunu kontrol et
+function onOwnerSelected() {
+	// Secim yapildi, bu noktada ek bir islem gerekmez
+	// Checkbox zaten ayri kontrol ediliyor
 }
 
 // Hesap silmeyi onayla
@@ -195,8 +241,29 @@ async function confirmAccountDeletion() {
 		return;
 	}
 
+	// Yeni owner ID belirle
+	var newOwnerId = null;
+	if (currentDeletionImpact) {
+		if (currentDeletionImpact.autoPromoteUser) {
+			// Senaryo 3: Otomatik atama
+			newOwnerId = currentDeletionImpact.autoPromoteUser.id;
+		} else if (currentDeletionImpact.needsOwnerSelection) {
+			// Senaryo 4: Kullanici secimi
+			var selectedRadio = document.querySelector('input[name="newOwner"]:checked');
+			if (!selectedRadio) {
+				alert('Lutfen yeni Merkez Kullanici secin.');
+				if (btn) {
+					btn.disabled = false;
+					btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hesabimi Sil';
+				}
+				return;
+			}
+			newOwnerId = selectedRadio.value;
+		}
+	}
+
 	try {
-		var result = await AccountDeletionService.executeAccountDeletion(userId);
+		var result = await AccountDeletionService.executeAccountDeletion(userId, newOwnerId);
 
 		if (result.error || !result.data) {
 			alert('Hesap silinirken bir hata olustu: ' + (result.error ? result.error.message : 'Bilinmeyen hata'));
