@@ -504,6 +504,9 @@ const OrdersService = {
      */
     async getTotalDiscountForCustomer(customerId) {
         try {
+            var thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
             const { data, error } = await supabaseClient
                 .from('orders')
                 .select(`
@@ -515,7 +518,8 @@ const OrdersService = {
                     )
                 `)
                 .eq('customer_id', customerId)
-                .eq('status', 'completed');
+                .eq('status', 'completed')
+                .gte('updated_at', thirtyDaysAgo.toISOString());
 
             if (error) throw error;
 

@@ -574,7 +574,7 @@
                         <label class="bo-form-label">Rol</label>
                         <select class="bo-form-select" id="userRole" onchange="toggleBranchPermissions()">
                             <option value="staff">Alt Kullanici (Staff)</option>
-                            <option value="owner">Ana Kullanici (Owner)</option>
+                            <option value="owner">Merkez Kullanici (Owner)</option>
                         </select>
                     </div>
                     <div class="bo-form-group">
@@ -1114,7 +1114,7 @@
             }
 
             grid.innerHTML = usersData.map(function(user) {
-                var roleText = user.role === 'owner' ? 'Ana Kullanici' : 'Alt Kullanici';
+                var roleText = user.role === 'owner' ? 'Merkez Kullanici' : 'Alt Kullanici';
                 var roleClass = user.role === 'owner' ? 'info' : 'default';
                 var statusClass = user.is_active !== false ? 'success' : 'error';
                 var statusText = user.is_active !== false ? 'Aktif' : 'Pasif';
@@ -1158,10 +1158,10 @@
             var ownerOption = roleSelect.querySelector('option[value="owner"]');
             if (hasOwner && ownerOption) {
                 ownerOption.disabled = true;
-                ownerOption.textContent = 'Ana Kullanici (Owner) - Zaten mevcut';
+                ownerOption.textContent = 'Merkez Kullanici (Owner) - Zaten mevcut';
             } else if (ownerOption) {
                 ownerOption.disabled = false;
-                ownerOption.textContent = 'Ana Kullanici (Owner)';
+                ownerOption.textContent = 'Merkez Kullanici (Owner)';
             }
             roleSelect.disabled = false;
             roleSelect.title = '';
@@ -1216,7 +1216,7 @@
             var roleSelect = document.getElementById('userRole');
             if (user.role === 'owner') {
                 roleSelect.disabled = true;
-                roleSelect.title = 'Ana kullanici rolu degistirilemez';
+                roleSelect.title = 'Merkez kullanici rolu degistirilemez';
             } else {
                 roleSelect.disabled = false;
                 roleSelect.title = '';
@@ -1262,7 +1262,7 @@
             if (!userId && role === 'owner') {
                 var hasOwner = usersData && usersData.some(function(u) { return u.role === 'owner' && u.is_active; });
                 if (hasOwner) {
-                    showToast('Bu musterinin zaten bir Ana Kullanicisi (Owner) var. Sadece 1 owner olabilir.', 'error');
+                    showToast('Bu musterinin zaten bir Merkez Kullanicisi (Owner) var. Sadece 1 owner olabilir.', 'error');
                     return;
                 }
             }
@@ -1348,7 +1348,7 @@
             if (!user) return;
 
             if (user.role === 'owner') {
-                showToast('Ana kullanici (owner) silinemez', 'error');
+                showToast('Merkez kullanici (owner) silinemez', 'error');
                 return;
             }
 

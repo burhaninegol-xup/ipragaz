@@ -143,7 +143,7 @@ const CustomerUsersService = {
             .single();
 
         if (user && user.role === 'owner') {
-            return { data: null, error: { message: 'Ana kullanici (owner) silinemez' } };
+            return { data: null, error: { message: 'Merkez kullanici (owner) silinemez' } };
         }
 
         // Once sube yetkilerini sil

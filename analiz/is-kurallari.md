@@ -27,7 +27,7 @@ Bu doküman, İpragaz Bayi Sistemi'nde uygulanan tüm iş kurallarını kapsaml�
 **Rol Türleri:**
 | Rol | Açıklama |
 |-----|----------|
-| **Owner** | Ana kullanıcı (silinemez) |
+| **Owner** | Merkez kullanıcı (silinemez) |
 | **Staff** | Alt kullanıcılar, sınırlı yetkiler |
 
 **Yetkilendirme Kuralları:**

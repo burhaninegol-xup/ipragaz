@@ -45,7 +45,18 @@
       "Bash(lsof:*)",
       "Bash(kill:*)",
       "Bash(xargs:*)",
-      "Bash(shasum:*)"
+      "Bash(shasum:*)",
+      "Bash(for i in {1..30})",
+      "Bash(do if docker ps)",
+      "Bash(then echo \"Docker hazır!\")",
+      "Bash(break)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(docker info:*)",
+      "Bash(ps:*)",
+      "Bash(test:*)",
+      "WebFetch(domain:www.ipragaz.com.tr)",
+      "WebFetch(domain:cdn.ipragaz.com.tr)"
     ]
   }
 }
