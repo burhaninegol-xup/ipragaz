@@ -188,13 +188,7 @@
 					<label class="form-label">Adres Adı *</label>
 					<input type="text" class="form-input" id="branchName" placeholder="Ornegin: Merkez, Depo, vb." required>
 				</div>
-					<div class="form-group">
-					<label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-						<input type="checkbox" id="isMerkez" style="width: 18px; height: 18px; accent-color: #e31e24;">
-						<span class="form-label" style="margin: 0;">Merkez</span>
-					</label>
-				</div>
-				</form>
+					</form>
 		</div>
 		<div class="panel-footer">
 			<button class="save-btn" onclick="saveAddress()">Kaydet</button>
@@ -314,9 +308,8 @@
 					html += '<div class="address-actions">';
 					html += '<button class="address-action" onclick="openAddressPanel(\'edit\', \'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
 					if (!addr.is_default) {
-						html += '<button class="address-action" onclick="setDefaultAddress(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Merkez Yap</button>';
+						html += '<button class="address-action" onclick="openDeleteModal(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
 					}
-					html += '<button class="address-action" onclick="openDeleteModal(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
 					html += '</div>';
 				}
 				html += '</div>';
@@ -467,7 +460,6 @@
 			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
 			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
 			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
-			document.getElementById('isMerkez').checked = false;
 		}
 
 		async function loadAddressData(addressId) {
@@ -504,8 +496,7 @@
 			document.getElementById('apartment').value = addr.apartment || '';
 			document.getElementById('branchDescription').value = addr.branch_description || '';
 			document.getElementById('branchName').value = addr.branch_name || '';
-			document.getElementById('isMerkez').checked = addr.is_default || false;
-					}
+	}
 
 		// Sube kaydet
 		async function saveAddress() {
@@ -526,12 +517,9 @@
 				return;
 			}
 
-		var isMerkez = document.getElementById('isMerkez').checked;
-
 			var branchData = {
 				customer_id: customerId,
 				branch_name: branchName,
-				is_default: isMerkez,
 				// Yeni FK kolonlari
 				city_id: cityId || null,
 				district_id: districtId || null,
@@ -552,8 +540,11 @@
 
 			var result;
 			if (currentAddressId) {
+				// Duzenleme modunda is_default gonderme, mevcut DB degeri korunsun
 				result = await BranchesService.update(currentAddressId, branchData);
 			} else {
+				// Ekleme modunda her zaman false
+				branchData.is_default = false;
 				result = await BranchesService.create(branchData);
 			}
 
@@ -563,16 +554,6 @@
 			}
 
 			closeAddressPanel();
-			await loadAddresses();
-		}
-
-		// Varsayilan sube yap
-		async function setDefaultAddress(addressId) {
-			var result = await BranchesService.setDefault(addressId, customerId);
-			if (result.error) {
-				alert('Merkez sube ayarlanamadi');
-				return;
-			}
 			await loadAddresses();
 		}
 

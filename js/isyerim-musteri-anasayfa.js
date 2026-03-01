@@ -593,35 +593,41 @@ function bindProductEvents() {
 
 	// Sepete Ekle
 	document.querySelectorAll('.btn-add-cart').forEach(function(btn) {
-		btn.addEventListener('click', async function(e) {
+		btn.addEventListener('click', function(e) {
 			e.preventDefault();
 			e.stopPropagation(); // Kartın tıklanmasını engelle
 
-			var productCard = this.closest('.product-card');
+			var self = this;
+			var productCard = self.closest('.product-card');
 			var productId = productCard.getAttribute('data-product-id');
 
 			// Ürünü bul
 			var product = products.find(function(p) { return p.id === productId; });
 			if (!product) return;
 
-			// Çözümlenmiş fiyatı al
-			var priceInfo = resolvedPrices[product.id] || { price: product.base_price || 0 };
+			var branchId = sessionStorage.getItem('selected_address_id');
 
-			// Ürünü sepete ekle (async)
-			await CartService.addItem({
-				id: product.id,
-				code: product.code,
-				name: product.name,
-				price: priceInfo.price,
-				points: product.points_per_unit || 0,
-				image_url: product.image_url
+			// Güvenlik soruları kontrolü
+			SecurityOverlay.checkAndProceed(branchId, async function() {
+				// Çözümlenmiş fiyatı al
+				var priceInfo = resolvedPrices[product.id] || { price: product.base_price || 0 };
+
+				// Ürünü sepete ekle (async)
+				await CartService.addItem({
+					id: product.id,
+					code: product.code,
+					name: product.name,
+					price: priceInfo.price,
+					points: product.points_per_unit || 0,
+					image_url: product.image_url
+				});
+
+				// Badge'i güncelle
+				updateCartBadge();
+
+				// Buton animasyonu göster
+				showAddedFeedback(self);
 			});
-
-			// Badge'i güncelle
-			updateCartBadge();
-
-			// Buton animasyonu göster
-			showAddedFeedback(this);
 		});
 	});
 }

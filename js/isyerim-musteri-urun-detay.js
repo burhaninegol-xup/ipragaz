@@ -526,64 +526,74 @@ function updateQuantityButtons() {
 }
 
 // Sepete ekle
-async function addToCart() {
+function addToCart() {
 	if (!currentProduct) return;
 
-	// Çözümlenmiş fiyatı al
-	var priceInfo = resolvedPrices[currentProduct.id] || { price: currentProduct.base_price || 0 };
-	var btn = document.getElementById('addToCartBtn');
+	var branchId = sessionStorage.getItem('selected_address_id');
 
-	// Ürünü sepete ekle
-	await CartService.addItem({
-		id: currentProduct.id,
-		code: currentProduct.code,
-		name: currentProduct.name,
-		price: priceInfo.price,
-		points: currentProduct.points_per_unit || 0,
-		image_url: currentProduct.image_url
-	}, currentQuantity);
+	// Güvenlik soruları kontrolü
+	SecurityOverlay.checkAndProceed(branchId, async function() {
+		// Çözümlenmiş fiyatı al
+		var priceInfo = resolvedPrices[currentProduct.id] || { price: currentProduct.base_price || 0 };
+		var btn = document.getElementById('addToCartBtn');
 
-	// Badge'i güncelle
-	updateCartBadge();
+		// Ürünü sepete ekle
+		await CartService.addItem({
+			id: currentProduct.id,
+			code: currentProduct.code,
+			name: currentProduct.name,
+			price: priceInfo.price,
+			points: currentProduct.points_per_unit || 0,
+			image_url: currentProduct.image_url
+		}, currentQuantity);
 
-	// Buton animasyonu
-	btn.innerHTML = '<span>Eklendi ✓</span>';
-	btn.classList.add('added');
+		// Badge'i güncelle
+		updateCartBadge();
 
-	setTimeout(function() {
-		btn.innerHTML = '<span>Sepete Ekle</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
-		btn.classList.remove('added');
-	}, 1500);
+		// Buton animasyonu
+		btn.innerHTML = '<span>Eklendi ✓</span>';
+		btn.classList.add('added');
+
+		setTimeout(function() {
+			btn.innerHTML = '<span>Sepete Ekle</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+			btn.classList.remove('added');
+		}, 1500);
+	});
 }
 
 // Önerilen ürünü sepete ekle
-async function addRecommendedToCart(btn, productId) {
+function addRecommendedToCart(btn, productId) {
 	var product = allProducts.find(function(p) { return p.id === productId; });
 	if (!product) return;
 
-	// Çözümlenmiş fiyatı al
-	var priceInfo = resolvedPrices[product.id] || { price: product.base_price || 0 };
+	var branchId = sessionStorage.getItem('selected_address_id');
 
-	await CartService.addItem({
-		id: product.id,
-		code: product.code,
-		name: product.name,
-		price: priceInfo.price,
-		points: product.points_per_unit || 0,
-		image_url: product.image_url
+	// Güvenlik soruları kontrolü
+	SecurityOverlay.checkAndProceed(branchId, async function() {
+		// Çözümlenmiş fiyatı al
+		var priceInfo = resolvedPrices[product.id] || { price: product.base_price || 0 };
+
+		await CartService.addItem({
+			id: product.id,
+			code: product.code,
+			name: product.name,
+			price: priceInfo.price,
+			points: product.points_per_unit || 0,
+			image_url: product.image_url
+		});
+
+		updateCartBadge();
+
+		// Buton animasyonu
+		var originalText = btn.textContent;
+		btn.textContent = 'Eklendi ✓';
+		btn.classList.add('added');
+
+		setTimeout(function() {
+			btn.textContent = originalText;
+			btn.classList.remove('added');
+		}, 1500);
 	});
-
-	updateCartBadge();
-
-	// Buton animasyonu
-	var originalText = btn.textContent;
-	btn.textContent = 'Eklendi ✓';
-	btn.classList.add('added');
-
-	setTimeout(function() {
-		btn.textContent = originalText;
-		btn.classList.remove('added');
-	}, 1500);
 }
 
 // Ürün detayına git
