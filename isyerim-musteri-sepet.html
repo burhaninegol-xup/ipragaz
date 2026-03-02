@@ -735,6 +735,8 @@
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/locations-service.js"></script>
+	<script src="./js/components/address-completion-overlay.js"></script>
 	<script>
 		// Campaign toggle
 		document.getElementById('campaignHeader').addEventListener('click', function() {
@@ -908,8 +910,8 @@
 
 			// Teslimat sayfasına yönlendir veya direkt sipariş oluştur
 			// Şimdilik teslimat sayfası yoksa direkt sipariş oluşturalım
-			var customerId = sessionStorage.getItem('customer_id');
-			var dealerId = sessionStorage.getItem('dealer_id');
+			var customerId = sessionStorage.getItem('isyerim_customer_id');
+			var dealerId = sessionStorage.getItem('isyerim_dealer_id');
 
 			if (!customerId || !dealerId) {
 				// Bayi ID'sini otomatik al
@@ -931,9 +933,26 @@
 				}
 			}
 
-			// Sipariş oluştur
-			this.disabled = true;
-			this.innerHTML = 'Sipariş oluşturuluyor...';
+			// Adres tamamlama kontrolu
+			var branchId = sessionStorage.getItem('selected_address_id');
+			if (branchId) {
+				var proceedBtnRef = this;
+				await ComponentLoader.loadAddressCompletionOverlay();
+				AddressCompletionOverlay.checkAndProceed(branchId, async function() {
+					// Adres tamam - siparis olustur
+					await doCheckout(proceedBtnRef, customerId, dealerId);
+				});
+				return;
+			}
+
+			// branchId yoksa direkt siparis olustur
+			await doCheckout(this, customerId, dealerId);
+		});
+
+		// Siparis olusturma fonksiyonu
+		async function doCheckout(btn, customerId, dealerId) {
+			btn.disabled = true;
+			btn.innerHTML = 'Sipariş oluşturuluyor...';
 
 			try {
 				const result = await CartService.checkout(customerId, dealerId, {
@@ -943,8 +962,8 @@
 
 				if (result.error) {
 					alert('Sipariş oluşturulamadı: ' + result.error);
-					this.disabled = false;
-					this.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+					btn.disabled = false;
+					btn.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 				} else {
 					alert('Siparişiniz başarıyla oluşturuldu! Sipariş No: ' + (result.data.order_number || result.data.id));
 					window.location.href = 'isyerim-musteri-anasayfa.html';
@@ -952,10 +971,10 @@
 			} catch (err) {
 				console.error('Sipariş hatası:', err);
 				alert('Sipariş oluşturulurken bir hata oluştu.');
-				this.disabled = false;
-				this.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+				btn.disabled = false;
+				btn.innerHTML = 'Siparişe Devam Et <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 			}
-		});
+		}
 	</script>
 </body>
 </html>

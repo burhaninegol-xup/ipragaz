@@ -93,6 +93,18 @@
 		.permission-item label { flex: 1; font-size: 14px; color: #333; cursor: pointer; }
 		.permission-item .branch-badge { font-size: 11px; padding: 2px 6px; border-radius: 3px; background: #e31e24; color: #fff; }
 
+		/* OTP Section */
+		.otp-section { margin-bottom: 16px; }
+		.otp-send-row { margin-bottom: 10px; }
+		.otp-send-btn { background: #e31e24; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; transition: background 0.3s; }
+		.otp-send-btn:hover { background: #c91a1f; }
+		.otp-send-btn:disabled { background: #999; cursor: not-allowed; }
+		.otp-input-row { margin-top: 12px; }
+		.otp-input-wrapper { display: flex; align-items: center; gap: 10px; }
+		.otp-input { flex: 1; letter-spacing: 8px; text-align: center; font-size: 20px; font-weight: 700; }
+		.otp-status { font-size: 22px; min-width: 28px; text-align: center; }
+		.otp-hint { font-size: 12px; color: #999; margin-top: 6px; }
+
 		/* Loading */
 		.loading { text-align: center; padding: 40px; color: #666; }
 
@@ -173,6 +185,20 @@
 					<label class="form-label">Telefon Numarasi *</label>
 					<input type="tel" class="form-input" id="userPhone" placeholder="5XX XXX XX XX" maxlength="10" required>
 				</div>
+				<!-- OTP Dogrulama -->
+				<div class="otp-section" id="otpSection" style="display: none;">
+					<div class="otp-send-row">
+						<button type="button" class="otp-send-btn" id="otpSendBtn" onclick="sendOtp()">Kod Gonder</button>
+					</div>
+					<div class="otp-input-row" id="otpInputRow" style="display: none;">
+						<label class="form-label">Dogrulama Kodu</label>
+						<div class="otp-input-wrapper">
+							<input type="text" class="form-input otp-input" id="otpCode" placeholder="4 haneli kod" maxlength="4">
+							<span class="otp-status" id="otpStatus"></span>
+						</div>
+						<p class="otp-hint">Telefonunuza gonderilen 4 haneli kodu girin</p>
+					</div>
+				</div>
 				<div class="toggle-group" id="activeToggleGroup">
 					<span class="toggle-label">Aktif</span>
 					<label class="toggle-switch">
@@ -232,6 +258,9 @@
 		var isEditMode = false;
 		var editingUserRole = null;
 		var isManagementRestricted = false;
+		var phoneVerified = false;
+		var originalPhone = '';
+		var MVP_OTP_CODE = '1111';
 
 		document.addEventListener('DOMContentLoaded', async function() {
 			customerId = sessionStorage.getItem('isyerim_customer_id');
@@ -264,6 +293,40 @@
 			await checkManagementRestriction();
 
 			await loadUsers();
+
+			// Telefon degistiginde OTP sifirla
+			document.getElementById('userPhone').addEventListener('input', function() {
+				var currentPhone = this.value.trim().replace(/\D/g, '');
+				if (isEditMode && currentPhone === originalPhone) {
+					// Orijinal telefona geri donuldu, OTP gerekmez
+					phoneVerified = true;
+					document.getElementById('otpSection').style.display = 'none';
+					resetOtpFields();
+				} else {
+					phoneVerified = false;
+					document.getElementById('otpSection').style.display = 'block';
+					resetOtpFields();
+				}
+				updateSaveButtonState();
+			});
+
+			// OTP kod girisi kontrolu
+			document.getElementById('otpCode').addEventListener('input', function() {
+				var code = this.value.trim();
+				if (code.length === 4) {
+					if (code === MVP_OTP_CODE) {
+						phoneVerified = true;
+						updateOtpStatus('verified');
+					} else {
+						phoneVerified = false;
+						updateOtpStatus('error');
+					}
+				} else {
+					phoneVerified = false;
+					updateOtpStatus('');
+				}
+				updateSaveButtonState();
+			});
 		});
 
 		// Yonetim kisitlamasini kontrol et
@@ -353,6 +416,57 @@
 		// Maksimum kullanici sayisi (merkez kullanici dahil)
 		var MAX_USERS_PER_CUSTOMER = 3;
 
+		// OTP fonksiyonlari
+		function sendOtp() {
+			var phone = document.getElementById('userPhone').value.trim().replace(/\D/g, '');
+			if (!phone || phone.length !== 10) {
+				alert('Lutfen gecerli bir telefon numarasi girin (10 hane)');
+				return;
+			}
+			// MVP: SMS gonderimi simule et
+			var btn = document.getElementById('otpSendBtn');
+			btn.textContent = 'Kod Gonderildi';
+			btn.disabled = true;
+			document.getElementById('otpInputRow').style.display = 'block';
+			document.getElementById('otpCode').value = '';
+			document.getElementById('otpCode').focus();
+			phoneVerified = false;
+			updateOtpStatus('');
+		}
+
+		function updateOtpStatus(state) {
+			var el = document.getElementById('otpStatus');
+			if (state === 'verified') {
+				el.innerHTML = '&#10003;';
+				el.style.color = '#2e7d32';
+			} else if (state === 'error') {
+				el.innerHTML = '&#10007;';
+				el.style.color = '#c62828';
+			} else {
+				el.innerHTML = '';
+			}
+		}
+
+		function resetOtpFields() {
+			var btn = document.getElementById('otpSendBtn');
+			btn.textContent = 'Kod Gonder';
+			btn.disabled = false;
+			document.getElementById('otpInputRow').style.display = 'none';
+			document.getElementById('otpCode').value = '';
+			updateOtpStatus('');
+			updateSaveButtonState();
+		}
+
+		function updateSaveButtonState() {
+			var saveBtn = document.querySelector('.save-btn');
+			var otpVisible = document.getElementById('otpSection').style.display !== 'none';
+			if (otpVisible && !phoneVerified) {
+				saveBtn.disabled = true;
+			} else {
+				saveBtn.disabled = false;
+			}
+		}
+
 		// Panel ac/kapat
 		async function openUserPanel(mode, userId) {
 			isEditMode = mode === 'edit';
@@ -377,21 +491,33 @@
 			if (isEditMode && userId) {
 				document.getElementById('panelTitle').textContent = 'Kullanici Duzenle';
 				currentUserId = userId;
-				loadUserData(userId);
+				await loadUserData(userId);
+				// Edit modda: telefon zaten dogrulanmis, OTP gizle
+				phoneVerified = true;
+				document.getElementById('otpSection').style.display = 'none';
+				resetOtpFields();
 			} else {
 				document.getElementById('panelTitle').textContent = 'Kullanici Ekle';
 				currentUserId = null;
 				editingUserRole = null;
+				originalPhone = '';
 				clearForm();
 				// Yeni kullanici eklerken yetki secimi goster
 				document.getElementById('permissionsSection').style.display = 'block';
+				// Yeni kullanici: OTP goster
+				phoneVerified = false;
+				document.getElementById('otpSection').style.display = 'block';
+				resetOtpFields();
 			}
+			updateSaveButtonState();
 		}
 
 		function closeUserPanel() {
 			document.getElementById('panelOverlay').classList.remove('active');
 			document.getElementById('userPanel').classList.remove('active');
 			document.body.style.overflow = '';
+			phoneVerified = false;
+			originalPhone = '';
 			clearForm();
 		}
 
@@ -402,6 +528,10 @@
 			document.getElementById('canConvertPoints').checked = false;
 			document.getElementById('permissionsSection').style.display = 'none';
 			editingUserRole = null;
+			phoneVerified = false;
+			originalPhone = '';
+			document.getElementById('otpSection').style.display = 'none';
+			resetOtpFields();
 		}
 
 		async function loadUserData(userId) {
@@ -410,6 +540,7 @@
 
 			var user = result.data;
 			editingUserRole = user.role;
+			originalPhone = user.phone || '';
 
 			document.getElementById('userName').value = user.name || '';
 			document.getElementById('userPhone').value = user.phone || '';
@@ -440,6 +571,21 @@
 
 			if (!userPhone || userPhone.length !== 10) {
 				alert('Lutfen gecerli bir telefon numarasi girin (10 hane)');
+				return;
+			}
+
+			// OTP dogrulama kontrolu
+			var needsOtp = false;
+			if (!currentUserId) {
+				// Yeni kullanici: OTP zorunlu
+				needsOtp = true;
+			} else if (userPhone !== originalPhone) {
+				// Edit modu: telefon degistiyse OTP zorunlu
+				needsOtp = true;
+			}
+
+			if (needsOtp && !phoneVerified) {
+				alert('Lutfen telefon numarasini dogrulayin. "Kod Gonder" butonuna tiklayin ve gelen kodu girin.');
 				return;
 			}
 

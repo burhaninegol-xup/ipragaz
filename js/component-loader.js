@@ -63,6 +63,66 @@ const ComponentLoader = {
     },
 
     /**
+     * Address Completion Overlay componentini yukle
+     * HTML'i body'ye ekler ve JS init'i calistirir
+     */
+    async loadAddressCompletionOverlay() {
+        // Zaten yuklenmis mi kontrol et
+        if (document.getElementById('addressCompletionOverlay')) {
+            // Sadece init et
+            if (typeof AddressCompletionOverlay !== 'undefined') {
+                AddressCompletionOverlay.init();
+            }
+            return;
+        }
+
+        try {
+            // CSS'leri head'e ekle (yoksa)
+            await this._loadCSS('./css/components/security-overlay.css');
+            await this._loadCSS('./css/components/address-completion-overlay.css');
+
+            // HTML'i fetch et
+            const response = await fetch('./components/address-completion-overlay.html');
+            if (!response.ok) {
+                throw new Error('Address completion overlay yuklenemedi');
+            }
+            const html = await response.text();
+
+            // Body'nin sonuna ekle
+            const container = document.createElement('div');
+            container.id = 'address-completion-overlay-container';
+            container.innerHTML = html;
+            document.body.appendChild(container);
+
+            // JS init
+            if (typeof AddressCompletionOverlay !== 'undefined') {
+                AddressCompletionOverlay.init();
+            }
+        } catch (error) {
+            console.error('Address completion overlay yukleme hatasi:', error);
+        }
+    },
+
+    /**
+     * CSS dosyasini head'e ekle (zaten yuklenmemisse)
+     * @param {string} href - CSS dosya yolu
+     */
+    _loadCSS(href) {
+        return new Promise(function(resolve) {
+            if (document.querySelector('link[href="' + href + '"]')) {
+                resolve();
+                return;
+            }
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.onload = resolve;
+            link.onerror = resolve; // Hata olsa da devam et
+            document.head.appendChild(link);
+        });
+    },
+
+    /**
      * Tum componentleri yukle
      */
     async loadAll() {

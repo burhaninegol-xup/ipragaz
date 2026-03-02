@@ -19,6 +19,7 @@
 		var currentUserType = 'dealer';
 		var countdownInterval = null; // 24 saat geri sayim interval
 		var countdownEndTime = null; // Geri sayim bitis zamani
+		var inactiveProductIds = []; // Bayinin pasife aldigi urun ID'leri
 
 		// Loading overlay
 		function showLoading(text) {
@@ -145,6 +146,19 @@
 					image: p.image_url || './İpragaz Bayi_files/IPR-BAYI-12-kg-ipr-uzun.png',
 					base_price: cityRetailPrices[p.id] !== undefined ? cityRetailPrices[p.id] : p.base_price
 				}));
+
+				// Bayinin pasife aldigi urunleri filtrele
+				try {
+					var inactiveResult = await DealerProductsService.getInactiveProductIds(currentDealerId);
+					if (!inactiveResult.error && inactiveResult.data) {
+						inactiveProductIds = inactiveResult.data;
+					}
+				} catch (err) {
+					console.warn('Pasif urun listesi alinamadi:', err);
+				}
+				products = products.filter(function(p) {
+					return inactiveProductIds.indexOf(p.id) === -1;
+				});
 
 				hideLoading();
 
@@ -280,9 +294,15 @@
 
 				// Teklif detayları varsa sadece onları göster
 				if (customerPrices && customerPrices.length > 0) {
+					var removedProducts = [];
 					customerPrices.forEach(function(detail) {
 						var product = detail.product;
 						if (product) {
+							// Pasif urun kontrolu
+							if (inactiveProductIds.indexOf(product.id) !== -1) {
+								removedProducts.push(product.name);
+								return;
+							}
 							var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
 							addProductRow(
 								{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
@@ -295,6 +315,7 @@
 							);
 						}
 					});
+					showRemovedProductsNotice(removedProducts);
 				} else {
 					// Teklif yoksa tüm ürünleri göster
 					products.forEach(function(product) {
@@ -543,9 +564,15 @@
 
 				// Teklif detayları varsa sadece onları göster
 				if (customerPrices && customerPrices.length > 0) {
+					var removedProducts = [];
 					customerPrices.forEach(function(detail) {
 						var product = detail.product;
 						if (product) {
+							// Pasif urun kontrolu
+							if (inactiveProductIds.indexOf(product.id) !== -1) {
+								removedProducts.push(product.name);
+								return;
+							}
 							var fullProduct = products.find(function(p) { return p.id === product.id; }) || product;
 							addProductRow(
 								{ id: product.id, code: product.code, name: product.name, base_price: fullProduct.base_price, image: fullProduct.image || product.image_url },
@@ -558,6 +585,7 @@
 							);
 						}
 					});
+					showRemovedProductsNotice(removedProducts);
 				} else {
 					products.forEach(function(product) {
 						addProductRow(product, '', '', undefined, undefined, 'retail_price', 0);
@@ -1138,6 +1166,19 @@
 				$('#offer-summary-section').show();
 			} else {
 				$('#offer-summary-section').hide();
+			}
+		}
+
+		// Cikarilan urunler bildirimini goster/gizle
+		function showRemovedProductsNotice(removedProducts) {
+			if (removedProducts && removedProducts.length > 0) {
+				$('#removedProductsNotice').show();
+				$('#removedProductsText').text(
+					removedProducts.length + ' urun bayinin artik satmadigi icin tekliften cikarildi: ' +
+					removedProducts.join(', ')
+				);
+			} else {
+				$('#removedProductsNotice').hide();
 			}
 		}
 

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Fiyatlandirma Raporu - Ipragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+	<link rel="stylesheet" type="text/css" href="./css/bayi-fiyatlandirma-raporu.css">
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Fiyatlandirma Raporu</h1>
+				<p>Musterilerinize verdiginiz fiyatlari il bazli perakende fiyatlarla karsilastirin</p>
+			</div>
+		</div>
+
+		<!-- Filter Section -->
+		<div class="filter-section">
+			<div class="filter-row">
+				<div class="filter-group">
+					<label for="filterCity">Il</label>
+					<select id="filterCity">
+						<option value="">Tum Iller</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterDistrict">Ilce</label>
+					<select id="filterDistrict" disabled>
+						<option value="">Once il seciniz</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterNeighborhood">Mahalle</label>
+					<select id="filterNeighborhood" disabled>
+						<option value="">Once ilce seciniz</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterCustomer">Musteri</label>
+					<select id="filterCustomer">
+						<option value="">Tum Musteriler</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterProduct">Urun</label>
+					<select id="filterProduct">
+						<option value="">Tum Urunler</option>
+					</select>
+				</div>
+				<div class="filter-group filter-action">
+					<button class="btn-primary" id="btnGenerateReport">Raporu Getir</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Summary Cards -->
+		<div class="summary-cards" id="summaryCards" style="display:none;">
+			<div class="summary-card">
+				<div class="summary-label">Toplam Musteri</div>
+				<div class="summary-value" id="sumCustomers">0</div>
+			</div>
+			<div class="summary-card">
+				<div class="summary-label">Toplam Urun Satiri</div>
+				<div class="summary-value" id="sumRows">0</div>
+			</div>
+			<div class="summary-card">
+				<div class="summary-label">Ort. Indirim Orani</div>
+				<div class="summary-value" id="sumAvgDiscount">%0</div>
+			</div>
+		</div>
+
+		<!-- Report Table -->
+		<div class="report-container">
+			<div class="report-empty" id="reportEmpty">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+					<path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+				</svg>
+				<p>Filtreleri secip "Raporu Getir" butonuna basin</p>
+			</div>
+			<div class="report-loading" id="reportLoading" style="display:none;">
+				<div class="spinner"></div>
+				<p>Rapor hazirlaniyor...</p>
+			</div>
+			<div class="report-table-wrapper" id="reportTableWrapper" style="display:none;">
+				<table class="report-table" id="reportTable">
+					<thead>
+						<tr>
+							<th data-sort-key="customerName">Musteri <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="branchName">Sube <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="productName">Urun <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="thisMonthQty" class="text-center">Kull. / Taah. <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="retailPrice" class="text-right">Il Fiyati <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="offerPrice" class="text-right">Teklif Fiyati <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="diff" class="text-right">Fark (TL) <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="diffPercent" class="text-right">Fark (%) <span class="sort-icon">&#9650;</span></th>
+						</tr>
+					</thead>
+					<tbody id="reportBody">
+					</tbody>
+				</table>
+			</div>
+			<div class="report-no-data" id="reportNoData" style="display:none;">
+				<p>Secilen kriterlere uygun veri bulunamadi.</p>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<!-- Scripts -->
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
+	<script src="./js/services/locations-service.js"></script>
+	<script src="./js/services/retail-prices-by-city-service.js"></script>
+	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/dealer-districts-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script src="./js/bayi-fiyatlandirma-raporu.js"></script>
+</body>
+</html>

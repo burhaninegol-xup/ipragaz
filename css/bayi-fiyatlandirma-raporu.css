@@ -1,0 +1,387 @@
+/* ==========================================================================
+   Bayi Fiyatlandirma Raporu Styles
+   Bayi panel tema uyumlu (#002c77 navy blue)
+   ========================================================================== */
+
+.main-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 30px 20px 40px;
+}
+
+/* Page Header */
+.page-header {
+	margin-bottom: 25px;
+}
+
+.page-header h1 {
+	font-size: 26px;
+	font-weight: 700;
+	color: #1a1a2e;
+	margin-bottom: 4px;
+}
+
+.page-header p {
+	font-size: 14px;
+	color: #666;
+}
+
+/* Filter Section */
+.filter-section {
+	background: #fff;
+	border-radius: 16px;
+	padding: 20px;
+	margin-bottom: 20px;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.filter-row {
+	display: flex;
+	gap: 15px;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+
+.filter-group {
+	flex: 1;
+	min-width: 150px;
+}
+
+.filter-group label {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 6px;
+}
+
+.filter-group select {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid #e0e0e0;
+	border-radius: 10px;
+	font-size: 14px;
+	font-family: inherit;
+	color: #333;
+	background: #fff;
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 14px center;
+	cursor: pointer;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+	outline: none;
+	border-color: #002c77;
+	box-shadow: 0 0 0 3px rgba(0,44,119,0.1);
+}
+
+.filter-group select:disabled {
+	background-color: #f5f7fa;
+	color: #999;
+	cursor: not-allowed;
+}
+
+.filter-action {
+	flex: 0 0 auto;
+	min-width: auto;
+}
+
+.btn-primary {
+	background: linear-gradient(135deg, #002c77 0%, #0056b3 100%);
+	color: #fff;
+	border: none;
+	border-radius: 10px;
+	padding: 12px 24px;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	transition: transform 0.2s, box-shadow 0.2s;
+	white-space: nowrap;
+}
+
+.btn-primary:hover {
+	background: linear-gradient(135deg, #001d52 0%, #004494 100%);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 15px rgba(0,44,119,0.3);
+}
+
+.btn-primary:disabled {
+	background: #ccc;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* Summary Cards */
+.summary-cards {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.summary-card {
+	flex: 1;
+	background: #fff;
+	border-radius: 14px;
+	padding: 16px 20px;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.summary-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: #666;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 4px;
+}
+
+.summary-value {
+	font-size: 24px;
+	font-weight: 700;
+	color: #1a1a2e;
+}
+
+/* Report Container */
+.report-container {
+	background: #fff;
+	border-radius: 20px;
+	overflow: hidden;
+	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* Empty State */
+.report-empty,
+.report-no-data {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60px 20px;
+	color: #999;
+}
+
+.report-empty svg {
+	width: 48px;
+	height: 48px;
+	margin-bottom: 12px;
+	color: #ccc;
+}
+
+.report-empty p,
+.report-no-data p {
+	font-size: 14px;
+}
+
+/* Loading State */
+.report-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 60px 20px;
+}
+
+.spinner {
+	width: 36px;
+	height: 36px;
+	border: 3px solid #e0e0e0;
+	border-top-color: #002c77;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+	margin-bottom: 12px;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
+
+.report-loading p {
+	font-size: 14px;
+	color: #666;
+}
+
+/* Report Table */
+.report-table-wrapper {
+	overflow-x: auto;
+}
+
+.report-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.report-table thead th {
+	background: #002c77;
+	padding: 14px 16px;
+	font-weight: 600;
+	color: #fff;
+	text-align: left;
+	white-space: nowrap;
+	position: sticky;
+	top: 0;
+	user-select: none;
+}
+
+/* Sortable headers */
+.report-table thead th[data-sort-key] {
+	cursor: pointer;
+	transition: background 0.15s, color 0.15s;
+}
+
+.report-table thead th[data-sort-key]:hover {
+	background: #001d52;
+	color: #fff;
+}
+
+.report-table thead th.sort-active {
+	color: #fff;
+	background: #001d52;
+}
+
+.sort-icon {
+	display: inline-block;
+	margin-left: 4px;
+	font-size: 11px;
+	opacity: 0.4;
+	color: rgba(255,255,255,0.5);
+	vertical-align: middle;
+}
+
+th[data-sort-key]:hover .sort-icon {
+	opacity: 0.7;
+	color: rgba(255,255,255,0.8);
+}
+
+th.sort-active .sort-icon {
+	opacity: 1;
+	color: #fff;
+}
+
+.report-table tbody tr {
+	border-bottom: 1px solid #e8ecf1;
+	transition: background 0.15s;
+}
+
+.report-table tbody tr:nth-child(even) {
+	background: #f5f7fa;
+}
+
+.report-table tbody tr:hover {
+	background: #ebeef3;
+}
+
+.report-table tbody td {
+	padding: 14px 16px;
+	color: #333;
+	vertical-align: middle;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+/* Customer info */
+.customer-name {
+	font-weight: 600;
+	color: #1a1a2e;
+}
+
+.customer-company {
+	font-size: 12px;
+	color: #666;
+}
+
+/* Branch info */
+.branch-name {
+	font-weight: 500;
+}
+
+.branch-address {
+	font-size: 12px;
+	color: #666;
+}
+
+/* Price cells */
+.price-cell {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.price-diff-negative {
+	color: #2e7d32;
+}
+
+.price-diff-positive {
+	color: #c62828;
+}
+
+.price-diff-zero {
+	color: #666;
+}
+
+/* Usage badge */
+.usage-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 32px;
+	padding: 4px 10px;
+	background: #e3f2fd;
+	color: #1565c0;
+	border-radius: 6px;
+	font-weight: 600;
+	font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.main-content {
+		padding: 20px 12px 32px;
+	}
+
+	.page-header h1 {
+		font-size: 22px;
+	}
+
+	.filter-row {
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.filter-group {
+		min-width: 100%;
+	}
+
+	.summary-cards {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.summary-card {
+		padding: 12px 16px;
+	}
+
+	.summary-value {
+		font-size: 20px;
+	}
+
+	.report-table {
+		font-size: 13px;
+	}
+
+	.report-table thead th,
+	.report-table tbody td {
+		padding: 10px 10px;
+	}
+}

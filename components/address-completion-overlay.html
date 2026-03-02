@@ -1,0 +1,46 @@
+<!-- Address Completion Overlay -->
+<div class="overlay" id="addressCompletionOverlay">
+	<div class="overlay-content address-completion-content">
+		<div class="address-completion-header">
+			<div class="address-completion-icon">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+					<circle cx="12" cy="10" r="3"/>
+				</svg>
+			</div>
+			<h3>Adres Bilgilerinizi Tamamlayin</h3>
+			<p>Siparisinizin teslimati icin adres bilgilerinizi tamamlamaniz gerekiyor.</p>
+		</div>
+		<div class="address-completion-form" id="addressCompletionForm">
+			<!-- İl -->
+			<div class="address-field" id="addressFieldCity">
+				<label>Il</label>
+				<select id="acCitySelect" disabled>
+					<option value="">Il Seciniz</option>
+				</select>
+			</div>
+			<!-- İlçe -->
+			<div class="address-field" id="addressFieldDistrict">
+				<label>Ilce</label>
+				<select id="acDistrictSelect" disabled>
+					<option value="">Ilce Seciniz</option>
+				</select>
+			</div>
+			<!-- Mahalle -->
+			<div class="address-field" id="addressFieldNeighborhood">
+				<label>Mahalle</label>
+				<select id="acNeighborhoodSelect" disabled>
+					<option value="">Mahalle Seciniz</option>
+				</select>
+			</div>
+			<!-- Sokak -->
+			<div class="address-field" id="addressFieldStreet">
+				<label>Cadde/Sokak</label>
+				<select id="acStreetSelect" disabled>
+					<option value="">Cadde/Sokak Seciniz</option>
+				</select>
+			</div>
+		</div>
+		<button class="btn-submit" id="addressCompletionSubmitBtn">Kaydet ve Devam Et</button>
+	</div>
+</div>

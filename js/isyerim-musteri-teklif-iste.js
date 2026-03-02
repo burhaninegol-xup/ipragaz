@@ -107,8 +107,24 @@
 			// Info card'i guncelle
 			updateInfoCardForReadOnly();
 
+			// Bayinin pasife aldigi urunleri filtrele
+			var filteredOfferDetails = activeOffer.offer_details;
+			if (activeOffer.dealer && activeOffer.dealer.id) {
+				try {
+					var inactiveResult = await DealerProductsService.getInactiveProductIds(activeOffer.dealer.id);
+					if (!inactiveResult.error && inactiveResult.data && inactiveResult.data.length > 0) {
+						var inactiveIds = inactiveResult.data;
+						filteredOfferDetails = activeOffer.offer_details.filter(function(detail) {
+							return !detail.product || inactiveIds.indexOf(detail.product.id) === -1;
+						});
+					}
+				} catch (err) {
+					console.warn('Pasif urun listesi alinamadi:', err);
+				}
+			}
+
 			// Urunleri read-only modda render et
-			await renderReadOnlyProducts(activeOffer.offer_details);
+			await renderReadOnlyProducts(filteredOfferDetails);
 
 			// Submit section'i gizle
 			document.getElementById('submitSection').style.display = 'none';

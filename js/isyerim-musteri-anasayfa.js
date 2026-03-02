@@ -265,6 +265,17 @@ async function loadProducts() {
 			}
 		}
 
+		// Bayinin pasife aldigi urunleri filtrele
+		if (currentDealerId) {
+			var inactiveResult = await DealerProductsService.getInactiveProductIds(currentDealerId);
+			if (!inactiveResult.error && inactiveResult.data && inactiveResult.data.length > 0) {
+				var inactiveIds = inactiveResult.data;
+				products = products.filter(function(p) {
+					return inactiveIds.indexOf(p.id) === -1;
+				});
+			}
+		}
+
 		// Ürünleri render et
 		renderProducts();
 	} catch (err) {

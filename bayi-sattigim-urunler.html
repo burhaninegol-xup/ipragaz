@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Sattigim Urunler - Ipragaz Bayi</title>
+	<meta http-equiv="Content-Language" content="Turkish">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="shortcut icon" type="image/x-icon" media="all" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" type="text/css" href="./İpragaz Bayi_files/css">
+	<link rel="stylesheet" type="text/css" media="all" href="./İpragaz Bayi_files/style.css">
+	<link rel="stylesheet" type="text/css" href="./css/bayi-sattigim-urunler.css">
+</head>
+
+<body>
+	<!-- Header Component -->
+	<div id="bayi-header"></div>
+
+	<!-- Main Content -->
+	<main class="main-content">
+		<!-- Page Header -->
+		<div class="page-header">
+			<div class="page-header-left">
+				<h1>Sattigim Urunler</h1>
+				<p>Hangi urunleri sattiginizi secin, istemediginiz urunleri pasife alin</p>
+			</div>
+		</div>
+
+		<!-- Search -->
+		<div class="search-section">
+			<div class="search-box">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="11" cy="11" r="8"/>
+					<path d="m21 21-4.35-4.35"/>
+				</svg>
+				<input type="text" id="searchInput" placeholder="Urun ara...">
+			</div>
+		</div>
+
+		<!-- Summary Cards -->
+		<div class="summary-cards" id="summaryCards">
+			<div class="summary-card">
+				<div class="summary-label">Toplam Urun</div>
+				<div class="summary-value" id="sumTotal">0</div>
+			</div>
+			<div class="summary-card summary-card-active">
+				<div class="summary-label">Aktif</div>
+				<div class="summary-value" id="sumActive">0</div>
+			</div>
+			<div class="summary-card summary-card-inactive">
+				<div class="summary-label">Pasif</div>
+				<div class="summary-value" id="sumInactive">0</div>
+			</div>
+		</div>
+
+		<!-- Products Grid -->
+		<div class="product-grid" id="productGrid">
+			<div class="loading-state" id="loadingState">
+				<div class="spinner"></div>
+				<p>Urunler yukleniyor...</p>
+			</div>
+		</div>
+	</main>
+
+	<!-- Mobile Sidebar Component -->
+	<div id="bayi-mobile-sidebar"></div>
+
+	<!-- Scripts -->
+	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/products-service.js"></script>
+	<script src="./js/services/dealer-products-service.js"></script>
+	<script src="./js/component-loader.js"></script>
+	<script src="./js/bayi-sattigim-urunler.js"></script>
+</body>
+</html>
