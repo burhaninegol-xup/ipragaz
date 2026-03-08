@@ -1,17 +1,4 @@
 {
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "lsof -iTCP:8080 -sTCP:LISTEN -t > /dev/null 2>&1 || (cd /Users/burhaninegol/cluade-code/ipragaz-bayi && nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &)"
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Bash(node --check:*)",
@@ -69,7 +56,21 @@
       "Bash(ps:*)",
       "Bash(test:*)",
       "WebFetch(domain:www.ipragaz.com.tr)",
-      "WebFetch(domain:cdn.ipragaz.com.tr)"
+      "WebFetch(domain:cdn.ipragaz.com.tr)",
+      "Bash(pip3 list:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "lsof -iTCP:8080 -sTCP:LISTEN -t > /dev/null 2>&1 || (cd /Users/burhaninegol/cluade-code/ipragaz-bayi && nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &)"
+          }
+        ]
+      }
     ]
   }
 }
