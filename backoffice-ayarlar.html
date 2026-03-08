@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayarlar - Ipragaz Back Office</title>
+    <script src="js/project-auth-check.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bo-primary: #e31e24;
+            --bo-primary-dark: #b91820;
+            --bo-primary-light: #ff4444;
+            --bo-sidebar-bg: #1a1a1a;
+            --bo-sidebar-width: 260px;
+            --bo-sidebar-collapsed: 72px;
+            --bo-header-height: 64px;
+            --bo-bg-main: #f5f5f5;
+            --bo-bg-paper: #ffffff;
+            --bo-text-primary: #262626;
+            --bo-text-secondary: #525252;
+            --bo-border: #e5e5e5;
+            --bo-success: #10b981;
+            --bo-warning: #f59e0b;
+            --bo-error: #ef4444;
+            --bo-info: #3b82f6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bo-bg-main);
+            min-height: 100vh;
+        }
+
+        .bo-main-content {
+            margin-left: var(--bo-sidebar-width);
+            padding-top: var(--bo-header-height);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .bo-main-content.sidebar-collapsed {
+            margin-left: var(--bo-sidebar-collapsed);
+        }
+
+        .bo-content {
+            padding: 24px;
+        }
+
+        /* Page Header */
+        .bo-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .bo-page-header-left h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .bo-page-header-left p {
+            font-size: 14px;
+            color: var(--bo-text-secondary);
+        }
+
+        /* Settings Card */
+        .settings-card {
+            background: var(--bo-bg-paper);
+            border-radius: 12px;
+            border: 1px solid var(--bo-border);
+            padding: 24px;
+            max-width: 700px;
+        }
+
+        .settings-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--bo-text-primary);
+            margin-bottom: 4px;
+        }
+
+        .settings-card-desc {
+            font-size: 13px;
+            color: var(--bo-text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .settings-textarea {
+            width: 100%;
+            min-height: 140px;
+            border: 1px solid var(--bo-border);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--bo-text-primary);
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .settings-textarea:focus {
+            outline: none;
+            border-color: var(--bo-primary);
+            box-shadow: 0 0 0 3px rgba(227, 30, 36, 0.1);
+        }
+
+        .settings-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-save {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: var(--bo-primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover {
+            background: var(--bo-primary-dark);
+        }
+
+        .btn-save:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-save svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bo-success);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: var(--bo-error);
+        }
+
+        /* Loading */
+        .settings-loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--bo-text-secondary);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="backoffice-sidebar"></div>
+
+    <!-- Header -->
+    <div id="backoffice-header"></div>
+
+    <!-- Main Content -->
+    <main class="bo-main-content">
+        <div class="bo-content">
+            <!-- Page Header -->
+            <div class="bo-page-header">
+                <div class="bo-page-header-left">
+                    <h1>Ayarlar</h1>
+                    <p>Sistem ayarlarini yonetin</p>
+                </div>
+            </div>
+
+            <!-- Teklif Sozlesme Metni -->
+            <div class="settings-card">
+                <div class="settings-card-title">Teklif Sozlesme Metni</div>
+                <div class="settings-card-desc">Musterilerin teklif talebi sirasinda onaylamasi gereken sozlesme metni. Bu metin Teklif Ozeti ekraninda gosterilir.</div>
+                <div id="settingsLoading" class="settings-loading">Yukleniyor...</div>
+                <div id="settingsForm" style="display: none;">
+                    <textarea class="settings-textarea" id="contractTextArea" placeholder="Sozlesme metnini buraya yazin..."></textarea>
+                    <div class="settings-actions">
+                        <button class="btn-save" id="btnSave" onclick="saveContractText()">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                            Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/services/settings-service.js"></script>
+
+    <script>
+        // Component'leri yukle
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('components/backoffice-sidebar.html')
+                .then(function(r) { return r.text(); })
+                .then(function(html) {
+                    document.getElementById('backoffice-sidebar').innerHTML = html;
+                    // Sidebar script'lerini calistir
+                    var scripts = document.getElementById('backoffice-sidebar').querySelectorAll('script');
+                    scripts.forEach(function(s) {
+                        var newScript = document.createElement('script');
+                        newScript.textContent = s.textContent;
+                        document.body.appendChild(newScript);
+                    });
+                });
+
+            fetch('components/backoffice-header.html')
+                .then(function(r) { return r.text(); })
+                .then(function(html) {
+                    document.getElementById('backoffice-header').innerHTML = html;
+                    var scripts = document.getElementById('backoffice-header').querySelectorAll('script');
+                    scripts.forEach(function(s) {
+                        var newScript = document.createElement('script');
+                        newScript.textContent = s.textContent;
+                        document.body.appendChild(newScript);
+                    });
+                });
+
+            // Ayarlari yukle
+            loadSettings();
+        });
+
+        // Ayarlari yukle
+        async function loadSettings() {
+            try {
+                var result = await SettingsService.getByKey('offer_contract_text');
+                document.getElementById('settingsLoading').style.display = 'none';
+                document.getElementById('settingsForm').style.display = 'block';
+
+                if (result.data) {
+                    document.getElementById('contractTextArea').value = result.data;
+                }
+            } catch (e) {
+                document.getElementById('settingsLoading').textContent = 'Ayarlar yuklenirken hata olustu.';
+                console.error('Settings load error:', e);
+            }
+        }
+
+        // Sozlesme metnini kaydet
+        async function saveContractText() {
+            var btn = document.getElementById('btnSave');
+            var value = document.getElementById('contractTextArea').value.trim();
+
+            if (!value) {
+                showToast('Sozlesme metni bos olamaz.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Kaydediliyor...';
+
+            try {
+                var result = await SettingsService.updateByKey('offer_contract_text', value);
+                if (result.error) throw new Error(result.error);
+                showToast('Sozlesme metni basariyla kaydedildi.');
+            } catch (e) {
+                console.error('Save error:', e);
+                showToast('Kaydetme sirasinda hata olustu.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Kaydet';
+            }
+        }
+
+        // Toast mesaji goster
+        function showToast(message, type) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (type === 'error' ? ' error' : '');
+            toast.classList.add('active');
+            setTimeout(function() {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+    </script>
+
+</body>
+</html>

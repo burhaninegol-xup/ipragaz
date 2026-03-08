@@ -952,7 +952,7 @@
 		}
 
 		// Teklif ozeti overlay'ini goster
-		function showOfferSummary() {
+		async function showOfferSummary() {
 			// Validation
 			if (Object.keys(selectedProducts).length === 0) {
 				alert('Lutfen en az bir urun icin tuketim miktari girin.');
@@ -991,8 +991,28 @@
 			document.getElementById('summaryProductsList').innerHTML = productListHtml;
 			document.getElementById('summaryTotalProducts').textContent = totalProducts + ' urun';
 
+			// Sozlesme metnini yukle
+			document.getElementById('contractAcceptCheckbox').checked = false;
+			document.getElementById('btnSummaryConfirm').disabled = true;
+			try {
+				var contractResult = await SettingsService.getByKey('offer_contract_text');
+				if (contractResult.data) {
+					document.getElementById('summaryContractText').textContent = contractResult.data;
+				} else {
+					document.getElementById('summaryContractText').textContent = 'Sozlesme metni yuklenemedi.';
+				}
+			} catch (e) {
+				document.getElementById('summaryContractText').textContent = 'Sozlesme metni yuklenemedi.';
+			}
+
 			// Overlay'i goster
 			document.getElementById('offerSummaryOverlay').classList.add('active');
+		}
+
+		// Sozlesme checkbox toggle
+		function toggleContractAccept() {
+			var checked = document.getElementById('contractAcceptCheckbox').checked;
+			document.getElementById('btnSummaryConfirm').disabled = !checked;
 		}
 
 		// Teklif ozeti overlay'ini kapat
@@ -1130,7 +1150,10 @@
 					dealer_id: dealerId,
 					customer_branch_id: selectedBranchId || null,
 					status: 'requested',
-					notes: 'Musteri tarafindan teklif talebi'
+					notes: 'Musteri tarafindan teklif talebi',
+					contract_text_snapshot: document.getElementById('summaryContractText').textContent || null,
+					contract_accepted: true,
+					contract_accepted_at: new Date().toISOString()
 				};
 
 				// Offer details

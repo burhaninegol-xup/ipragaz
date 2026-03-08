@@ -123,6 +123,46 @@
 		.detail-card-body {
 			padding: 25px;
 		}
+		.offer-info-grid-detay {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px;
+			margin-bottom: 14px;
+		}
+		.offer-info-grid-detay .summary-label { font-size: 12px; color: #888; }
+		.offer-info-grid-detay .summary-value { font-size: 14px; font-weight: 500; color: #333; }
+		.offer-status-badge {
+			display: inline-block;
+			padding: 2px 10px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		.offer-status-badge.accepted { background: #e8f5e9; color: #2e7d32; }
+		.offer-status-badge.pending { background: #fff8e1; color: #f57c00; }
+		.offer-status-badge.rejected { background: #fce4ec; color: #c62828; }
+		.offer-status-badge.cancelled { background: #f5f5f5; color: #757575; }
+		.offer-products-list-detay {
+			border-top: 1px solid #eee;
+			padding-top: 10px;
+		}
+		.offer-products-title-detay {
+			font-size: 13px;
+			font-weight: 600;
+			color: #555;
+			margin-bottom: 8px;
+		}
+		.offer-product-row-detay {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 5px 0;
+			font-size: 13px;
+			border-bottom: 1px solid #f5f5f5;
+		}
+		.offer-product-row-detay:last-child { border-bottom: none; }
+		.offer-product-price-detay { font-weight: 600; color: #e31e24; }
+		.offer-product-commitment-detay { font-size: 12px; color: #888; margin-left: 8px; }
 
 		/* Summary Grid */
 		.summary-grid {
@@ -800,6 +840,7 @@
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/services/account-deletion-service.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
@@ -879,6 +920,9 @@
 
 				// Detay icerigini render et
 				renderOrderDetail(currentOrder);
+
+				// Bagli teklif bilgisini yukle
+				loadOfferInfoDetay(currentOrder);
 
 			} catch (error) {
 				console.error('Siparis yukleme hatasi:', error);
@@ -996,6 +1040,12 @@
 
 			html += '</div>'; // detail-card-body
 			html += '</div>'; // detail-card
+
+			// Bagli Teklif Bilgisi Karti (placeholder - JS ile doldurulacak)
+			html += '<div class="detail-card" id="offer-info-card-detay" style="display:none;">';
+			html += '<div class="detail-card-header">Bagli Teklif Bilgisi</div>';
+			html += '<div class="detail-card-body" id="offer-info-content-detay" style="padding: 16px;"></div>';
+			html += '</div>';
 
 			// Urunler Karti
 			html += '<div class="detail-card">';
@@ -1118,6 +1168,72 @@
 		}
 
 		// Hata goster
+		// Bagli teklif bilgisini yukle
+		async function loadOfferInfoDetay(order) {
+			try {
+				if (!order.dealer_id || !order.customer_id) return;
+				var result = await OffersService.getAcceptedOffer(order.dealer_id, order.customer_id);
+				var offer = result.data;
+				var card = document.getElementById('offer-info-card-detay');
+				var content = document.getElementById('offer-info-content-detay');
+				if (!card || !content) return;
+
+				if (!offer) {
+					content.innerHTML = '<div style="text-align:center;padding:16px;color:#999;font-size:14px;">Bu siparis icin bagli teklif bulunamadi.</div>';
+					card.style.display = '';
+					return;
+				}
+
+				var statusLabelsMap = { accepted: 'Kabul Edildi', pending: 'Beklemede', rejected: 'Reddedildi', cancelled: 'Iptal' };
+				var offerStatus = offer.status || 'pending';
+				var offerId = offer.id ? offer.id.substring(0, 8).toUpperCase() : '---';
+				var acceptedDate = offer.accepted_at ? formatDateSimple(offer.accepted_at) : '---';
+				var createdDate = offer.created_at ? formatDateSimple(offer.created_at) : '---';
+
+				var html = '<div class="offer-info-grid-detay">';
+				html += '<div class="summary-item"><span class="summary-label">Teklif ID</span><span class="summary-value">#' + offerId + '</span></div>';
+				html += '<div class="summary-item"><span class="summary-label">Durum</span><span class="summary-value"><span class="offer-status-badge ' + offerStatus + '">' + (statusLabelsMap[offerStatus] || offerStatus) + '</span></span></div>';
+				html += '<div class="summary-item"><span class="summary-label">Olusturma Tarihi</span><span class="summary-value">' + createdDate + '</span></div>';
+				html += '<div class="summary-item"><span class="summary-label">Kabul Tarihi</span><span class="summary-value">' + acceptedDate + '</span></div>';
+				html += '</div>';
+
+				if (offer.offer_details && offer.offer_details.length > 0) {
+					html += '<div class="offer-products-list-detay">';
+					html += '<div class="offer-products-title-detay">Teklif Urun Fiyatlari</div>';
+					offer.offer_details.forEach(function(detail) {
+						var productName = detail.product ? detail.product.name : 'Urun';
+						var unitPrice = parseFloat(detail.unit_price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+						html += '<div class="offer-product-row-detay">';
+						html += '<span>' + productName + '</span>';
+						html += '<span>';
+						html += '<span class="offer-product-price-detay">' + unitPrice + ' TL</span>';
+						if (detail.commitment_quantity > 0) {
+							html += '<span class="offer-product-commitment-detay">(Taahhut: ' + detail.commitment_quantity + ' adet/ay)</span>';
+						}
+						html += '</span>';
+						html += '</div>';
+					});
+					html += '</div>';
+				}
+
+				content.innerHTML = html;
+				card.style.display = '';
+			} catch (err) {
+				console.error('Teklif bilgisi yukleme hatasi:', err);
+			}
+		}
+
+		function formatDateSimple(dateStr) {
+			if (!dateStr) return '---';
+			var date = new Date(dateStr);
+			var day = date.getDate().toString().padStart(2, '0');
+			var month = (date.getMonth() + 1).toString().padStart(2, '0');
+			var year = date.getFullYear();
+			var hours = date.getHours().toString().padStart(2, '0');
+			var minutes = date.getMinutes().toString().padStart(2, '0');
+			return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+		}
+
 		function showError(message) {
 			var detailContent = document.getElementById('detailContent');
 			detailContent.innerHTML = '<div class="error-state">' +

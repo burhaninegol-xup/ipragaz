@@ -215,9 +215,20 @@
 					</div>
 				</div>
 			</div>
+			<!-- Sozlesme Metni -->
+			<div class="offer-summary-contract">
+				<div class="offer-summary-contract-label">Teklif Sozlesme Metni</div>
+				<div class="offer-summary-contract-text" id="summaryContractText">
+					<!-- Supabase'den dinamik yuklenir -->
+				</div>
+				<label class="offer-summary-contract-checkbox">
+					<input type="checkbox" id="contractAcceptCheckbox" onchange="toggleContractAccept()">
+					<span>Sozlesme metnini okudum ve kabul ediyorum</span>
+				</label>
+			</div>
 			<div class="offer-summary-footer">
 				<button class="btn-summary-cancel" onclick="closeOfferSummary()">Iptal</button>
-				<button class="btn-summary-confirm" id="btnSummaryConfirm" onclick="confirmOfferRequest()">Onayla ve Gonder</button>
+				<button class="btn-summary-confirm" id="btnSummaryConfirm" disabled onclick="confirmOfferRequest()">Onayla ve Gonder</button>
 			</div>
 		</div>
 	</div>
@@ -342,6 +353,7 @@
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
 	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/settings-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/isyerim-musteri-teklif-iste.js"></script>
 </body>

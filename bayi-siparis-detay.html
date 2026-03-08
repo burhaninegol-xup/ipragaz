@@ -131,6 +131,65 @@
 			background: #fff8e1;
 			color: #f57c00;
 		}
+		.detail-card-icon.offer {
+			background: #e0f2f1;
+			color: #00695c;
+		}
+		.offer-info-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px;
+			margin-bottom: 16px;
+		}
+		.offer-info-item .offer-info-label {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 2px;
+		}
+		.offer-info-item .offer-info-value {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+		.offer-status-badge {
+			display: inline-block;
+			padding: 2px 10px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		.offer-status-badge.accepted { background: #e8f5e9; color: #2e7d32; }
+		.offer-status-badge.pending { background: #fff8e1; color: #f57c00; }
+		.offer-status-badge.rejected { background: #fce4ec; color: #c62828; }
+		.offer-status-badge.cancelled { background: #f5f5f5; color: #757575; }
+		.offer-products-list {
+			border-top: 1px solid #eee;
+			padding-top: 12px;
+		}
+		.offer-products-title {
+			font-size: 13px;
+			font-weight: 600;
+			color: #555;
+			margin-bottom: 8px;
+		}
+		.offer-product-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 6px 0;
+			font-size: 13px;
+			border-bottom: 1px solid #f5f5f5;
+		}
+		.offer-product-row:last-child { border-bottom: none; }
+		.offer-product-name { color: #333; }
+		.offer-product-price { font-weight: 600; color: #e31e24; }
+		.offer-product-commitment { font-size: 12px; color: #888; margin-left: 8px; }
+		.offer-empty-msg {
+			text-align: center;
+			padding: 20px;
+			color: #999;
+			font-size: 14px;
+		}
 
 		.detail-card-title {
 			font-size: 16px;
@@ -969,6 +1028,21 @@
 				</div>
 			</div>
 
+			<!-- Offer Info Card -->
+			<div class="detail-card" id="offer-info-card" style="display:none;">
+				<div class="detail-card-header">
+					<div class="detail-card-icon offer">
+						<svg viewBox="0 0 24 24" fill="currentColor">
+							<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/>
+						</svg>
+					</div>
+					<span class="detail-card-title">Bagli Teklif Bilgisi</span>
+				</div>
+				<div class="detail-card-body" id="offer-info-content" style="padding: 16px;">
+					<!-- JS ile doldurulacak -->
+				</div>
+			</div>
+
 			<!-- Products Card -->
 			<div class="detail-card">
 				<div class="detail-card-header">
@@ -1083,6 +1157,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/points-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
@@ -1183,6 +1258,60 @@
 			}) + ' TL';
 		}
 
+		// Bagli teklif bilgisini yukle ve render et
+		async function loadOfferInfo(order) {
+			try {
+				if (!order.dealer_id || !order.customer_id) return;
+				var result = await OffersService.getAcceptedOffer(order.dealer_id, order.customer_id);
+				var offer = result.data;
+				var $card = $('#offer-info-card');
+				var $content = $('#offer-info-content');
+
+				if (!offer) {
+					$content.html('<div class="offer-empty-msg">Bu siparis icin bagli teklif bulunamadi.</div>');
+					$card.show();
+					return;
+				}
+
+				var statusLabelsMap = { accepted: 'Kabul Edildi', pending: 'Beklemede', rejected: 'Reddedildi', cancelled: 'Iptal' };
+				var offerStatus = offer.status || 'pending';
+				var offerId = offer.id ? offer.id.substring(0, 8).toUpperCase() : '---';
+				var acceptedDate = offer.accepted_at ? formatDate(offer.accepted_at) : '---';
+				var createdDate = offer.created_at ? formatDate(offer.created_at) : '---';
+
+				var html = '<div class="offer-info-grid">';
+				html += '<div class="offer-info-item"><div class="offer-info-label">Teklif ID</div><div class="offer-info-value">#' + offerId + '</div></div>';
+				html += '<div class="offer-info-item"><div class="offer-info-label">Durum</div><div class="offer-info-value"><span class="offer-status-badge ' + offerStatus + '">' + (statusLabelsMap[offerStatus] || offerStatus) + '</span></div></div>';
+				html += '<div class="offer-info-item"><div class="offer-info-label">Olusturma Tarihi</div><div class="offer-info-value">' + createdDate + '</div></div>';
+				html += '<div class="offer-info-item"><div class="offer-info-label">Kabul Tarihi</div><div class="offer-info-value">' + acceptedDate + '</div></div>';
+				html += '</div>';
+
+				if (offer.offer_details && offer.offer_details.length > 0) {
+					html += '<div class="offer-products-list">';
+					html += '<div class="offer-products-title">Teklif Urun Fiyatlari</div>';
+					offer.offer_details.forEach(function(detail) {
+						var productName = detail.product ? detail.product.name : 'Urun';
+						var unitPrice = parseFloat(detail.unit_price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+						html += '<div class="offer-product-row">';
+						html += '<span class="offer-product-name">' + productName + '</span>';
+						html += '<span>';
+						html += '<span class="offer-product-price">' + unitPrice + ' TL</span>';
+						if (detail.commitment_quantity > 0) {
+							html += '<span class="offer-product-commitment">(Taahhut: ' + detail.commitment_quantity + ' adet/ay)</span>';
+						}
+						html += '</span>';
+						html += '</div>';
+					});
+					html += '</div>';
+				}
+
+				$content.html(html);
+				$card.show();
+			} catch (err) {
+				console.error('Teklif bilgisi yukleme hatasi:', err);
+			}
+		}
+
 		// Get order ID from URL
 		function getOrderIdFromUrl() {
 			var params = new URLSearchParams(window.location.search);
@@ -1215,6 +1344,9 @@
 
 				// Timeline zaten yuklendi, direkt render et
 				renderTimeline(historyResult.data || []);
+
+				// Bagli teklif bilgisini yukle
+				loadOfferInfo(orderData);
 
 			} catch (err) {
 				console.error('Siparis yukleme hatasi:', err);

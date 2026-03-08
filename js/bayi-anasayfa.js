@@ -219,16 +219,39 @@ $(document).ready(async function() {
 			const { data: offers } = await OffersService.getCustomersWithAcceptedOffers(currentDealerId);
 			if (!offers) return;
 
+			// Bu ayın tamamlanmış siparişlerini çek
+			var now = new Date();
+			var monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+			const { data: orders } = await OrdersService.getByDealerId(currentDealerId, {
+				status: 'completed',
+				dateFrom: monthStart
+			});
+
+			// purchaseMap: { customer_id: { product_id: toplam_miktar } }
+			var purchaseMap = {};
+			(orders || []).forEach(function(order) {
+				var cid = order.customer_id;
+				if (!purchaseMap[cid]) purchaseMap[cid] = {};
+				(order.order_items || []).forEach(function(item) {
+					var pid = item.product_id || (item.product && item.product.id);
+					if (pid) {
+						purchaseMap[cid][pid] = (purchaseMap[cid][pid] || 0) + item.quantity;
+					}
+				});
+			});
+
 			// Uyarı veren müşterileri filtrele
 			var alertCustomers = [];
 			offers.forEach(function(offer) {
 				if (!offer.customer || !offer.customer.is_active) return;
+				var customerId = offer.customer.id;
 
 				var warnings = [];
 				(offer.offer_details || []).forEach(function(detail) {
-					// commitment_quantity > 0 olan ve %50'nin altında tüketen ürünleri bul
 					if (detail.commitment_quantity > 0) {
-						var thisMonth = detail.this_month_quantity || 0;
+						var productId = detail.product ? detail.product.id : null;
+						var thisMonth = (purchaseMap[customerId] && productId)
+							? (purchaseMap[customerId][productId] || 0) : 0;
 						var percent = (thisMonth / detail.commitment_quantity) * 100;
 						if (percent < 50) {
 							warnings.push({

@@ -32,6 +32,32 @@ var AddressCompletionOverlay = (function() {
 			});
 		}
 
+		// Sokak "Diger" secenegi: dropdown -> manual input gecisi
+		var streetSelect = document.getElementById('acStreetSelect');
+		if (streetSelect) {
+			streetSelect.addEventListener('change', function() {
+				if (this.value === '__other__') {
+					this.style.display = 'none';
+					var manualInput = document.getElementById('acStreetManualInput');
+					var backLink = document.getElementById('acStreetBackToList');
+					if (manualInput) { manualInput.style.display = ''; manualInput.focus(); }
+					if (backLink) backLink.style.display = '';
+				}
+			});
+		}
+
+		// "Listeden sec" geri baglantisi
+		var backToList = document.getElementById('acStreetBackToList');
+		if (backToList) {
+			backToList.addEventListener('click', function() {
+				var sel = document.getElementById('acStreetSelect');
+				var manualInput = document.getElementById('acStreetManualInput');
+				if (sel) { sel.style.display = ''; sel.value = ''; }
+				if (manualInput) { manualInput.style.display = 'none'; manualInput.value = ''; }
+				this.style.display = 'none';
+			});
+		}
+
 		isInitialized = true;
 	}
 
@@ -92,7 +118,9 @@ var AddressCompletionOverlay = (function() {
 		if (!branch.city || !branch.city_id) missingFields.push('city');
 		if (!branch.district || !branch.district_id) missingFields.push('district');
 		if (!branch.neighborhood || !branch.neighborhood_id) missingFields.push('neighborhood');
-		if (!branch.street || !branch.street_id) missingFields.push('street');
+		if (!branch.street) missingFields.push('street');
+		if (!branch.building_no) missingFields.push('building_no');
+		if (!branch.apartment) missingFields.push('apartment');
 
 		if (missingFields.length === 0) {
 			// Tam adres, devam et
@@ -114,6 +142,19 @@ var AddressCompletionOverlay = (function() {
 		setupField('District', 'district', branch, missing);
 		setupField('Neighborhood', 'neighborhood', branch, missing);
 		setupField('Street', 'street', branch, missing);
+
+		// Sokak manual input resetle
+		var manualInput = document.getElementById('acStreetManualInput');
+		var backLink = document.getElementById('acStreetBackToList');
+		var streetSelect = document.getElementById('acStreetSelect');
+		if (manualInput) { manualInput.style.display = 'none'; manualInput.value = ''; }
+		if (backLink) backLink.style.display = 'none';
+		if (streetSelect) streetSelect.style.display = '';
+
+		// Bina No alani
+		setupTextInputField('BuildingNo', 'building_no', branch, missing);
+		// Daire No alani
+		setupTextInputField('Apartment', 'apartment', branch, missing);
 
 		// Cascading dropdown listener'larini kur
 		setupDropdownListeners(branch, missing);
@@ -146,6 +187,27 @@ var AddressCompletionOverlay = (function() {
 				street: 'Cadde/Sokak Seciniz'
 			};
 			select.innerHTML = '<option value="">' + placeholders[fieldKey] + '</option>';
+		}
+	}
+
+	/**
+	 * Text input alani kur - dolu ise disabled, bos ise aktif
+	 */
+	function setupTextInputField(fieldName, fieldKey, branch, missing) {
+		var container = document.getElementById('addressField' + fieldName);
+		var input = document.getElementById('ac' + fieldName + 'Input');
+		if (!container || !input) return;
+
+		if (missing.indexOf(fieldKey) === -1) {
+			// Alan dolu - disabled goster
+			container.classList.add('disabled');
+			input.value = branch[fieldKey] || '';
+			input.disabled = true;
+		} else {
+			// Alan bos - aktif input
+			container.classList.remove('disabled');
+			input.value = '';
+			input.disabled = false;
 		}
 	}
 
@@ -310,9 +372,17 @@ var AddressCompletionOverlay = (function() {
 		select.innerHTML = '<option value="">Sokak Yukleniyor...</option>';
 		select.disabled = true;
 
+		// Sokak degistiginde manual input'u resetle
+		var manualInput = document.getElementById('acStreetManualInput');
+		var backLink = document.getElementById('acStreetBackToList');
+		if (manualInput) { manualInput.style.display = 'none'; manualInput.value = ''; }
+		if (backLink) backLink.style.display = 'none';
+		select.style.display = '';
+
 		var result = await LocationsService.getStreetsByNeighborhoodId(neighborhoodId);
 		if (result.error || !result.data || result.data.length === 0) {
 			select.innerHTML = '<option value="">Sokak bulunamadi</option>';
+			select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
 			select.disabled = false;
 			return;
 		}
@@ -323,6 +393,7 @@ var AddressCompletionOverlay = (function() {
 		result.data.forEach(function(s) {
 			select.innerHTML += '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>';
 		});
+		select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
 	}
 
 	/**
@@ -404,12 +475,44 @@ var AddressCompletionOverlay = (function() {
 		}
 
 		if (missingFields.indexOf('street') !== -1) {
-			var streetSelect = document.getElementById('acStreetSelect');
-			if (!streetSelect || !streetSelect.value) {
+			var streetManualInput = document.getElementById('acStreetManualInput');
+			var isManualStreet = streetManualInput && streetManualInput.style.display !== 'none';
+			if (isManualStreet) {
+				var manualVal = streetManualInput.value.trim();
+				if (!manualVal) {
+					hasEmpty = true;
+				} else {
+					updateData.street_id = null;
+					updateData.street = manualVal;
+				}
+			} else {
+				var streetSelect = document.getElementById('acStreetSelect');
+				if (!streetSelect || !streetSelect.value) {
+					hasEmpty = true;
+				} else {
+					updateData.street_id = streetSelect.value;
+					updateData.street = getSelectedName('acStreetSelect');
+				}
+			}
+		}
+
+		if (missingFields.indexOf('building_no') !== -1) {
+			var buildingNoInput = document.getElementById('acBuildingNoInput');
+			var buildingVal = buildingNoInput ? buildingNoInput.value.trim() : '';
+			if (!buildingVal) {
 				hasEmpty = true;
 			} else {
-				updateData.street_id = streetSelect.value;
-				updateData.street = getSelectedName('acStreetSelect');
+				updateData.building_no = buildingVal;
+			}
+		}
+
+		if (missingFields.indexOf('apartment') !== -1) {
+			var apartmentInput = document.getElementById('acApartmentInput');
+			var apartmentVal = apartmentInput ? apartmentInput.value.trim() : '';
+			if (!apartmentVal) {
+				hasEmpty = true;
+			} else {
+				updateData.apartment = apartmentVal;
 			}
 		}
 
@@ -429,8 +532,8 @@ var AddressCompletionOverlay = (function() {
 			mergedData.district = updateData.district || branchData.district;
 			mergedData.neighborhood = updateData.neighborhood || branchData.neighborhood;
 			mergedData.street = updateData.street || branchData.street;
-			mergedData.building_no = branchData.building_no;
-				mergedData.apartment = branchData.apartment;
+			mergedData.building_no = updateData.building_no || branchData.building_no;
+			mergedData.apartment = updateData.apartment || branchData.apartment;
 
 			// updateData'ya sadece eksik alanlari koy
 			// full_address'i de guncelle

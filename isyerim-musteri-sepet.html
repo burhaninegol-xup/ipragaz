@@ -936,17 +936,16 @@
 			// Adres tamamlama kontrolu
 			var branchId = sessionStorage.getItem('selected_address_id');
 			if (branchId) {
-				var proceedBtnRef = this;
 				await ComponentLoader.loadAddressCompletionOverlay();
-				AddressCompletionOverlay.checkAndProceed(branchId, async function() {
-					// Adres tamam - siparis olustur
-					await doCheckout(proceedBtnRef, customerId, dealerId);
+				AddressCompletionOverlay.checkAndProceed(branchId, function() {
+					// Adres tamam - teslimat sayfasina yonlendir
+					window.location.href = 'isyerim-musteri-teslimat.html';
 				});
 				return;
 			}
 
-			// branchId yoksa direkt siparis olustur
-			await doCheckout(this, customerId, dealerId);
+			// branchId yoksa direkt teslimat sayfasina yonlendir
+			window.location.href = 'isyerim-musteri-teslimat.html';
 		});
 
 		// Siparis olusturma fonksiyonu

@@ -39,6 +39,18 @@
 				<select id="acStreetSelect" disabled>
 					<option value="">Cadde/Sokak Seciniz</option>
 				</select>
+				<input type="text" class="address-text-input" id="acStreetManualInput" placeholder="Sokak adini yaziniz..." style="display:none;">
+				<a href="javascript:void(0)" id="acStreetBackToList" class="back-to-list-link" style="display:none;">&#8617; Listeden sec</a>
+			</div>
+			<!-- Bina No -->
+			<div class="address-field" id="addressFieldBuildingNo">
+				<label>Bina No</label>
+				<input type="text" class="address-text-input" id="acBuildingNoInput" placeholder="Bina numarasi giriniz">
+			</div>
+			<!-- Daire No -->
+			<div class="address-field" id="addressFieldApartment">
+				<label>Daire No</label>
+				<input type="text" class="address-text-input" id="acApartmentInput" placeholder="Daire numarasi giriniz">
 			</div>
 		</div>
 		<button class="btn-submit" id="addressCompletionSubmitBtn">Kaydet ve Devam Et</button>

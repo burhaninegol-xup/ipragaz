@@ -217,6 +217,81 @@
 			line-height: 1.6;
 		}
 
+		/* Offer Info Section */
+		.offer-info-section {
+			padding: 20px 24px;
+			display: none;
+		}
+		.offer-info-section-title {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+			margin-bottom: 14px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.offer-info-section-title svg {
+			width: 20px;
+			height: 20px;
+			color: #00695c;
+		}
+		.offer-info-grid-ozet {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px;
+			margin-bottom: 14px;
+		}
+		.offer-info-grid-ozet .detail-item .detail-label {
+			font-size: 12px;
+			color: #888;
+			margin-bottom: 2px;
+		}
+		.offer-info-grid-ozet .detail-item .detail-value {
+			font-size: 14px;
+			font-weight: 500;
+			color: #333;
+		}
+		.offer-status-badge {
+			display: inline-block;
+			padding: 2px 10px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 600;
+		}
+		.offer-status-badge.accepted { background: #e8f5e9; color: #2e7d32; }
+		.offer-status-badge.pending { background: #fff8e1; color: #f57c00; }
+		.offer-status-badge.rejected { background: #fce4ec; color: #c62828; }
+		.offer-status-badge.cancelled { background: #f5f5f5; color: #757575; }
+		.offer-products-list-ozet {
+			border-top: 1px solid #eee;
+			padding-top: 10px;
+		}
+		.offer-products-list-ozet .offer-products-title {
+			font-size: 13px;
+			font-weight: 600;
+			color: #555;
+			margin-bottom: 8px;
+		}
+		.offer-product-row-ozet {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 5px 0;
+			font-size: 13px;
+			border-bottom: 1px solid #f5f5f5;
+		}
+		.offer-product-row-ozet:last-child { border-bottom: none; }
+		.offer-product-name-ozet { color: #333; }
+		.offer-product-price-ozet { font-weight: 600; color: #e31e24; }
+		.offer-product-commitment-ozet { font-size: 12px; color: #888; margin-left: 8px; }
+		.offer-empty-msg-ozet {
+			text-align: center;
+			padding: 16px;
+			color: #999;
+			font-size: 14px;
+		}
+
 		/* Divider */
 		.divider {
 			height: 1px;
@@ -1277,6 +1352,19 @@
 				</div>
 			</div>
 
+			<!-- Offer Info Section -->
+			<div class="offer-info-section" id="offer-info-section">
+				<div class="offer-info-section-title">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/>
+					</svg>
+					Bagli Teklif Bilgisi
+				</div>
+				<div id="offer-info-content-ozet">
+					<!-- JS ile doldurulacak -->
+				</div>
+			</div>
+
 			<div class="divider"></div>
 
 			<!-- Payment Section -->
@@ -1424,6 +1512,7 @@
 	<script src="./js/services/cart-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/recurring-orders-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
 
 	<script>
 		// Global değişkenler
@@ -1483,10 +1572,78 @@
 
 				renderOrderProducts();
 
+				// Bagli teklif bilgisini yukle
+				loadOfferInfoOzet(currentOrder);
+
 			} catch (error) {
 				console.error('Sipariş yükleme hatası:', error);
 				loadFromSessionStorage();
 			}
+		}
+
+		// Bagli teklif bilgisini yukle
+		async function loadOfferInfoOzet(order) {
+			try {
+				if (!order.dealer_id || !order.customer_id) return;
+				var result = await OffersService.getAcceptedOffer(order.dealer_id, order.customer_id);
+				var offer = result.data;
+				var section = document.getElementById('offer-info-section');
+				var content = document.getElementById('offer-info-content-ozet');
+
+				if (!offer) {
+					content.innerHTML = '<div class="offer-empty-msg-ozet">Bu siparis icin bagli teklif bulunamadi.</div>';
+					section.style.display = 'block';
+					return;
+				}
+
+				var statusLabelsMap = { accepted: 'Kabul Edildi', pending: 'Beklemede', rejected: 'Reddedildi', cancelled: 'Iptal' };
+				var offerStatus = offer.status || 'pending';
+				var offerId = offer.id ? offer.id.substring(0, 8).toUpperCase() : '---';
+				var acceptedDate = offer.accepted_at ? formatDateOffer(offer.accepted_at) : '---';
+				var createdDate = offer.created_at ? formatDateOffer(offer.created_at) : '---';
+
+				var html = '<div class="offer-info-grid-ozet">';
+				html += '<div class="detail-item"><span class="detail-label">Teklif ID</span><span class="detail-value">#' + offerId + '</span></div>';
+				html += '<div class="detail-item"><span class="detail-label">Durum</span><span class="detail-value"><span class="offer-status-badge ' + offerStatus + '">' + (statusLabelsMap[offerStatus] || offerStatus) + '</span></span></div>';
+				html += '<div class="detail-item"><span class="detail-label">Olusturma Tarihi</span><span class="detail-value">' + createdDate + '</span></div>';
+				html += '<div class="detail-item"><span class="detail-label">Kabul Tarihi</span><span class="detail-value">' + acceptedDate + '</span></div>';
+				html += '</div>';
+
+				if (offer.offer_details && offer.offer_details.length > 0) {
+					html += '<div class="offer-products-list-ozet">';
+					html += '<div class="offer-products-title">Teklif Urun Fiyatlari</div>';
+					offer.offer_details.forEach(function(detail) {
+						var productName = detail.product ? detail.product.name : 'Urun';
+						var unitPrice = parseFloat(detail.unit_price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+						html += '<div class="offer-product-row-ozet">';
+						html += '<span class="offer-product-name-ozet">' + productName + '</span>';
+						html += '<span>';
+						html += '<span class="offer-product-price-ozet">' + unitPrice + ' TL</span>';
+						if (detail.commitment_quantity > 0) {
+							html += '<span class="offer-product-commitment-ozet">(Taahhut: ' + detail.commitment_quantity + ' adet/ay)</span>';
+						}
+						html += '</span>';
+						html += '</div>';
+					});
+					html += '</div>';
+				}
+
+				content.innerHTML = html;
+				section.style.display = 'block';
+			} catch (err) {
+				console.error('Teklif bilgisi yukleme hatasi:', err);
+			}
+		}
+
+		function formatDateOffer(dateStr) {
+			if (!dateStr) return '---';
+			var date = new Date(dateStr);
+			var day = date.getDate().toString().padStart(2, '0');
+			var month = (date.getMonth() + 1).toString().padStart(2, '0');
+			var year = date.getFullYear();
+			var hours = date.getHours().toString().padStart(2, '0');
+			var minutes = date.getMinutes().toString().padStart(2, '0');
+			return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
 		}
 
 		// SessionStorage'dan yükle (fallback)
