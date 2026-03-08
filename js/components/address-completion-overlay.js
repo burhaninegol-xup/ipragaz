@@ -430,8 +430,7 @@ var AddressCompletionOverlay = (function() {
 			mergedData.neighborhood = updateData.neighborhood || branchData.neighborhood;
 			mergedData.street = updateData.street || branchData.street;
 			mergedData.building_no = branchData.building_no;
-			mergedData.floor = branchData.floor;
-			mergedData.apartment = branchData.apartment;
+				mergedData.apartment = branchData.apartment;
 
 			// updateData'ya sadece eksik alanlari koy
 			// full_address'i de guncelle

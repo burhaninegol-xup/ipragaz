@@ -165,15 +165,13 @@
 					<select class="form-select" id="streetSelect">
 						<option value="">Cadde/Sokak Seciniz</option>
 					</select>
+					<input type="text" class="form-input" id="streetManualInput" placeholder="Sokak adini yaziniz..." style="display:none;">
+					<a href="javascript:void(0)" id="streetBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden sec</a>
 				</div>
 				<div class="form-row">
 					<div class="form-group">
 						<label class="form-label">Bina No</label>
 						<input type="text" class="form-input" id="buildingNo" placeholder="Bina No">
-					</div>
-					<div class="form-group">
-						<label class="form-label">Kat</label>
-						<input type="text" class="form-input" id="floor" placeholder="Kat">
 					</div>
 					<div class="form-group">
 						<label class="form-label">Daire</label>
@@ -403,6 +401,12 @@
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
 			var select = document.getElementById('streetSelect');
 
+			// Manuel giris modunu resetle
+			select.style.display = '';
+			document.getElementById('streetManualInput').style.display = 'none';
+			document.getElementById('streetManualInput').value = '';
+			document.getElementById('streetBackToList').style.display = 'none';
+
 			if (!neighborhoodId) {
 				select.innerHTML = '<option value="">Once mahalle seciniz</option>';
 				return;
@@ -414,6 +418,7 @@
 
 			if (result.error || !result.data || result.data.length === 0) {
 				select.innerHTML = '<option value="">Sokak bulunamadi</option>';
+				select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
 				return;
 			}
 
@@ -421,6 +426,7 @@
 			result.data.forEach(function(s) {
 				select.innerHTML += '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>';
 			});
+			select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
 		}
 
 		// Secili option'in data-name degerini al
@@ -429,6 +435,24 @@
 			var selectedOption = select.options[select.selectedIndex];
 			return selectedOption ? selectedOption.getAttribute('data-name') : null;
 		}
+
+		// Sokak dropdown "Diger" secenegi ve geri don handler
+		document.getElementById('streetSelect').addEventListener('change', function() {
+			if (this.value === '__other__') {
+				this.style.display = 'none';
+				document.getElementById('streetManualInput').style.display = '';
+				document.getElementById('streetBackToList').style.display = '';
+				document.getElementById('streetManualInput').focus();
+			}
+		});
+
+		document.getElementById('streetBackToList').addEventListener('click', function() {
+			document.getElementById('streetSelect').style.display = '';
+			document.getElementById('streetSelect').value = '';
+			document.getElementById('streetManualInput').style.display = 'none';
+			document.getElementById('streetManualInput').value = '';
+			document.getElementById('streetBackToList').style.display = 'none';
+		});
 
 		// Panel ac/kapat
 		function openAddressPanel(mode, addressId) {
@@ -460,6 +484,10 @@
 			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
 			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
 			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			document.getElementById('streetSelect').style.display = '';
+			document.getElementById('streetManualInput').style.display = 'none';
+			document.getElementById('streetManualInput').value = '';
+			document.getElementById('streetBackToList').style.display = 'none';
 		}
 
 		async function loadAddressData(addressId) {
@@ -489,11 +517,16 @@
 			// Sokak sec
 			if (addr.street_id) {
 				document.getElementById('streetSelect').value = addr.street_id;
+			} else if (addr.street) {
+				// Manuel girilmis sokak - text input modunu aktifle
+				document.getElementById('streetSelect').style.display = 'none';
+				document.getElementById('streetManualInput').style.display = '';
+				document.getElementById('streetManualInput').value = addr.street;
+				document.getElementById('streetBackToList').style.display = '';
 			}
 
 			document.getElementById('buildingNo').value = addr.building_no || '';
-			document.getElementById('floor').value = addr.floor || '';
-			document.getElementById('apartment').value = addr.apartment || '';
+				document.getElementById('apartment').value = addr.apartment || '';
 			document.getElementById('branchDescription').value = addr.branch_description || '';
 			document.getElementById('branchName').value = addr.branch_name || '';
 	}
@@ -504,13 +537,21 @@
 			var cityId = document.getElementById('citySelect').value;
 			var districtId = document.getElementById('districtSelect').value;
 			var neighborhoodId = document.getElementById('neighborhoodSelect').value;
-			var streetId = document.getElementById('streetSelect').value;
+			// Sokak: manuel mi dropdown mi?
+			var isManualStreet = document.getElementById('streetManualInput').style.display !== 'none';
+			var streetId, streetName;
+			if (isManualStreet) {
+				streetId = null;
+				streetName = document.getElementById('streetManualInput').value.trim() || null;
+			} else {
+				streetId = document.getElementById('streetSelect').value;
+				streetName = getSelectedOptionName('streetSelect');
+			}
 
 			// Text degerlerini de al (backward compatibility icin)
 			var cityName = getSelectedOptionName('citySelect');
 			var districtName = getSelectedOptionName('districtSelect');
 			var neighborhoodName = getSelectedOptionName('neighborhoodSelect');
-			var streetName = getSelectedOptionName('streetSelect');
 
 			if (!branchName || !cityId || !districtId) {
 				alert('Lutfen zorunlu alanlari doldurun');
@@ -532,8 +573,7 @@
 				street: streetName || null,
 				// Diger alanlar
 				building_no: document.getElementById('buildingNo').value.trim() || null,
-				floor: document.getElementById('floor').value.trim() || null,
-				apartment: document.getElementById('apartment').value.trim() || null,
+					apartment: document.getElementById('apartment').value.trim() || null,
 				branch_description: document.getElementById('branchDescription').value.trim() || null,
 				points_collection_mode: 'customer'
 			};

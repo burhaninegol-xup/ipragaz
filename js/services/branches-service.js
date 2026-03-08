@@ -138,7 +138,6 @@ const BranchesService = {
         if (branchData.neighborhood) parts.push(branchData.neighborhood);
         if (branchData.street) parts.push(branchData.street);
         if (branchData.building_no) parts.push('BINA NO:' + branchData.building_no);
-        if (branchData.floor) parts.push('KAT:' + branchData.floor);
         if (branchData.apartment) parts.push('DAIRE:' + branchData.apartment);
         if (branchData.district) parts.push(branchData.district);
         if (branchData.city) parts.push(branchData.city);

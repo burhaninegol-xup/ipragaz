@@ -424,7 +424,7 @@ const LocationsService = {
     /**
      * Tam adres metni olustur (ID'lerden)
      */
-    async buildFullAddressFromIds(cityId, districtId, neighborhoodId, streetId, buildingNo, floor, apartment) {
+    async buildFullAddressFromIds(cityId, districtId, neighborhoodId, streetId, buildingNo, apartment) {
         var parts = [];
 
         var { data: locationDetails } = await this.getLocationDetails(cityId, districtId, neighborhoodId, streetId);
@@ -432,7 +432,6 @@ const LocationsService = {
         if (locationDetails.neighborhood) parts.push(locationDetails.neighborhood.name);
         if (locationDetails.street) parts.push(locationDetails.street.name);
         if (buildingNo) parts.push('Bina No: ' + buildingNo);
-        if (floor) parts.push('Kat: ' + floor);
         if (apartment) parts.push('Daire: ' + apartment);
         if (locationDetails.district) parts.push(locationDetails.district.name);
         if (locationDetails.city) parts.push(locationDetails.city.name);

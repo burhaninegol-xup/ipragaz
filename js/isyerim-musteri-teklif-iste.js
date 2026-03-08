@@ -792,7 +792,7 @@
 							'data-product-id="' + product.id + '" ' +
 							'min="0" ' +
 							'placeholder="0" ' +
-							'onchange="updateSelectedCount()">' +
+							'oninput="updateSelectedCount()">' +
 						'<span class="consumption-unit">adet/ay</span>' +
 					'</div>' +
 				'</div>' +
