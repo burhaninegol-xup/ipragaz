@@ -52,13 +52,44 @@
 			document.getElementById('confirmationModal').classList.remove('active');
 		}
 
-		// Mevcut teklif kontrolu (musteri bazli teklif sistemi)
+		// Mevcut teklif kontrolu (il bazli teklif sistemi)
 		async function checkExistingOffer() {
 			if (!currentCustomer) return { hasOffer: false, isActive: false };
 
 			try {
-				// Musteri bazli teklif ara (sube bagimsiz)
-				const { data: allOffer, error } = await OffersService.getLatestOfferByCustomerId(currentCustomer.id);
+				// Secili sube ve il bilgisini bul
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+				var cityId = null;
+				var merkezCityId = null;
+
+				// Tum subeleri al (merkez ve secili subeyi bulmak icin)
+				var branchesResult = await BranchesService.getByCustomerId(currentCustomer.id);
+				var allBranches = (branchesResult && branchesResult.data) ? branchesResult.data : [];
+
+				// Merkez branch'i bul
+				var merkezBranch = allBranches.find(function(b) { return b.is_default === true; }) || allBranches[0];
+				merkezCityId = merkezBranch ? merkezBranch.city_id : null;
+
+				// Secili branch'i bul
+				if (selectedBranchId && allBranches.length > 0) {
+					var selectedBranch = allBranches.find(function(b) { return b.id === selectedBranchId; });
+					if (selectedBranch) {
+						cityId = selectedBranch.city_id;
+					}
+				}
+
+				// Secili sube bulunamadiysa merkez ilini kullan
+				if (!cityId && merkezCityId) {
+					cityId = merkezCityId;
+				}
+
+				if (!cityId) {
+					console.warn('City ID bulunamadi, teklif kontrolu atlanıyor');
+					return { hasOffer: false, isActive: false };
+				}
+
+				// Il bazli teklif ara
+				const { data: cityOffer, error } = await OffersService.getLatestOfferForCity(currentCustomer.id, cityId, merkezCityId, allBranches);
 
 				if (error) {
 					console.error('Teklif kontrolu hatasi:', error);
@@ -66,20 +97,21 @@
 				}
 
 				// Teklif var mi?
-				if (allOffer) {
+				if (cityOffer) {
 					// Teklif detayi kontrolu - detay yoksa gecersiz teklif
-					if (!allOffer.offer_details || allOffer.offer_details.length === 0) {
+					if (!cityOffer.offer_details || cityOffer.offer_details.length === 0) {
 						console.log('Teklif detayi bulunamadi, gecersiz teklif olarak isaretlendi');
 						return { hasOffer: false, isActive: false };
 					}
 
-					activeOffer = allOffer;
-					var isActiveStatus = ['requested', 'pending', 'accepted', 'passive'].includes(allOffer.status);
+					activeOffer = cityOffer;
+					var isActiveStatus = ['requested', 'pending', 'accepted', 'passive'].includes(cityOffer.status);
 
 					if (isActiveStatus) {
 						// Aktif teklif - read-only mod
 						isReadOnlyMode = true;
 						await renderReadOnlyMode();
+						await showCoveredAddresses();
 					} else {
 						// Sonuclanan teklif (rejected/cancelled) - sadece banner goster
 						isReadOnlyMode = false;
@@ -89,11 +121,68 @@
 					return { hasOffer: true, isActive: isActiveStatus };
 				}
 
-				// Hic teklif yok - bos form goster
+				// Bu il icin hic teklif yok - bos form goster
 				return { hasOffer: false, isActive: false };
 			} catch (err) {
 				console.error('Teklif kontrolu hatasi:', err);
 				return { hasOffer: false, isActive: false };
+			}
+		}
+
+		// Teklifin kapsayacagi adresleri goster
+		async function showCoveredAddresses() {
+			if (!currentCustomer) return;
+
+			try {
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+				var branchesResult = await BranchesService.getByCustomerId(currentCustomer.id);
+				var allBranches = (branchesResult && branchesResult.data) ? branchesResult.data : [];
+
+				if (allBranches.length === 0) return;
+
+				// Secili branch'i bul
+				var selectedBranch = null;
+				if (selectedBranchId) {
+					selectedBranch = allBranches.find(function(b) { return b.id === selectedBranchId; });
+				}
+				if (!selectedBranch) {
+					selectedBranch = allBranches.find(function(b) { return b.is_default === true; }) || allBranches[0];
+				}
+
+				if (!selectedBranch || !selectedBranch.city_id) return;
+
+				// Ayni ildeki tum subeleri bul
+				var sameCityBranches = allBranches.filter(function(b) {
+					return b.city_id === selectedBranch.city_id;
+				});
+
+				if (sameCityBranches.length === 0) return;
+
+				// HTML olustur
+				var html = '';
+				sameCityBranches.forEach(function(b) {
+					var branchName = b.branch_name || b.name || 'Adres';
+					var location = b.district ? (b.district + ', ' + (b.city || '')) : (b.city || '');
+					var isDefault = b.is_default ? ' (Merkez)' : '';
+					var isCurrent = b.id === selectedBranchId ? ' (Secili)' : '';
+					html += '<li>' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">' +
+						'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>' +
+						'<circle cx="12" cy="10" r="3"/>' +
+						'</svg>' +
+						'<span>' + branchName + isDefault + isCurrent + '</span>' +
+						'<small>' + location + '</small>' +
+					'</li>';
+				});
+
+				var container = document.getElementById('coveredAddressesList');
+				var card = document.getElementById('coveredAddressesCard');
+				if (container && card) {
+					container.innerHTML = html;
+					card.style.display = 'block';
+				}
+			} catch (err) {
+				console.error('Kapsanan adresler yukleme hatasi:', err);
 			}
 		}
 
@@ -959,8 +1048,10 @@
 				return;
 			}
 
-			// Bayi ID'sini belirle - secilen veya mevcut
-			var dealerId = selectedDealerId || (currentCustomer ? currentCustomer.dealer_id : null);
+			// Bayi ID'sini belirle - branch-aware
+			var branchSelected = !!sessionStorage.getItem('selected_address_id');
+			var dealerId = selectedDealerId || sessionStorage.getItem('isyerim_dealer_id')
+				|| (branchSelected ? null : (currentCustomer ? currentCustomer.dealer_id : null));
 
 			if (!currentCustomer || !dealerId) {
 				alert('Bayi bilgisi bulunamadi. Lutfen destek ile iletisime gecin.');
@@ -968,7 +1059,8 @@
 			}
 
 			// Bayi adini ayarla
-			var dealerName = selectedDealerName || (currentCustomer.dealer ? currentCustomer.dealer.name : '-');
+			var dealerName = selectedDealerName || sessionStorage.getItem('isyerim_dealer_name')
+				|| (branchSelected ? '-' : (currentCustomer.dealer ? currentCustomer.dealer.name : '-'));
 			document.getElementById('summaryDealerName').textContent = dealerName;
 
 			// Urun listesini olustur
@@ -1135,8 +1227,10 @@
 			// Overlay'i kapat
 			closeOfferSummary();
 
-			// Bayi ID'sini belirle - secilen veya mevcut
-			var dealerId = selectedDealerId || (currentCustomer ? currentCustomer.dealer_id : null);
+			// Bayi ID'sini belirle - branch-aware
+			var branchSelected = !!sessionStorage.getItem('selected_address_id');
+			var dealerId = selectedDealerId || sessionStorage.getItem('isyerim_dealer_id')
+				|| (branchSelected ? null : (currentCustomer ? currentCustomer.dealer_id : null));
 
 			// Secili subeyi al
 			var selectedBranchId = sessionStorage.getItem('selected_address_id');
@@ -1221,8 +1315,14 @@
 					return false; // Read-only mod aktif, normal akisi durdur
 				}
 
-				// Aktif teklif yoksa dealer_id kontrolu yap
-				if (!currentCustomer.dealer_id) {
+				// Aktif teklif yoksa dealer kontrolu yap
+				// Branch seciliyse session'daki bayiyi kullan (evaluateDealerForBranch sonucu)
+				var branchSelected = !!sessionStorage.getItem('selected_address_id');
+				var effectiveDealerId = branchSelected
+					? sessionStorage.getItem('isyerim_dealer_id')
+					: (sessionStorage.getItem('isyerim_dealer_id') || currentCustomer.dealer_id);
+
+				if (!effectiveDealerId) {
 					// Bayi yok, bayi secim ekranini goster
 					document.getElementById('productsGrid').style.display = 'none';
 					document.getElementById('submitSection').style.display = 'none';
@@ -1233,10 +1333,15 @@
 				}
 
 				// Bayi bilgisini goster
-				if (currentCustomer.dealer) {
-					document.getElementById('dealerName').textContent = currentCustomer.dealer.name;
+				var effectiveDealerName = sessionStorage.getItem('isyerim_dealer_name')
+					|| (branchSelected ? null : (currentCustomer.dealer ? currentCustomer.dealer.name : null));
+				if (effectiveDealerName) {
+					document.getElementById('dealerName').textContent = effectiveDealerName;
 					document.getElementById('dealerInfo').style.display = 'flex';
 				}
+
+				// Kapsanan adresleri goster
+				await showCoveredAddresses();
 
 				return true;
 

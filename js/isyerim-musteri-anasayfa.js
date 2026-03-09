@@ -196,27 +196,47 @@ async function loadProducts() {
 		hasDealerInDistrict = true;
 		currentBranchInfo = null;
 
+		// Secili sube merkez ile ayni ilde mi? (evaluateDealerForBranch tarafindan set edilir)
+		var branchInOfferCity = sessionStorage.getItem('isyerim_branch_in_offer_city') !== 'false';
+		var cityOffer = null;
+
 		if (currentBranchId && currentCustomerId) {
 			// 1. Şube detayını al
 			try {
 				const { data: branch } = await BranchesService.getById(currentBranchId);
 				currentBranchInfo = branch;
 
-				// 2. Müşteri için teklif durumunu kontrol et (musteri bazli teklif sistemi)
-				const { data: offers } = await OffersService.getByCustomerId(
-					currentCustomerId,
-					{} // tüm durumlar
-				);
+				// 2. Teklif kontrolu - il bazli (her il icin kendi teklifi kontrol edilir)
+				var selectedCityId = branch ? branch.city_id : null;
 
-				if (offers && offers.length > 0) {
-					// En son teklifi al
-					var latestOffer = offers[0];
-					if (latestOffer.status === 'accepted') {
-						branchOfferStatus = 'accepted';
-						currentOfferDealer = latestOffer.dealer; // Bayi bilgisini kaydet
-					} else if (latestOffer.status === 'pending' || latestOffer.status === 'requested') {
-						branchOfferStatus = 'in_process';
-						currentOfferDealer = latestOffer.dealer; // Bayi bilgisini kaydet
+				if (selectedCityId) {
+					// Merkez city_id'sini bul (eski teklifler icin fallback)
+					var merkezCityId = null;
+					try {
+						var branchesResult = await BranchesService.getByCustomerId(currentCustomerId);
+						if (branchesResult.data) {
+							var merkezBranch = branchesResult.data.find(function(b) { return b.is_default === true; }) || branchesResult.data[0];
+							merkezCityId = merkezBranch ? merkezBranch.city_id : null;
+						}
+					} catch (e) { /* merkez bulunamazsa devam et */ }
+
+					var activeOffersResult = await OffersService.getActiveOffersByCustomerId(currentCustomerId);
+					var branchesForFilter = (branchesResult && branchesResult.data) ? branchesResult.data : [];
+					cityOffer = OffersService.findActiveOfferForCity(
+						activeOffersResult.data || [], selectedCityId, merkezCityId, branchesForFilter
+					);
+
+					if (cityOffer) {
+						if (cityOffer.status === 'accepted') {
+							branchOfferStatus = 'accepted';
+							currentOfferDealer = cityOffer.dealer;
+						} else if (cityOffer.status === 'pending' || cityOffer.status === 'requested') {
+							branchOfferStatus = 'in_process';
+							currentOfferDealer = cityOffer.dealer;
+						} else {
+							branchOfferStatus = null;
+							currentOfferDealer = null;
+						}
 					} else {
 						branchOfferStatus = null;
 						currentOfferDealer = null;
@@ -238,7 +258,7 @@ async function loadProducts() {
 					}
 				}
 
-				console.log('Teklif durumu:', branchOfferStatus, 'Ilcede bayi var mi:', hasDealerInDistrict);
+				console.log('Teklif durumu:', branchOfferStatus, 'Ilcede bayi var mi:', hasDealerInDistrict, 'Ayni il:', branchInOfferCity);
 			} catch (offerErr) {
 				console.error('Teklif durumu kontrol hatasi:', offerErr);
 			}
@@ -248,11 +268,14 @@ async function loadProducts() {
 		// Şube şehir ID'sini al
 		var cityId = currentBranchInfo ? currentBranchInfo.city_id : null;
 
+		// Sadece kabul edilmis teklif varsa teklif fiyatlari gosterilir
+		var dealerIdForPricing = (cityOffer && cityOffer.status === 'accepted') ? currentDealerId : null;
+
 		resolvedPrices = await PriceResolverService.resolvePricesForProducts(
 			products,
 			currentCustomerId,
 			currentBranchId,
-			currentDealerId,
+			dealerIdForPricing,
 			cityId
 		);
 
@@ -729,8 +752,16 @@ async function loadLastOrder() {
 	}
 
 	try {
-		console.log('OrdersService.getByCustomerId cagiriliyor, customerId:', customerId);
-		const { data: orders, error } = await OrdersService.getByCustomerId(customerId, 1);
+		var selectedAddressId = sessionStorage.getItem('selected_address_id');
+		var result;
+		if (selectedAddressId) {
+			console.log('Sube secili, getByCustomerAndBranches cagiriliyor, customerId:', customerId, 'branchId:', selectedAddressId);
+			result = await OrdersService.getByCustomerAndBranches(customerId, [selectedAddressId], 1);
+		} else {
+			console.log('Sube secili degil, getByCustomerId cagiriliyor, customerId:', customerId);
+			result = await OrdersService.getByCustomerId(customerId, 1);
+		}
+		const { data: orders, error } = result;
 		console.log('OrdersService sonucu:', { orders, error });
 
 		if (error) {

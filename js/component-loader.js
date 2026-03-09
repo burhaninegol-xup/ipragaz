@@ -1421,8 +1421,11 @@ window.confirmAddressSelection = async function() {
         }
     }
 
-    // Sube degistiyse sayfayi yenile
+    // Sube degistiyse sepeti bosalt ve sayfayi yenile
     if (previousBranchId !== selectedAddressId) {
+        if (typeof CartService !== 'undefined') {
+            await CartService.clearCart();
+        }
         window.location.reload();
         return;
     }
@@ -1521,13 +1524,26 @@ window.openDealerModal = async function() {
     // Find MERKEZ branch (is_default=true) or fallback to first branch
     var merkezBranch = branchesResult.data.find(function(b) { return b.is_default === true; }) || branchesResult.data[0];
 
-    // 2. Use MERKEZ branch location
-    var city = merkezBranch.city;
-    var district = merkezBranch.district;
-    var districtId = merkezBranch.district_id;
+    // 2. Il bazli lokasyon secimi: ayni il ise merkez, farkli il ise secili sube
+    var branchInOfferCity = sessionStorage.getItem('isyerim_branch_in_offer_city') !== 'false';
+    var locationBranch;
+    if (branchInOfferCity) {
+        locationBranch = merkezBranch;
+    } else {
+        var selectedBranchId = sessionStorage.getItem('selected_address_id');
+        locationBranch = branchesResult.data.find(function(b) { return b.id === selectedBranchId; }) || merkezBranch;
+    }
+
+    var city = locationBranch.city;
+    var district = locationBranch.district;
+    var districtId = locationBranch.district_id;
 
     if (locationText) {
-        locationText.textContent = district + ', ' + city + ' (MERKEZ)';
+        if (branchInOfferCity) {
+            locationText.textContent = district + ', ' + city + ' (MERKEZ)';
+        } else {
+            locationText.textContent = district + ', ' + city;
+        }
     }
 
     // Load dealers for this location (Mikro Pazar dahil)
@@ -1655,8 +1671,9 @@ window.closeDealerModal = function(event) {
 window.confirmDealerSelection = async function() {
     if (!selectedTempDealerId) return;
 
-    // ===== KILITLIYSE BAYI DEGISTIRMEYI ENGELLE =====
-    if (isOfferDealerLocked && offerLockedDealer) {
+    // ===== KILITLIYSE BAYI DEGISTIRMEYI ENGELLE (sadece ayni ildeki subeler icin) =====
+    var branchInOfferCityForConfirm = sessionStorage.getItem('isyerim_branch_in_offer_city') !== 'false';
+    if (branchInOfferCityForConfirm && isOfferDealerLocked && offerLockedDealer) {
         if (selectedTempDealerId !== offerLockedDealer.id) {
             alert('Aktif teklif sureci devam ederken bayi degistiremezsiniz.');
             return;
@@ -1689,24 +1706,26 @@ window.confirmDealerSelection = async function() {
     }
 
     try {
-        // Update customer with new dealer_id
-        if (typeof CustomersService === 'undefined') {
-            alert('Musteri servisi yuklenemedi');
-            return;
-        }
-
-        var result = await CustomersService.update(customerId, {
-            dealer_id: selectedTempDealerId
-        });
-
-        if (result.error) {
-            console.error('Error updating dealer:', result.error);
-            alert('Bayi kaydedilemedi. Lutfen tekrar deneyiniz.');
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+        // Update customer with new dealer_id (sadece ayni ildeki subeler icin DB guncelle)
+        if (branchInOfferCityForConfirm) {
+            if (typeof CustomersService === 'undefined') {
+                alert('Musteri servisi yuklenemedi');
+                return;
             }
-            return;
+
+            var result = await CustomersService.update(customerId, {
+                dealer_id: selectedTempDealerId
+            });
+
+            if (result.error) {
+                console.error('Error updating dealer:', result.error);
+                alert('Bayi kaydedilemedi. Lutfen tekrar deneyiniz.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+                }
+                return;
+            }
         }
 
         // Update local state
@@ -1739,16 +1758,18 @@ window.confirmDealerSelection = async function() {
 // ============================================
 
 // Bayi secimini temizle
-function clearDealerSelection() {
+function clearDealerSelection(sessionOnly) {
     currentDealerId = null;
     currentDealerName = null;
     sessionStorage.removeItem('isyerim_dealer_id');
     sessionStorage.removeItem('isyerim_dealer_name');
 
-    // Veritabaninda da temizle
-    var customerId = sessionStorage.getItem('isyerim_customer_id');
-    if (customerId && typeof CustomersService !== 'undefined') {
-        CustomersService.update(customerId, { dealer_id: null });
+    // Veritabaninda da temizle (sadece sessionOnly degilse)
+    if (!sessionOnly) {
+        var customerId = sessionStorage.getItem('isyerim_customer_id');
+        if (customerId && typeof CustomersService !== 'undefined') {
+            CustomersService.update(customerId, { dealer_id: null });
+        }
     }
 
     // ===== TEKLIF KILIDINI TEMIZLE =====
@@ -1761,7 +1782,7 @@ function clearDealerSelection() {
 }
 
 // Tek bayiyi otomatik sec
-async function autoSelectDealer(dealer, customerId) {
+async function autoSelectDealer(dealer, customerId, sessionOnly) {
     currentDealerId = dealer.id;
     currentDealerName = dealer.name;
 
@@ -1769,8 +1790,10 @@ async function autoSelectDealer(dealer, customerId) {
     sessionStorage.setItem('isyerim_dealer_id', dealer.id);
     sessionStorage.setItem('isyerim_dealer_name', dealer.name);
 
-    // Veritabani guncelle
-    await CustomersService.update(customerId, { dealer_id: dealer.id });
+    // Veritabani guncelle (sadece sessionOnly degilse)
+    if (!sessionOnly) {
+        await CustomersService.update(customerId, { dealer_id: dealer.id });
+    }
 
     // UI guncelle
     updateDealerButton(dealer.name);
@@ -1790,7 +1813,7 @@ async function evaluateDealerForBranch(branchId) {
     }
 
     try {
-        // 1. MERKEZ branch'ini al (seçili branch yerine)
+        // 1. Tum subeleri al
         var branchesResult = await BranchesService.getByCustomerId(customerId);
         if (!branchesResult.data || branchesResult.data.length === 0) {
             updateDealerButton(null, 'no-dealers');
@@ -1800,25 +1823,43 @@ async function evaluateDealerForBranch(branchId) {
         // MERKEZ branch'ini bul (is_default=true) veya ilk branch'i kullan
         var merkezBranch = branchesResult.data.find(function(b) { return b.is_default === true; }) || branchesResult.data[0];
 
-        var city = merkezBranch.city;
-        var district = merkezBranch.district;
-        var districtId = merkezBranch.district_id;
+        // Secili branch'i bul
+        var selectedBranch = branchesResult.data.find(function(b) { return b.id === branchId; }) || merkezBranch;
+
+        // ===== IL KARSILASTIRMASI =====
+        var isSameCity = false;
+        if (selectedBranch && merkezBranch) {
+            if (selectedBranch.city_id && merkezBranch.city_id) {
+                isSameCity = selectedBranch.city_id === merkezBranch.city_id;
+            } else {
+                isSameCity = (selectedBranch.city || '').toLowerCase() === (merkezBranch.city || '').toLowerCase();
+            }
+        }
+        sessionStorage.setItem('isyerim_branch_in_offer_city', isSameCity ? 'true' : 'false');
+        // ===== IL KARSILASTIRMASI SONU =====
+
+        // Bayi aramasi icin kullanilacak sube: ayni il ise merkez, farkli il ise secili sube
+        var locationBranch = isSameCity ? merkezBranch : selectedBranch;
+
+        var city = locationBranch.city;
+        var district = locationBranch.district;
+        var districtId = locationBranch.district_id;
 
         // UUID'den isim cekme (gerekirse)
-        if ((!city || !district) && (merkezBranch.city_id || merkezBranch.district_id)) {
-            if (merkezBranch.city_id && !city) {
-                var cityResult = await supabaseClient.from('cities').select('name').eq('id', merkezBranch.city_id).single();
+        if ((!city || !district) && (locationBranch.city_id || locationBranch.district_id)) {
+            if (locationBranch.city_id && !city) {
+                var cityResult = await supabaseClient.from('cities').select('name').eq('id', locationBranch.city_id).single();
                 if (cityResult.data) city = cityResult.data.name;
             }
-            if (merkezBranch.district_id && !district) {
-                var districtResult = await supabaseClient.from('districts').select('name').eq('id', merkezBranch.district_id).single();
+            if (locationBranch.district_id && !district) {
+                var districtResult = await supabaseClient.from('districts').select('name').eq('id', locationBranch.district_id).single();
                 if (districtResult.data) district = districtResult.data.name;
-                districtId = merkezBranch.district_id;
+                districtId = locationBranch.district_id;
             }
         }
 
         if (!city || !district) {
-            clearDealerSelection();
+            clearDealerSelection(!isSameCity);
             updateDealerButton(null, 'no-dealers');
             return;
         }
@@ -1833,37 +1874,34 @@ async function evaluateDealerForBranch(branchId) {
             districtId = districtLookup.data ? districtLookup.data.id : null;
         }
 
-        // ===== AKTIF TEKLIF KONTROLU (musteri bazli teklif sistemi) =====
+        // ===== AKTIF TEKLIF KONTROLU (il bazli) =====
         var activeOfferDealer = null;
         try {
             if (typeof OffersService !== 'undefined') {
-                // Musteri bazli teklif sistemi - getByCustomerId kullan
-                var offersResult = await OffersService.getByCustomerId(customerId, {});
-                var offers = offersResult.data || [];
+                // Secili subenin city_id'sini bul
+                var currentCityId = selectedBranch.city_id || locationBranch.city_id;
+                var merkezCityId = merkezBranch.city_id || null;
 
-                // Aktif durumda teklif bul (cancelled ve rejected haric)
-                var activeOffer = offers.find(function(o) {
-                    return ['requested', 'pending', 'accepted', 'passive'].includes(o.status);
-                });
+                var activeOffersResult = await OffersService.getActiveOffersByCustomerId(customerId);
+                var activeOffers = activeOffersResult.data || [];
 
-                if (activeOffer && activeOffer.dealer) {
-                    activeOfferDealer = activeOffer.dealer;
+                // Bu il icin aktif teklif var mi?
+                var cityOffer = OffersService.findActiveOfferForCity(activeOffers, currentCityId, merkezCityId, branchesResult.data);
 
-                    // Kilit bayraglarini ayarla
+                if (cityOffer && cityOffer.dealer) {
+                    activeOfferDealer = cityOffer.dealer;
+
                     isOfferDealerLocked = true;
                     offerLockedDealer = activeOfferDealer;
 
-                    // SessionStorage'a kaydet
                     sessionStorage.setItem('isyerim_offer_locked_dealer_id', activeOfferDealer.id);
                     sessionStorage.setItem('isyerim_offer_locked_dealer_name', activeOfferDealer.name);
                     sessionStorage.setItem('isyerim_is_offer_locked', 'true');
 
-                    // Bu bayiyi otomatik sec
-                    await autoSelectDealer(activeOfferDealer, customerId);
-                    console.log('Aktif teklif bayisi otomatik secildi:', activeOfferDealer.name);
-                    return; // Erken cik - diger bayilere gerek yok
+                    await autoSelectDealer(activeOfferDealer, customerId, !isSameCity);
+                    console.log('Aktif teklif bayisi otomatik secildi (il bazli):', activeOfferDealer.name);
+                    return;
                 } else {
-                    // Aktif teklif yok - kilidi kaldir
                     isOfferDealerLocked = false;
                     offerLockedDealer = null;
                     sessionStorage.removeItem('isyerim_offer_locked_dealer_id');
@@ -1882,33 +1920,28 @@ async function evaluateDealerForBranch(branchId) {
         var dealersResult = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
         var dealers = dealersResult.data || [];
 
-        // 4. Sonuca gore islem yap
+        // 4. Sonuca gore islem yap (farkli il ise DB guncelleme yapma)
+        var sessionOnlyMode = !isSameCity;
+
         if (dealers.length === 0) {
-            // Bayi yok - temizle ve "Bayi Yok" goster
-            clearDealerSelection();
+            clearDealerSelection(sessionOnlyMode);
             updateDealerButton(null, 'no-dealers');
         } else if (dealers.length === 1) {
-            // Tek bayi - otomatik sec
-            await autoSelectDealer(dealers[0], customerId);
+            await autoSelectDealer(dealers[0], customerId, sessionOnlyMode);
         } else {
-            // Birden fazla bayi var
-            // Onceden secilmis bir bayi var mi ve hala gecerli mi kontrol et
             var savedDealerId = sessionStorage.getItem('isyerim_dealer_id');
             var savedDealerName = sessionStorage.getItem('isyerim_dealer_name');
 
-            // Secili bayi bu bolgede gecerli mi?
             var savedDealerValid = savedDealerId && dealers.some(function(d) {
                 return d.id === savedDealerId;
             });
 
             if (savedDealerValid) {
-                // Onceki secim gecerli - koru
                 currentDealerId = savedDealerId;
                 currentDealerName = savedDealerName;
                 updateDealerButton(savedDealerName);
             } else {
-                // Onceki secim gecersiz veya yok - temizle
-                clearDealerSelection();
+                clearDealerSelection(sessionOnlyMode);
                 updateDealerButton(null, 'select');
             }
         }

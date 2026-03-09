@@ -82,6 +82,73 @@ a {
 	line-height: 1.5;
 }
 
+/* Covered Addresses Card */
+.covered-addresses-card {
+	background: #f0f7ff;
+	border: 1px solid #d0e3f7;
+	border-radius: 12px;
+	padding: 20px;
+	margin-bottom: 30px;
+}
+
+.covered-addresses-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.covered-addresses-header svg {
+	width: 20px;
+	height: 20px;
+	color: #1976d2;
+	flex-shrink: 0;
+}
+
+.covered-addresses-header h4 {
+	font-size: 14px;
+	font-weight: 600;
+	color: #1565c0;
+}
+
+.covered-addresses-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.covered-addresses-list li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: #fff;
+	border-radius: 8px;
+	margin-bottom: 6px;
+	font-size: 13px;
+	color: #333;
+}
+
+.covered-addresses-list li:last-child {
+	margin-bottom: 0;
+}
+
+.covered-addresses-list li svg {
+	color: #1976d2;
+	flex-shrink: 0;
+}
+
+.covered-addresses-list li span {
+	font-weight: 500;
+	flex-shrink: 0;
+}
+
+.covered-addresses-list li small {
+	color: #888;
+	font-size: 12px;
+	margin-left: auto;
+}
+
 /* Products Grid */
 .products-grid {
 	display: grid;

@@ -211,6 +211,20 @@
 		</div>
 	</div>
 
+	<!-- Offer Warning Modal -->
+	<div class="confirm-modal" id="offerWarningModal">
+		<div class="confirm-box">
+			<svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+				<line x1="12" y1="9" x2="12" y2="13"/>
+				<line x1="12" y1="17" x2="12.01" y2="17"/>
+			</svg>
+			<h3 class="confirm-title" id="offerWarningTitle"></h3>
+			<p class="confirm-text" id="offerWarningMessage"></p>
+			<div class="confirm-buttons" id="offerWarningButtons"></div>
+		</div>
+	</div>
+
 	<!-- Delete Account Overlay Container -->
 	<div id="delete-account-overlay-container"></div>
 
@@ -221,6 +235,9 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/locations-service.js"></script>
 	<script src="./js/services/account-deletion-service.js"></script>
+	<script src="./js/services/offers-service.js"></script>
+	<script src="./js/services/offer-logs-service.js"></script>
+	<script src="./js/services/messages-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/components/settings-sidebar.js"></script>
 	<script>
@@ -228,6 +245,8 @@
 		var currentAddressId = null;
 		var deleteAddressId = null;
 		var isManagementRestricted = false;
+		var currentCustomerData = null;
+		var editingBranchData = null;
 
 		document.addEventListener('DOMContentLoaded', async function() {
 			customerId = sessionStorage.getItem('isyerim_customer_id');
@@ -264,6 +283,7 @@
 		async function checkManagementRestriction() {
 			try {
 				var result = await CustomersService.getById(customerId);
+				currentCustomerData = result.data || null;
 				if (result.data && result.data.management_restricted) {
 					isManagementRestricted = true;
 					document.getElementById('btnAddBranch').style.display = 'none';
@@ -467,6 +487,7 @@
 			} else {
 				document.getElementById('panelTitle').textContent = 'Adres Ekle';
 				currentAddressId = null;
+				editingBranchData = null;
 				clearForm();
 			}
 		}
@@ -495,6 +516,7 @@
 			if (result.error || !result.data) return;
 
 			var addr = result.data;
+			editingBranchData = addr;
 
 			// Il sec ve ilceleri yukle (ID veya isim bazli)
 			if (addr.city_id) {
@@ -531,6 +553,206 @@
 			document.getElementById('branchName').value = addr.branch_name || '';
 	}
 
+		// Teklif uyari mesajlari
+		var offerWarningMessages = {
+			merkez_il_degisti_sube_yok: {
+				title: 'Teklif Iptal Olacak',
+				message: 'Merkez adresinizin ilini degistirdiginiz icin mevcut teklifiniz iptal edilecektir. Yeni adresiniz icin bastan teklif talep etmeniz gerekecektir. Devam etmek istiyor musunuz?',
+				buttons: 'confirm'
+			},
+			merkez_il_degisti_sube_var: {
+				title: 'Teklif Bilgisi',
+				message: 'Merkez adresinizin ili degisecek. Mevcut teklifiniz merkez adres icin gecerli olmayacak ancak ayni ildeki diger subeleriniz icin gecerli olmaya devam edecektir. Devam etmek istiyor musunuz?',
+				buttons: 'confirm'
+			},
+			farkli_il_yeni_sube: {
+				title: 'Teklif Bilgisi',
+				message: 'Bu adres merkezinizden farkli bir ilde. Bu adrese siparis verebilmek icin ayrica teklif talep etmeniz gerekecektir.',
+				buttons: 'ok'
+			},
+			ayni_il_yeni_sube: {
+				title: 'Teklif Bilgisi',
+				message: 'Bu adres merkeziniz ile ayni ilde. Mevcut teklifiniz bu adres icin de gecerli olacak ve bu adresten siparis verebileceksiniz.',
+				buttons: 'ok'
+			},
+			farkli_il_sube_guncelle: {
+				title: 'Teklif Bilgisi',
+				message: 'Bu adres artik merkezinizden farkli bir ilde olacak. Mevcut teklifiniz bu adres icin gecerli olmayacaktir. Bu adrese siparis verebilmek icin ayrica teklif talep etmeniz gerekecektir.',
+				buttons: 'ok'
+			},
+			ayni_il_sube_guncelle: {
+				title: 'Teklif Bilgisi',
+				message: 'Bu adres merkeziniz ile ayni ilde. Mevcut teklifiniz bu adres icin de gecerli olacaktir.',
+				buttons: 'ok'
+			},
+			sube_silindi_teklif_iptal: {
+				title: 'Teklif Iptal Olacak',
+				message: 'Bu subeyi sildiginizde, bagli aktif teklifiniz iptal edilecektir cunku ayni ilde baska bir adresiniz bulunmuyor. Devam etmek istiyor musunuz?',
+				buttons: 'confirm'
+			},
+			sube_silindi_teklif_tasindi: {
+				title: 'Teklif Tasinacak',
+				message: 'Bu subeyi sildiginizde, bagli aktif teklifiniz ayni ildeki diger adresinize aktarilacaktir. Devam etmek istiyor musunuz?',
+				buttons: 'confirm'
+			}
+		};
+
+		// Teklif uyari popover'ini goster
+		function showOfferWarning(type, offer, onConfirm) {
+			var config = offerWarningMessages[type];
+			if (!config) return;
+
+			document.getElementById('offerWarningTitle').textContent = config.title;
+			document.getElementById('offerWarningMessage').textContent = config.message;
+
+			var buttonsHtml = '';
+			if (config.buttons === 'confirm') {
+				buttonsHtml = '<button class="confirm-btn cancel" id="offerWarningCancel">Vazgec</button>';
+				buttonsHtml += '<button class="confirm-btn delete" id="offerWarningConfirm">Evet</button>';
+			} else {
+				buttonsHtml = '<button class="confirm-btn delete" id="offerWarningOk" style="flex:1;">Tamam</button>';
+			}
+			document.getElementById('offerWarningButtons').innerHTML = buttonsHtml;
+			document.getElementById('offerWarningModal').classList.add('active');
+
+			if (config.buttons === 'confirm') {
+				document.getElementById('offerWarningConfirm').onclick = function() {
+					document.getElementById('offerWarningModal').classList.remove('active');
+					onConfirm();
+				};
+				document.getElementById('offerWarningCancel').onclick = function() {
+					document.getElementById('offerWarningModal').classList.remove('active');
+				};
+			} else {
+				document.getElementById('offerWarningOk').onclick = function() {
+					document.getElementById('offerWarningModal').classList.remove('active');
+					onConfirm();
+				};
+			}
+		}
+
+		// Teklif ile ilgili mesaj gonder (Senaryo 1 ve 2)
+		async function sendOfferMessage(offer, type) {
+			var messages = {
+				teklif_iptal: 'Musteri merkez adresinin ilini degistirmistir. Bu degisiklik nedeniyle teklif iptal edilmistir.',
+				merkez_il_degisti_devam: 'Musteri merkez adresinin ilini degistirmistir. Teklif, ayni ildeki diger subeler icin gecerli olmaya devam etmektedir.',
+				teklif_sube_silindi_iptal: 'Musteri subesini silmistir. Ayni ilde baska adres bulunmadigi icin teklif iptal edilmistir.',
+				teklif_sube_silindi_tasindi: 'Musteri subesini silmistir. Teklif ayni ildeki diger adresine aktarilmistir.'
+			};
+			try {
+				await MessagesService.create({
+					offer_id: offer.id,
+					sender_type: 'customer',
+					sender_id: customerId,
+					message: messages[type]
+				});
+			} catch (err) {
+				console.error('Mesaj gonderilemedi:', err);
+			}
+		}
+
+		// Kayit islemini gerceklestir
+		async function proceedWithSave(branchData, isNew) {
+			var result;
+			if (!isNew && currentAddressId) {
+				result = await BranchesService.update(currentAddressId, branchData);
+			} else {
+				branchData.is_default = false;
+				result = await BranchesService.create(branchData);
+			}
+
+			if (result.error) {
+				alert('Sube kaydedilemedi: ' + result.error.message);
+				return;
+			}
+
+			closeAddressPanel();
+			await loadAddresses();
+		}
+
+		// Teklif etkisi kontrol et
+		async function checkOfferImpact(branchData, isNewBranch) {
+			var dealerId = currentCustomerData && currentCustomerData.dealer_id;
+			if (!dealerId) { return proceedWithSave(branchData, isNewBranch); }
+
+			var offerResult = await OffersService.getAcceptedOffer(dealerId, customerId);
+			var offer = offerResult.data;
+			if (!offer) { return proceedWithSave(branchData, isNewBranch); }
+
+			var branchesResult = await BranchesService.getByCustomerId(customerId);
+			var allBranches = branchesResult.data || [];
+			var merkez = allBranches.find(function(b) { return b.is_default; });
+			var newCityId = branchData.city_id;
+
+			if (isNewBranch) {
+				if (!merkez || merkez.city_id !== newCityId) {
+					// Senaryo 4: Farkli il yeni sube
+					showOfferWarning('farkli_il_yeni_sube', offer, function() {
+						proceedWithSave(branchData, true);
+					});
+				} else {
+					// Senaryo 5: Ayni il yeni sube
+					showOfferWarning('ayni_il_yeni_sube', offer, function() {
+						proceedWithSave(branchData, true);
+					});
+				}
+			} else {
+				var isMerkez = editingBranchData && editingBranchData.is_default;
+				var oldCityId = editingBranchData ? editingBranchData.city_id : null;
+
+				if (oldCityId === newCityId) {
+					if (isMerkez) {
+						// Senaryo 3: Merkez il ayni
+						return proceedWithSave(branchData, false);
+					} else {
+						// Senaryo 7: Sube il ayni, merkezle ayni ilde mi?
+						if (merkez && merkez.city_id === newCityId) {
+							showOfferWarning('ayni_il_sube_guncelle', offer, function() {
+								proceedWithSave(branchData, false);
+							});
+						} else {
+							return proceedWithSave(branchData, false);
+						}
+					}
+				} else {
+					// Il DEGISTI
+					if (isMerkez) {
+						var sameCityBranches = allBranches.filter(function(b) { return !b.is_default && b.city_id === oldCityId; });
+						if (sameCityBranches.length > 0) {
+							// Senaryo 2: Merkez il degisti, ayni ilde baska sube var
+							showOfferWarning('merkez_il_degisti_sube_var', offer, function() {
+								sendOfferMessage(offer, 'merkez_il_degisti_devam');
+								proceedWithSave(branchData, false);
+							});
+						} else {
+							// Senaryo 1: Merkez il degisti, baska sube yok
+							showOfferWarning('merkez_il_degisti_sube_yok', offer, async function() {
+								await OffersService.cancel(offer.id);
+								await OfferLogsService.log(offer.id, 'cancelled', 'customer', customerId, currentCustomerData.name || '', { reason: 'merkez_adres_il_degisikligi' });
+								sendOfferMessage(offer, 'teklif_iptal');
+								proceedWithSave(branchData, false);
+							});
+						}
+					} else {
+						// Sube il degisti
+						if (merkez && merkez.city_id !== newCityId) {
+							// Senaryo 6: Farkli il
+							showOfferWarning('farkli_il_sube_guncelle', offer, function() {
+								proceedWithSave(branchData, false);
+							});
+						} else if (merkez && merkez.city_id === newCityId) {
+							// Senaryo 7: Ayni il (sube yeni ile tasinmis, merkezle ayni olmus)
+							showOfferWarning('ayni_il_sube_guncelle', offer, function() {
+								proceedWithSave(branchData, false);
+							});
+						} else {
+							return proceedWithSave(branchData, false);
+						}
+					}
+				}
+			}
+		}
+
 		// Sube kaydet
 		async function saveAddress() {
 			var branchName = document.getElementById('branchName').value.trim();
@@ -561,40 +783,22 @@
 			var branchData = {
 				customer_id: customerId,
 				branch_name: branchName,
-				// Yeni FK kolonlari
 				city_id: cityId || null,
 				district_id: districtId || null,
 				neighborhood_id: neighborhoodId || null,
 				street_id: streetId || null,
-				// Eski VARCHAR kolonlari (backward compatibility)
 				city: cityName || null,
 				district: districtName || null,
 				neighborhood: neighborhoodName || null,
 				street: streetName || null,
-				// Diger alanlar
 				building_no: document.getElementById('buildingNo').value.trim() || null,
-					apartment: document.getElementById('apartment').value.trim() || null,
+				apartment: document.getElementById('apartment').value.trim() || null,
 				branch_description: document.getElementById('branchDescription').value.trim() || null,
 				points_collection_mode: 'customer'
 			};
 
-			var result;
-			if (currentAddressId) {
-				// Duzenleme modunda is_default gonderme, mevcut DB degeri korunsun
-				result = await BranchesService.update(currentAddressId, branchData);
-			} else {
-				// Ekleme modunda her zaman false
-				branchData.is_default = false;
-				result = await BranchesService.create(branchData);
-			}
-
-			if (result.error) {
-				alert('Sube kaydedilemedi: ' + result.error.message);
-				return;
-			}
-
-			closeAddressPanel();
-			await loadAddresses();
+			var isNewBranch = !currentAddressId;
+			await checkOfferImpact(branchData, isNewBranch);
 		}
 
 		// Silme modali
@@ -610,15 +814,82 @@
 
 		async function confirmDelete() {
 			if (!deleteAddressId) return;
+			var addressIdToDelete = deleteAddressId;
 
-			var result = await BranchesService.delete(deleteAddressId);
-			if (result.error) {
-				alert('Sube silinemedi');
-				closeDeleteModal();
+			// Silinecek subenin bilgilerini al
+			var branchesResult = await BranchesService.getByCustomerId(customerId);
+			var allBranches = branchesResult.data || [];
+			var deletingBranch = allBranches.find(function(b) { return b.id === addressIdToDelete; });
+
+			if (!deletingBranch) {
+				await proceedWithDelete(addressIdToDelete);
 				return;
 			}
 
-			closeDeleteModal();
+			// Musterinin tum tekliflerini cek
+			var offersResult = await OffersService.getByCustomerId(customerId);
+			var allOffers = offersResult.data || [];
+
+			// Bu subeye bagli aktif teklifleri filtrele
+			var activeStatuses = ['requested', 'pending', 'accepted', 'passive'];
+			var branchOffers = allOffers.filter(function(o) {
+				return o.customer_branch_id === addressIdToDelete && activeStatuses.includes(o.status);
+			});
+
+			// Aktif teklif yoksa direkt sil
+			if (branchOffers.length === 0) {
+				await proceedWithDelete(addressIdToDelete);
+				return;
+			}
+
+			// Ayni ilde baska sube var mi?
+			var sameCityBranches = allBranches.filter(function(b) {
+				return b.id !== addressIdToDelete && b.city_id === deletingBranch.city_id;
+			});
+
+			if (sameCityBranches.length > 0) {
+				// Ayni ilde sube var - teklif tasinacak
+				var targetBranch = sameCityBranches.find(function(b) { return b.is_default; }) || sameCityBranches[0];
+				closeDeleteModal();
+				showOfferWarning('sube_silindi_teklif_tasindi', branchOffers[0], async function() {
+					for (var i = 0; i < branchOffers.length; i++) {
+						await OffersService.update(branchOffers[i].id, { customer_branch_id: targetBranch.id });
+						await OfferLogsService.log(branchOffers[i].id, 'branch_changed', 'customer', customerId, currentCustomerData.name || '', { reason: 'sube_silindi', new_branch_id: targetBranch.id, new_branch_name: targetBranch.branch_name });
+						sendOfferMessage(branchOffers[i], 'teklif_sube_silindi_tasindi');
+					}
+					await proceedWithDelete(addressIdToDelete);
+				});
+			} else {
+				// Ayni ilde sube yok - teklif iptal olacak
+				closeDeleteModal();
+				showOfferWarning('sube_silindi_teklif_iptal', branchOffers[0], async function() {
+					for (var i = 0; i < branchOffers.length; i++) {
+						await OffersService.cancel(branchOffers[i].id);
+						await OfferLogsService.log(branchOffers[i].id, 'cancelled', 'customer', customerId, currentCustomerData.name || '', { reason: 'sube_silindi_ayni_ilde_adres_yok' });
+						sendOfferMessage(branchOffers[i], 'teklif_sube_silindi_iptal');
+					}
+					await proceedWithDelete(addressIdToDelete);
+				});
+			}
+		}
+
+		async function proceedWithDelete(addressId) {
+			var result = await BranchesService.delete(addressId);
+			if (result.error) {
+				alert('Sube silinemedi');
+				return;
+			}
+			deleteAddressId = null;
+			document.getElementById('deleteModal').classList.remove('active');
+
+			// Silinen sube secili ise Merkez'e don
+			if (sessionStorage.getItem('selected_address_id') === addressId) {
+				sessionStorage.removeItem('selected_address_id');
+				sessionStorage.removeItem('selected_address_name');
+				window.location.reload();
+				return;
+			}
+
 			await loadAddresses();
 		}
 	</script>

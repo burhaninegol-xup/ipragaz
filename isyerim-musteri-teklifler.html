@@ -197,6 +197,7 @@
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/services/account-deletion-service.js"></script>
@@ -207,6 +208,7 @@
 		var userId = null;
 		var userRole = null;
 		var allOffers = [];
+		var allBranches = [];
 		var currentTab = 'all';
 
 		// Durum mapping
@@ -247,7 +249,11 @@
 			listContainer.innerHTML = '<div class="loading">Teklifler yukleniyor...</div>';
 
 			try {
-				var result = await OffersService.getByCustomerId(customerId);
+				// Teklifleri ve subeleri paralel yukle
+				var [result, branchesResult] = await Promise.all([
+					OffersService.getByCustomerId(customerId),
+					typeof BranchesService !== 'undefined' ? BranchesService.getByCustomerId(customerId) : { data: [] }
+				]);
 
 				if (result.error) {
 					listContainer.innerHTML = '<div class="loading">Teklifler yuklenirken hata olustu</div>';
@@ -255,6 +261,7 @@
 				}
 
 				allOffers = result.data || [];
+				allBranches = (branchesResult && branchesResult.data) ? branchesResult.data : [];
 				updateTabCounts();
 				filterOffers();
 			} catch (err) {
@@ -296,7 +303,7 @@
 				// Arama filtresi
 				if (searchTerm) {
 					var dealerName = (offer.dealer?.name || '').toLowerCase();
-					var branchName = (offer.customer_branch?.branch_name || 'Tum Subeler').toLowerCase();
+					var branchName = (offer.customer_branch?.name || 'Tum Subeler').toLowerCase();
 					var productNames = (offer.offer_details || []).map(function(item) {
 						return (item.product?.name || '').toLowerCase();
 					}).join(' ');
@@ -340,7 +347,7 @@
 			var html = '';
 			offers.forEach(function(offer) {
 				var status = statusMap[offer.status] || { text: offer.status, class: 'pending', icon: '' };
-				var branchName = offer.customer_branch ? (offer.customer_branch.branch_name || offer.customer_branch.district || 'Sube') : 'Tum Subeler';
+				var branchName = getCoveredBranches(offer);
 				var dealerName = offer.dealer ? offer.dealer.name : 'Bayi Atanmadi';
 				var createdAt = new Date(offer.created_at);
 				var dateStr = createdAt.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -409,6 +416,27 @@
 			// Countdown timer'ları başlat
 			clearAllCountdowns();
 			initOfferCountdowns();
+		}
+
+		function getCoveredBranches(offer) {
+			// Teklifin bagili oldugu subeyi bul
+			var offerBranch = null;
+			if (offer.customer_branch_id) {
+				offerBranch = allBranches.find(function(b) { return b.id === offer.customer_branch_id; });
+			}
+			if (!offerBranch) {
+				// Eski teklif (branch_id null) → merkez ilindeki tum subeler
+				var merkez = allBranches.find(function(b) { return b.is_default === true; });
+				if (!merkez || allBranches.length === 0) return 'Tum Subeler';
+				offerBranch = merkez;
+			}
+			var sameCityBranches = allBranches.filter(function(b) { return b.city_id === offerBranch.city_id; });
+			if (sameCityBranches.length === 0) {
+				return offerBranch.branch_name || offerBranch.name || 'Sube';
+			}
+			return sameCityBranches.map(function(b) {
+				return (b.branch_name || b.name || 'Adres') + (b.is_default ? ' (Merkez)' : '');
+			}).join(', ');
 		}
 
 		function goToOfferDetail(offerId) {

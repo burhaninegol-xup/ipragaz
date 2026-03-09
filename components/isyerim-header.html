@@ -1632,6 +1632,9 @@ const DealerUI = {
 	},
 
 	async loadCurrentDealer() {
+		// Branch seciliyse component-loader evaluateDealerForBranch handle eder
+		if (sessionStorage.getItem('selected_address_id')) return;
+
 		const customerId = sessionStorage.getItem('isyerim_customer_id');
 		if (!customerId) return;
 

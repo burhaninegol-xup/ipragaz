@@ -1230,6 +1230,111 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.filterBranchesWithoutActiveOffers');
         }
+    },
+
+    /**
+     * Musterinin tum aktif tekliflerini getir (branch join ile city_id dahil)
+     * Aktif: requested, pending, accepted, passive
+     */
+    async getActiveOffersByCustomerId(customerId) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code, city, district, phone),
+                    offer_details(
+                        id, unit_price, pricing_type, discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .in('status', ['requested', 'pending', 'accepted', 'passive'])
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            return { data: data || [], error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getActiveOffersByCustomerId');
+        }
+    },
+
+    /**
+     * Teklifin il bilgisini dondur
+     * branches: musteri subeleri listesi (BranchesService.getByCustomerId sonucu)
+     */
+    getOfferCityId(offer, branches) {
+        if (!offer.customer_branch_id) return null;
+        if (branches && branches.length > 0) {
+            var branch = branches.find(function(b) { return b.id === offer.customer_branch_id; });
+            if (branch) return branch.city_id;
+        }
+        return null;
+    },
+
+    /**
+     * Aktif teklifler listesinden belirli bir ile ait olani bul
+     * branches: musteri subeleri listesi
+     * merkezCityId: eski tekliflerde customer_branch_id null ise merkez iline ait sayilir
+     */
+    findActiveOfferForCity(activeOffers, cityId, merkezCityId, branches) {
+        if (!cityId || !activeOffers || activeOffers.length === 0) return null;
+        return activeOffers.find(function(offer) {
+            var offerCityId = OffersService.getOfferCityId(offer, branches);
+            // customer_branch_id null olan eski teklifler merkez iline ait sayilir
+            if (!offerCityId && merkezCityId) {
+                offerCityId = merkezCityId;
+            }
+            return offerCityId === cityId;
+        }) || null;
+    },
+
+    /**
+     * Belirli bir il icin en son teklifi getir (aktif oncelikli)
+     * merkezCityId: eski tekliflerde customer_branch_id null ise merkez iline ait sayilir
+     */
+    async getLatestOfferForCity(customerId, cityId, merkezCityId, branches) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offers')
+                .select(`
+                    *,
+                    dealer:dealers(id, name, code, city, district, phone),
+                    offer_details(
+                        id, unit_price, pricing_type, discount_value,
+                        commitment_quantity,
+                        product:products(id, code, name, base_price, image_url)
+                    )
+                `)
+                .eq('customer_id', customerId)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            var offers = data || [];
+
+            // cityId'ye gore filtrele
+            var cityOffers = offers.filter(function(o) {
+                var oCityId = OffersService.getOfferCityId(o, branches);
+                if (!oCityId && merkezCityId) {
+                    oCityId = merkezCityId;
+                }
+                return oCityId === cityId;
+            });
+
+            // Oncelik: aktif > cancelled/rejected
+            var activeStatuses = ['requested', 'pending', 'accepted', 'passive'];
+            var activeOffer = cityOffers.find(function(o) {
+                return activeStatuses.includes(o.status);
+            });
+            if (activeOffer) return { data: activeOffer, error: null };
+
+            // Aktif yoksa en son teklif
+            return { data: cityOffers[0] || null, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.getLatestOfferForCity');
+        }
     }
 };
 
