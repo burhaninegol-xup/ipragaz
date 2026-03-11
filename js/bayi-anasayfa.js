@@ -3,10 +3,7 @@ if (!bayiAuthCheck()) {
 	throw new Error('Auth required');
 }
 
-// Bayi componentlerini yukle
 document.addEventListener('DOMContentLoaded', function() {
-	ComponentLoader.loadBayiComponents();
-
 	// Hoş geldiniz mesajını güncelle
 	var dealerName = sessionStorage.getItem('bayi_dealer_name');
 	if (dealerName) {

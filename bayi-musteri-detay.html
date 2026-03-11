@@ -1162,11 +1162,6 @@
 			throw new Error('Auth required');
 		}
 
-		// Bayi componentlerini yukle
-		document.addEventListener('DOMContentLoaded', function() {
-			ComponentLoader.loadBayiComponents();
-		});
-
 		$(document).ready(async function() {
 			var customerId = null;
 			var customerData = null;

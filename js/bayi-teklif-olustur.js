@@ -4,8 +4,6 @@
 	}
 
 	$(document).ready(async function() {
-		// Bayi componentlerini yukle
-		ComponentLoader.loadBayiComponents();
 		// Ürünler Supabase'den yüklenecek
 		var products = [];
 		var currentCustomer = null;

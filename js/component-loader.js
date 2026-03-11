@@ -4,6 +4,10 @@
  */
 
 const ComponentLoader = {
+    _bayiComponentsLoading: null,
+    _feedbackToolbarLoading: null,
+    _bayiEventsInitialized: false,
+
     /**
      * Tek bir componenti yukle
      */
@@ -152,6 +156,13 @@ const ComponentLoader = {
             return;
         }
 
+        // Concurrent load guard
+        if (this._feedbackToolbarLoading) return this._feedbackToolbarLoading;
+        this._feedbackToolbarLoading = this._doLoadFeedbackToolbar();
+        return this._feedbackToolbarLoading;
+    },
+
+    async _doLoadFeedbackToolbar() {
         try {
             // CSS yukle
             await this._loadCSS('./css/components/feedback-toolbar.css');
@@ -945,6 +956,13 @@ const ComponentLoader = {
      * Bayi componentlerini yukle
      */
     async loadBayiComponents() {
+        // Concurrent load guard
+        if (this._bayiComponentsLoading) return this._bayiComponentsLoading;
+        this._bayiComponentsLoading = this._doLoadBayiComponents();
+        return this._bayiComponentsLoading;
+    },
+
+    async _doLoadBayiComponents() {
         await Promise.all([
             this.load('bayi-header', './components/bayi-header.html'),
             this.load('bayi-mobile-sidebar', './components/bayi-mobile-sidebar.html')
@@ -961,6 +979,9 @@ const ComponentLoader = {
      * Bayi component event'lerini bagla
      */
     initializeBayiComponents() {
+        if (this._bayiEventsInitialized) return;
+        this._bayiEventsInitialized = true;
+
         var $sidebar = document.getElementById('mobile-sidebar');
         var $overlay = document.getElementById('menu-overlay');
         var $hamburger = document.getElementById('hamburger-btn');

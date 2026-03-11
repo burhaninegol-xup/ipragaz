@@ -573,11 +573,6 @@ function showImportResults(results) {
 	container.innerHTML = html;
 }
 
-// Bayi componentlerini yukle
-document.addEventListener('DOMContentLoaded', function() {
-	ComponentLoader.loadBayiComponents();
-});
-
 // Global reference for loadOffers (will be set inside document.ready)
 var loadOffers = null;
 
