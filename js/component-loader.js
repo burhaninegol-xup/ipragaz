@@ -123,6 +123,63 @@ const ComponentLoader = {
     },
 
     /**
+     * JS dosyasini dinamik olarak yukle (zaten yuklenmemisse)
+     * @param {string} src - JS dosya yolu
+     */
+    _loadScript(src) {
+        return new Promise(function(resolve, reject) {
+            if (document.querySelector('script[src="' + src + '"]')) {
+                resolve();
+                return;
+            }
+            var script = document.createElement('script');
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.body.appendChild(script);
+        });
+    },
+
+    /**
+     * Feedback Toolbar componentini yukle
+     * Tum sayfalarda geri bildirim ozelligini aktif eder
+     */
+    async loadFeedbackToolbar() {
+        if (document.getElementById('feedbackToolbar')) {
+            if (typeof FeedbackToolbar !== 'undefined') {
+                FeedbackToolbar.init();
+            }
+            return;
+        }
+
+        try {
+            // CSS yukle
+            await this._loadCSS('./css/components/feedback-toolbar.css');
+
+            // JS dosyalarini sirayla yukle
+            await this._loadScript('./js/services/feedback-service.js');
+            await this._loadScript('./js/components/feedback-toolbar.js');
+
+            // HTML yukle
+            var response = await fetch('./components/feedback-toolbar.html');
+            if (!response.ok) return;
+            var html = await response.text();
+
+            var container = document.createElement('div');
+            container.id = 'feedback-toolbar-container';
+            container.innerHTML = html;
+            document.body.appendChild(container);
+
+            // Init
+            if (typeof FeedbackToolbar !== 'undefined') {
+                FeedbackToolbar.init();
+            }
+        } catch (error) {
+            console.error('Feedback toolbar yukleme hatasi:', error);
+        }
+    },
+
+    /**
      * Tum componentleri yukle
      */
     async loadAll() {
@@ -137,6 +194,9 @@ const ComponentLoader = {
 
         // Mevcut bayiyi yukle
         loadCurrentDealer();
+
+        // Feedback toolbar yukle
+        this.loadFeedbackToolbar();
     },
 
     /**
@@ -892,6 +952,9 @@ const ComponentLoader = {
 
         // Componentler yuklendikten sonra event'leri bagla
         this.initializeBayiComponents();
+
+        // Feedback toolbar yukle
+        this.loadFeedbackToolbar();
     },
 
     /**

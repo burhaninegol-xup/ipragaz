@@ -1,0 +1,83 @@
+<!-- Feedback Toolbar -->
+<div id="feedbackToolbar" class="feedback-toolbar">
+    <div class="feedback-toolbar-inner">
+        <span class="feedback-toolbar-label">Geri Bildirim</span>
+        <button id="feedbackAnnotateBtn" class="feedback-toolbar-btn" title="Alan sec ve yorum yap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-dasharray="4 2"/>
+                <line x1="9" y1="14" x2="15" y2="14"/>
+                <line x1="9" y1="18" x2="13" y2="18"/>
+            </svg>
+            <span>Alan Sec</span>
+        </button>
+        <button id="feedbackViewBtn" class="feedback-toolbar-btn" title="Bu sayfanin geri bildirimlerini gor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Geri Bildirimler</span>
+            <span id="feedbackCount" class="feedback-badge" style="display:none;">0</span>
+        </button>
+    </div>
+</div>
+
+<!-- Annotation Overlay -->
+<div id="feedbackAnnotationOverlay" class="feedback-annotation-overlay">
+    <div class="feedback-annotation-hint">Ekranda bir alan secmek icin tiklayip surukleyin. ESC ile iptal.</div>
+    <div id="feedbackSelectionRect" class="feedback-selection-rect"></div>
+</div>
+
+<!-- Comment Box -->
+<div id="feedbackCommentBox" class="feedback-comment-box">
+    <div class="feedback-comment-box-header">Yorumunuzu yazin</div>
+    <input id="feedbackNameInput" class="feedback-name-input" type="text" placeholder="Adiniz Soyadiniz" maxlength="100" />
+    <textarea id="feedbackCommentText" class="feedback-comment-textarea" placeholder="Bu alan hakkindaki gorusunuzu yazin..."></textarea>
+    <div class="feedback-comment-actions">
+        <button id="feedbackCancelBtn" class="feedback-btn-cancel">Iptal</button>
+        <button id="feedbackSubmitBtn" class="feedback-btn-submit">Gonder</button>
+    </div>
+</div>
+
+<!-- Feedback List Panel -->
+<div id="feedbackListOverlay" class="feedback-list-backdrop"></div>
+<div id="feedbackListPanel" class="feedback-list-panel">
+    <div class="feedback-list-header">
+        <h3>Sayfa Geri Bildirimleri</h3>
+        <button id="feedbackListCloseBtn" class="feedback-list-close">&times;</button>
+    </div>
+    <div class="feedback-page-filter">
+        <button class="feedback-page-filter-btn active" data-page-filter="current">Bu Sayfa</button>
+        <button class="feedback-page-filter-btn" data-page-filter="all">Tum Sayfalar</button>
+    </div>
+    <div class="feedback-list-tabs">
+        <button class="feedback-list-tab active" data-status="open">Acik</button>
+        <button class="feedback-list-tab" data-status="resolved">Cozuldu</button>
+        <button class="feedback-list-tab" data-status="">Tumu</button>
+    </div>
+    <div id="feedbackListContent" class="feedback-list-content">
+        <div class="feedback-list-empty">Henuz geri bildirim yok.</div>
+    </div>
+</div>
+
+<!-- Feedback Detail Popover -->
+<div id="feedbackDetailPopover" class="feedback-detail-popover">
+    <div class="feedback-detail-header">
+        <h4>Geri Bildirim Detayi</h4>
+        <button id="feedbackDetailCloseBtn" class="feedback-list-close">&times;</button>
+    </div>
+    <div class="feedback-detail-body">
+        <img id="feedbackDetailImage" class="feedback-detail-image" src="" alt="Screenshot" />
+        <div id="feedbackDetailText" class="feedback-detail-text"></div>
+        <div class="feedback-detail-meta">
+            <span id="feedbackDetailUser"></span>
+            <span id="feedbackDetailDate"></span>
+            <span id="feedbackDetailStatus"></span>
+        </div>
+    </div>
+    <div class="feedback-detail-actions">
+        <button id="feedbackDeleteBtn" class="feedback-btn-delete">Sil</button>
+        <button id="feedbackResolveBtn" class="feedback-btn-resolve">Cozuldu Olarak Isaretle</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="feedbackToast" class="feedback-toast"></div>
