@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Urun Detay - Ipragaz Back Office</title>
+	<title>Ürün Detay - İpragaz Back Office</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -614,7 +614,7 @@
 					<a href="backoffice-urunler.html" class="back-btn">
 						<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
 					</a>
-					<h1 id="page-title">Yeni Urun</h1>
+					<h1 id="page-title">Yeni Ürün</h1>
 				</div>
 				<div class="page-header-right" id="header-actions" style="display: none;">
 					<button class="btn btn-danger" id="btn-deactivate" onclick="confirmDeactivate()">
@@ -641,20 +641,20 @@
 						<h3 class="form-section-title">Temel Bilgiler</h3>
 						<div class="form-row">
 							<div class="form-group">
-								<label for="product-code">Urun Kodu <span class="required">*</span></label>
-								<input type="text" class="form-control" id="product-code" placeholder="Ornek: TUP-12KG" required>
-								<p class="form-helper">Benzersiz urun kodu</p>
+								<label for="product-code">Ürün Kodu <span class="required">*</span></label>
+								<input type="text" class="form-control" id="product-code" placeholder="Örnek: TUP-12KG" required>
+								<p class="form-helper">Benzersiz ürün kodu</p>
 							</div>
 							<div class="form-group">
-								<label for="product-name">Urun Adi <span class="required">*</span></label>
-								<input type="text" class="form-control" id="product-name" placeholder="Ornek: 12 Kg Tup Gaz" required>
+								<label for="product-name">Ürün Adı <span class="required">*</span></label>
+								<input type="text" class="form-control" id="product-name" placeholder="Örnek: 12 Kg Tüp Gaz" required>
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group">
 								<label for="product-category">Kategori</label>
 								<select class="form-control" id="product-category">
-									<option value="">Kategori Seciniz</option>
+									<option value="">Kategori Seçiniz</option>
 								</select>
 							</div>
 							<div class="form-group">
@@ -666,46 +666,46 @@
 
 					<!-- Physical Properties -->
 					<div class="form-section">
-						<h3 class="form-section-title">Fiziksel Ozellikler</h3>
+						<h3 class="form-section-title">Fiziksel Özellikler</h3>
 						<div class="form-row three-cols">
 							<div class="form-group">
-								<label for="product-weight">Agirlik (kg)</label>
+								<label for="product-weight">Ağırlık (kg)</label>
 								<input type="number" class="form-control" id="product-weight" placeholder="0.00" step="0.01" min="0">
 							</div>
 							<div class="form-group">
-								<label for="product-height">Yukseklik (mm)</label>
+								<label for="product-height">Yükseklik (mm)</label>
 								<input type="number" class="form-control" id="product-height" placeholder="0" min="0">
 							</div>
 							<div class="form-group">
-								<label for="product-diameter">Cap (mm)</label>
+								<label for="product-diameter">Çap (mm)</label>
 								<input type="number" class="form-control" id="product-diameter" placeholder="0" min="0">
 							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group">
 								<label for="product-color">Renk</label>
-								<input type="text" class="form-control" id="product-color" placeholder="Ornek: Kirmizi">
+								<input type="text" class="form-control" id="product-color" placeholder="Örnek: Kırmızı">
 							</div>
 							<div class="form-group">
 								<label for="product-points">Puan/Birim</label>
 								<input type="number" class="form-control" id="product-points" placeholder="0" min="0">
-								<p class="form-helper">Bu urun satin alindiginda kazanilacak puan</p>
+								<p class="form-helper">Bu ürün satın alındığında kazanılacak puan</p>
 							</div>
 						</div>
 					</div>
 
 					<!-- Image -->
 					<div class="form-section">
-						<h3 class="form-section-title">Gorsel</h3>
+						<h3 class="form-section-title">Görsel</h3>
 						<div class="image-preview-container">
 							<div class="image-preview" id="image-preview">
 								<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
 							</div>
 							<div class="image-input-wrapper">
 								<div class="form-group" style="margin-bottom: 0;">
-									<label for="product-image-url">Gorsel URL</label>
+									<label for="product-image-url">Görsel URL</label>
 									<input type="url" class="form-control" id="product-image-url" placeholder="https://example.com/image.jpg">
-									<p class="form-helper">Urun gorseli icin gecerli bir URL girin</p>
+									<p class="form-helper">Ürün görseli için geçerli bir URL girin</p>
 								</div>
 							</div>
 						</div>
@@ -713,14 +713,14 @@
 
 					<!-- Description -->
 					<div class="form-section">
-						<h3 class="form-section-title">Aciklama ve Uyarilar</h3>
+						<h3 class="form-section-title">Açıklama ve Uyarılar</h3>
 						<div class="form-group">
-							<label for="product-description">Aciklama</label>
-							<textarea class="form-control" id="product-description" placeholder="Urun hakkinda detayli aciklama..."></textarea>
+							<label for="product-description">Açıklama</label>
+							<textarea class="form-control" id="product-description" placeholder="Ürün hakkında detaylı açıklama..."></textarea>
 						</div>
 						<div class="form-group">
-							<label for="product-warnings">Uyarilar</label>
-							<textarea class="form-control" id="product-warnings" placeholder="Urunle ilgili onemli uyarilar..."></textarea>
+							<label for="product-warnings">Uyarılar</label>
+							<textarea class="form-control" id="product-warnings" placeholder="Ürünle ilgili önemli uyarılar..."></textarea>
 						</div>
 					</div>
 
@@ -728,7 +728,7 @@
 					<div class="form-section">
 						<h3 class="form-section-title">Durum</h3>
 						<div class="status-toggle">
-							<span class="status-toggle-label">Urun Durumu:</span>
+							<span class="status-toggle-label">Ürün Durumu:</span>
 							<label class="toggle-switch">
 								<input type="checkbox" id="product-is-active" checked>
 								<span class="toggle-slider"></span>
@@ -739,7 +739,7 @@
 
 					<!-- Form Actions -->
 					<div class="form-actions">
-						<a href="backoffice-urunler.html" class="btn btn-secondary">Iptal</a>
+						<a href="backoffice-urunler.html" class="btn btn-secondary">İptal</a>
 						<button type="submit" class="btn btn-primary" id="btn-save">
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 								<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
@@ -765,10 +765,10 @@
 	<!-- Confirm Modal -->
 	<div class="confirm-modal-overlay" id="confirm-modal">
 		<div class="confirm-modal">
-			<h3 id="confirm-title">Urunu Pasife Al</h3>
-			<p id="confirm-message">Bu urunu pasife almak istediginize emin misiniz?</p>
+			<h3 id="confirm-title">Ürünü Pasife Al</h3>
+			<p id="confirm-message">Bu ürünü pasife almak istediğinize emin misiniz?</p>
 			<div class="confirm-modal-actions">
-				<button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">Iptal</button>
+				<button class="confirm-modal-btn cancel" onclick="closeConfirmModal()">İptal</button>
 				<button class="confirm-modal-btn danger" id="confirm-btn" onclick="executeConfirmAction()">Pasife Al</button>
 			</div>
 		</div>
@@ -788,7 +788,7 @@
 			}
 
 			await loadComponents();
-			if (typeof setPageName === 'function') setPageName('Urun Detay');
+			if (typeof setPageName === 'function') setPageName('Ürün Detay');
 
 			// Load categories first, then product
 			loadCategories().then(function() {
@@ -925,7 +925,7 @@
 				if (error) throw new Error(error);
 
 				if (!data) {
-					showToast('Urun bulunamadi', 'error');
+					showToast('Ürün bulunamadı', 'error');
 					setTimeout(function() {
 						window.location.href = 'backoffice-urunler.html';
 					}, 1500);
@@ -936,8 +936,8 @@
 				populateForm(data);
 
 				// Update page title
-				document.getElementById('page-title').textContent = 'Urun Duzenle';
-				document.title = data.name + ' - Ipragaz Back Office';
+				document.getElementById('page-title').textContent = 'Ürün Düzenle';
+				document.title = data.name + ' - İpragaz Back Office';
 
 				// Show header actions
 				document.getElementById('header-actions').style.display = 'flex';
@@ -945,7 +945,7 @@
 
 			} catch (err) {
 				console.error('Urun yukleme hatasi:', err);
-				showToast('Urun yuklenirken hata olustu', 'error');
+				showToast('Ürün yüklenirken hata oluştu', 'error');
 			} finally {
 				hideLoading();
 			}
@@ -996,7 +996,7 @@
 		function updateImagePreview(url) {
 			var preview = document.getElementById('image-preview');
 			if (url) {
-				preview.innerHTML = '<img src="' + url + '" alt="Urun Gorseli" onerror="this.parentElement.innerHTML=\'<svg viewBox=\\\'0 0 24 24\\\' fill=\\\'currentColor\\\'><path d=\\\'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z\\\'/></svg>\'">';
+				preview.innerHTML = '<img src="' + url + '" alt="Ürün Görseli" onerror="this.parentElement.innerHTML=\'<svg viewBox=\\\'0 0 24 24\\\' fill=\\\'currentColor\\\'><path d=\\\'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z\\\'/></svg>\'">';
 			} else {
 				preview.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>';
 			}
@@ -1026,15 +1026,15 @@
 			var errors = [];
 
 			if (!data.code) {
-				errors.push('Urun kodu zorunludur');
+				errors.push('Ürün kodu zorunludur');
 			}
 
 			if (!data.name) {
-				errors.push('Urun adi zorunludur');
+				errors.push('Ürün adı zorunludur');
 			}
 
 			if (!data.base_price || data.base_price <= 0) {
-				errors.push('Gecerli bir baz fiyat girin');
+				errors.push('Geçerli bir baz fiyat girin');
 			}
 
 			return errors;
@@ -1066,7 +1066,7 @@
 
 				if (result.error) throw new Error(result.error);
 
-				showToast(isEditMode ? 'Urun guncellendi' : 'Urun olusturuldu', 'success');
+				showToast(isEditMode ? 'Ürün güncellendi' : 'Ürün oluşturuldu', 'success');
 
 				// Redirect to list or stay on page
 				if (!isEditMode && result.data) {
@@ -1080,7 +1080,7 @@
 
 			} catch (err) {
 				console.error('Kaydetme hatasi:', err);
-				showToast('Bir hata olustu: ' + err.message, 'error');
+				showToast('Bir hata oluştu: ' + err.message, 'error');
 			} finally {
 				hideLoading();
 				document.getElementById('btn-save').disabled = false;
@@ -1090,8 +1090,8 @@
 		// Confirm deactivate
 		function confirmDeactivate() {
 			showConfirmModal(
-				'Urunu Pasife Al',
-				'Bu urunu pasife almak istediginize emin misiniz? Pasif urunler musterilere gosterilmez.',
+				'Ürünü Pasife Al',
+				'Bu ürünü pasife almak istediğinize emin misiniz? Pasif ürünler müşterilere gösterilmez.',
 				deactivateProduct,
 				true
 			);
@@ -1105,12 +1105,12 @@
 				const { error } = await ProductsService.deactivate(productId);
 				if (error) throw new Error(error);
 
-				showToast('Urun pasife alindi', 'success');
+				showToast('Ürün pasife alındı', 'success');
 				loadProduct();
 
 			} catch (err) {
 				console.error('Pasife alma hatasi:', err);
-				showToast('Bir hata olustu', 'error');
+				showToast('Bir hata oluştu', 'error');
 			} finally {
 				hideLoading();
 			}
@@ -1124,12 +1124,12 @@
 				const { error } = await ProductsService.activate(productId);
 				if (error) throw new Error(error);
 
-				showToast('Urun aktif edildi', 'success');
+				showToast('Ürün aktif edildi', 'success');
 				loadProduct();
 
 			} catch (err) {
 				console.error('Aktif etme hatasi:', err);
-				showToast('Bir hata olustu', 'error');
+				showToast('Bir hata oluştu', 'error');
 			} finally {
 				hideLoading();
 			}

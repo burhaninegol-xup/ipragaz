@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Siparislerim - Ipragaz IsYerim</title>
+	<title>Siparişlerim - İpragaz İşYerim</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
@@ -194,22 +194,22 @@
 		<div class="settings-layout">
 			<div id="isyerim-settings-sidebar"></div>
 			<div class="settings-content">
-				<h1 class="content-title">Siparislerim</h1>
+				<h1 class="content-title">Siparişlerim</h1>
 
 				<!-- Search -->
 				<div class="search-box">
-					<input type="text" class="search-input" id="searchInput" placeholder="Siparis Ara" oninput="filterOrders()">
+					<input type="text" class="search-input" id="searchInput" placeholder="Sipariş Ara" oninput="filterOrders()">
 				</div>
 
 				<!-- Tabs -->
 				<div class="tabs">
 					<div class="tab" data-status="recurring" onclick="switchTab('recurring')">
 						<svg style="width:14px;height:14px;margin-right:4px;vertical-align:middle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-						Rutin Siparisler
+						Rutin Siparişler
 					</div>
 					<div class="tab active" data-status="ongoing" onclick="switchTab('ongoing')">Devam Eden</div>
 					<div class="tab" data-status="delivered" onclick="switchTab('delivered')">Tamamlanan</div>
-					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">Iptal/Teslim Edilemedi</div>
+					<div class="tab" data-status="cancelled" onclick="switchTab('cancelled')">İptal/Teslim Edilemedi</div>
 				</div>
 
 				<!-- Filter Row: Date + Branch -->
@@ -225,7 +225,7 @@
 								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
 								<circle cx="12" cy="10" r="3"/>
 							</svg>
-							<span id="branchFilterLabel">Tum Adresler</span>
+							<span id="branchFilterLabel">Tüm Adresler</span>
 							<span class="branch-count-badge" id="branchCountBadge">0</span>
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;color:#666">
 								<polyline points="6 9 12 15 18 9"/>
@@ -235,7 +235,7 @@
 							<div class="branch-dropdown-header">
 								<label class="branch-checkbox-item select-all">
 									<input type="checkbox" id="selectAllBranches" onchange="toggleAllBranches()">
-									<span>Tumunu Sec</span>
+									<span>Tümünü Seç</span>
 								</label>
 							</div>
 							<div class="branch-dropdown-list" id="branchList">
@@ -247,7 +247,7 @@
 
 				<!-- Orders List -->
 				<div id="ordersList" class="orders-list">
-					<div class="loading">Siparisler yukleniyor...</div>
+					<div class="loading">Siparişler yükleniyor...</div>
 				</div>
 			</div>
 		</div>
@@ -262,11 +262,11 @@
 				<line x1="15" y1="9" x2="9" y2="15"/>
 				<line x1="9" y1="9" x2="15" y2="15"/>
 			</svg>
-			<h3 class="confirm-title">Siparisi Iptal Et</h3>
-			<p class="confirm-text">Bu siparisi iptal etmek istediginizden emin misiniz?</p>
+			<h3 class="confirm-title">Siparişi İptal Et</h3>
+			<p class="confirm-text">Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
 			<div class="confirm-buttons">
-				<button class="confirm-btn cancel" onclick="closeCancelModal()">Vazgec</button>
-				<button class="confirm-btn confirm" onclick="confirmCancel()">Iptal Et</button>
+				<button class="confirm-btn cancel" onclick="closeCancelModal()">Vazgeç</button>
+				<button class="confirm-btn confirm" onclick="confirmCancel()">İptal Et</button>
 			</div>
 		</div>
 	</div>
@@ -301,10 +301,10 @@
 
 		// Durum mapping
 		var statusMap = {
-			'waiting_for_assignment': { text: 'Siparis Olusturuldu', class: 'pending' },
-			'on_the_way': { text: 'Dagitimda', class: 'confirmed' },
+			'waiting_for_assignment': { text: 'Sipariş Oluşturuldu', class: 'pending' },
+			'on_the_way': { text: 'Dağıtımda', class: 'confirmed' },
 			'completed': { text: 'Teslim Edildi', class: 'delivered' },
-			'cancelled': { text: 'Iptal Edildi', class: 'cancelled' }
+			'cancelled': { text: 'İptal Edildi', class: 'cancelled' }
 		};
 
 		document.addEventListener('DOMContentLoaded', async function() {
@@ -355,7 +355,7 @@
 
 		async function loadOrders() {
 			var listContainer = document.getElementById('ordersList');
-			listContainer.innerHTML = '<div class="loading">Siparisler yukleniyor...</div>';
+			listContainer.innerHTML = '<div class="loading">Siparişler yükleniyor...</div>';
 
 			var result;
 
@@ -366,7 +366,7 @@
 				var authorizedBranchIds = branchResult.data || [];
 
 				if (authorizedBranchIds.length === 0) {
-					listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Yetkili oldugunuz sube bulunmuyor</p><p class="empty-subtext">Lutfen yonetici ile iletisime gecin</p></div>';
+					listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Yetkili olduğunuz şube bulunmuyor</p><p class="empty-subtext">Lütfen yönetici ile iletişime geçin</p></div>';
 					return;
 				}
 
@@ -377,7 +377,7 @@
 			}
 
 			if (result.error) {
-				listContainer.innerHTML = '<div class="loading">Siparisler yuklenirken hata olustu</div>';
+				listContainer.innerHTML = '<div class="loading">Siparişler yüklenirken hata oluştu</div>';
 				return;
 			}
 
@@ -492,7 +492,7 @@
 			var listContainer = document.getElementById('branchList');
 
 			if (allBranches.length === 0) {
-				listContainer.innerHTML = '<div style="padding:15px;color:#888;text-align:center">Sube bulunamadi</div>';
+				listContainer.innerHTML = '<div style="padding:15px;color:#888;text-align:center">Şube bulunamadı</div>';
 				return;
 			}
 
@@ -582,14 +582,14 @@
 			badge.textContent = selectedBranchIds.length;
 
 			if (selectedBranchIds.length === 0) {
-				label.textContent = 'Sube Secin';
+				label.textContent = 'Şube Seçin';
 			} else if (selectedBranchIds.length === allBranches.length) {
-				label.textContent = 'Tum Adresler';
+				label.textContent = 'Tüm Adresler';
 			} else if (selectedBranchIds.length === 1) {
 				var branch = allBranches.find(function(b) { return b.id === selectedBranchIds[0]; });
 				label.textContent = branch ? (branch.branch_name || branch.address_name) : '1 Sube';
 			} else {
-				label.textContent = selectedBranchIds.length + ' Sube';
+				label.textContent = selectedBranchIds.length + ' Şube';
 			}
 		}
 
@@ -597,7 +597,7 @@
 			var listContainer = document.getElementById('ordersList');
 
 			if (orders.length === 0) {
-				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Bu kategoride siparis bulunamadi</p><p class="empty-subtext">Farkli bir filtre deneyin</p></div>';
+				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p class="empty-text">Bu kategoride sipariş bulunamadı</p><p class="empty-subtext">Farklı bir filtre deneyin</p></div>';
 				return;
 			}
 
@@ -609,7 +609,7 @@
 				var timeStr = orderDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
 				// Sube ve bayi bilgileri
-				var branchName = order.branch?.branch_name || 'Varsayilan Adres';
+				var branchName = order.branch?.branch_name || 'Varsayılan Adres';
 				var dealerName = order.dealer?.name || 'Bayi';
 
 				// Urun sayisi
@@ -641,14 +641,14 @@
 				html += '<div class="order-amount">' + amount + ' TL</div>';
 				html += '<div class="order-meta-info">';
 				html += '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ' + dateStr + ' ' + timeStr + '</span>';
-				html += '<span class="order-item-count">' + itemCount + ' urun</span>';
+				html += '<span class="order-item-count">' + itemCount + ' ürün</span>';
 				html += '</div>';
 				html += '</div>';
 
 				// Sag taraf - Durum ve Buton
 				html += '<div class="order-card-right">';
 				html += '<span class="status-badge-new ' + status.class + '">' + statusIcon + status.text + '</span>';
-				html += '<button class="btn-detail" onclick="event.stopPropagation(); goToDetail(\'' + order.id + '\')">Siparis Detayi</button>';
+				html += '<button class="btn-detail" onclick="event.stopPropagation(); goToDetail(\'' + order.id + '\')">Sipariş Detayı</button>';
 				html += '</div>';
 
 				html += '</div>';
@@ -677,7 +677,7 @@
 			var result = await OrdersService.cancel(cancelOrderId);
 
 			if (result.error) {
-				alert('Siparis iptal edilemedi');
+				alert('Sipariş iptal edilemedi');
 			} else {
 				closeCancelModal();
 				await loadOrders();
@@ -692,12 +692,12 @@
 
 		async function loadRecurringOrders() {
 			var listContainer = document.getElementById('ordersList');
-			listContainer.innerHTML = '<div class="loading">Rutin siparisler yukleniyor...</div>';
+			listContainer.innerHTML = '<div class="loading">Rutin siparişler yükleniyor...</div>';
 
 			var result = await RecurringOrdersService.getByCustomerId(customerId);
 
 			if (result.error) {
-				listContainer.innerHTML = '<div class="loading">Rutin siparisler yuklenirken hata olustu</div>';
+				listContainer.innerHTML = '<div class="loading">Rutin siparişler yüklenirken hata oluştu</div>';
 				return;
 			}
 
@@ -709,7 +709,7 @@
 			var listContainer = document.getElementById('ordersList');
 
 			if (orders.length === 0) {
-				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><p class="empty-text">Rutin siparisiniz bulunmuyor</p><p class="empty-subtext">Siparis verdikten sonra rutin siparis olusturabilirsiniz</p></div>';
+				listContainer.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><p class="empty-text">Rutin siparişiniz bulunmuyor</p><p class="empty-subtext">Sipariş verdikten sonra rutin sipariş oluşturabilirsiniz</p></div>';
 				return;
 			}
 
@@ -747,13 +747,13 @@
 				html += '<span class="recurring-schedule">' + schedule + '</span>';
 				html += '</div>';
 
-				html += '<div class="recurring-products">' + (productSummary || 'Urun bilgisi yok') + '</div>';
+				html += '<div class="recurring-products">' + (productSummary || 'Ürün bilgisi yok') + '</div>';
 
 				html += '<div class="recurring-info">';
 				html += '<div class="recurring-info-item"><span class="recurring-info-label">Bayi:</span> <span class="recurring-info-value">' + (order.dealer?.name || '-') + '</span></div>';
 				html += '<div class="recurring-info-item"><span class="recurring-info-label">Bir sonraki:</span> <span class="recurring-info-value highlight">' + nextOrderDate + '</span></div>';
-				html += '<div class="recurring-info-item"><span class="recurring-info-label">Baslangic:</span> <span class="recurring-info-value">' + createdDate + '</span></div>';
-				html += '<div class="recurring-info-item"><span class="recurring-info-label">Toplam siparis:</span> <span class="recurring-info-value">' + (order.total_orders_created || 0) + '</span></div>';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Başlangıç:</span> <span class="recurring-info-value">' + createdDate + '</span></div>';
+				html += '<div class="recurring-info-item"><span class="recurring-info-label">Toplam sipariş:</span> <span class="recurring-info-value">' + (order.total_orders_created || 0) + '</span></div>';
 				html += '</div>';
 
 				html += '<div class="recurring-actions">';
@@ -763,7 +763,7 @@
 					html += '<button class="btn-recurring btn-recurring-resume" onclick="resumeRecurring(\'' + order.id + '\')">Devam Ettir</button>';
 				}
 				if (order.status !== 'cancelled') {
-					html += '<button class="btn-recurring btn-recurring-cancel" onclick="cancelRecurring(\'' + order.id + '\')">Iptal Et</button>';
+					html += '<button class="btn-recurring btn-recurring-cancel" onclick="cancelRecurring(\'' + order.id + '\')">İptal Et</button>';
 				}
 				html += '</div>';
 
@@ -775,16 +775,16 @@
 
 		function formatDateTurkish(dateStr) {
 			var date = new Date(dateStr);
-			var aylar = ['Ocak', 'Subat', 'Mart', 'Nisan', 'Mayis', 'Haziran', 'Temmuz', 'Agustos', 'Eylul', 'Ekim', 'Kasim', 'Aralik'];
+			var aylar = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
 			return date.getDate() + ' ' + aylar[date.getMonth()] + ' ' + date.getFullYear();
 		}
 
 		async function pauseRecurring(id) {
-			if (!confirm('Bu rutin siparisi duraklatmak istediginizden emin misiniz?')) return;
+			if (!confirm('Bu rutin siparişi duraklatmak istediğinizden emin misiniz?')) return;
 
 			var result = await RecurringOrdersService.updateStatus(id, 'paused');
 			if (result.error) {
-				alert('Rutin siparis durdurulamadi');
+				alert('Rutin sipariş durdurulamadı');
 			} else {
 				loadRecurringOrders();
 			}
@@ -793,18 +793,18 @@
 		async function resumeRecurring(id) {
 			var result = await RecurringOrdersService.updateStatus(id, 'active');
 			if (result.error) {
-				alert('Rutin siparis devam ettirilemedi');
+				alert('Rutin sipariş devam ettirilemedi');
 			} else {
 				loadRecurringOrders();
 			}
 		}
 
 		async function cancelRecurring(id) {
-			if (!confirm('Bu rutin siparisi iptal etmek istediginizden emin misiniz? Bu islem geri alinamaz.')) return;
+			if (!confirm('Bu rutin siparişi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) return;
 
 			var result = await RecurringOrdersService.updateStatus(id, 'cancelled');
 			if (result.error) {
-				alert('Rutin siparis iptal edilemedi');
+				alert('Rutin sipariş iptal edilemedi');
 			} else {
 				loadRecurringOrders();
 			}

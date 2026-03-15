@@ -262,37 +262,37 @@
 			var statusConfig = {
 				'requested': {
 					title: 'Teklif Talebiniz Iletildi',
-					message: 'Teklif talebiniz bayiye iletildi. Bayiniz en kisa surede size ozel fiyat teklifi hazirlayacaktir.',
+					message: 'Teklif talebiniz bayiye iletildi. Bayiniz en kısa sürede size özel fiyat teklifi hazırlayacaktır.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
 					className: 'status-requested'
 				},
 				'pending': {
-					title: 'Fiyat Teklifi Hazir',
-					message: 'Bayiniz fiyat teklifini hazirladi. Asagidaki urunleri ve fiyatlari inceleyip teklifi kabul edebilirsiniz.',
+					title: 'Fiyat Teklifi Hazır',
+					message: 'Bayiniz fiyat teklifini hazırladı. Aşağıdaki ürünleri ve fiyatları inceleyip teklifi kabul edebilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
 					className: 'status-pending'
 				},
 				'accepted': {
-					title: 'Teklif Kabul Edildi',
-					message: 'Tebrikler! Teklifi kabul ettiniz. Artik ozel fiyatlarla siparis verebilirsiniz.',
+					title: 'Tebrikler! Teklifinizi başarıyla kabul ettiniz.',
+					message: 'Seçtiğiniz bayiden ve size özel fiyatlardan artık tüp siparişinizi verebilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
 					className: 'status-accepted'
 				},
 				'rejected': {
 					title: 'Teklifiniz Reddedildi',
-					message: 'Bayiniz teklifinizi reddetmistir. Asagidan yeni bir teklif talebi olusturabilirsiniz.',
+					message: 'Bayiniz teklifinizi reddetmiştir. Aşağıdan yeni bir teklif talebi oluşturabilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
 					className: 'status-rejected'
 				},
 				'cancelled': {
-					title: 'Teklif Iptal Edildi',
-					message: 'Onceki teklifiniz iptal edilmistir. Asagidan yeni bir teklif talebi olusturabilirsiniz.',
+					title: 'Teklif İptal Edildi',
+					message: 'Önceki teklifiniz iptal edilmiştir. Aşağıdan yeni bir teklif talebi oluşturabilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
 					className: 'status-cancelled'
 				},
 				'passive': {
 					title: 'Teklifiniz Pasif Durumda',
-					message: 'Bu teklif bayi tarafindan pasife alinmistir. Bu fiyatlarla siparis veremezsiniz. Detayli bilgi icin bayinizi arayabilirsiniz.',
+					message: 'Bu teklif bayi tarafından pasife alınmıştır. Bu fiyatlarla sipariş veremezsiniz. Detaylı bilgi için bayinizi arayabilirsiniz.',
 					icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>',
 					className: 'status-passive'
 				}
@@ -435,15 +435,15 @@
 			var logs = result.data;
 
 			var actionLabels = {
-				'created': 'Teklif olusturuldu',
+				'created': 'Teklif oluşturuldu',
 				'requested': 'Teklif talep edildi',
-				'price_updated': 'Fiyatlar guncellendi',
+				'price_updated': 'Fiyatlar güncellendi',
 				'accepted': 'Teklif kabul edildi',
 				'rejected': 'Teklif reddedildi',
 				'cancelled': 'Teklif iptal edildi',
-				'passived': 'Teklif pasife alindi',
+				'passived': 'Teklif pasife alındı',
 				'activated': 'Teklif aktif edildi',
-				'details_updated': 'Teklif detaylari guncellendi'
+				'details_updated': 'Teklif detayları güncellendi'
 			};
 
 			var html = logs.map(function(log) {
@@ -597,7 +597,7 @@
 						'</svg>' +
 					'</div>' +
 					'<div class="notice-text">' +
-						'<p>Mevcut teklifinize yeni bir urun eklemek icin bayinizi aramalisiniz.</p>' +
+						'<p>Mevcut teklifinize yeni bir ürün eklemek için bayinizi aramalısınız.</p>' +
 					'</div>' +
 					'<div class="dealer-contact-vertical">' +
 						'<strong>' + dealerInfo + '</strong>' +
@@ -631,7 +631,7 @@
 						'<span class="summary-value highlight" id="totalDiscountedPrice">0,00 TL</span>' +
 					'</div>' +
 					'<div class="summary-item benefit">' +
-						'<span class="summary-label">Müşteriye Sağlanan Fayda</span>' +
+						'<span class="summary-label">Kazancınız</span>' +
 						'<span class="summary-value benefit-value" id="totalBenefit">0,00 TL</span>' +
 					'</div>' +
 				'</div>' +
@@ -746,7 +746,7 @@
 		async function acceptActiveOffer() {
 			if (!activeOffer) return;
 
-			var confirmed = confirm('Teklifi kabul etmek istediginize emin misiniz?');
+			var confirmed = confirm('Teklifi kabul etmek istediğinize emin misiniz?');
 			if (!confirmed) return;
 
 			showLoading('Teklif kabul ediliyor...');
@@ -784,7 +784,7 @@
 								price: detail.unit_price || 0,
 								image_url: detail.product.image_url,
 								priceType: 'size_ozel',
-								priceLabel: 'Teklif Fiyati'
+								priceLabel: 'Teklif Fiyatı'
 							}, detail.commitment_quantity);
 						}
 					}
@@ -798,7 +798,7 @@
 			} catch (err) {
 				hideLoading();
 				console.error('Teklif kabul hatasi:', err);
-				alert('Teklif kabul edilirken bir hata olustu. Lutfen tekrar deneyin.');
+				alert('Teklif kabul edilirken bir hata oluştu. Lütfen tekrar deneyin.');
 			}
 		}
 
@@ -807,12 +807,12 @@
 			if (!activeOffer) return;
 
 			var title = activeOffer.status === 'accepted'
-				? 'Kabul Edilmis Teklifi Iptal Et'
-				: 'Teklif Talebini Iptal Et';
+				? 'Kabul Edilmiş Teklifi İptal Et'
+				: 'Teklif Talebini İptal Et';
 
 			var message = activeOffer.status === 'accepted'
-				? 'Teklifi iptal ederseniz size ozel fiyatlar ortadan kalkacaktir. Bu islemi geri alamazsiniz.'
-				: 'Teklif talebinizi iptal etmek istediginize emin misiniz? Bu islem geri alinamaz.';
+				? 'Teklifi iptal ederseniz size özel fiyatlar ortadan kalkacaktır. Bu işlemi geri alamazsınız.'
+				: 'Teklif talebinizi iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.';
 
 			showConfirmationModal(title, message, async function() {
 				showLoading('Teklif iptal ediliyor...');
@@ -844,7 +844,7 @@
 				} catch (err) {
 					hideLoading();
 					console.error('Teklif iptal hatasi:', err);
-					alert('Teklif iptal edilirken bir hata olustu. Lutfen tekrar deneyin.');
+					alert('Teklif iptal edilirken bir hata oluştu. Lütfen tekrar deneyin.');
 				}
 			});
 		}
@@ -860,7 +860,7 @@
 			} catch (err) {
 				console.error('Urun yukleme hatasi:', err);
 				document.getElementById('productsGrid').innerHTML =
-					'<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Urunler Yuklenemedi</h3><p>Lutfen sayfayi yenileyip tekrar deneyin.</p></div>';
+					'<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Ürünler Yüklenemedi</h3><p>Lütfen sayfayı yenileyip tekrar deneyin.</p></div>';
 			}
 		}
 
@@ -875,7 +875,7 @@
 				'<div class="product-name">' + product.name + '</div>' +
 				'<div class="product-code">' + product.code + '</div>' +
 				'<div class="consumption-input-wrapper">' +
-					'<label>Aylik Ortalama Tuketim</label>' +
+					'<label>Aylık Ortalama Tüketim</label>' +
 					'<div class="consumption-input-row">' +
 						'<input type="number" class="consumption-input" ' +
 							'data-product-id="' + product.id + '" ' +
@@ -893,7 +893,7 @@
 			var grid = document.getElementById('productsGrid');
 
 			if (products.length === 0) {
-				grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>Urun Bulunamadi</h3><p>Henuz sistemde tanimli urun bulunmamaktadir.</p></div>';
+				grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><h3>Ürün Bulunamadı</h3><p>Henüz sistemde tanımlı ürün bulunmamaktadır.</p></div>';
 				return;
 			}
 
@@ -1044,7 +1044,7 @@
 		async function showOfferSummary() {
 			// Validation
 			if (Object.keys(selectedProducts).length === 0) {
-				alert('Lutfen en az bir urun icin tuketim miktari girin.');
+				alert('Lütfen en az bir ürün için tüketim miktarı girin.');
 				return;
 			}
 
@@ -1054,7 +1054,7 @@
 				|| (branchSelected ? null : (currentCustomer ? currentCustomer.dealer_id : null));
 
 			if (!currentCustomer || !dealerId) {
-				alert('Bayi bilgisi bulunamadi. Lutfen destek ile iletisime gecin.');
+				alert('Bayi bilgisi bulunamadı. Lütfen destek ile iletişime geçin.');
 				return;
 			}
 
@@ -1070,7 +1070,7 @@
 			for (var productId in selectedProducts) {
 				var quantity = selectedProducts[productId];
 				var product = products.find(function(p) { return p.id === productId; });
-				var productName = product ? product.name : 'Urun #' + productId;
+				var productName = product ? product.name : 'Ürün #' + productId;
 
 				productListHtml += '<div class="offer-summary-product-item">' +
 					'<span class="offer-summary-product-name">' + productName + '</span>' +
@@ -1081,7 +1081,7 @@
 			}
 
 			document.getElementById('summaryProductsList').innerHTML = productListHtml;
-			document.getElementById('summaryTotalProducts').textContent = totalProducts + ' urun';
+			document.getElementById('summaryTotalProducts').textContent = totalProducts + ' ürün';
 
 			// Sozlesme metnini yukle
 			document.getElementById('contractAcceptCheckbox').checked = false;
@@ -1091,10 +1091,10 @@
 				if (contractResult.data) {
 					document.getElementById('summaryContractText').textContent = contractResult.data;
 				} else {
-					document.getElementById('summaryContractText').textContent = 'Sozlesme metni yuklenemedi.';
+					document.getElementById('summaryContractText').textContent = 'Sözleşme metni yüklenemedi.';
 				}
 			} catch (e) {
-				document.getElementById('summaryContractText').textContent = 'Sozlesme metni yuklenemedi.';
+				document.getElementById('summaryContractText').textContent = 'Sözleşme metni yüklenemedi.';
 			}
 
 			// Overlay'i goster
@@ -1117,7 +1117,7 @@
 			var branchId = sessionStorage.getItem('selected_address_id');
 
 			if (!branchId) {
-				alert('Lutfen bir sube seciniz.');
+				alert('Lütfen bir şube seçiniz.');
 				return;
 			}
 
@@ -1182,12 +1182,12 @@
 			});
 
 			if (!allAnswered) {
-				alert('Lutfen tum sorulari cevaplayiniz.');
+				alert('Lütfen tüm soruları cevaplayınız.');
 				return;
 			}
 
 			if (!document.getElementById('securityAcceptCheckbox').checked) {
-				alert('Lutfen beyanlarinizin dogrulugunu kabul ediniz.');
+				alert('Lütfen beyanlarınızın doğruluğunu kabul ediniz.');
 				return;
 			}
 
@@ -1202,7 +1202,7 @@
 			var result = await BranchesService.updateSecurityAnswers(branchId, answers);
 
 			if (result.error) {
-				alert('Bir hata olustu. Lutfen tekrar deneyiniz.');
+				alert('Bir hata oluştu. Lütfen tekrar deneyiniz.');
 				return;
 			}
 
@@ -1235,7 +1235,7 @@
 			// Secili subeyi al
 			var selectedBranchId = sessionStorage.getItem('selected_address_id');
 
-			showLoading('Teklif talebiniz gonderiliyor...');
+			showLoading('Teklif talebiniz gönderiliyor...');
 
 			try {
 				// Offer data
@@ -1244,7 +1244,7 @@
 					dealer_id: dealerId,
 					customer_branch_id: selectedBranchId || null,
 					status: 'requested',
-					notes: 'Musteri tarafindan teklif talebi',
+					notes: 'Müşteri tarafından teklif talebi',
 					contract_text_snapshot: document.getElementById('summaryContractText').textContent || null,
 					contract_accepted: true,
 					contract_accepted_at: new Date().toISOString()
@@ -1289,7 +1289,7 @@
 			} catch (err) {
 				hideLoading();
 				console.error('Teklif gonderme hatasi:', err);
-				alert('Teklif gonderilirken bir hata olustu. Lutfen tekrar deneyin.');
+				alert('Teklif gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
 			}
 		}
 
@@ -1497,16 +1497,22 @@
 
 				if (error) {
 					console.error('Mesaj gonderme hatasi:', error);
-					alert('Mesaj gonderilemedi. Lutfen tekrar deneyin.');
+					alert('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
 				} else {
 					input.value = '';
 					input.style.height = 'auto';
 					loadMessages();
+
+					// Minimize ise maximize et
+					var chat = document.getElementById('chatColumn');
+					if (chat && chat.classList.contains('minimized')) {
+						toggleChatSize();
+					}
 				}
 
 			} catch (err) {
 				console.error('Mesaj gonderme hatasi:', err);
-				alert('Mesaj gonderilemedi. Lutfen tekrar deneyin.');
+				alert('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
 			}
 
 			btn.disabled = false;
@@ -1579,6 +1585,52 @@
 			document.getElementById('chatColumn').classList.remove('active');
 			document.body.style.overflow = '';
 		}
+
+		// Chat minimize/maximize toggle
+		function toggleChatSize() {
+			var chat = document.getElementById('chatColumn');
+			var container = chat.closest('.content-with-chat');
+			var maxIcon = document.getElementById('chatMaximizeIcon');
+			var minIcon = document.getElementById('chatMinimizeIcon');
+
+			chat.classList.toggle('minimized');
+			if (container) container.classList.toggle('chat-minimized');
+
+			var isMinimized = chat.classList.contains('minimized');
+			if (maxIcon) maxIcon.style.display = isMinimized ? '' : 'none';
+			if (minIcon) minIcon.style.display = isMinimized ? 'none' : '';
+
+			if (!isMinimized) {
+				scrollToBottom();
+			}
+
+			// Minimize modda adres kartı ile chat yüksekliğini eşitle
+			syncAddressChatHeight();
+		}
+		window.toggleChatSize = toggleChatSize;
+
+		// Adres kartı ve chat yüksekliğini eşitle (minimize modda)
+		function syncAddressChatHeight() {
+			var chat = document.getElementById('chatColumn');
+			var addressCard = document.getElementById('coveredAddressesCard');
+			if (!chat || !addressCard) return;
+
+			// Önce min-height'ları temizle
+			addressCard.style.minHeight = '';
+
+			if (chat.classList.contains('minimized')) {
+				requestAnimationFrame(function() {
+					var chatH = chat.offsetHeight;
+					var addrH = addressCard.offsetHeight;
+					if (chatH > addrH) {
+						addressCard.style.minHeight = chatH + 'px';
+					}
+				});
+			}
+		}
+
+		// Sayfa yüklendiğinde yükseklikleri eşitle
+		setTimeout(syncAddressChatHeight, 500);
 
 		// Chat'i baslat
 		async function initializeChat() {

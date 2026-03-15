@@ -452,7 +452,7 @@ async function goToOfferPage(e) {
 
 	var branchId = sessionStorage.getItem('selected_address_id');
 	if (!branchId) {
-		alert('Lutfen bir sube seciniz.');
+		alert('Lütfen bir şube seçiniz.');
 		return;
 	}
 
@@ -598,7 +598,7 @@ function bindProductEvents() {
 
 			var customerId = sessionStorage.getItem('isyerim_customer_id');
 			if (!customerId) {
-				alert('Favorilere eklemek icin giris yapmaniz gerekiyor.');
+				alert('Favorilere eklemek için giriş yapmanız gerekiyor.');
 				return;
 			}
 
@@ -803,12 +803,12 @@ var repeatOrderTotalPoints = 0;
 // Repeat order modal ac
 async function openRepeatOrderModal() {
 	if (!lastOrder) {
-		alert('Son siparis bulunamadi');
+		alert('Son sipariş bulunamadı');
 		return;
 	}
 
 	// Loading goster
-	document.getElementById('repeatOrderBody').innerHTML = '<div style="text-align: center; padding: 40px;"><p>Fiyatlar yukleniyor...</p></div>';
+	document.getElementById('repeatOrderBody').innerHTML = '<div style="text-align: center; padding: 40px;"><p>Fiyatlar yükleniyor...</p></div>';
 	document.getElementById('repeatOrderOverlay').classList.add('active');
 	document.body.style.overflow = 'hidden';
 
@@ -1065,20 +1065,20 @@ function formatOrderDate(dateString) {
 // Siparisi gonder - dogrudan siparis olustur
 async function submitRepeatOrder() {
 	if (!lastOrder || !selectedTimeSlot) {
-		alert('Lutfen bir teslimat zamani secin');
+		alert('Lütfen bir teslimat zamanı seçin');
 		return;
 	}
 
 	// Odeme yontemi kontrolu
 	var paymentInput = document.querySelector('input[name="repeatPayment"]:checked');
 	if (!paymentInput) {
-		alert('Lutfen odeme yontemi secin');
+		alert('Lütfen ödeme yöntemi seçin');
 		return;
 	}
 
 	var submitBtn = document.getElementById('btnRepeatSubmit');
 	submitBtn.disabled = true;
-	submitBtn.textContent = 'Siparis olusturuluyor...';
+	submitBtn.textContent = 'Sipariş oluşturuluyor...';
 
 	try {
 		// Gerekli bilgileri al
@@ -1131,7 +1131,7 @@ async function submitRepeatOrder() {
 		var result = await OrdersService.create(orderData, orderItems);
 
 		if (result.error) {
-			throw new Error(result.error.message || 'Siparis olusturulamadi');
+			throw new Error(result.error.message || 'Sipariş oluşturulamadı');
 		}
 
 		// Timeline kaydini olustur
@@ -1145,16 +1145,16 @@ async function submitRepeatOrder() {
 
 	} catch (err) {
 		console.error('Siparis olusturma hatasi:', err);
-		alert('Siparis olusturulurken bir hata olustu: ' + (err.message || 'Bilinmeyen hata'));
+		alert('Sipariş oluşturulurken bir hata oluştu: ' + (err.message || 'Bilinmeyen hata'));
 		submitBtn.disabled = false;
-		submitBtn.textContent = 'Siparis Ver';
+		submitBtn.textContent = 'Sipariş Ver';
 	}
 }
 
 // Siparisi duzenle - sepeti temizle, urunleri ekle ve sepet sayfasina yonlendir
 async function editRepeatOrder() {
 	if (!lastOrder) {
-		alert('Son siparis bulunamadi');
+		alert('Son sipariş bulunamadı');
 		return;
 	}
 
@@ -1186,7 +1186,7 @@ async function editRepeatOrder() {
 
 	} catch (err) {
 		console.error('Siparis duzenleme hatasi:', err);
-		alert('Siparis duzenlenirken bir hata olustu. Lutfen tekrar deneyin.');
+		alert('Sipariş düzenlenirken bir hata oluştu. Lütfen tekrar deneyin.');
 	}
 }
 

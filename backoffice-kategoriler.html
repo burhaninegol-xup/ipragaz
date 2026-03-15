@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Kategoriler - Ipragaz Back Office</title>
+	<title>Kategoriler - İpragaz Back Office</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -546,7 +546,7 @@
 			<div class="page-header">
 				<div class="page-header-left">
 					<h1>Kategoriler</h1>
-					<p>Urun kategorilerini yonetin</p>
+					<p>Ürün kategorilerini yönetin</p>
 				</div>
 				<button class="btn btn-primary" onclick="openCreateModal()">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -563,11 +563,11 @@
 					<table class="data-table" id="categories-table">
 						<thead>
 							<tr>
-								<th style="width: 100px;">Sira</th>
-								<th>Kategori Adi</th>
-								<th>Urun Sayisi</th>
+								<th style="width: 100px;">Sıra</th>
+								<th>Kategori Adı</th>
+								<th>Ürün Sayısı</th>
 								<th style="width: 120px;">Durum</th>
-								<th style="width: 140px;">Islem</th>
+								<th style="width: 140px;">İşlem</th>
 							</tr>
 						</thead>
 						<tbody id="categories-tbody">
@@ -575,7 +575,7 @@
 								<td colspan="5">
 									<div class="loading-placeholder">
 										<div class="spinner"></div>
-										<p>Kategoriler yukleniyor...</p>
+										<p>Kategoriler yükleniyor...</p>
 									</div>
 								</td>
 							</tr>
@@ -606,30 +606,30 @@
 					<input type="hidden" id="category-id">
 
 					<div class="form-group">
-						<label for="category-name">Kategori Adi <span class="required">*</span></label>
-						<input type="text" class="form-control" id="category-name" placeholder="Ornek: Tup Gazlar" required>
+						<label for="category-name">Kategori Adı <span class="required">*</span></label>
+						<input type="text" class="form-control" id="category-name" placeholder="Örnek: Tüp Gazlar" required>
 					</div>
 
 					<div class="form-group">
 						<label for="category-slug">Slug (URL)</label>
-						<input type="text" class="form-control" id="category-slug" placeholder="Otomatik olusturulur">
-						<p class="form-helper">Bos birakirsaniz kategori adindan otomatik olusturulur.</p>
+						<input type="text" class="form-control" id="category-slug" placeholder="Otomatik oluşturulur">
+						<p class="form-helper">Boş bırakırsanız kategori adından otomatik oluşturulur.</p>
 					</div>
 
 					<div class="form-group">
-						<label for="category-description">Aciklama</label>
-						<textarea class="form-control" id="category-description" placeholder="Kategori hakkinda kisa bir aciklama..."></textarea>
+						<label for="category-description">Açıklama</label>
+						<textarea class="form-control" id="category-description" placeholder="Kategori hakkında kısa bir açıklama..."></textarea>
 					</div>
 
 					<div class="form-group">
-						<label for="category-sort-order">Siralama</label>
+						<label for="category-sort-order">Sıralama</label>
 						<input type="number" class="form-control" id="category-sort-order" value="0" min="0">
-						<p class="form-helper">Dusuk degerler once gosterilir.</p>
+						<p class="form-helper">Düşük değerler önce gösterilir.</p>
 					</div>
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-secondary" onclick="closeModal()">Iptal</button>
+				<button class="btn btn-secondary" onclick="closeModal()">İptal</button>
 				<button class="btn btn-primary" onclick="saveCategory()">Kaydet</button>
 			</div>
 		</div>
@@ -705,7 +705,7 @@
 
 			} catch (err) {
 				console.error('Kategori yukleme hatasi:', err);
-				document.getElementById('categories-tbody').innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>Kategoriler yuklenirken hata olustu</p></div></td></tr>';
+				document.getElementById('categories-tbody').innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>Kategoriler yüklenirken hata oluştu</p></div></td></tr>';
 			}
 		}
 
@@ -717,8 +717,8 @@
 			if (allCategories.length === 0) {
 				tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">' +
 					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>' +
-					'<h3>Kategori bulunamadi</h3>' +
-					'<p>Henuz kategori eklenmemis. "Yeni Kategori" butonuna tiklayarak ekleyebilirsiniz.</p>' +
+					'<h3>Kategori bulunamadı</h3>' +
+					'<p>Henüz kategori eklenmemiş. "Yeni Kategori" butonuna tıklayarak ekleyebilirsiniz.</p>' +
 				'</div></td></tr>';
 				return;
 			}
@@ -739,10 +739,10 @@
 						'<div class="sort-order-cell">' +
 							'<span class="sort-order-badge">' + category.sort_order + '</span>' +
 							'<div class="sort-btns">' +
-								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', -1)" title="Yukari">' +
+								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', -1)" title="Yukarı">' +
 									'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>' +
 								'</button>' +
-								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', 1)" title="Asagi">' +
+								'<button class="sort-btn" onclick="changeSortOrder(\'' + category.id + '\', 1)" title="Aşağı">' +
 									'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>' +
 								'</button>' +
 							'</div>' +
@@ -755,7 +755,7 @@
 					'<td>' +
 						'<span class="product-count-badge">' +
 							'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>' +
-							category.product_count + ' urun' +
+							category.product_count + ' ürün' +
 						'</span>' +
 					'</td>' +
 					'<td>' +
@@ -763,7 +763,7 @@
 					'</td>' +
 					'<td>' +
 						'<div class="action-btns">' +
-							'<button class="action-btn" onclick="openEditModal(\'' + category.id + '\')" title="Duzenle">' +
+							'<button class="action-btn" onclick="openEditModal(\'' + category.id + '\')" title="Düzenle">' +
 								'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>' +
 							'</button>' +
 							'<button class="action-btn ' + toggleBtnClass + '" onclick="toggleCategoryStatus(\'' + category.id + '\', ' + category.is_active + ')" title="' + toggleBtnTitle + '">' +
@@ -792,7 +792,7 @@
 			if (!category) return;
 
 			editingCategoryId = categoryId;
-			document.getElementById('modal-title').textContent = 'Kategori Duzenle';
+			document.getElementById('modal-title').textContent = 'Kategori Düzenle';
 			document.getElementById('category-id').value = category.id;
 			document.getElementById('category-name').value = category.name;
 			document.getElementById('category-slug').value = category.slug || '';
@@ -815,7 +815,7 @@
 			var sortOrder = parseInt(document.getElementById('category-sort-order').value) || 0;
 
 			if (!name) {
-				showToast('Kategori adi zorunludur', 'error');
+				showToast('Kategori adı zorunludur', 'error');
 				return;
 			}
 
@@ -836,13 +836,13 @@
 
 				if (result.error) throw new Error(result.error);
 
-				showToast(editingCategoryId ? 'Kategori guncellendi' : 'Kategori olusturuldu', 'success');
+				showToast(editingCategoryId ? 'Kategori güncellendi' : 'Kategori oluşturuldu', 'success');
 				closeModal();
 				loadCategories();
 
 			} catch (err) {
 				console.error('Kaydetme hatasi:', err);
-				showToast('Bir hata olustu: ' + err.message, 'error');
+				showToast('Bir hata oluştu: ' + err.message, 'error');
 			}
 		}
 
@@ -858,12 +858,12 @@
 
 				if (result.error) throw new Error(result.error);
 
-				showToast(currentStatus ? 'Kategori pasife alindi' : 'Kategori aktif edildi', 'success');
+				showToast(currentStatus ? 'Kategori pasife alındı' : 'Kategori aktif edildi', 'success');
 				loadCategories();
 
 			} catch (err) {
 				console.error('Durum degistirme hatasi:', err);
-				showToast('Bir hata olustu', 'error');
+				showToast('Bir hata oluştu', 'error');
 			}
 		}
 
@@ -883,7 +883,7 @@
 
 			} catch (err) {
 				console.error('Siralama hatasi:', err);
-				showToast('Siralama degistirilemedi', 'error');
+				showToast('Sıralama değiştirilemedi', 'error');
 			}
 		}
 	</script>

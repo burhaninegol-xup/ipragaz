@@ -117,7 +117,7 @@ var AddressCompletionOverlay = (function() {
 		missingFields = [];
 		if (!branch.city || !branch.city_id) missingFields.push('city');
 		if (!branch.district || !branch.district_id) missingFields.push('district');
-		if (!branch.neighborhood || !branch.neighborhood_id) missingFields.push('neighborhood');
+		if (!branch.neighborhood) missingFields.push('neighborhood');
 		if (!branch.street) missingFields.push('street');
 		if (!branch.building_no) missingFields.push('building_no');
 		if (!branch.apartment) missingFields.push('apartment');
@@ -142,6 +142,14 @@ var AddressCompletionOverlay = (function() {
 		setupField('District', 'district', branch, missing);
 		setupField('Neighborhood', 'neighborhood', branch, missing);
 		setupField('Street', 'street', branch, missing);
+
+		// Mahalle manual input resetle
+		var nhManualReset = document.getElementById('acNeighborhoodManualInput');
+		var nhBackReset = document.getElementById('acNeighborhoodBackToList');
+		var nhSelectReset = document.getElementById('acNeighborhoodSelect');
+		if (nhManualReset) { nhManualReset.style.display = 'none'; nhManualReset.value = ''; }
+		if (nhBackReset) nhBackReset.style.display = 'none';
+		if (nhSelectReset) nhSelectReset.style.display = '';
 
 		// Sokak manual input resetle
 		var manualInput = document.getElementById('acStreetManualInput');
@@ -238,11 +246,42 @@ var AddressCompletionOverlay = (function() {
 		}
 
 		if (neighborhoodSelect && missing.indexOf('neighborhood') !== -1) {
+			var nhContainer = document.getElementById('addressFieldNeighborhood');
 			var newNeighborhood = neighborhoodSelect.cloneNode(true);
 			neighborhoodSelect.parentNode.replaceChild(newNeighborhood, neighborhoodSelect);
 			newNeighborhood.addEventListener('change', function() {
-				loadStreets(this.value);
+				if (this.value === '__other__') {
+					this.style.display = 'none';
+					var nhManual = nhContainer.querySelector('#acNeighborhoodManualInput');
+					var nhBack = nhContainer.querySelector('#acNeighborhoodBackToList');
+					if (nhManual) { nhManual.style.display = 'block'; nhManual.focus(); }
+					if (nhBack) { nhBack.style.display = 'block'; }
+					// Sokak da otomatik free-text'e geç
+					var streetField = document.getElementById('addressFieldStreet');
+					if (streetField) {
+						var stSelect = streetField.querySelector('select');
+						var stManual = streetField.querySelector('#acStreetManualInput');
+						var stBack = streetField.querySelector('#acStreetBackToList');
+						if (stSelect) stSelect.style.display = 'none';
+						if (stManual) { stManual.style.display = 'block'; stManual.value = ''; }
+						if (stBack) { stBack.style.display = 'block'; }
+					}
+				} else {
+					loadStreets(this.value);
+				}
 			});
+
+			// Mahalle geri dön handler
+			var nhBackBtn = nhContainer.querySelector('#acNeighborhoodBackToList');
+			if (nhBackBtn) {
+				nhBackBtn.addEventListener('click', function() {
+					var nhSelect = nhContainer.querySelector('select');
+					var nhManual = nhContainer.querySelector('#acNeighborhoodManualInput');
+					if (nhSelect) { nhSelect.style.display = ''; nhSelect.value = ''; }
+					if (nhManual) { nhManual.style.display = 'none'; nhManual.value = ''; }
+					this.style.display = 'none';
+				});
+			}
 		}
 	}
 
@@ -332,28 +371,37 @@ var AddressCompletionOverlay = (function() {
 		// Sokak resetle
 		resetChildDropdowns('neighborhood');
 
+		// Manuel mahalle giriş alanlarını sıfırla
+		select.style.display = '';
+		var nhManual = document.getElementById('acNeighborhoodManualInput');
+		var nhBack = document.getElementById('acNeighborhoodBackToList');
+		if (nhManual) { nhManual.style.display = 'none'; nhManual.value = ''; }
+		if (nhBack) { nhBack.style.display = 'none'; }
+
 		if (!districtId) {
-			select.innerHTML = '<option value="">Once ilce seciniz</option>';
+			select.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
 			select.disabled = true;
 			return;
 		}
 
-		select.innerHTML = '<option value="">Mahalle Yukleniyor...</option>';
+		select.innerHTML = '<option value="">Mahalle Yükleniyor...</option>';
 		select.disabled = true;
 
 		var result = await LocationsService.getNeighborhoodsByDistrictId(districtId);
 		if (result.error || !result.data || result.data.length === 0) {
-			select.innerHTML = '<option value="">Mahalle bulunamadi</option>';
+			select.innerHTML = '<option value="">Mahalle bulunamadı</option>';
+			select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 			select.disabled = false;
 			return;
 		}
 
-		select.innerHTML = '<option value="">Mahalle Seciniz</option>';
+		select.innerHTML = '<option value="">Mahalle Seçiniz</option>';
 		select.disabled = false;
 
 		result.data.forEach(function(n) {
 			select.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
 		});
+		select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 	}
 
 	/**
@@ -465,12 +513,24 @@ var AddressCompletionOverlay = (function() {
 		}
 
 		if (missingFields.indexOf('neighborhood') !== -1) {
-			var neighborhoodSelect = document.getElementById('acNeighborhoodSelect');
-			if (!neighborhoodSelect || !neighborhoodSelect.value) {
-				hasEmpty = true;
+			var nhManualInput = document.getElementById('acNeighborhoodManualInput');
+			var isManualNeighborhood = nhManualInput && nhManualInput.style.display !== 'none';
+			if (isManualNeighborhood) {
+				var nhManualVal = nhManualInput.value.trim();
+				if (!nhManualVal) {
+					hasEmpty = true;
+				} else {
+					updateData.neighborhood_id = null;
+					updateData.neighborhood = nhManualVal;
+				}
 			} else {
-				updateData.neighborhood_id = neighborhoodSelect.value;
-				updateData.neighborhood = getSelectedName('acNeighborhoodSelect');
+				var neighborhoodSelect = document.getElementById('acNeighborhoodSelect');
+				if (!neighborhoodSelect || !neighborhoodSelect.value || neighborhoodSelect.value === '__other__') {
+					hasEmpty = true;
+				} else {
+					updateData.neighborhood_id = neighborhoodSelect.value;
+					updateData.neighborhood = getSelectedName('acNeighborhoodSelect');
+				}
 			}
 		}
 

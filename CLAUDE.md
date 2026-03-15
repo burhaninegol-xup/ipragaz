@@ -9,6 +9,12 @@
 - Çalışmıyorsa background'da yeniden başlat: `nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &`
 - Kontrol komutu: `lsof -iTCP:8080 -sTCP:LISTEN`
 
+## KRİTİK: Türkçe Karakter Kullanımı
+- Bu proje Türkçe bir projedir
+- Tüm kullanıcıya görünen metinlerde düzgün Türkçe karakterler kullanılmalıdır: ü, ö, ş, ç, ğ, ı, İ
+- ASCII karşılıkları (u, o, s, c, g, i) ASLA kullanılmamalıdır
+- Placeholder, alert, confirm, modal metinleri, buton yazıları, açıklama metinleri — hepsi Türkçe olmalıdır
+
  ## Oturum Başlangıç Görevi
   - Her konuşmanın başında port 8080'i kontrol et
   - Çalışmıyorsa `nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &` ile başlat

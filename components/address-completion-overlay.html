@@ -8,49 +8,51 @@
 					<circle cx="12" cy="10" r="3"/>
 				</svg>
 			</div>
-			<h3>Adres Bilgilerinizi Tamamlayin</h3>
-			<p>Siparisinizin teslimati icin adres bilgilerinizi tamamlamaniz gerekiyor.</p>
+			<h3>Adres Bilgilerinizi Tamamlayın</h3>
+			<p>Siparişinizin teslimatı için adres bilgilerinizi tamamlamanız gerekiyor.</p>
 		</div>
 		<div class="address-completion-form" id="addressCompletionForm">
 			<!-- İl -->
 			<div class="address-field" id="addressFieldCity">
-				<label>Il</label>
+				<label>İl</label>
 				<select id="acCitySelect" disabled>
-					<option value="">Il Seciniz</option>
+					<option value="">İl Seçiniz</option>
 				</select>
 			</div>
 			<!-- İlçe -->
 			<div class="address-field" id="addressFieldDistrict">
-				<label>Ilce</label>
+				<label>İlçe</label>
 				<select id="acDistrictSelect" disabled>
-					<option value="">Ilce Seciniz</option>
+					<option value="">İlçe Seçiniz</option>
 				</select>
 			</div>
 			<!-- Mahalle -->
 			<div class="address-field" id="addressFieldNeighborhood">
 				<label>Mahalle</label>
 				<select id="acNeighborhoodSelect" disabled>
-					<option value="">Mahalle Seciniz</option>
+					<option value="">Mahalle Seçiniz</option>
 				</select>
+				<input type="text" class="address-text-input" id="acNeighborhoodManualInput" placeholder="Mahalle adını yazınız..." style="display:none;">
+				<a href="javascript:void(0)" id="acNeighborhoodBackToList" class="back-to-list-link" style="display:none;">&#8617; Listeden seç</a>
 			</div>
 			<!-- Sokak -->
 			<div class="address-field" id="addressFieldStreet">
 				<label>Cadde/Sokak</label>
 				<select id="acStreetSelect" disabled>
-					<option value="">Cadde/Sokak Seciniz</option>
+					<option value="">Cadde/Sokak Seçiniz</option>
 				</select>
-				<input type="text" class="address-text-input" id="acStreetManualInput" placeholder="Sokak adini yaziniz..." style="display:none;">
-				<a href="javascript:void(0)" id="acStreetBackToList" class="back-to-list-link" style="display:none;">&#8617; Listeden sec</a>
+				<input type="text" class="address-text-input" id="acStreetManualInput" placeholder="Sokak adını yazınız..." style="display:none;">
+				<a href="javascript:void(0)" id="acStreetBackToList" class="back-to-list-link" style="display:none;">&#8617; Listeden seç</a>
 			</div>
 			<!-- Bina No -->
 			<div class="address-field" id="addressFieldBuildingNo">
 				<label>Bina No</label>
-				<input type="text" class="address-text-input" id="acBuildingNoInput" placeholder="Bina numarasi giriniz">
+				<input type="text" class="address-text-input" id="acBuildingNoInput" placeholder="Bina numarası giriniz">
 			</div>
 			<!-- Daire No -->
 			<div class="address-field" id="addressFieldApartment">
 				<label>Daire No</label>
-				<input type="text" class="address-text-input" id="acApartmentInput" placeholder="Daire numarasi giriniz">
+				<input type="text" class="address-text-input" id="acApartmentInput" placeholder="Daire numarası giriniz">
 			</div>
 		</div>
 		<button class="btn-submit" id="addressCompletionSubmitBtn">Kaydet ve Devam Et</button>

@@ -1349,7 +1349,7 @@
 		<div class="stepper">
 			<div class="step">
 				<span class="step-number completed">1</span>
-				<span class="step-label active">Siparis Detayi</span>
+				<span class="step-label active">Sipariş Detayı</span>
 			</div>
 			<div class="step-line"></div>
 			<div class="step">
@@ -1359,7 +1359,7 @@
 			<div class="step-line"></div>
 			<div class="step">
 				<span class="step-number completed">3</span>
-				<span class="step-label active">Teslimat ve Odeme</span>
+				<span class="step-label active">Teslimat ve Ödeme</span>
 			</div>
 		</div>
 	</div>
@@ -1398,9 +1398,9 @@
 						<path d="M1 20v-6h6"/>
 						<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
 					</svg>
-					<h3 class="routine-title">Rutin Sipariş</h3>
+					<h3 class="routine-title">Siparişi Tekrarla</h3>
 				</div>
-				<p class="routine-desc">Bu siparişi düzenli olarak otomatik tekrarlayın. Sıklığı seçerek düzenli ihtiyaçlarınızı karşılayın.</p>
+				<p class="routine-desc">Düzenli siparişleriniz için bu alandan otomatik sipariş talimatları oluşturabilirsiniz.</p>
 
 				<div class="routine-toggle-container">
 					<label class="routine-toggle">
@@ -1421,7 +1421,7 @@
 				</div>
 
 				<button class="btn-routine" id="btnCreateRoutine" disabled>
-					Rutin Sipariş Oluştur
+					Otomatik Sipariş Oluştur
 				</button>
 			</div>
 
@@ -1462,7 +1462,7 @@
 				<!-- Address Row -->
 				<div class="address-row">
 					<div class="address-box">
-						<div class="address-box-label">Teslimat Subesi</div>
+						<div class="address-box-label">Teslimat Şubesi</div>
 						<div class="address-box-value">Burhan - BARBAROS MAH. 3004. CD. BİNA NO:12 DAİRE:1 K:2 Ataşehir/İstanbul</div>
 					</div>
 					<div class="address-box">
@@ -1737,12 +1737,12 @@
 				var content = document.getElementById('offer-info-content-ozet');
 
 				if (!offer) {
-					content.innerHTML = '<div class="offer-empty-msg-ozet">Bu siparis icin bagli teklif bulunamadi.</div>';
+					content.innerHTML = '<div class="offer-empty-msg-ozet">Bu sipariş için bağlı teklif bulunamadı.</div>';
 					section.style.display = 'block';
 					return;
 				}
 
-				var statusLabelsMap = { accepted: 'Kabul Edildi', pending: 'Beklemede', rejected: 'Reddedildi', cancelled: 'Iptal' };
+				var statusLabelsMap = { accepted: 'Kabul Edildi', pending: 'Beklemede', rejected: 'Reddedildi', cancelled: 'İptal' };
 				var offerStatus = offer.status || 'pending';
 				var offerId = offer.id ? offer.id.substring(0, 8).toUpperCase() : '---';
 				var acceptedDate = offer.accepted_at ? formatDateOffer(offer.accepted_at) : '---';
@@ -1751,15 +1751,15 @@
 				var html = '<div class="offer-info-grid-ozet">';
 				html += '<div class="detail-item"><span class="detail-label">Teklif ID</span><span class="detail-value">#' + offerId + '</span></div>';
 				html += '<div class="detail-item"><span class="detail-label">Durum</span><span class="detail-value"><span class="offer-status-badge ' + offerStatus + '">' + (statusLabelsMap[offerStatus] || offerStatus) + '</span></span></div>';
-				html += '<div class="detail-item"><span class="detail-label">Olusturma Tarihi</span><span class="detail-value">' + createdDate + '</span></div>';
+				html += '<div class="detail-item"><span class="detail-label">Oluşturma Tarihi</span><span class="detail-value">' + createdDate + '</span></div>';
 				html += '<div class="detail-item"><span class="detail-label">Kabul Tarihi</span><span class="detail-value">' + acceptedDate + '</span></div>';
 				html += '</div>';
 
 				if (offer.offer_details && offer.offer_details.length > 0) {
 					html += '<div class="offer-products-list-ozet">';
-					html += '<div class="offer-products-title">Teklif Urun Fiyatlari</div>';
+					html += '<div class="offer-products-title">Teklif Ürün Fiyatları</div>';
 					offer.offer_details.forEach(function(detail) {
-						var productName = detail.product ? detail.product.name : 'Urun';
+						var productName = detail.product ? detail.product.name : 'Ürün';
 						var unitPrice = parseFloat(detail.unit_price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 						html += '<div class="offer-product-row-ozet">';
 						html += '<span class="offer-product-name-ozet">' + productName + '</span>';

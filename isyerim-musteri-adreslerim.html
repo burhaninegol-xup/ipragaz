@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Adreslerim - Ipragaz IsYerim</title>
+	<title>Adreslerim - İpragaz İşYerim</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
@@ -105,7 +105,7 @@
 			<div class="settings-content">
 				<h1 class="content-title">Adreslerim</h1>
 				<div id="addresses-container">
-					<div class="loading">Subeler yukleniyor...</div>
+					<div class="loading">Şubeler yükleniyor...</div>
 				</div>
 				<div class="restriction-notice" id="restrictionNotice" style="display: none;">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -113,7 +113,7 @@
 						<line x1="12" y1="8" x2="12" y2="12"/>
 						<line x1="12" y1="16" x2="12.01" y2="16"/>
 					</svg>
-					<span>Sube yonetimi icin lutfen bayinizle iletisime gecin.</span>
+					<span>Şube yönetimi için lütfen bayinizle iletişime geçin.</span>
 				</div>
 				<button class="add-address-btn" id="btnAddBranch" onclick="openAddressPanel('add')">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -143,32 +143,32 @@
 			<form id="addressForm">
 				<input type="hidden" id="addressId">
 				<div class="form-group">
-					<label class="form-label">Il *</label>
+					<label class="form-label">İl *</label>
 					<select class="form-select" id="citySelect" onchange="loadDistricts()" required>
-						<option value="">Il Seciniz</option>
+						<option value="">İl Seçiniz</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label class="form-label">Ilce *</label>
+					<label class="form-label">İlçe *</label>
 					<select class="form-select" id="districtSelect" onchange="loadNeighborhoods()" required>
-						<option value="">Ilce Seciniz</option>
+						<option value="">İlçe Seçiniz</option>
 					</select>
 				</div>
 				<div class="form-group">
 					<label class="form-label">Mahalle <span style="color:#e31e24;">*</span></label>
 					<select class="form-select" id="neighborhoodSelect" onchange="loadStreets()">
-						<option value="">Mahalle Seciniz</option>
+						<option value="">Mahalle Seçiniz</option>
 					</select>
-					<input type="text" class="form-input" id="neighborhoodManualInput" placeholder="Mahalle adini yaziniz..." style="display:none;">
-					<a href="javascript:void(0)" id="neighborhoodBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden sec</a>
+					<input type="text" class="form-input" id="neighborhoodManualInput" placeholder="Mahalle adını yazınız..." style="display:none;">
+					<a href="javascript:void(0)" id="neighborhoodBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden seç</a>
 				</div>
 				<div class="form-group">
 					<label class="form-label">Cadde/Sokak</label>
 					<select class="form-select" id="streetSelect">
-						<option value="">Cadde/Sokak Seciniz</option>
+						<option value="">Cadde/Sokak Seçiniz</option>
 					</select>
-					<input type="text" class="form-input" id="streetManualInput" placeholder="Sokak adini yaziniz..." style="display:none;">
-					<a href="javascript:void(0)" id="streetBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden sec</a>
+					<input type="text" class="form-input" id="streetManualInput" placeholder="Sokak adını yazınız..." style="display:none;">
+					<a href="javascript:void(0)" id="streetBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden seç</a>
 				</div>
 				<div class="form-row">
 					<div class="form-group">
@@ -186,7 +186,7 @@
 				</div>
 				<div class="form-group">
 					<label class="form-label">Adres Adı *</label>
-					<input type="text" class="form-input" id="branchName" placeholder="Ornegin: Merkez, Depo, vb." required>
+					<input type="text" class="form-input" id="branchName" placeholder="Örneğin: Merkez, Depo, vb." required>
 				</div>
 					</form>
 		</div>
@@ -204,10 +204,10 @@
 				<line x1="10" y1="11" x2="10" y2="17"/>
 				<line x1="14" y1="11" x2="14" y2="17"/>
 			</svg>
-			<h3 class="confirm-title">Subeyi Sil</h3>
-			<p class="confirm-text">Bu subeyi silmek istediginizden emin misiniz? Bu islem geri alinamaz.</p>
+			<h3 class="confirm-title">Şubeyi Sil</h3>
+			<p class="confirm-text">Bu şubeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
 			<div class="confirm-buttons">
-				<button class="confirm-btn cancel" onclick="closeDeleteModal()">Iptal</button>
+				<button class="confirm-btn cancel" onclick="closeDeleteModal()">İptal</button>
 				<button class="confirm-btn delete" onclick="confirmDelete()">Sil</button>
 			</div>
 		</div>
@@ -258,7 +258,7 @@
 
 			// Sadece owner kullanicilar bu sayfaya erisebilir
 			if (userRole !== 'owner') {
-				alert('Bu sayfaya erisim yetkiniz bulunmuyor.');
+				alert('Bu sayfaya erişim yetkiniz bulunmuyor.');
 				window.location.href = 'isyerim-musteri-anasayfa.html';
 				return;
 			}
@@ -299,19 +299,19 @@
 		// Subeleri yukle
 		async function loadAddresses() {
 			var container = document.getElementById('addresses-container');
-			container.innerHTML = '<div class="loading">Subeler yukleniyor...</div>';
+			container.innerHTML = '<div class="loading">Şubeler yükleniyor...</div>';
 
 			var result = await BranchesService.getByCustomerId(customerId);
 
 			if (result.error) {
-				container.innerHTML = '<div class="loading">Subeler yuklenirken hata olustu</div>';
+				container.innerHTML = '<div class="loading">Şubeler yüklenirken hata oluştu</div>';
 				return;
 			}
 
 			var addresses = result.data || [];
 
 			if (addresses.length === 0) {
-				container.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p class="empty-text">Henuz kayitli subeniz bulunmuyor</p><p class="empty-subtext">Yeni sube ekleyerek baslayabilirsiniz</p></div>';
+				container.innerHTML = '<div class="empty-state"><svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><p class="empty-text">Henüz kayıtlı şubeniz bulunmuyor</p><p class="empty-subtext">Yeni şube ekleyerek başlayabilirsiniz</p></div>';
 				return;
 			}
 
@@ -321,12 +321,12 @@
 				html += '<div class="address-header">';
 				html += '<span class="address-name">' + addr.branch_name;
 				if (addr.is_default) html += ' <span class="default-badge">Merkez</span>';
-				if (addr.points_collection_mode === 'branch') html += ' <span class="default-badge" style="background: #3b82f6;">Sube Puani</span>';
+				if (addr.points_collection_mode === 'branch') html += ' <span class="default-badge" style="background: #3b82f6;">Şube Puanı</span>';
 				html += '</span>';
 				// Kisitlama yoksa action butonlarini goster
 				if (!isManagementRestricted) {
 					html += '<div class="address-actions">';
-					html += '<button class="address-action" onclick="openAddressPanel(\'edit\', \'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Duzenle</button>';
+					html += '<button class="address-action" onclick="openAddressPanel(\'edit\', \'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Düzenle</button>';
 					if (!addr.is_default) {
 						html += '<button class="address-action" onclick="openDeleteModal(\'' + addr.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Sil</button>';
 					}
@@ -344,17 +344,17 @@
 		// Il/Ilce dropdownlari - API tabanli
 		async function loadCities() {
 			var select = document.getElementById('citySelect');
-			select.innerHTML = '<option value="">Il Yukleniyor...</option>';
+			select.innerHTML = '<option value="">İl Yükleniyor...</option>';
 
 			var result = await LocationsService.getCities();
 
 			if (result.error) {
-				select.innerHTML = '<option value="">Hata olustu</option>';
+				select.innerHTML = '<option value="">Hata oluştu</option>';
 				console.error('Iller yuklenemedi:', result.error);
 				return;
 			}
 
-			select.innerHTML = '<option value="">Il Seciniz</option>';
+			select.innerHTML = '<option value="">İl Seçiniz</option>';
 			result.data.forEach(function(city) {
 				select.innerHTML += '<option value="' + city.id + '" data-name="' + city.name + '">' + city.name + '</option>';
 			});
@@ -367,25 +367,25 @@
 			var streetSelect = document.getElementById('streetSelect');
 
 			// Reset alt dropdown'lar
-			neighborhoodSelect.innerHTML = '<option value="">Once ilce seciniz</option>';
-			streetSelect.innerHTML = '<option value="">Once mahalle seciniz</option>';
+			neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
+			streetSelect.innerHTML = '<option value="">Önce mahalle seçiniz</option>';
 
 			if (!cityId) {
-				select.innerHTML = '<option value="">Once il seciniz</option>';
+				select.innerHTML = '<option value="">Önce il seçiniz</option>';
 				return;
 			}
 
-			select.innerHTML = '<option value="">Ilce Yukleniyor...</option>';
+			select.innerHTML = '<option value="">İlçe Yükleniyor...</option>';
 
 			var result = await LocationsService.getDistrictsByCityId(cityId);
 
 			if (result.error) {
-				select.innerHTML = '<option value="">Hata olustu</option>';
+				select.innerHTML = '<option value="">Hata oluştu</option>';
 				console.error('Ilceler yuklenemedi:', result.error);
 				return;
 			}
 
-			select.innerHTML = '<option value="">Ilce Seciniz</option>';
+			select.innerHTML = '<option value="">İlçe Seçiniz</option>';
 			result.data.forEach(function(district) {
 				select.innerHTML += '<option value="' + district.id + '" data-name="' + district.name + '">' + district.name + '</option>';
 			});
@@ -397,7 +397,7 @@
 			var streetSelect = document.getElementById('streetSelect');
 
 			// Reset sokak dropdown
-			streetSelect.innerHTML = '<option value="">Once mahalle seciniz</option>';
+			streetSelect.innerHTML = '<option value="">Önce mahalle seçiniz</option>';
 
 			// Manuel mahalle giriş alanlarını sıfırla
 			select.style.display = '';
@@ -406,25 +406,25 @@
 			document.getElementById('neighborhoodBackToList').style.display = 'none';
 
 			if (!districtId) {
-				select.innerHTML = '<option value="">Once ilce seciniz</option>';
+				select.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
 				return;
 			}
 
-			select.innerHTML = '<option value="">Mahalle Yukleniyor...</option>';
+			select.innerHTML = '<option value="">Mahalle Yükleniyor...</option>';
 
 			var result = await LocationsService.getNeighborhoodsByDistrictId(districtId);
 
 			if (result.error || !result.data || result.data.length === 0) {
-				select.innerHTML = '<option value="">Mahalle bulunamadi</option>';
-				select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+				select.innerHTML = '<option value="">Mahalle bulunamadı</option>';
+				select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 				return;
 			}
 
-			select.innerHTML = '<option value="">Mahalle Seciniz</option>';
+			select.innerHTML = '<option value="">Mahalle Seçiniz</option>';
 			result.data.forEach(function(n) {
 				select.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
 			});
-			select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+			select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 		}
 
 		async function loadStreets() {
@@ -438,25 +438,25 @@
 			document.getElementById('streetBackToList').style.display = 'none';
 
 			if (!neighborhoodId) {
-				select.innerHTML = '<option value="">Once mahalle seciniz</option>';
+				select.innerHTML = '<option value="">Önce mahalle seçiniz</option>';
 				return;
 			}
 
-			select.innerHTML = '<option value="">Sokak Yukleniyor...</option>';
+			select.innerHTML = '<option value="">Sokak Yükleniyor...</option>';
 
 			var result = await LocationsService.getStreetsByNeighborhoodId(neighborhoodId);
 
 			if (result.error || !result.data || result.data.length === 0) {
-				select.innerHTML = '<option value="">Sokak bulunamadi</option>';
-				select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+				select.innerHTML = '<option value="">Sokak bulunamadı</option>';
+				select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 				return;
 			}
 
-			select.innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			select.innerHTML = '<option value="">Cadde/Sokak Seçiniz</option>';
 			result.data.forEach(function(s) {
 				select.innerHTML += '<option value="' + s.id + '" data-name="' + s.name + '">' + s.name + '</option>';
 			});
-			select.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+			select.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 		}
 
 		// Secili option'in data-name degerini al
@@ -535,9 +535,9 @@
 		function clearForm() {
 			document.getElementById('addressForm').reset();
 			document.getElementById('addressId').value = '';
-			document.getElementById('districtSelect').innerHTML = '<option value="">Ilce Seciniz</option>';
-			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seciniz</option>';
-			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seciniz</option>';
+			document.getElementById('districtSelect').innerHTML = '<option value="">İlçe Seçiniz</option>';
+			document.getElementById('neighborhoodSelect').innerHTML = '<option value="">Mahalle Seçiniz</option>';
+			document.getElementById('streetSelect').innerHTML = '<option value="">Cadde/Sokak Seçiniz</option>';
 			document.getElementById('streetSelect').style.display = '';
 			document.getElementById('streetManualInput').style.display = 'none';
 			document.getElementById('streetManualInput').value = '';
@@ -602,43 +602,43 @@
 		// Teklif uyari mesajlari
 		var offerWarningMessages = {
 			merkez_il_degisti_sube_yok: {
-				title: 'Teklif Iptal Olacak',
-				message: 'Merkez adresinizin ilini degistirdiginiz icin mevcut teklifiniz iptal edilecektir. Yeni adresiniz icin bastan teklif talep etmeniz gerekecektir. Devam etmek istiyor musunuz?',
+				title: 'Teklif İptal Olacak',
+				message: 'Merkez adresinizin ilini değiştirdiğiniz için mevcut teklifiniz iptal edilecektir. Yeni adresiniz için baştan teklif talep etmeniz gerekecektir. Devam etmek istiyor musunuz?',
 				buttons: 'confirm'
 			},
 			merkez_il_degisti_sube_var: {
 				title: 'Teklif Bilgisi',
-				message: 'Merkez adresinizin ili degisecek. Mevcut teklifiniz merkez adres icin gecerli olmayacak ancak ayni ildeki diger subeleriniz icin gecerli olmaya devam edecektir. Devam etmek istiyor musunuz?',
+				message: 'Merkez adresinizin ili değişecek. Mevcut teklifiniz merkez adres için geçerli olmayacak ancak aynı ildeki diğer şubeleriniz için geçerli olmaya devam edecektir. Devam etmek istiyor musunuz?',
 				buttons: 'confirm'
 			},
 			farkli_il_yeni_sube: {
 				title: 'Teklif Bilgisi',
-				message: 'Bu adres merkezinizden farkli bir ilde. Bu adrese siparis verebilmek icin ayrica teklif talep etmeniz gerekecektir.',
+				message: 'Bu adres merkezinizden farklı bir ilde. Bu adrese sipariş verebilmek için ayrıca teklif talep etmeniz gerekecektir.',
 				buttons: 'ok'
 			},
 			ayni_il_yeni_sube: {
 				title: 'Teklif Bilgisi',
-				message: 'Bu adres merkeziniz ile ayni ilde. Mevcut teklifiniz bu adres icin de gecerli olacak ve bu adresten siparis verebileceksiniz.',
+				message: 'Bu adres merkeziniz ile aynı ilde. Mevcut teklifiniz bu adres için de geçerli olacak ve bu adresten sipariş verebileceksiniz.',
 				buttons: 'ok'
 			},
 			farkli_il_sube_guncelle: {
 				title: 'Teklif Bilgisi',
-				message: 'Bu adres artik merkezinizden farkli bir ilde olacak. Mevcut teklifiniz bu adres icin gecerli olmayacaktir. Bu adrese siparis verebilmek icin ayrica teklif talep etmeniz gerekecektir.',
+				message: 'Bu adres artık merkezinizden farklı bir ilde olacak. Mevcut teklifiniz bu adres için geçerli olmayacaktır. Bu adrese sipariş verebilmek için ayrıca teklif talep etmeniz gerekecektir.',
 				buttons: 'ok'
 			},
 			ayni_il_sube_guncelle: {
 				title: 'Teklif Bilgisi',
-				message: 'Bu adres merkeziniz ile ayni ilde. Mevcut teklifiniz bu adres icin de gecerli olacaktir.',
+				message: 'Bu adres merkeziniz ile aynı ilde. Mevcut teklifiniz bu adres için de geçerli olacaktır.',
 				buttons: 'ok'
 			},
 			sube_silindi_teklif_iptal: {
-				title: 'Teklif Iptal Olacak',
-				message: 'Bu subeyi sildiginizde, bagli aktif teklifiniz iptal edilecektir cunku ayni ilde baska bir adresiniz bulunmuyor. Devam etmek istiyor musunuz?',
+				title: 'Teklif İptal Olacak',
+				message: 'Bu şubeyi sildiğinizde, bağlı aktif teklifiniz iptal edilecektir çünkü aynı ilde başka bir adresiniz bulunmuyor. Devam etmek istiyor musunuz?',
 				buttons: 'confirm'
 			},
 			sube_silindi_teklif_tasindi: {
-				title: 'Teklif Tasinacak',
-				message: 'Bu subeyi sildiginizde, bagli aktif teklifiniz ayni ildeki diger adresinize aktarilacaktir. Devam etmek istiyor musunuz?',
+				title: 'Teklif Taşınacak',
+				message: 'Bu şubeyi sildiğinizde, bağlı aktif teklifiniz aynı ildeki diğer adresinize aktarılacaktır. Devam etmek istiyor musunuz?',
 				buttons: 'confirm'
 			}
 		};
@@ -653,7 +653,7 @@
 
 			var buttonsHtml = '';
 			if (config.buttons === 'confirm') {
-				buttonsHtml = '<button class="confirm-btn cancel" id="offerWarningCancel">Vazgec</button>';
+				buttonsHtml = '<button class="confirm-btn cancel" id="offerWarningCancel">Vazgeç</button>';
 				buttonsHtml += '<button class="confirm-btn delete" id="offerWarningConfirm">Evet</button>';
 			} else {
 				buttonsHtml = '<button class="confirm-btn delete" id="offerWarningOk" style="flex:1;">Tamam</button>';
@@ -708,7 +708,7 @@
 			}
 
 			if (result.error) {
-				alert('Sube kaydedilemedi: ' + result.error.message);
+				alert('Şube kaydedilemedi: ' + result.error.message);
 				return;
 			}
 
@@ -831,17 +831,17 @@
 			var districtName = getSelectedOptionName('districtSelect');
 
 			if (!branchName || !cityId || !districtId) {
-				alert('Lutfen zorunlu alanlari doldurun');
+				alert('Lütfen zorunlu alanları doldurun');
 				return;
 			}
 
 			// Mahalle zorunlu kontrolu
 			if (!isManualNeighborhood && (!neighborhoodId || neighborhoodId === '__other__')) {
-				alert('Lutfen mahalle seciniz.');
+				alert('Lütfen mahalle seçiniz.');
 				return;
 			}
 			if (isManualNeighborhood && !neighborhoodName) {
-				alert('Lutfen mahalle adini yaziniz.');
+				alert('Lütfen mahalle adını yazınız.');
 				return;
 			}
 
@@ -941,7 +941,7 @@
 		async function proceedWithDelete(addressId) {
 			var result = await BranchesService.delete(addressId);
 			if (result.error) {
-				alert('Sube silinemedi');
+				alert('Şube silinemedi');
 				return;
 			}
 			deleteAddressId = null;

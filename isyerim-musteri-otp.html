@@ -428,7 +428,7 @@
 
 					// Kullanicinin aktif olup olmadigini kontrol et
 					if (!user.is_active) {
-						alert('Hesabiniz silinmis. Giris yapilamiyor.');
+						alert('Hesabınız silinmiş. Giriş yapılamıyor.');
 						submitBtn.disabled = false;
 						submitBtn.textContent = 'Devam';
 						return;
@@ -436,7 +436,7 @@
 
 					// Musterinin aktif olup olmadigini kontrol et
 					if (!customer || !customer.is_active) {
-						alert('Hesabiniz aktif degil. Lutfen bayi ile iletisime gecin.');
+						alert('Hesabınız aktif değil. Lütfen bayi ile iletişime geçin.');
 						submitBtn.disabled = false;
 						submitBtn.textContent = 'Devam';
 						return;
@@ -447,7 +447,7 @@
 					sessionStorage.setItem('isyerim_user_id', user.id);
 					sessionStorage.setItem('isyerim_user_role', user.role);
 					sessionStorage.setItem('isyerim_user_name', user.name);
-					sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+					sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Müşteri');
 					sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 					sessionStorage.setItem('isNewUser', 'false');
 
@@ -456,7 +456,7 @@
 					// Pasif kullanici kontrolu - pasif yapilmis kullanici tekrar giris yapamasin
 					var inactiveResult = await CustomerUsersService.getInactiveByPhone(phone);
 					if (inactiveResult.data) {
-						alert('Hesabiniz silinmis. Giris yapilamiyor.');
+						alert('Hesabınız silinmiş. Giriş yapılamıyor.');
 						submitBtn.disabled = false;
 						submitBtn.textContent = 'Devam';
 						return;
@@ -471,7 +471,7 @@
 
 						// Musterinin aktif olup olmadigini kontrol et
 						if (!customer.is_active) {
-							alert('Hesabiniz aktif degil. Lutfen bayi ile iletisime gecin.');
+							alert('Hesabınız aktif değil. Lütfen bayi ile iletişime geçin.');
 							submitBtn.disabled = false;
 							submitBtn.textContent = 'Devam';
 							return;
@@ -490,7 +490,7 @@
 							sessionStorage.setItem('isyerim_user_id', ownerResult.data.id);
 							sessionStorage.setItem('isyerim_user_role', 'owner');
 							sessionStorage.setItem('isyerim_user_name', customer.name);
-							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Müşteri');
 							sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 							sessionStorage.setItem('isNewUser', 'false');
 
@@ -501,7 +501,7 @@
 							sessionStorage.setItem('isyerim_user_id', customer.id); // Owner icin customer.id kullan
 							sessionStorage.setItem('isyerim_user_role', 'owner');
 							sessionStorage.setItem('isyerim_user_name', customer.name);
-							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Musteri');
+							sessionStorage.setItem('isyerim_customer_name', customer.company_name || customer.name || 'Müşteri');
 							sessionStorage.setItem('isyerim_tabela_unvani', customer.tabela_unvani || '');
 							sessionStorage.setItem('isNewUser', 'false');
 

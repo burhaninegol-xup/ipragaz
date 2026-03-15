@@ -366,7 +366,7 @@ const ComponentLoader = {
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                     </svg>
-                    <p>Hic okunmamis mesajiniz yok</p>
+                    <p>Hiç okunmamış mesajınız yok</p>
                 </div>
             `;
             return;
@@ -441,10 +441,10 @@ const ComponentLoader = {
         const now = new Date();
         const seconds = Math.floor((now - date) / 1000);
 
-        if (seconds < 60) return 'Az once';
-        if (seconds < 3600) return Math.floor(seconds / 60) + ' dk once';
-        if (seconds < 86400) return Math.floor(seconds / 3600) + ' saat once';
-        if (seconds < 604800) return Math.floor(seconds / 86400) + ' gun once';
+        if (seconds < 60) return 'Az önce';
+        if (seconds < 3600) return Math.floor(seconds / 60) + ' dk önce';
+        if (seconds < 86400) return Math.floor(seconds / 3600) + ' saat önce';
+        if (seconds < 604800) return Math.floor(seconds / 86400) + ' gün önce';
         return date.toLocaleDateString('tr-TR');
     },
 
@@ -547,7 +547,7 @@ const ComponentLoader = {
                 .single();
 
             if (offerError || !offer) {
-                body.innerHTML = '<div class="notification-modal-loading">Teklif detaylari yuklenemedi</div>';
+                body.innerHTML = '<div class="notification-modal-loading">Teklif detayları yüklenemedi</div>';
                 return;
             }
 
@@ -612,7 +612,7 @@ const ComponentLoader = {
         // Urunleri listele
         let productsHtml = '';
         details.forEach(d => {
-            const productName = d.products?.name || 'Bilinmeyen Urun';
+            const productName = d.products?.name || 'Bilinmeyen Ürün';
             const qty = d.commitment_quantity || 0;
             const unitPrice = d.unit_price || 0;
             const lineTotal = qty * unitPrice;
@@ -782,7 +782,7 @@ const ComponentLoader = {
             <div class="toast-message">${notification.message}</div>
             ${notification.offer_id ? `
                 <button class="toast-action" onclick="window.location.href='isyerim-musteri-bayi-fiyatlari.html?offer_id=${notification.offer_id}'">
-                    Teklifi Goruntule
+                    Teklifi Görüntüle
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14"/><path d="M12 5l7 7-7 7"/>
                     </svg>
@@ -1397,7 +1397,7 @@ window.openAddressModal = async function() {
     // Tum kullanicilar (staff ve owner) musterinin tum subelerine erisebilir
     if (typeof AddressesService === 'undefined') {
         if (listContainer) {
-            listContainer.innerHTML = '<div class="address-empty">Sube servisi yuklenemedi</div>';
+            listContainer.innerHTML = '<div class="address-empty">Şube servisi yüklenemedi</div>';
         }
         return;
     }
@@ -1408,14 +1408,14 @@ window.openAddressModal = async function() {
 
     if (result && result.error) {
         if (listContainer) {
-            listContainer.innerHTML = '<div class="address-empty">Subeler yuklenemedi</div>';
+            listContainer.innerHTML = '<div class="address-empty">Şubeler yüklenemedi</div>';
         }
         return;
     }
 
     if (addresses.length === 0) {
         if (listContainer) {
-            var emptyMessage = 'Henuz kayitli subeniz yok.<br><a href="isyerim-musteri-adreslerim.html">Sube eklemek icin tiklayin</a>';
+            var emptyMessage = 'Henüz kayıtlı şubeniz yok.<br><a href="isyerim-musteri-adreslerim.html">Şube eklemek için tıklayın</a>';
             listContainer.innerHTML = '<div class="address-empty">' + emptyMessage + '</div>';
         }
         return;
@@ -1585,22 +1585,22 @@ window.openDealerModal = async function() {
 
     // Get MERKEZ address location (instead of selected address)
     if (typeof BranchesService === 'undefined') {
-        if (locationText) locationText.textContent = 'Servis yuklenemedi';
+        if (locationText) locationText.textContent = 'Servis yüklenemedi';
         return;
     }
 
     // 1. Get MERKEZ branch (is_default=true)
     var branchesResult = await BranchesService.getByCustomerId(customerId);
     if (branchesResult.error || !branchesResult.data || branchesResult.data.length === 0) {
-        if (locationText) locationText.textContent = 'Adres bilgisi alinamadi';
+        if (locationText) locationText.textContent = 'Adres bilgisi alınamadı';
         if (list) {
             list.innerHTML = '<div class="dealer-empty">' +
                 '<div class="dealer-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>' +
-                '<h4 class="dealer-empty-title">Adres Secilmedi</h4>' +
-                '<p class="dealer-empty-text">Lutfen once bir adres seciniz.</p>' +
+                '<h4 class="dealer-empty-title">Adres Seçilmedi</h4>' +
+                '<p class="dealer-empty-text">Lütfen önce bir adres seçiniz.</p>' +
                 '<button class="dealer-empty-btn" onclick="openAddressModal(); closeDealerModal();">' +
                 '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>' +
-                'Adres Sec</button></div>';
+                'Adres Seç</button></div>';
         }
         return;
     }
@@ -1632,7 +1632,7 @@ window.openDealerModal = async function() {
 
     // Load dealers for this location (Mikro Pazar dahil)
     if (typeof DealersService === 'undefined') {
-        if (list) list.innerHTML = '<div class="dealer-empty">Bayi servisi yuklenemedi</div>';
+        if (list) list.innerHTML = '<div class="dealer-empty">Bayi servisi yüklenemedi</div>';
         return;
     }
 
@@ -1655,7 +1655,7 @@ window.openDealerModal = async function() {
     // Mikro Pazar destekli bayi arama
     var dealersResult = await DealersService.getByDistrictWithMikroPazar(city, district, districtId);
     if (dealersResult.error) {
-        if (list) list.innerHTML = '<div class="dealer-empty">Bayiler yuklenemedi</div>';
+        if (list) list.innerHTML = '<div class="dealer-empty">Bayiler yüklenemedi</div>';
         return;
     }
 
@@ -1793,7 +1793,7 @@ window.confirmDealerSelection = async function() {
         // Update customer with new dealer_id (sadece ayni ildeki subeler icin DB guncelle)
         if (branchInOfferCityForConfirm) {
             if (typeof CustomersService === 'undefined') {
-                alert('Musteri servisi yuklenemedi');
+                alert('Müşteri servisi yüklenemedi');
                 return;
             }
 
@@ -1803,10 +1803,10 @@ window.confirmDealerSelection = async function() {
 
             if (result.error) {
                 console.error('Error updating dealer:', result.error);
-                alert('Bayi kaydedilemedi. Lutfen tekrar deneyiniz.');
+                alert('Bayi kaydedilemedi. Lütfen tekrar deneyiniz.');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+                    btn.innerHTML = 'Seç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
                 }
                 return;
             }
@@ -1829,10 +1829,10 @@ window.confirmDealerSelection = async function() {
 
     } catch (err) {
         console.error('Error confirming dealer:', err);
-        alert('Bir hata olustu. Lutfen tekrar deneyiniz.');
+        alert('Bir hata oluştu. Lütfen tekrar deneyiniz.');
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = 'Sec <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            btn.innerHTML = 'Seç <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
         }
     }
 };
@@ -2053,7 +2053,7 @@ function updateDealerButton(dealerName, state) {
             // Birden fazla bayi var, secim bekliyor
             btn.classList.remove('no-dealer');
             btn.classList.add('empty');
-            nameEl.textContent = 'Bayi Seciniz';
+            nameEl.textContent = 'Bayi Seçiniz';
         }
     }
 }

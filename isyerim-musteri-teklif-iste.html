@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Teklif Iste - IsYerim Ipragaz</title>
+	<title>Teklif İste - İşYerim İpragaz</title>
 	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
 	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
@@ -19,14 +19,14 @@
 	<!-- Page Header -->
 	<section class="page-header">
 		<div class="container">
-			<h1 class="page-title">Teklif Iste</h1>
-			<p class="page-subtitle">Bayinizden fiyat teklifi talep edin</p>
+			<h1 class="page-title">Size özel fırsat fiyatları kaçırmayın!</h1>
+			<p class="page-subtitle">Hizmet almak istediğiniz bayiye istediğiniz üründen tüketim sürelerini ve miktarlarınızı belirterek, size uygun fiyatları görebilirsiniz.</p>
 		</div>
 	</section>
 
 	<!-- Main Content -->
 	<main class="main-content">
-		<div class="container content-with-chat">
+		<div class="container content-with-chat chat-minimized">
 			<!-- Status Banner (Aktif teklif varken gosterilecek) - Grid'in doğrudan child'ı -->
 			<div class="offer-status-banner" id="offerStatusBanner" style="display: none;">
 				<div class="status-icon" id="statusIcon"></div>
@@ -62,8 +62,8 @@
 						<line x1="12" y1="8" x2="12.01" y2="8"/>
 					</svg>
 					<div class="info-card-content">
-						<h4>Nasil Calisir?</h4>
-						<p>Her urun icin aylik ortalama tuketim miktarinizi girin. Bayiniz bu bilgilere gore size ozel fiyat teklifi hazirlayacaktir.</p>
+						<h4>Nasıl Çalışır?</h4>
+						<p>Her ürün için aylık ortalama tüketim miktarınızı girin. Bayiniz bu bilgilere göre size özel fiyat teklifi hazırlayacaktır.</p>
 					</div>
 				</div>
 
@@ -74,7 +74,7 @@
 							<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
 							<circle cx="12" cy="10" r="3"/>
 						</svg>
-						<h4>Bu Teklif Asagidaki Adresler Icin Gecerli Olacaktir</h4>
+						<h4>Talep ettiğiniz teklif aşağıdaki adresleriniz için geçerli olacaktır.</h4>
 					</div>
 					<ul class="covered-addresses-list" id="coveredAddressesList">
 					</ul>
@@ -90,7 +90,7 @@
 						<span class="dealer-info-text">Teklif talep edilecek bayi: <strong id="dealerName">-</strong></span>
 					</div>
 					<div class="selected-count">
-						Secilen urun: <strong id="selectedCount">0</strong>
+						Seçilen ürün: <strong id="selectedCount">0</strong>
 					</div>
 					<button class="btn-submit" id="submitBtn" disabled>
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -99,7 +99,7 @@
 							<line x1="12" y1="18" x2="12" y2="12"/>
 							<line x1="9" y1="15" x2="15" y2="15"/>
 						</svg>
-						Teklif Iste
+						Teklif İste
 					</button>
 				</div>
 
@@ -107,17 +107,17 @@
 				<div class="products-grid" id="productsGrid">
 					<!-- Urunler yukleniyor -->
 					<div class="loading-placeholder" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
-						<p>Urunler yukleniyor...</p>
+						<p>Ürünler yükleniyor...</p>
 					</div>
 				</div>
 
 				<!-- Dealer Selection Section -->
 				<div class="dealer-selection-section" id="dealerSelectionSection">
-					<h3 class="dealer-selection-title">Teklif Isteyeceginiz Bayiyi Secin</h3>
+					<h3 class="dealer-selection-title">Teklif İsteyeceğiniz Bayiyi Seçin</h3>
 					<div class="dealer-list" id="dealerList">
 						<!-- Bayiler dinamik yuklenir -->
 						<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
-							<p>Bayiler yukleniyor...</p>
+							<p>Bayiler yükleniyor...</p>
 						</div>
 					</div>
 					<button class="dealer-continue-btn" id="dealerContinueBtn" disabled onclick="confirmPageDealerSelection()">
@@ -127,8 +127,8 @@
 
 				<!-- Teklif Iptal Link -->
 				<div class="cancel-offer-link-wrapper" id="cancelOfferLinkWrapper" style="display: none;">
-					<p class="cancel-offer-description">Mevcut teklifinizi iptal ederek yeniden teklif almak icin alttaki linke tiklayabilirsiniz</p>
-					<a href="javascript:void(0)" class="cancel-offer-link" id="btnCancelOffer" onclick="cancelActiveOffer()">Teklifi Iptal Et</a>
+					<p class="cancel-offer-description">Mevcut teklifinizi iptal ederek yeniden teklif almak için alttaki linke tıklayabilirsiniz</p>
+					<a href="javascript:void(0)" class="cancel-offer-link" id="btnCancelOffer" onclick="cancelActiveOffer()">Teklifi İptal Et</a>
 				</div>
 
 				<!-- Teklif Gecmisi Timeline -->
@@ -137,16 +137,16 @@
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<polyline points="6 9 12 15 18 9"/>
 						</svg>
-						Teklif gecmisi
+						Teklif geçmişi
 					</summary>
 					<div class="metadata-timeline" id="metadata-timeline">
-						<p class="timeline-empty">Yukleniyor...</p>
+						<p class="timeline-empty">Yükleniyor...</p>
 					</div>
 				</details>
 			</div>
 
 			<!-- Chat Column -->
-			<aside class="chat-column" id="chatColumn">
+			<aside class="chat-column minimized" id="chatColumn">
 				<button class="chat-close-mobile" id="chatCloseMobile" onclick="closeChatMobile()">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<line x1="18" y1="6" x2="6" y2="18"/>
@@ -158,20 +158,36 @@
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
 						</svg>
-						Mesajlar
+						Bayinize Sorun
 					</h3>
-					<span class="chat-badge" id="chatBadge" style="display: none;">0</span>
+					<div class="chat-header-actions">
+						<span class="chat-badge" id="chatBadge" style="display: none;">0</span>
+						<button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChatSize()" title="Büyüt/Küçült">
+							<svg id="chatMaximizeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+								<polyline points="15 3 21 3 21 9"/>
+								<polyline points="9 21 3 21 3 15"/>
+								<line x1="21" y1="3" x2="14" y2="10"/>
+								<line x1="3" y1="21" x2="10" y2="14"/>
+							</svg>
+							<svg id="chatMinimizeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;display:none;">
+								<polyline points="4 14 10 14 10 20"/>
+								<polyline points="20 10 14 10 14 4"/>
+								<line x1="14" y1="10" x2="21" y2="3"/>
+								<line x1="3" y1="21" x2="10" y2="14"/>
+							</svg>
+						</button>
+					</div>
 				</div>
 				<div class="chat-messages" id="chatMessages">
 					<div class="no-messages" id="noMessages">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
 						</svg>
-						<p>Henuz mesaj yok</p>
+						<p>Henüz mesaj yok</p>
 					</div>
 				</div>
 				<div class="chat-input-wrapper" id="chatInputWrapper">
-					<textarea id="messageInput" placeholder="Mesajinizi yazin..." rows="1" onkeydown="handleMessageKeydown(event)"></textarea>
+					<textarea id="messageInput" placeholder="Mesajınızı yazın..." rows="1" onkeydown="handleMessageKeydown(event)"></textarea>
 					<button class="btn-send-message" id="btnSendMessage" onclick="sendMessage()">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<line x1="22" y1="2" x2="11" y2="13"/>
@@ -185,7 +201,7 @@
 						<line x1="12" y1="8" x2="12" y2="12"/>
 						<line x1="12" y1="16" x2="12.01" y2="16"/>
 					</svg>
-					<p>Mesajlasma icin aktif bir teklifiniz olmalidir</p>
+					<p>Mesajlaşma için aktif bir teklifiniz olmalıdır</p>
 				</div>
 			</aside>
 		</div>
@@ -193,7 +209,7 @@
 
 	<!-- Mobile Chat Toggle -->
 	<button class="chat-toggle-mobile" id="chatToggleMobile" onclick="openChatMobile()">
-		Mesajlar
+		Bayinize Sorun
 		<span class="unread-badge" id="unreadBadgeMobile" style="display: none;">0</span>
 	</button>
 
@@ -204,7 +220,7 @@
 	<div class="offer-summary-overlay" id="offerSummaryOverlay">
 		<div class="offer-summary-modal">
 			<div class="offer-summary-header">
-				<h3>Teklif Ozeti</h3>
+				<h3>Teklif Özeti</h3>
 				<button class="offer-summary-close" onclick="closeOfferSummary()">
 					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<line x1="18" y1="6" x2="6" y2="18"/>
@@ -214,34 +230,34 @@
 			</div>
 			<div class="offer-summary-body">
 				<div class="offer-summary-dealer">
-					<div class="offer-summary-label">Teklif Istenen Bayi</div>
+					<div class="offer-summary-label">Teklif İstenen Bayi</div>
 					<div class="offer-summary-dealer-name" id="summaryDealerName">-</div>
 				</div>
 				<div class="offer-summary-products">
-					<div class="offer-summary-label">Secilen Urunler</div>
+					<div class="offer-summary-label">Seçilen Ürünler</div>
 					<div class="offer-summary-products-list" id="summaryProductsList">
 						<!-- Dinamik urun listesi -->
 					</div>
 					<div class="offer-summary-total">
-						<span class="offer-summary-total-label">Toplam Urun</span>
-						<span class="offer-summary-total-value" id="summaryTotalProducts">0 urun</span>
+						<span class="offer-summary-total-label">Toplam Ürün</span>
+						<span class="offer-summary-total-value" id="summaryTotalProducts">0 ürün</span>
 					</div>
 				</div>
 			</div>
 			<!-- Sozlesme Metni -->
 			<div class="offer-summary-contract">
-				<div class="offer-summary-contract-label">Teklif Sozlesme Metni</div>
+				<div class="offer-summary-contract-label">Teklif Sözleşme Metni</div>
 				<div class="offer-summary-contract-text" id="summaryContractText">
 					<!-- Supabase'den dinamik yuklenir -->
 				</div>
 				<label class="offer-summary-contract-checkbox">
 					<input type="checkbox" id="contractAcceptCheckbox" onchange="toggleContractAccept()">
-					<span>Sozlesme metnini okudum ve kabul ediyorum</span>
+					<span>Sözleşme metnini okudum ve kabul ediyorum</span>
 				</label>
 			</div>
 			<div class="offer-summary-footer">
-				<button class="btn-summary-cancel" onclick="closeOfferSummary()">Iptal</button>
-				<button class="btn-summary-confirm" id="btnSummaryConfirm" disabled onclick="confirmOfferRequest()">Onayla ve Gonder</button>
+				<button class="btn-summary-cancel" onclick="closeOfferSummary()">İptal</button>
+				<button class="btn-summary-confirm" id="btnSummaryConfirm" disabled onclick="confirmOfferRequest()">Onayla ve Gönder</button>
 			</div>
 		</div>
 	</div>
@@ -254,9 +270,9 @@
 					<polyline points="20 6 9 17 4 12"/>
 				</svg>
 			</div>
-			<h3 class="modal-title">Teklif Talebiniz Alindi!</h3>
-			<p class="modal-text">Teklif talebiniz bayinize iletildi. Bayiniz en kisa surede size ozel fiyat teklifi hazirlayacaktir.</p>
-			<button class="modal-btn" onclick="window.location.href='isyerim-musteri-anasayfa.html'">Anasayfaya Don</button>
+			<h3 class="modal-title">Teklif Talebiniz Alındı!</h3>
+			<p class="modal-text">Teklif talebiniz bayinize iletildi. Bayiniz en kısa sürede size özel fiyat teklifi hazırlayacaktır.</p>
+			<button class="modal-btn" onclick="window.location.href='isyerim-musteri-anasayfa.html'">Anasayfaya Dön</button>
 		</div>
 	</div>
 
@@ -269,9 +285,9 @@
 				</svg>
 			</div>
 			<h3 class="modal-title">Teklifi Kabul Ettiniz!</h3>
-			<p class="modal-text">Artik avantajli fiyatlarla siparislerinizi verebilirsiniz.</p>
+			<p class="modal-text">Artık avantajlı fiyatlarla siparişlerinizi verebilirsiniz.</p>
 			<div class="modal-actions-row">
-				<button class="modal-btn-outline" onclick="window.location.href='isyerim-musteri-anasayfa.html'">Anasayfaya Don</button>
+				<button class="modal-btn-outline" onclick="window.location.href='isyerim-musteri-anasayfa.html'">Anasayfaya Dön</button>
 				<button class="modal-btn" onclick="window.location.href='isyerim-musteri-sepet.html'">Sepete Git</button>
 			</div>
 		</div>
@@ -280,7 +296,7 @@
 	<!-- Loading Overlay -->
 	<div class="loading-overlay" id="loadingOverlay">
 		<div class="loading-spinner"></div>
-		<div class="loading-text" id="loadingText">Yukleniyor...</div>
+		<div class="loading-text" id="loadingText">Yükleniyor...</div>
 	</div>
 
 	<!-- Confirmation Modal -->
@@ -293,14 +309,14 @@
 					<line x1="12" y1="17" x2="12.01" y2="17"/>
 				</svg>
 			</div>
-			<h3 class="modal-title" id="confirmationTitle">Teklifi Iptal Et</h3>
+			<h3 class="modal-title" id="confirmationTitle">Teklifi İptal Et</h3>
 			<p class="modal-text modal-text-warning" id="confirmationMessage"></p>
 			<div class="modal-actions">
 				<button class="modal-btn modal-btn-cancel" onclick="closeConfirmationModal()">
-					Vazgec
+					Vazgeç
 				</button>
 				<button class="modal-btn modal-btn-danger" id="confirmationActionBtn">
-					Evet, Iptal Et
+					Evet, İptal Et
 				</button>
 			</div>
 		</div>
@@ -310,44 +326,44 @@
 	<div class="overlay" id="securityQuestionsOverlay">
 		<div class="overlay-content security-overlay-content">
 			<div class="security-header">
-				<h3>Guvenlik Beyanlari</h3>
+				<h3>Güvenlik Beyanları</h3>
 				<div class="security-progress-bar">
 					<div class="security-progress-fill" id="securityProgressFill"></div>
 				</div>
 			</div>
 			<div class="security-questions-scroll">
 				<div class="security-question-item">
-					<p class="security-question-text"><span class="security-question-number">1</span>Kullanilan ve depolanan LPG tupleri farkli alanlardadir. Depolama ve kullanim alanlari zemin seviyesi altinda (bodrum v.s.) degildir. Bu ortamlarda havalandirma menfezi vardir.</p>
+					<p class="security-question-text"><span class="security-question-number">1</span>Kullanılan ve depolanan LPG tüpleri farklı alanlardadır. Depolama ve kullanım alanları zemin seviyesi altında (bodrum v.s.) değildir. Bu ortamlarda havalandırma menfezi vardır.</p>
 					<div class="security-radio-group">
 						<label><input type="radio" name="secQ1" value="yes"> Evet</label>
-						<label><input type="radio" name="secQ1" value="no"> Hayir</label>
+						<label><input type="radio" name="secQ1" value="no"> Hayır</label>
 					</div>
 				</div>
 				<div class="security-question-item">
-					<p class="security-question-text"><span class="security-question-number">2</span>Kullandigimiz LPG Dedantoru, LPG hortumu, LPG boru tesisati ve diger ekipmanlar yasal standartlara uygundur ve LPG hortum uzunlugu 150 cm'den kisadir.</p>
+					<p class="security-question-text"><span class="security-question-number">2</span>Kullandığımız LPG Dedantörü, LPG hortumu, LPG boru tesisatı ve diğer ekipmanlar yasal standartlara uygundur ve LPG hortum uzunluğu 150 cm'den kısadır.</p>
 					<div class="security-radio-group">
 						<label><input type="radio" name="secQ2" value="yes"> Evet</label>
-						<label><input type="radio" name="secQ2" value="no"> Hayir</label>
+						<label><input type="radio" name="secQ2" value="no"> Hayır</label>
 					</div>
 				</div>
 				<div class="security-question-item">
-					<p class="security-question-text"><span class="security-question-number">3</span>LPG tuplerinin depolanacagi ve kullanilacagi alanlara 1 m den daha az mesafede gaz kaçaklarinin toplanarak tehlikeli olabilecegi yerler bulunmamaktadir.</p>
+					<p class="security-question-text"><span class="security-question-number">3</span>LPG tüplerinin depolanacağı ve kullanılacağı alanlara 1 m den daha az mesafede gaz kaçaklarının toplanarak tehlikeli olabilecegi yerler bulunmamaktadır.</p>
 					<div class="security-radio-group">
 						<label><input type="radio" name="secQ3" value="yes"> Evet</label>
-						<label><input type="radio" name="secQ3" value="no"> Hayir</label>
+						<label><input type="radio" name="secQ3" value="no"> Hayır</label>
 					</div>
 				</div>
 				<div class="security-question-item">
-					<p class="security-question-text"><span class="security-question-number">4</span>LPG Tuplerinin depolanacagi veya kullanilacagi alanlara 3 m den daha az mesafede elektrikli cihaz, yanici ve/veya kolay tutusabilen madde bulunmamaktadir.</p>
+					<p class="security-question-text"><span class="security-question-number">4</span>LPG Tüplerinin depolanacağı veya kullanılacağı alanlara 3 m den daha az mesafede elektrikli cihaz, yanıcı ve/veya kolay tutuşabilen madde bulunmamaktadır.</p>
 					<div class="security-radio-group">
 						<label><input type="radio" name="secQ4" value="yes"> Evet</label>
-						<label><input type="radio" name="secQ4" value="no"> Hayir</label>
+						<label><input type="radio" name="secQ4" value="no"> Hayır</label>
 					</div>
 				</div>
 			</div>
 			<div class="security-checkbox-container">
 				<input type="checkbox" id="securityAcceptCheckbox">
-				<label for="securityAcceptCheckbox">Yukaridaki beyanlarimin dogrulugunu kabul ederim.</label>
+				<label for="securityAcceptCheckbox">Yukarıdaki beyanlarımın doğruluğunu kabul ederim.</label>
 			</div>
 			<button class="btn-submit" id="securitySubmitBtn" onclick="submitSecurityAnswers()">Devam Et</button>
 		</div>
@@ -363,7 +379,7 @@
 					<line x1="12" y1="16" x2="12.01" y2="16"/>
 				</svg>
 			</div>
-			<p class="error-message">Uyelik isleminize devam edemezsiniz. <span class="error-phone">444 47 72</span> numarali cagri merkezini arayabilirsiniz.</p>
+			<p class="error-message">Üyelik işleminize devam edemezsiniz. <span class="error-phone">444 47 72</span> numaralı çağrı merkezini arayabilirsiniz.</p>
 			<button class="btn-close-overlay" onclick="closeSecurityError()">Tamam</button>
 		</div>
 	</div>

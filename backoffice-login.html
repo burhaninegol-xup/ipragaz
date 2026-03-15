@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giris - Ipragaz Back Office</title>
+    <title>Giriş - İpragaz Back Office</title>
     <script src="js/project-auth-check.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -330,17 +330,17 @@
         <div class="login-logo">
             <img src="./ipragaz-160x34px.svg" alt="İpragaz">
             <h1>Back Office</h1>
-            <p>Bayi Yonetim Paneli</p>
+            <p>Bayi Yönetim Paneli</p>
         </div>
 
         <!-- Login Card -->
         <div class="login-card">
-            <h2>Hosgeldiniz</h2>
-            <p>Devam etmek icin giris yapin</p>
+            <h2>Hoşgeldiniz</h2>
+            <p>Devam etmek için giriş yapın</p>
 
             <!-- Mobile Warning -->
             <div class="mobile-warning">
-                <span>Bu panel masaustu cihazlar icin optimize edilmistir. En iyi deneyim icin bilgisayar kullanin.</span>
+                <span>Bu panel masaüstü cihazlar için optimize edilmiştir. En iyi deneyim için bilgisayar kullanın.</span>
             </div>
 
             <!-- Error Message -->
@@ -350,13 +350,13 @@
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <span id="errorText">Kullanici adi veya sifre hatali</span>
+                <span id="errorText">Kullanıcı adı veya şifre hatalı</span>
             </div>
 
             <!-- Login Form -->
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label class="form-label">Kullanici Adi</label>
+                    <label class="form-label">Kullanıcı Adı</label>
                     <div class="form-input-wrapper">
                         <span class="form-icon">
                             <svg viewBox="0 0 24 24">
@@ -369,7 +369,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Sifre</label>
+                    <label class="form-label">Şifre</label>
                     <div class="form-input-wrapper">
                         <span class="form-icon">
                             <svg viewBox="0 0 24 24">
@@ -390,13 +390,13 @@
                 <div class="form-options">
                     <label class="form-checkbox">
                         <input type="checkbox" id="rememberMe">
-                        <span>Beni hatirla</span>
+                        <span>Beni hatırla</span>
                     </label>
-                    <a href="#" class="forgot-link" onclick="showForgotPassword(event)">Sifremi unuttum</a>
+                    <a href="#" class="forgot-link" onclick="showForgotPassword(event)">Şifremi unuttum</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">
-                    <span id="loginBtnText">Giris Yap</span>
+                    <span id="loginBtnText">Giriş Yap</span>
                     <svg viewBox="0 0 24 24" id="loginBtnIcon">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -407,7 +407,7 @@
 
         <!-- Footer -->
         <div class="login-footer">
-            <p>&copy; 2024 Ipragaz. Tum haklar saklidir.</p>
+            <p>&copy; 2024 İpragaz. Tüm hakları saklıdır.</p>
         </div>
     </div>
 
@@ -434,7 +434,7 @@
         function resetLoginButton() {
             var loginBtn = document.getElementById('loginBtn');
             loginBtn.disabled = false;
-            loginBtn.innerHTML = '<span id="loginBtnText">Giris Yap</span><svg viewBox="0 0 24 24" id="loginBtnIcon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+            loginBtn.innerHTML = '<span id="loginBtnText">Giriş Yap</span><svg viewBox="0 0 24 24" id="loginBtnIcon"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
         }
 
         // Handle login
@@ -454,7 +454,7 @@
 
             // Show loading
             loginBtn.disabled = true;
-            loginBtnText.textContent = 'Giris yapiliyor...';
+            loginBtnText.textContent = 'Giriş yapılıyor...';
             loginBtnIcon.outerHTML = '<div class="spinner"></div>';
 
             try {
@@ -493,7 +493,7 @@
 
             } catch (error) {
                 console.error('Login error:', error);
-                errorText.textContent = 'Bir hata olustu. Lutfen tekrar deneyin.';
+                errorText.textContent = 'Bir hata oluştu. Lütfen tekrar deneyin.';
                 errorMessage.classList.add('show');
                 resetLoginButton();
             }
@@ -502,7 +502,7 @@
         // Forgot password
         function showForgotPassword(e) {
             e.preventDefault();
-            alert('Sifre sifirlama icin sistem yoneticisi ile iletisime gecin.');
+            alert('Şifre sıfırlama için sistem yöneticisi ile iletişime geçin.');
         }
 
         // Check if already logged in

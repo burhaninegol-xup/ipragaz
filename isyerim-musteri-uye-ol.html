@@ -472,8 +472,8 @@
 				<select class="form-select" id="neighborhoodSelect" disabled>
 					<option value="">Önce ilçe seçiniz</option>
 				</select>
-				<input type="text" class="form-input" id="neighborhoodManualInput" placeholder="Mahalle adini yaziniz..." style="display:none;">
-				<a href="javascript:void(0)" id="neighborhoodBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden sec</a>
+				<input type="text" class="form-input" id="neighborhoodManualInput" placeholder="Mahalle adını yazınız..." style="display:none;">
+				<a href="javascript:void(0)" id="neighborhoodBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden seç</a>
 			</div>
 
 			<div class="form-group">
@@ -506,7 +506,7 @@
 					<svg class="info-icon" viewBox="0 0 24 24" fill="currentColor">
 						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
 					</svg>
-					Tabela Unvanı
+					Tabela Ünvanı
 				</label>
 				<input type="text" class="form-input" id="tabelaUnvani" placeholder="">
 			</div>
@@ -789,10 +789,10 @@
 				result.data.forEach(function(n) {
 					neighborhoodSelect.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
 				});
-				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 			} else {
 				neighborhoodSelect.innerHTML = '<option value="">Mahalle bulunamadı</option>';
-				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diğer (Elle yazınız) \u2014</option>';
 				neighborhoodSelect.disabled = false;
 			}
 		}
