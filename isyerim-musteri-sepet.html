@@ -108,7 +108,18 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			margin-bottom: 20px;
+			margin-bottom: 12px;
+		}
+
+		.cart-address-info {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 16px;
+			background: #FFF5F5;
+			border-radius: 8px;
+			margin-bottom: 16px;
+			font-size: 14px;
 		}
 
 		.cart-title-wrapper {
@@ -652,6 +663,17 @@
 				</button>
 			</div>
 
+			<!-- Seçili Adres Bilgisi -->
+			<div id="cartAddressInfo" class="cart-address-info" style="display: none;">
+				<svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;color:#E30613;flex-shrink:0;">
+					<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+				</svg>
+				<div>
+					<span id="cartAddressName" style="font-weight:600;"></span>
+					<span id="cartAddressDetail" style="color:#666;margin-left:6px;"></span>
+				</div>
+			</div>
+
 			<!-- Cart Items -->
 			<div class="cart-items" id="cartItems">
 				<!-- Dinamik olarak doldurulacak -->
@@ -890,12 +912,43 @@
 			}
 		}
 
-		// Sayfa yüklendiğinde sepeti render et
+		// Seçili adres bilgisini yükle
+		async function loadCartAddress() {
+			var branchId = sessionStorage.getItem('selected_address_id');
+			var infoEl = document.getElementById('cartAddressInfo');
+			var nameEl = document.getElementById('cartAddressName');
+			var detailEl = document.getElementById('cartAddressDetail');
+
+			if (!branchId) {
+				infoEl.style.display = 'none';
+				return;
+			}
+
+			try {
+				var result = await BranchesService.getById(branchId);
+				if (result.data) {
+					var branch = result.data;
+					nameEl.textContent = branch.branch_name || 'Adres';
+					detailEl.textContent = branch.full_address || ((branch.district || '') + (branch.district && branch.city ? ', ' : '') + (branch.city || ''));
+					infoEl.style.display = 'flex';
+				}
+			} catch (e) {
+				infoEl.style.display = 'none';
+			}
+		}
+
+		// Sayfa yüklendiğinde sepeti render et ve adres bilgisini yükle
 		renderCart();
+		loadCartAddress();
 
 		// Sepet güncellendiğinde yeniden render et
 		window.addEventListener('cartUpdated', function() {
 			renderCart();
+		});
+
+		// Adres değiştiğinde güncelle
+		window.addEventListener('addressChanged', function() {
+			loadCartAddress();
 		});
 
 		// Sepeti temizle butonu

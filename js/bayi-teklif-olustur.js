@@ -1180,8 +1180,11 @@
 			}
 		}
 
+		// Global değişken - sözleşme metni
+		var dealerContractText = '';
+
 		// Populate offer preview modal
-		function populateOfferPreview() {
+		async function populateOfferPreview() {
 			// Müşteri bilgisi
 			var customerName = $('#customer-name').text();
 			$('#preview-customer-name').text(customerName);
@@ -1225,10 +1228,21 @@
 			$('#preview-retail-total').text(totalRetail.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
 			$('#preview-discounted-total').text(totalDiscounted.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
 			$('#preview-benefit-total').text(benefit.toLocaleString('tr-TR', {minimumFractionDigits: 2}) + ' TL');
+
+			// Sözleşme metnini yükle
+			try {
+				var contractResult = await SettingsService.getByKey('dealer_offer_contract_text');
+				dealerContractText = contractResult.data || 'Sözleşme metni yüklenemedi.';
+			} catch (e) {
+				dealerContractText = 'Sözleşme metni yüklenemedi.';
+			}
+			$('#previewContractText').text(dealerContractText);
+			$('#previewContractCheckbox').prop('checked', false);
+			$('#preview-modal-send').prop('disabled', true);
 		}
 
 		// Save button
-		$('#save-btn').on('click', function() {
+		$('#save-btn').on('click', async function() {
 			var hasError = false;
 			var $firstError = null;
 			var errorMessage = '';
@@ -1281,12 +1295,17 @@
 				return;
 			}
 
-			populateOfferPreview();
+			await populateOfferPreview();
 			$('#offer-preview-modal').addClass('active');
 		});
 
 		$('#modal-cancel').on('click', function() {
 			$('#save-modal').removeClass('active');
+		});
+
+		// Sözleşme checkbox handler
+		$('#previewContractCheckbox').on('change', function() {
+			$('#preview-modal-send').prop('disabled', !this.checked);
 		});
 
 		// Preview modal close/cancel handlers
@@ -1413,6 +1432,16 @@
 						const { error: detailsError } = await OffersService.updateDetails(currentOffer.id, offerDetails);
 						if (detailsError) throw new Error(detailsError);
 
+						// Bayi sözleşme onayını kaydet
+						await supabaseClient
+							.from('offers')
+							.update({
+								dealer_contract_text_snapshot: dealerContractText,
+								dealer_contract_accepted: true,
+								dealer_contract_accepted_at: new Date().toISOString()
+							})
+							.eq('id', currentOffer.id);
+
 						// Fiyat guncelleme logunu kaydet
 						await OfferLogsService.log(
 							currentOffer.id,
@@ -1433,9 +1462,12 @@
 						const offerData = {
 							dealer_id: currentDealerId,
 							customer_id: customerId,
-							customer_branch_id: branchIdToUse, // Yeni müşteri için şube ID, mevcut müşteri için null (teklifler müşteri bazlı)
+							customer_branch_id: branchIdToUse,
 							status: saveAsAccepted ? 'accepted' : 'pending',
-							notes: 'Bayi panelinden oluşturuldu'
+							notes: 'Bayi panelinden oluşturuldu',
+							dealer_contract_text_snapshot: dealerContractText,
+							dealer_contract_accepted: true,
+							dealer_contract_accepted_at: new Date().toISOString()
 						};
 						const { data: newOffer, error: offerError } = await OffersService.create(offerData, offerDetails);
 						if (offerError) throw new Error(offerError);

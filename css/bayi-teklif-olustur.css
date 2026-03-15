@@ -2820,3 +2820,56 @@ body {
 	color: #856404;
 	margin-top: 2px;
 }
+
+/* Bayi Teklif Sözleşme */
+.preview-contract {
+	padding: 16px 24px 0;
+}
+
+.preview-contract-label {
+	font-size: 11px;
+	color: #888;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.preview-contract-text {
+	max-height: 5.2em;
+	overflow-y: auto;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	padding: 12px;
+	font-size: 13px;
+	line-height: 1.3em;
+	color: #444;
+	background: #f9fafb;
+}
+
+.preview-contract-checkbox {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin-top: 12px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #333;
+	font-weight: 500;
+}
+
+.preview-contract-checkbox input[type="checkbox"] {
+	display: inline-block !important;
+	-webkit-appearance: checkbox !important;
+	appearance: checkbox !important;
+	width: 18px !important;
+	height: 18px !important;
+	min-width: 18px;
+	min-height: 18px;
+	margin-top: 1px;
+	accent-color: #1a73e8;
+	cursor: pointer;
+	flex-shrink: 0;
+	opacity: 1 !important;
+	position: static !important;
+}

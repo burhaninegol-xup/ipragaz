@@ -353,13 +353,13 @@ function createProductCard(product) {
 
 		campaignBadgeHtml =
 			'<div class="product-campaign-badge">' +
-				'<span class="badge-label">Tavsiye edilen<br>kampanyali fiyat</span>' +
+				'<span class="badge-label">Anlaşılan Fiyat</span>' +
 				'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
 			'</div>';
 
 		strikeThroughHtml = '<div class="product-original-price"><del>₺' + retailPriceFormatted + '</del></div>' +
-			'<div class="price-label-below">Tavan Fiyattır</div>';
-		// Avantajlı Fiyat badge'i kaldırıldı - Tavan Fiyattır etiketi kullanılacak
+			'<div class="price-label-below">Tavan Fiyatıdır</div>';
+		// Avantajlı Fiyat badge'i kaldırıldı - Tavan Fiyatıdır etiketi kullanılacak
 		advantageLabelHtml = '';
 		cardClass = ' in-offer';
 		buttonHtml = '<button class="btn-add-cart">Sepete Ekle</button>';
@@ -381,10 +381,10 @@ function createProductCard(product) {
 		cardClass = ' no-offer';
 	}
 
-	// Teklifsiz kartlarda fiyatın altına "Tavan Fiyattır" etiketi ekle
+	// Teklifsiz kartlarda fiyatın altına "Tavan Fiyatıdır" etiketi ekle
 	var priceLabelBelowHtml = '';
 	if (!priceInfo.isInOffer || branchOfferStatus !== 'accepted') {
-		priceLabelBelowHtml = '<div class="price-label-below">Tavan Fiyattır</div>';
+		priceLabelBelowHtml = '<div class="price-label-below">Tavan Fiyatıdır</div>';
 	}
 
 	return '<div class="product-card' + cardClass + '" data-product-id="' + product.id + '" style="cursor: pointer;">' +
@@ -854,21 +854,28 @@ async function openRepeatOrderModal() {
 	// Modal icerigini olustur
 	var bodyHtml = '';
 
-	// Sube bilgisi (en ustte)
-	var branchName = sessionStorage.getItem('selected_branch_name') || '';
-	var branchAddress = sessionStorage.getItem('selected_branch_address') || '';
-	if (branchName) {
-		bodyHtml += '<div class="repeat-order-branch">' +
-			'<div class="repeat-order-branch-icon">' +
-				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-					'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>' +
-					'<polyline points="9 22 9 12 15 12 15 22"/>' +
-				'</svg>' +
-				'<span class="repeat-order-branch-label">Teslimat Adresi</span>' +
-			'</div>' +
-			'<div class="repeat-order-branch-name">' + branchName + '</div>' +
-			(branchAddress ? '<div class="repeat-order-branch-address">' + branchAddress + '</div>' : '') +
-		'</div>';
+	// Teslimat adresi (secili adres bilgisi)
+	var selectedBranchId = sessionStorage.getItem('selected_address_id');
+	if (selectedBranchId) {
+		try {
+			var branchResult = await BranchesService.getById(selectedBranchId);
+			if (branchResult.data) {
+				var branch = branchResult.data;
+				var branchName = branch.branch_name || '';
+				var branchAddress = branch.full_address || ((branch.district || '') + (branch.district && branch.city ? ', ' : '') + (branch.city || ''));
+				bodyHtml += '<div class="repeat-order-branch">' +
+					'<div class="repeat-order-branch-icon">' +
+						'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+							'<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>' +
+							'<polyline points="9 22 9 12 15 12 15 22"/>' +
+						'</svg>' +
+						'<span class="repeat-order-branch-label">Teslimat Adresi</span>' +
+					'</div>' +
+					'<div class="repeat-order-branch-name">' + branchName + '</div>' +
+					(branchAddress ? '<div class="repeat-order-branch-address">' + branchAddress + '</div>' : '') +
+				'</div>';
+			}
+		} catch (e) { }
 	}
 
 	// Bayi bilgisi

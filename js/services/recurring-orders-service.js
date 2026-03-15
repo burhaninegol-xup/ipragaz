@@ -18,6 +18,7 @@ const RecurringOrdersService = {
                     customer_id: data.customer_id,
                     dealer_id: data.dealer_id,
                     customer_branch_id: data.customer_branch_id,
+                    frequency: data.frequency || 'weekly',
                     day_of_week: data.day_of_week,
                     delivery_time: data.delivery_time,
                     payment_method: data.payment_method || 'cash',

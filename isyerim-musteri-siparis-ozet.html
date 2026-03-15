@@ -897,6 +897,119 @@
 			color: #888;
 		}
 
+		/* Frekans Seçici */
+		.routine-frequency-selector {
+			display: flex;
+			gap: 8px;
+			margin-bottom: 16px;
+			padding: 4px;
+			background: #f5f5f5;
+			border-radius: 12px;
+		}
+
+		.routine-freq-option {
+			flex: 1;
+			text-align: center;
+			padding: 10px 6px;
+			border-radius: 10px;
+			font-size: 13px;
+			font-weight: 500;
+			color: #666;
+			cursor: pointer;
+			transition: all 0.2s;
+			border: none;
+			background: transparent;
+		}
+
+		.routine-freq-option.selected {
+			background: #e31e24;
+			color: white;
+			box-shadow: 0 2px 8px rgba(227, 30, 36, 0.3);
+		}
+
+		.routine-freq-option:not(.selected):hover {
+			background: #eee;
+		}
+
+		/* Modal Adres & Bayi Kartları */
+		.routine-modal-address {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			padding: 15px;
+			background: #fff5f0;
+			border-radius: 12px;
+			margin-bottom: 12px;
+			border-left: 4px solid #ff8c42;
+		}
+
+		.routine-modal-address-icon {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 4px;
+		}
+
+		.routine-modal-address-icon svg {
+			width: 18px;
+			height: 18px;
+			color: #ff8c42;
+		}
+
+		.routine-modal-address-icon span {
+			font-size: 12px;
+			color: #888;
+			font-weight: 500;
+		}
+
+		.routine-modal-address-name {
+			font-size: 15px;
+			font-weight: 600;
+			color: #333;
+		}
+
+		.routine-modal-address-detail {
+			font-size: 12px;
+			color: #666;
+			line-height: 1.4;
+		}
+
+		.routine-modal-dealer {
+			display: flex;
+			align-items: flex-start;
+			gap: 10px;
+			padding: 15px;
+			background: #f9f9f9;
+			border-radius: 12px;
+			margin-bottom: 16px;
+		}
+
+		.routine-modal-dealer svg {
+			width: 20px;
+			height: 20px;
+			color: #e31e24;
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+
+		.routine-modal-dealer-info {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		.routine-modal-dealer-name {
+			font-size: 14px;
+			color: #333;
+			font-weight: 500;
+		}
+
+		.routine-modal-dealer-phone,
+		.routine-modal-dealer-location {
+			font-size: 12px;
+			color: #666;
+		}
+
 		.btn-routine {
 			width: 100%;
 			padding: 14px;
@@ -1287,7 +1400,7 @@
 					</svg>
 					<h3 class="routine-title">Rutin Sipariş</h3>
 				</div>
-				<p class="routine-desc">Bu siparişi her hafta aynı gün ve saatte otomatik tekrarlayın. Düzenli ihtiyaçlarınız için idealdir.</p>
+				<p class="routine-desc">Bu siparişi düzenli olarak otomatik tekrarlayın. Sıklığı seçerek düzenli ihtiyaçlarınızı karşılayın.</p>
 
 				<div class="routine-toggle-container">
 					<label class="routine-toggle">
@@ -1295,9 +1408,16 @@
 						<span class="toggle-slider"></span>
 					</label>
 					<div class="routine-toggle-info">
-						<span class="routine-toggle-title">Her hafta aynı siparişi tekrarla</span>
+						<span class="routine-toggle-title" id="routineToggleTitle">Her hafta aynı siparişi tekrarla</span>
 						<span class="routine-toggle-desc" id="routineScheduleText">Teslimat günü ve saati otomatik belirlenecek</span>
 					</div>
+				</div>
+
+				<div class="routine-frequency-selector" id="routineFrequencySelector" style="display:none;">
+					<div class="routine-freq-option" data-freq="daily">Günlük</div>
+					<div class="routine-freq-option selected" data-freq="weekly">Haftalık</div>
+					<div class="routine-freq-option" data-freq="biweekly">2 Haftalık</div>
+					<div class="routine-freq-option" data-freq="monthly">Aylık</div>
 				</div>
 
 				<button class="btn-routine" id="btnCreateRoutine" disabled>
@@ -1312,7 +1432,7 @@
 					<polyline points="22 4 12 14.01 9 11.01"/>
 				</svg>
 				<h4>Rutin Sipariş Oluşturuldu!</h4>
-				<p>Siparişiniz her hafta otomatik olarak tekrarlanacak. Siparişlerim sayfasından yönetebilirsiniz.</p>
+				<p id="routineSuccessText">Siparişiniz otomatik olarak tekrarlanacak. Siparişlerim sayfasından yönetebilirsiniz.</p>
 			</div>
 
 			<!-- Order Details -->
@@ -1438,10 +1558,36 @@
 						<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
 					</svg>
 				</div>
-				<h2>Haftalık Rutin Sipariş</h2>
+				<h2 id="routineModalTitle">Haftalık Rutin Sipariş</h2>
 			</div>
 
 			<div class="routine-modal-body">
+				<!-- Teslimat Adresi -->
+				<div class="routine-modal-address" id="routineModalAddress" style="display:none;">
+					<div class="routine-modal-address-icon">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+							<polyline points="9 22 9 12 15 12 15 22"/>
+						</svg>
+						<span>Teslimat Adresi</span>
+					</div>
+					<div class="routine-modal-address-name" id="routineModalAddressName"></div>
+					<div class="routine-modal-address-detail" id="routineModalAddressDetail"></div>
+				</div>
+
+				<!-- Bayi Bilgisi -->
+				<div class="routine-modal-dealer" id="routineModalDealer" style="display:none;">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+						<circle cx="12" cy="10" r="3"/>
+					</svg>
+					<div class="routine-modal-dealer-info">
+						<div class="routine-modal-dealer-name" id="routineModalDealerName"></div>
+						<div class="routine-modal-dealer-phone" id="routineModalDealerPhone"></div>
+						<div class="routine-modal-dealer-location" id="routineModalDealerLocation"></div>
+					</div>
+				</div>
+
 				<!-- Özet Kartı -->
 				<div class="routine-summary-card">
 					<div class="routine-summary-title">Sipariş Özeti</div>
@@ -1476,8 +1622,8 @@
 						</svg>
 						Önemli Bilgiler
 					</div>
-					<ul>
-						<li>Her hafta otomatik sipariş oluşturulur</li>
+					<ul id="routineInfoList">
+						<li>Otomatik sipariş oluşturulur</li>
 						<li>Sipariş öncesi bildirim alırsınız</li>
 						<li>İstediğiniz zaman iptal edebilirsiniz</li>
 					</ul>
@@ -1923,10 +2069,39 @@
 		var routineConfirmModal = document.getElementById('routineConfirmModal');
 		var btnRoutineConfirm = document.getElementById('btnRoutineConfirm');
 		var btnRoutineCancel = document.getElementById('btnRoutineCancel');
+		var frequencySelector = document.getElementById('routineFrequencySelector');
+		var selectedFrequency = 'weekly';
 
-		// Toggle checkbox - butonu aktif/pasif yap
+		var freqLabels = {
+			daily: 'Günlük',
+			weekly: 'Haftalık',
+			biweekly: '2 Haftalık',
+			monthly: 'Aylık'
+		};
+
+		var freqToggleTitles = {
+			daily: 'Her gün aynı siparişi tekrarla',
+			weekly: 'Her hafta aynı siparişi tekrarla',
+			biweekly: 'Her 2 haftada aynı siparişi tekrarla',
+			monthly: 'Her ay aynı siparişi tekrarla'
+		};
+
+		// Frekans seçici tıklama
+		var freqOptions = document.querySelectorAll('.routine-freq-option');
+		freqOptions.forEach(function(opt) {
+			opt.addEventListener('click', function() {
+				freqOptions.forEach(function(o) { o.classList.remove('selected'); });
+				this.classList.add('selected');
+				selectedFrequency = this.dataset.freq;
+				document.getElementById('routineToggleTitle').textContent = freqToggleTitles[selectedFrequency];
+				updateRoutineScheduleText();
+			});
+		});
+
+		// Toggle checkbox - butonu ve frekans seçiciyi aktif/pasif yap
 		routineCheckbox.addEventListener('change', function() {
 			btnCreateRoutine.disabled = !this.checked;
+			frequencySelector.style.display = this.checked ? 'flex' : 'none';
 			if (this.checked && currentOrder) {
 				updateRoutineScheduleText();
 			}
@@ -1940,11 +2115,16 @@
 			var dayName = getDayName(currentOrder.delivery_date);
 			var timeSlot = currentOrder.delivery_time || '';
 
-			if (dayName && timeSlot) {
-				scheduleText.textContent = 'Her ' + dayName + ' ' + timeSlot;
-			} else if (dayName) {
-				scheduleText.textContent = 'Her ' + dayName;
-			}
+			var prefix = {
+				daily: 'Her gün',
+				weekly: 'Her ' + dayName,
+				biweekly: 'Her 2 haftada ' + dayName,
+				monthly: 'Her ay ' + dayName
+			};
+
+			var text = prefix[selectedFrequency] || ('Her ' + dayName);
+			if (timeSlot) text += ' ' + timeSlot;
+			scheduleText.textContent = text;
 		}
 
 		// Gün adını al
@@ -1955,19 +2135,35 @@
 			return days[date.getDay()];
 		}
 
-		// Bir sonraki sipariş tarihini hesapla
-		function calculateNextOrderDate(deliveryDate) {
-			var date = new Date(deliveryDate);
-			var targetDay = date.getDay();
+		// Bir sonraki sipariş tarihini hesapla (frekansa göre)
+		function calculateNextOrderDate(deliveryDate, frequency) {
+			var freq = frequency || selectedFrequency || 'weekly';
 			var today = new Date();
+			var nextDate = new Date(today);
 
-			var daysUntilNext = targetDay - today.getDay();
-			if (daysUntilNext <= 0) {
-				daysUntilNext += 7;
+			if (freq === 'daily') {
+				nextDate.setDate(today.getDate() + 1);
+			} else if (freq === 'biweekly') {
+				var date = new Date(deliveryDate);
+				var targetDay = date.getDay();
+				var daysUntilNext = targetDay - today.getDay();
+				if (daysUntilNext <= 0) daysUntilNext += 14;
+				nextDate.setDate(today.getDate() + daysUntilNext);
+			} else if (freq === 'monthly') {
+				var date = new Date(deliveryDate);
+				nextDate = new Date(today.getFullYear(), today.getMonth() + 1, date.getDate());
+				if (nextDate <= today) {
+					nextDate = new Date(today.getFullYear(), today.getMonth() + 2, date.getDate());
+				}
+			} else {
+				// weekly (default)
+				var date = new Date(deliveryDate);
+				var targetDay = date.getDay();
+				var daysUntilNext = targetDay - today.getDay();
+				if (daysUntilNext <= 0) daysUntilNext += 7;
+				nextDate.setDate(today.getDate() + daysUntilNext);
 			}
 
-			var nextDate = new Date(today);
-			nextDate.setDate(today.getDate() + daysUntilNext);
 			return nextDate.toISOString().split('T')[0];
 		}
 
@@ -1989,24 +2185,75 @@
 		});
 
 		// Rutin sipariş onay modalını aç
-		function openRoutineConfirmModal() {
+		async function openRoutineConfirmModal() {
+			// Modal başlığını frekansa göre güncelle
+			document.getElementById('routineModalTitle').textContent = freqLabels[selectedFrequency] + ' Rutin Sipariş';
+
+			// Teslimat adresi kartını doldur
+			var branchId = sessionStorage.getItem('selected_address_id');
+			var addressEl = document.getElementById('routineModalAddress');
+			if (branchId) {
+				try {
+					var branchResult = await BranchesService.getById(branchId);
+					if (branchResult.data) {
+						var branch = branchResult.data;
+						document.getElementById('routineModalAddressName').textContent = branch.branch_name || '';
+						document.getElementById('routineModalAddressDetail').textContent = branch.full_address || ((branch.district || '') + (branch.district && branch.city ? ', ' : '') + (branch.city || ''));
+						addressEl.style.display = 'flex';
+					}
+				} catch (e) { addressEl.style.display = 'none'; }
+			}
+
+			// Bayi bilgisi kartını doldur
+			var dealerEl = document.getElementById('routineModalDealer');
+			if (currentOrder.dealer) {
+				var dealer = currentOrder.dealer;
+				document.getElementById('routineModalDealerName').textContent = 'Bayi: ' + (dealer.name || '');
+				document.getElementById('routineModalDealerPhone').textContent = dealer.phone ? 'Tel: ' + dealer.phone : '';
+				var dealerLoc = '';
+				if (dealer.district && dealer.city) dealerLoc = dealer.district + ', ' + dealer.city;
+				else if (dealer.city) dealerLoc = dealer.city;
+				document.getElementById('routineModalDealerLocation').textContent = dealerLoc;
+				dealerEl.style.display = 'flex';
+			}
+
 			// Ürünleri modal'a doldur
 			var productsText = orderProducts.map(function(p) {
 				return p.quantity + 'x ' + p.name;
 			}).join('<br>');
 			document.getElementById('routineSummaryProducts').innerHTML = productsText;
 
-			// Zamanlama
+			// Zamanlama (frekansa göre)
 			var dayName = getDayName(currentOrder.delivery_date);
 			var timeSlot = currentOrder.delivery_time || '';
-			document.getElementById('routineSummarySchedule').textContent = 'Her ' + dayName + ' ' + timeSlot;
+			var schedulePrefix = {
+				daily: 'Her gün',
+				weekly: 'Her ' + dayName,
+				biweekly: 'Her 2 haftada ' + dayName,
+				monthly: 'Her ay ' + dayName
+			};
+			var scheduleText = (schedulePrefix[selectedFrequency] || ('Her ' + dayName));
+			if (timeSlot) scheduleText += ' ' + timeSlot;
+			document.getElementById('routineSummarySchedule').textContent = scheduleText;
 
 			// Adres
 			var address = currentOrder.delivery_address || 'Teslimat adresi';
 			document.getElementById('routineSummaryAddress').textContent = address;
 
+			// Önemli bilgiler metnini frekansa göre güncelle
+			var freqText = {
+				daily: 'Her gün otomatik sipariş oluşturulur',
+				weekly: 'Her hafta otomatik sipariş oluşturulur',
+				biweekly: 'Her 2 haftada otomatik sipariş oluşturulur',
+				monthly: 'Her ay otomatik sipariş oluşturulur'
+			};
+			var infoList = document.getElementById('routineInfoList');
+			infoList.innerHTML = '<li>' + (freqText[selectedFrequency] || freqText.weekly) + '</li>' +
+				'<li>Sipariş öncesi bildirim alırsınız</li>' +
+				'<li>İstediğiniz zaman iptal edebilirsiniz</li>';
+
 			// İlk sipariş tarihi
-			var nextDate = calculateNextOrderDate(currentOrder.delivery_date);
+			var nextDate = calculateNextOrderDate(currentOrder.delivery_date, selectedFrequency);
 			document.getElementById('routineFirstDate').textContent = formatDateTurkish(nextDate);
 
 			// Modal aç
@@ -2044,12 +2291,13 @@
 			try {
 				var deliveryDate = new Date(currentOrder.delivery_date);
 				var dayOfWeek = deliveryDate.getDay();
-				var nextOrderDate = calculateNextOrderDate(currentOrder.delivery_date);
+				var nextOrderDate = calculateNextOrderDate(currentOrder.delivery_date, selectedFrequency);
 
 				var recurringData = {
 					customer_id: sessionStorage.getItem('isyerim_customer_id'),
 					dealer_id: currentOrder.dealer_id,
 					customer_branch_id: currentOrder.customer_branch_id || sessionStorage.getItem('selected_address_id'),
+					frequency: selectedFrequency,
 					day_of_week: dayOfWeek,
 					delivery_time: currentOrder.delivery_time,
 					payment_method: currentOrder.payment_method,

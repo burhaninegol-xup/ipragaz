@@ -8,3 +8,7 @@
 - Her Bash komutu sonrası port 8080'in çalışıp çalışmadığını kontrol et
 - Çalışmıyorsa background'da yeniden başlat: `nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &`
 - Kontrol komutu: `lsof -iTCP:8080 -sTCP:LISTEN`
+
+ ## Oturum Başlangıç Görevi
+  - Her konuşmanın başında port 8080'i kontrol et
+  - Çalışmıyorsa `nohup npx http-server . -p 8080 -s > /dev/null 2>&1 &` ile başlat

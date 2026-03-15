@@ -24,6 +24,22 @@ const CustomerUsersService = {
     },
 
     /**
+     * Telefon numarasi ile pasif kullanici ara (login kontrolu icin)
+     * @param {string} phone - Telefon numarasi
+     * @returns {Promise<{data: Object|null, error: Object|null}>}
+     */
+    async getInactiveByPhone(phone) {
+        const { data, error } = await supabaseClient
+            .from('customer_users')
+            .select('id, phone, is_active')
+            .eq('phone', phone)
+            .eq('is_active', false)
+            .maybeSingle();
+
+        return { data, error };
+    },
+
+    /**
      * ID ile kullanici getir
      * @param {string} id - Kullanici ID
      * @returns {Promise<{data: Object|null, error: Object|null}>}

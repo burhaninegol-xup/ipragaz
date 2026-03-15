@@ -468,10 +468,12 @@
 			</div>
 
 			<div class="form-group">
-				<label class="form-label">Mahalle</label>
+				<label class="form-label">Mahalle <span style="color:#e31e24;">*</span></label>
 				<select class="form-select" id="neighborhoodSelect" disabled>
 					<option value="">Önce ilçe seçiniz</option>
 				</select>
+				<input type="text" class="form-input" id="neighborhoodManualInput" placeholder="Mahalle adini yaziniz..." style="display:none;">
+				<a href="javascript:void(0)" id="neighborhoodBackToList" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;">&#8617; Listeden sec</a>
 			</div>
 
 			<div class="form-group">
@@ -766,6 +768,12 @@
 			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
 			var districtId = districtSelect.value;
 
+			// Manuel giriş alanlarını sıfırla
+			document.getElementById('neighborhoodManualInput').style.display = 'none';
+			document.getElementById('neighborhoodManualInput').value = '';
+			document.getElementById('neighborhoodBackToList').style.display = 'none';
+			neighborhoodSelect.style.display = '';
+
 			if (!districtId) {
 				neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçiniz</option>';
 				neighborhoodSelect.disabled = true;
@@ -776,16 +784,37 @@
 			var result = await LocationsService.getNeighborhoodsByDistrictId(districtId);
 
 			if (result.data && result.data.length > 0) {
-				neighborhoodSelect.innerHTML = '<option value="">Mahalle Seçiniz (Opsiyonel)</option>';
+				neighborhoodSelect.innerHTML = '<option value="">Mahalle Seçiniz</option>';
 				neighborhoodSelect.disabled = false;
 				result.data.forEach(function(n) {
 					neighborhoodSelect.innerHTML += '<option value="' + n.id + '" data-name="' + n.name + '">' + n.name + '</option>';
 				});
+				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
 			} else {
 				neighborhoodSelect.innerHTML = '<option value="">Mahalle bulunamadı</option>';
-				neighborhoodSelect.disabled = true;
+				neighborhoodSelect.innerHTML += '<option value="__other__">\u2014 Diger (Elle yaziniz) \u2014</option>';
+				neighborhoodSelect.disabled = false;
 			}
 		}
+
+		// Mahalle "Diğer" seçildiğinde manuel giriş göster
+		document.getElementById('neighborhoodSelect').addEventListener('change', function() {
+			if (this.value === '__other__') {
+				this.style.display = 'none';
+				document.getElementById('neighborhoodManualInput').style.display = '';
+				document.getElementById('neighborhoodBackToList').style.display = '';
+				document.getElementById('neighborhoodManualInput').focus();
+			}
+		});
+
+		// Mahalle listesine geri dön
+		document.getElementById('neighborhoodBackToList').addEventListener('click', function() {
+			document.getElementById('neighborhoodSelect').style.display = '';
+			document.getElementById('neighborhoodSelect').value = '';
+			document.getElementById('neighborhoodManualInput').style.display = 'none';
+			document.getElementById('neighborhoodManualInput').value = '';
+			document.getElementById('neighborhoodBackToList').style.display = 'none';
+		});
 
 		// Sayfa yuklendiginde illeri getir
 		loadCities();
@@ -856,6 +885,18 @@
 			var districtSelect = document.getElementById('districtSelect');
 			if (!districtSelect.value) {
 				alert('Lütfen ilçe seçiniz.');
+				return;
+			}
+
+			// Mahalle kontrolu (zorunlu)
+			var neighborhoodSelect = document.getElementById('neighborhoodSelect');
+			var isManualNeighborhood = document.getElementById('neighborhoodManualInput').style.display !== 'none';
+			if (!isManualNeighborhood && (!neighborhoodSelect.value || neighborhoodSelect.value === '__other__')) {
+				alert('Lütfen mahalle seçiniz.');
+				return;
+			}
+			if (isManualNeighborhood && !document.getElementById('neighborhoodManualInput').value.trim()) {
+				alert('Lütfen mahalle adını yazınız.');
 				return;
 			}
 
@@ -951,17 +992,26 @@
 				var cityOption = citySelect.options[citySelect.selectedIndex];
 				var districtOption = districtSelect.options[districtSelect.selectedIndex];
 				var neighborhoodSelect = document.getElementById('neighborhoodSelect');
-				var neighborhoodOption = neighborhoodSelect.value ? neighborhoodSelect.options[neighborhoodSelect.selectedIndex] : null;
+				var isManualNh = document.getElementById('neighborhoodManualInput').style.display !== 'none';
+				var nhId = null;
+				var nhName = null;
+				if (isManualNh) {
+					nhName = document.getElementById('neighborhoodManualInput').value.trim() || null;
+				} else if (neighborhoodSelect.value && neighborhoodSelect.value !== '__other__') {
+					nhId = neighborhoodSelect.value;
+					var neighborhoodOption = neighborhoodSelect.options[neighborhoodSelect.selectedIndex];
+					nhName = neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null;
+				}
 
 				var branchData = {
 					customer_id: customer.id,
 					branch_name: 'Merkez',
 					city_id: citySelect.value,
 					district_id: districtSelect.value,
-					neighborhood_id: neighborhoodSelect.value || null,
+					neighborhood_id: nhId,
 					city: cityOption.getAttribute('data-name'),
 					district: districtOption.getAttribute('data-name'),
-					neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null,
+					neighborhood: nhName,
 					is_default: true
 				};
 				var branchResult = await BranchesService.create(branchData);
@@ -1109,7 +1159,16 @@
 				var branchesResult = await BranchesService.getByCustomerId(customer.id);
 				var cityOption = citySelect.options[citySelect.selectedIndex];
 				var districtOption = districtSelect.options[districtSelect.selectedIndex];
-				var neighborhoodOption = neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.options[neighborhoodSelect.selectedIndex] : null;
+				var isManualNh2 = document.getElementById('neighborhoodManualInput').style.display !== 'none';
+				var nhId2 = null;
+				var nhName2 = null;
+				if (isManualNh2) {
+					nhName2 = document.getElementById('neighborhoodManualInput').value.trim() || null;
+				} else if (neighborhoodSelect && neighborhoodSelect.value && neighborhoodSelect.value !== '__other__') {
+					nhId2 = neighborhoodSelect.value;
+					var neighborhoodOption = neighborhoodSelect.options[neighborhoodSelect.selectedIndex];
+					nhName2 = neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null;
+				}
 
 				if (!branchesResult.data || branchesResult.data.length === 0) {
 					// Şube yok, merkez şubesi oluştur
@@ -1118,10 +1177,10 @@
 						branch_name: 'Merkez',
 						city_id: citySelect.value,
 						district_id: districtSelect.value,
-						neighborhood_id: neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.value : null,
+						neighborhood_id: nhId2,
 						city: cityOption.getAttribute('data-name'),
 						district: districtOption.getAttribute('data-name'),
-						neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null,
+						neighborhood: nhName2,
 						is_default: true
 					};
 					var branchResult = await BranchesService.create(branchData);
@@ -1140,10 +1199,10 @@
 					await BranchesService.update(defaultBranch.id, {
 						city_id: citySelect.value,
 						district_id: districtSelect.value,
-						neighborhood_id: neighborhoodSelect && neighborhoodSelect.value ? neighborhoodSelect.value : null,
+						neighborhood_id: nhId2,
 						city: cityOption.getAttribute('data-name'),
 						district: districtOption.getAttribute('data-name'),
-						neighborhood: neighborhoodOption ? neighborhoodOption.getAttribute('data-name') : null
+						neighborhood: nhName2
 					});
 				}
 

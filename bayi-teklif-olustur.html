@@ -381,9 +381,19 @@
 				</div>
 			</div>
 
+			<!-- Bayi Teklif Sözleşmesi -->
+			<div class="preview-contract" id="previewContract">
+				<div class="preview-contract-label">Teklif Sözleşme Metni</div>
+				<div class="preview-contract-text" id="previewContractText"></div>
+				<label class="preview-contract-checkbox">
+					<input type="checkbox" id="previewContractCheckbox">
+					<span>Sözleşme metnini okudum ve kabul ediyorum</span>
+				</label>
+			</div>
+
 			<div class="modal-actions">
 				<button type="button" class="btn btn-secondary" id="preview-modal-cancel">Vazgeç</button>
-				<button type="button" class="btn btn-primary btn-send" id="preview-modal-send">
+				<button type="button" class="btn btn-primary btn-send" id="preview-modal-send" disabled>
 					<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
 						<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
 					</svg>
@@ -481,6 +491,7 @@
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/dealer-districts-service.js"></script>
+	<script src="./js/services/settings-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/bayi-teklif-olustur.js"></script>
 </body>

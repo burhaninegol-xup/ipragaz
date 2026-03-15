@@ -792,8 +792,8 @@
 
 				hideLoading();
 
-				// 5. Sepet sayfasina yonlendir
-				window.location.href = 'isyerim-musteri-sepet.html';
+				// 5. Basari modal'ini goster
+				document.getElementById('acceptSuccessModal').classList.add('active');
 
 			} catch (err) {
 				hideLoading();

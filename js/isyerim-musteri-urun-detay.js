@@ -212,7 +212,7 @@ function renderProductDetail() {
 		campaignBadgeHtml =
 			'<div class="product-detail-campaign-badge">' +
 				'<div class="badge-left">' +
-					'<span class="badge-label">Tavsiye edilen kampanyali fiyat</span>' +
+					'<span class="badge-label">Anlaşılan Fiyat</span>' +
 					'<div class="badge-original-price"><del>₺' + retailPriceFormatted + '</del></div>' +
 					'<div class="badge-advantage-label">Avantajli Fiyat</div>' +
 				'</div>' +
@@ -403,7 +403,7 @@ function renderRecommendedProducts() {
 
 			campaignBadgeHtml =
 				'<div class="product-campaign-badge">' +
-					'<span class="badge-label">Tavsiye edilen kampanyali fiyat</span>' +
+					'<span class="badge-label">Anlaşılan Fiyat</span>' +
 					'<span class="badge-price">₺' + offerPriceFormatted + '</span>' +
 				'</div>';
 
