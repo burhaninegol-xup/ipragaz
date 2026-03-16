@@ -386,6 +386,49 @@
 			color: #666;
 		}
 
+		/* Depozito bandı */
+		.deposit-band {
+			background: #fef9e7;
+			border: 1px solid #f0e6b8;
+			border-radius: 8px;
+			padding: 12px 16px;
+			margin-top: 10px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+		.deposit-band-label {
+			font-size: 13px;
+			color: #666;
+		}
+		.deposit-band-input {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 13px;
+			color: #333;
+		}
+		.deposit-band-input input {
+			width: 60px;
+			text-align: center;
+			padding: 6px 8px;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			font-size: 14px;
+			font-family: inherit;
+		}
+		.deposit-band-input input:focus {
+			outline: none;
+			border-color: #e31e24;
+		}
+		.deposit-band-info {
+			font-size: 12px;
+			color: #e31e24;
+			font-weight: 500;
+		}
+
 		/* Ürün toplam fiyatı (sağda) */
 		.cart-item-total {
 			text-align: right;
@@ -698,6 +741,14 @@
 				<h2 class="order-summary-title">Sipariş Özeti</h2>
 				<div class="order-summary-count" id="orderCount">(1 Ürün)</div>
 
+				<div class="order-row">
+					<span class="order-row-label">Ürün Tutarı</span>
+					<span class="price-value" id="orderProductTotal">₺0,00</span>
+				</div>
+				<div class="order-row" id="depositRow" style="display:none;">
+					<span class="order-row-label">Depozito Tutarı</span>
+					<span class="price-value" id="orderDepositTotal">₺0,00</span>
+				</div>
 				<div class="order-row total-row">
 					<span class="order-row-label">Toplam Tutar</span>
 					<div class="order-row-values">
@@ -752,7 +803,7 @@
 	<!-- Supabase -->
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
-	<script src="./js/services/cart-service.js?v=4"></script>
+	<script src="./js/services/cart-service.js?v=5"></script>
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/branches-service.js"></script>
@@ -799,6 +850,8 @@
 				emptyCartEl.style.display = 'block';
 				cartCountEl.textContent = '(0 Ürün)';
 				orderCountEl.textContent = '(0 Ürün)';
+				document.getElementById('orderProductTotal').textContent = formatPrice(0);
+				document.getElementById('depositRow').style.display = 'none';
 				document.getElementById('orderTotal').textContent = formatPrice(0);
 				document.getElementById('orderTotalPoints').textContent = '★ 0 Puan';
 				return;
@@ -810,7 +863,18 @@
 			cartCountEl.textContent = '(' + summary.itemCount + ' Ürün)';
 			orderCountEl.textContent = '(' + summary.itemCount + ' Ürün)';
 
-			// Toplam Tutar göster
+			// Ürün Tutarı
+			document.getElementById('orderProductTotal').textContent = formatPrice(summary.productTotal);
+
+			// Depozito Tutarı
+			if (summary.depositTotal > 0) {
+				document.getElementById('depositRow').style.display = 'flex';
+				document.getElementById('orderDepositTotal').textContent = formatPrice(summary.depositTotal);
+			} else {
+				document.getElementById('depositRow').style.display = 'none';
+			}
+
+			// Toplam Tutar
 			document.getElementById('orderTotal').textContent = formatPrice(summary.total);
 			document.getElementById('orderTotalPoints').textContent = '★ ' + summary.totalPoints + ' Puan';
 
@@ -863,8 +927,38 @@
 						'<div class="item-total-price">' + formatPrice(itemTotal) + '</div>' +
 						'<div class="item-total-points">★ ' + itemTotalPoints + ' Puan</div>' +
 					'</div>' +
-				'</div>';
+				'</div>' +
+				(function() {
+					if (item.deposit_price && item.deposit_price > 0) {
+						var emptyTubes = item.empty_tube_count || 0;
+						var depositCount = Math.max(0, item.quantity - emptyTubes);
+						var depositAmount = depositCount * item.deposit_price;
+						return '<div class="deposit-band">' +
+							'<div class="deposit-band-label">Elinizde kaç adet boş tüp var?</div>' +
+							'<div class="deposit-band-input">' +
+								'<input type="number" min="0" max="' + item.quantity + '" value="' + emptyTubes + '" ' +
+									'onchange="updateEmptyTubes(\'' + item.id + '\', this.value)" ' +
+									'inputmode="numeric">' +
+								'<span>Adet</span>' +
+							'</div>' +
+							'<div class="deposit-band-info">' +
+								(depositCount > 0
+									? depositCount + ' adet depozito: ' + formatPrice(depositAmount)
+									: 'Depozito yok') +
+							'</div>' +
+						'</div>';
+					}
+					return '';
+				})();
 			}).join('');
+		}
+
+		// Boş tüp sayısını güncelle
+		function updateEmptyTubes(productId, value) {
+			var count = parseInt(value, 10);
+			if (isNaN(count) || count < 0) count = 0;
+			CartService.updateEmptyTubeCount(productId, count);
+			renderCart();
 		}
 
 		// Sadece sayısal giriş

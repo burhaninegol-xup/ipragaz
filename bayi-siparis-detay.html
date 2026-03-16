@@ -1077,6 +1077,10 @@
 						<span class="payment-label">Indirim</span>
 						<span class="payment-value" id="discount">-0,00 TL</span>
 					</div>
+					<div class="payment-row" id="deposit-row" style="display: none;">
+						<span class="payment-label">Depozito</span>
+						<span class="payment-value" id="deposit-total">0,00 TL</span>
+					</div>
 					<div class="payment-row total">
 						<span class="payment-label">Toplam</span>
 						<span class="payment-value" id="total">0,00 TL</span>
@@ -1428,12 +1432,23 @@
 						'</div>' +
 					'</div>';
 
+				if (item.deposit_count > 0) {
+						productHtml += '<div style="background:#fef9e7;border:1px solid #f0e6b8;border-radius:8px;padding:8px 14px;margin-top:6px;font-size:13px;color:#666;display:flex;justify-content:space-between;">' +
+							'<span>Depozito: ' + item.deposit_count + ' adet × ' + formatPrice(item.deposit_unit_price) + '</span>' +
+							'<span style="font-weight:600;color:#e31e24;">' + formatPrice(item.deposit_total) + '</span>' +
+						'</div>';
+					}
+
 					$productList.append(productHtml);
 				});
 			}
 
 			// Payment summary
 			$('#subtotal').text(formatPrice(subtotal));
+			if (parseFloat(order.deposit_total) > 0) {
+				$('#deposit-row').show();
+				$('#deposit-total').text(formatPrice(order.deposit_total));
+			}
 			$('#total').text(formatPrice(order.total_amount || subtotal));
 
 			// Notes

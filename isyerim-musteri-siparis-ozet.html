@@ -1497,6 +1497,13 @@
 					</div>
 				</div>
 
+				<div id="depositPaymentRow" style="display:none; padding: 8px 0; border-bottom: 1px solid rgba(227,30,36,0.1); margin-bottom: 12px; display: none;">
+					<div style="display:flex; justify-content:space-between; align-items:center;">
+						<span style="font-size:14px; color:#666;">Depozito Tutarı</span>
+						<span style="font-size:14px; font-weight:600; color:#e31e24;" id="depositPayment">₺0,00</span>
+					</div>
+				</div>
+
 				<!-- Product Items Container -->
 				<div id="productItemsContainer">
 					<!-- Dinamik olarak doldurulacak -->
@@ -1655,7 +1662,7 @@
 	<script src="./js/services/customer-prices-service.js"></script>
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
-	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/cart-service.js?v=5"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/recurring-orders-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
@@ -1711,7 +1718,10 @@
 							name: product.name || 'Ürün',
 							quantity: item.quantity,
 							unitPrice: item.unit_price,
-							points: item.points || 0
+							points: item.points || 0,
+							deposit_count: item.deposit_count || 0,
+							deposit_unit_price: item.deposit_unit_price || 0,
+							deposit_total: item.deposit_total || 0
 						};
 					});
 				}
@@ -1883,6 +1893,8 @@
 			var container = document.getElementById('productItemsContainer');
 			var totalPaymentEl = document.getElementById('totalPayment');
 			var totalPaymentPointsEl = document.getElementById('totalPaymentPoints');
+			var depositPaymentRow = document.getElementById('depositPaymentRow');
+			var depositPaymentEl = document.getElementById('depositPayment');
 
 			if (orderProducts.length === 0) {
 				container.innerHTML = '<p style="color: #888; font-size: 14px;">Sipariş bulunamadı.</p>';
@@ -1897,6 +1909,14 @@
 				var totalPrice = unitPrice * item.quantity;
 				var unitPoints = Math.floor(unitPrice);
 				var totalPoints = unitPoints * item.quantity;
+
+				var depositHtml = '';
+				if (item.deposit_count > 0) {
+					depositHtml = '<div style="background:#fef9e7;border:1px solid #f0e6b8;border-radius:8px;padding:8px 14px;margin-top:8px;font-size:12px;color:#666;display:flex;justify-content:space-between;">' +
+						'<span>Depozito: ' + item.deposit_count + ' adet × ' + formatPrice(item.deposit_unit_price) + '</span>' +
+						'<span style="font-weight:600;color:#e31e24;">' + formatPrice(item.deposit_total) + '</span>' +
+					'</div>';
+				}
 
 				return '<div class="product-item">' +
 					'<div class="product-image">' +
@@ -1915,19 +1935,33 @@
 						'<span class="product-total-price">' + formatPrice(totalPrice) + '</span>' +
 						'<span class="product-points">★ ' + totalPoints + ' Puan</span>' +
 					'</div>' +
-				'</div>';
+				'</div>' + depositHtml;
 			}).join('');
 
 			// Toplam fiyat ve puan hesapla
-			var totalPrice = orderProducts.reduce(function(sum, item) {
+			var productTotal = orderProducts.reduce(function(sum, item) {
 				return sum + (parseFloat(item.unitPrice || 0) * item.quantity);
 			}, 0);
+			var depositTotal = orderProducts.reduce(function(sum, item) {
+				return sum + (parseFloat(item.deposit_total || 0));
+			}, 0);
+			var grandTotal = productTotal + depositTotal;
 			var totalPoints = orderProducts.reduce(function(sum, item) {
 				var unitPoints = Math.floor(parseFloat(item.unitPrice) || 0);
 				return sum + (unitPoints * item.quantity);
 			}, 0);
 
-			totalPaymentEl.textContent = formatPrice(totalPrice);
+			// Depozito satırını göster/gizle
+			if (depositTotal > 0) {
+				depositPaymentRow.style.display = 'block';
+				depositPaymentEl.textContent = formatPrice(depositTotal);
+			} else {
+				depositPaymentRow.style.display = 'none';
+			}
+
+			// Genel toplam (depozito dahil) veya order'dan gelen total_amount
+			var displayTotal = currentOrder && currentOrder.total_amount ? parseFloat(currentOrder.total_amount) : grandTotal;
+			totalPaymentEl.textContent = formatPrice(displayTotal);
 			totalPaymentPointsEl.textContent = '★ ' + totalPoints + ' Puan';
 		}
 

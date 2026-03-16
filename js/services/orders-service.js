@@ -54,7 +54,11 @@ const OrdersService = {
                         unit_price,
                         total_price,
                         points,
-                        product:products(id, code, name, image_url)
+                        empty_tube_count,
+                        deposit_count,
+                        deposit_unit_price,
+                        deposit_total,
+                        product:products(id, code, name, image_url, deposit_price)
                     )
                 `)
                 .eq('id', id)
@@ -84,7 +88,11 @@ const OrdersService = {
                         unit_price,
                         total_price,
                         points,
-                        product:products(id, code, name, image_url)
+                        empty_tube_count,
+                        deposit_count,
+                        deposit_unit_price,
+                        deposit_total,
+                        product:products(id, code, name, image_url, deposit_price)
                     )
                 `)
                 .eq('order_number', orderNumber)
@@ -114,7 +122,11 @@ const OrdersService = {
                         unit_price,
                         total_price,
                         points,
-                        product:products(id, code, name, image_url)
+                        empty_tube_count,
+                        deposit_count,
+                        deposit_unit_price,
+                        deposit_total,
+                        product:products(id, code, name, image_url, deposit_price)
                     )
                 `)
                 .eq('customer_id', customerId)
@@ -149,7 +161,11 @@ const OrdersService = {
                         unit_price,
                         total_price,
                         points,
-                        product:products(id, code, name, image_url)
+                        empty_tube_count,
+                        deposit_count,
+                        deposit_unit_price,
+                        deposit_total,
+                        product:products(id, code, name, image_url, deposit_price)
                     )
                 `)
                 .eq('customer_id', customerId)
@@ -179,6 +195,10 @@ const OrdersService = {
                         quantity,
                         unit_price,
                         total_price,
+                        empty_tube_count,
+                        deposit_count,
+                        deposit_unit_price,
+                        deposit_total,
                         product:products(id, code, name)
                     )
                 `)

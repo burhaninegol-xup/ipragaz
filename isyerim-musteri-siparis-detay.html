@@ -281,6 +281,22 @@
 		.product-item-enhanced:hover {
 			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 		}
+		.deposit-info-row {
+			grid-column: 1 / -1;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background: #fef9e7;
+			border: 1px solid #f0e6b8;
+			border-radius: 8px;
+			padding: 8px 14px;
+			font-size: 13px;
+			color: #666;
+		}
+		.deposit-info-row span:last-child {
+			font-weight: 600;
+			color: #e31e24;
+		}
 		.product-image-container {
 			width: 80px;
 			height: 80px;
@@ -1096,6 +1112,14 @@
 					}
 					html += '</div>';
 
+					// Depozito bilgisi
+					if (item.deposit_count > 0) {
+						html += '<div class="deposit-info-row">';
+						html += '<span>Depozito: ' + item.deposit_count + ' adet × ' + formatPrice(item.deposit_unit_price) + '</span>';
+						html += '<span>' + formatPrice(item.deposit_total) + '</span>';
+						html += '</div>';
+					}
+
 					html += '</div>'; // product-item-enhanced
 				});
 
@@ -1105,7 +1129,14 @@
 				html += '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>';
 				html += 'Siparis Ozeti';
 				html += '</div>';
-				html += '<div class="summary-row total" style="border-top:none;margin-top:0;padding-top:0;">';
+				if (parseFloat(order.deposit_total) > 0) {
+					html += '<div class="summary-row" style="border-top:none;margin-top:0;padding-top:0;">';
+					html += '<span>Depozito Tutarı</span>';
+					html += '<span>' + formatPrice(order.deposit_total) + '</span>';
+					html += '</div>';
+				}
+
+				html += '<div class="summary-row total" style="border-top:1px solid #eee;margin-top:8px;padding-top:12px;">';
 				html += '<span>Genel Toplam</span>';
 				html += '<div class="summary-total-right">';
 				html += '<span class="summary-total-amount">' + formatPrice(orderTotalAmount) + '</span>';

@@ -1205,7 +1205,7 @@
 			if (order.order_items && order.order_items.length > 0) {
 				itemCount = order.order_items.length;
 				order.order_items.forEach(function(item) {
-					total += parseFloat(item.total_price) || 0;
+					total += (parseFloat(item.total_price) || 0) + (parseFloat(item.deposit_total) || 0);
 				});
 				// First 2 products
 				var summaryItems = order.order_items.slice(0, 2).map(function(item) {

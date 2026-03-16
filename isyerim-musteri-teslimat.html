@@ -938,7 +938,15 @@
 				<div class="order-summary-count" id="orderCount">(0 Ürün)</div>
 
 				<div class="order-row">
-					<span class="order-row-label">Sipariş Tutarı</span>
+					<span class="order-row-label">Ürün Tutarı</span>
+					<span class="price-value" id="orderProductTotal">₺0,00</span>
+				</div>
+				<div class="order-row" id="depositRow" style="display:none;">
+					<span class="order-row-label">Depozito Tutarı</span>
+					<span class="price-value" id="orderDepositTotal">₺0,00</span>
+				</div>
+				<div class="order-row">
+					<span class="order-row-label">Toplam Tutar</span>
 					<div class="order-row-values">
 						<span class="price-value price-value-large" id="orderTotal">₺0,00</span>
 						<span class="points-value" id="orderTotalPoints">★ 0 Puan</span>
@@ -1057,7 +1065,7 @@
 	<script src="./js/services/customer-prices-service.js"></script>
 	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
-	<script src="./js/services/cart-service.js"></script>
+	<script src="./js/services/cart-service.js?v=5"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/customer-users-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
@@ -1089,10 +1097,21 @@
 			// Toplam hesapla
 			var totalItems = CartService.getItemCount();
 			var totalPoints = CartService.getTotalPoints();
+			var productTotal = CartService.getProductTotal();
+			var depositTotal = CartService.getDepositTotal();
 			var totalPrice = CartService.getTotal();
 
 			// DOM güncelle
 			document.getElementById('orderCount').textContent = '(' + totalItems + ' Ürün)';
+			document.getElementById('orderProductTotal').textContent = formatPrice(productTotal);
+
+			if (depositTotal > 0) {
+				document.getElementById('depositRow').style.display = 'flex';
+				document.getElementById('orderDepositTotal').textContent = formatPrice(depositTotal);
+			} else {
+				document.getElementById('depositRow').style.display = 'none';
+			}
+
 			document.getElementById('orderTotal').textContent = formatPrice(totalPrice);
 			document.getElementById('orderTotalPoints').textContent = '★ ' + totalPoints + ' Puan';
 		}

@@ -1752,10 +1752,10 @@ a {
 	display: none !important;
 }
 
-/* Minimize durumunda: main full width, chat adres kartı yanında */
+/* Minimize durumunda: display:contents ile grid yeniden düzenleme */
 .content-with-chat.chat-minimized {
 	grid-template-columns: 1fr 380px;
-	grid-template-rows: auto auto 1fr;
+	grid-template-rows: auto auto auto auto auto auto auto auto 1fr;
 }
 
 .content-with-chat.chat-minimized .offer-status-banner {
@@ -1763,21 +1763,56 @@ a {
 	grid-row: 1;
 }
 
-.content-with-chat.chat-minimized .chat-column {
+.content-with-chat.chat-minimized .main-column {
+	display: contents;
+}
+
+.content-with-chat.chat-minimized .main-column > * {
+	grid-column: 1 / -1;
+	min-width: 0;
+}
+
+.content-with-chat.chat-minimized .info-card {
 	grid-row: 2;
+	grid-column: 1 / -1;
+}
+
+.content-with-chat.chat-minimized .covered-addresses-card {
+	grid-row: 3;
+	grid-column: 1;
+	margin-right: 0;
+	margin-bottom: 30px;
+}
+
+.content-with-chat.chat-minimized .chat-column {
+	grid-row: 3;
 	grid-column: 2;
 	align-self: stretch;
 }
 
-.content-with-chat.chat-minimized .main-column {
-	grid-row: 2 / 4;
+.content-with-chat.chat-minimized .offer-summary-section {
+	grid-row: 4;
 	grid-column: 1 / -1;
 }
 
-/* Minimize'da covered-addresses-card: sağdan chat genişliği kadar boşluk + alt boşluk */
-.content-with-chat.chat-minimized .covered-addresses-card {
-	margin-right: 410px;
-	margin-bottom: 40px;
+.content-with-chat.chat-minimized .products-grid {
+	grid-row: 5;
+	grid-column: 1 / -1;
+}
+
+.content-with-chat.chat-minimized .add-product-notice {
+	grid-row: 6;
+	grid-column: 1 / -1;
+}
+
+.content-with-chat.chat-minimized .cancel-offer-link-wrapper {
+	grid-row: 7;
+	grid-column: 1 / -1;
+}
+
+.content-with-chat.chat-minimized .offer-metadata {
+	grid-row: 8;
+	grid-column: 1 / -1;
 }
 
 /* Toggle Butonu */

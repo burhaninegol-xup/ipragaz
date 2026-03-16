@@ -212,7 +212,7 @@
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/products-service.js"></script>
 	<script src="./js/services/customer-prices-service.js"></script>
-	<script src="./js/services/cart-service.js?v=4"></script>
+	<script src="./js/services/cart-service.js?v=5"></script>
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/favorites-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
@@ -387,7 +387,8 @@
 				name: product.name,
 				price: price,
 				points: product.points_per_unit || 0,
-				image_url: product.image_url
+				image_url: product.image_url,
+				deposit_price: product.deposit_price || 0
 			});
 
 			// Buton animasyonu

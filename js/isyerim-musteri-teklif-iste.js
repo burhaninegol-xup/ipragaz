@@ -770,7 +770,7 @@
 				);
 
 				// 3. Mevcut sepeti temizle
-				CartService.clearCart();
+				await CartService.clearCart();
 
 				// 4. Teklifin urunlerini sepete ekle
 				if (activeOffer.offer_details && activeOffer.offer_details.length > 0) {
@@ -783,6 +783,7 @@
 								name: detail.product.name,
 								price: detail.unit_price || 0,
 								image_url: detail.product.image_url,
+								deposit_price: detail.product.deposit_price || 0,
 								priceType: 'size_ozel',
 								priceLabel: 'Teklif Fiyatı'
 							}, 1);

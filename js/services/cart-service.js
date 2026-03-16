@@ -53,7 +53,7 @@ const CartService = {
                 .from('cart_items')
                 .select(`
                     *,
-                    product:products(id, code, name, base_price, points_per_unit, image_url)
+                    product:products(id, code, name, base_price, points_per_unit, image_url, deposit_price)
                 `)
                 .eq('customer_id', customerId);
 
@@ -71,7 +71,9 @@ const CartService = {
                         price: item.unit_price,
                         points: this.calculatePointsFromPrice(item.unit_price || item.product.base_price),
                         image_url: item.product.image_url || '',
-                        quantity: item.quantity
+                        quantity: item.quantity,
+                        deposit_price: item.product.deposit_price || 0,
+                        empty_tube_count: 0
                     }))
                 };
                 this.saveCart(cart);
@@ -146,6 +148,7 @@ const CartService = {
             existingItem.priceType = product.priceType || 'retail';
             existingItem.priceLabel = product.priceLabel || 'Perakende';
             existingItem.points = this.calculatePointsFromPrice(price);
+            existingItem.deposit_price = product.deposit_price || existingItem.deposit_price || 0;
         } else {
             cart.items.push({
                 id: product.id,
@@ -156,7 +159,9 @@ const CartService = {
                 priceLabel: product.priceLabel || 'Perakende',
                 points: this.calculatePointsFromPrice(price),
                 image_url: product.image_url || '',
-                quantity: quantity
+                quantity: quantity,
+                deposit_price: product.deposit_price || 0,
+                empty_tube_count: 0
             });
         }
 
@@ -312,13 +317,44 @@ const CartService = {
     },
 
     /**
-     * Toplam tutarı hesapla
+     * Boş tüp sayısını güncelle
      */
-    getTotal() {
+    updateEmptyTubeCount(productId, count) {
+        const cart = this.getCart();
+        const item = cart.items.find(item => item.id === productId);
+        if (item) {
+            item.empty_tube_count = Math.max(0, Math.min(count, item.quantity));
+            this.saveCart(cart);
+        }
+        return cart;
+    },
+
+    /**
+     * Sadece ürün tutarını hesapla (depozito hariç)
+     */
+    getProductTotal() {
         const cart = this.getCart();
         return cart.items.reduce((total, item) => {
             return total + (parseFloat(item.price) * item.quantity);
         }, 0);
+    },
+
+    /**
+     * Toplam depozito tutarını hesapla
+     */
+    getDepositTotal() {
+        const cart = this.getCart();
+        return cart.items.reduce((total, item) => {
+            var depositCount = Math.max(0, item.quantity - (item.empty_tube_count || 0));
+            return total + (depositCount * (item.deposit_price || 0));
+        }, 0);
+    },
+
+    /**
+     * Toplam tutarı hesapla (ürün + depozito)
+     */
+    getTotal() {
+        return this.getProductTotal() + this.getDepositTotal();
     },
 
     /**
@@ -387,6 +423,7 @@ const CartService = {
             dealer_id: dealerId,
             customer_branch_id: deliveryInfo.branchId || null,
             total_amount: this.getTotal(),
+            deposit_total: this.getDepositTotal(),
             total_points: this.getTotalPoints(),
             delivery_address: deliveryInfo.address || null,
             delivery_date: deliveryInfo.date || null,
@@ -396,13 +433,20 @@ const CartService = {
             status: 'waiting_for_assignment'
         };
 
-        const orderItems = cart.items.map(item => ({
-            product_id: item.id,
-            quantity: item.quantity,
-            unit_price: parseFloat(item.price),
-            total_price: parseFloat(item.price) * item.quantity,
-            points: this.calculatePointsFromPrice(parseFloat(item.price)) * item.quantity
-        }));
+        const orderItems = cart.items.map(item => {
+            var depositCount = Math.max(0, item.quantity - (item.empty_tube_count || 0));
+            return {
+                product_id: item.id,
+                quantity: item.quantity,
+                unit_price: parseFloat(item.price),
+                total_price: parseFloat(item.price) * item.quantity,
+                points: this.calculatePointsFromPrice(parseFloat(item.price)) * item.quantity,
+                empty_tube_count: item.empty_tube_count || 0,
+                deposit_count: depositCount,
+                deposit_unit_price: item.deposit_price || 0,
+                deposit_total: depositCount * (item.deposit_price || 0)
+            };
+        });
 
         const result = await OrdersService.create(orderData, orderItems);
 
@@ -423,6 +467,8 @@ const CartService = {
             items: this.getCart().items,
             itemCount: this.getItemCount(),
             uniqueItemCount: this.getUniqueItemCount(),
+            productTotal: this.getProductTotal(),
+            depositTotal: this.getDepositTotal(),
             total: this.getTotal(),
             totalPoints: this.getTotalPoints(),
             isEmpty: this.isEmpty()

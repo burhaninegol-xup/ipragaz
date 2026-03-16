@@ -33,6 +33,13 @@
 		border: 1px solid #e0e0e0;
 		border-radius: 30px;
 		transition: all 0.2s;
+		max-width: 400px;
+	}
+	.header-user-location .location-text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 300px;
 	}
 	.header-user-location:hover {
 		border-color: #e31e24;
@@ -869,7 +876,7 @@
 		border-radius: 30px;
 		cursor: pointer;
 		transition: all 0.2s;
-		max-width: 200px;
+		max-width: 400px;
 		font-size: 14px;
 		color: #333;
 	}
@@ -896,7 +903,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 140px;
+		max-width: 300px;
 		font-weight: 500;
 	}
 	.header-dealer-select .dealer-chevron {
@@ -1166,7 +1173,7 @@
 			<div class="header-user-location">
 				<span class="user-name" id="headerUserName">Kullanıcı</span>
 				<span>:</span>
-				<span id="headerUserLocation">Şube Seçiniz</span>
+				<span class="location-text" id="headerUserLocation">Şube Seçiniz</span>
 				<svg viewBox="0 0 24 24" fill="currentColor">
 					<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
 				</svg>

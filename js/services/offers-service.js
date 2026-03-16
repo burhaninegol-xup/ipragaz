@@ -1304,7 +1304,7 @@ const OffersService = {
                     offer_details(
                         id, unit_price, pricing_type, discount_value,
                         commitment_quantity,
-                        product:products(id, code, name, base_price, image_url)
+                        product:products(id, code, name, base_price, image_url, deposit_price)
                     )
                 `)
                 .eq('customer_id', customerId)

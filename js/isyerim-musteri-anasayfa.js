@@ -653,7 +653,8 @@ function bindProductEvents() {
 					name: product.name,
 					price: priceInfo.price,
 					points: product.points_per_unit || 0,
-					image_url: product.image_url
+					image_url: product.image_url,
+					deposit_price: product.deposit_price || 0
 				});
 
 				// Badge'i güncelle
@@ -1171,7 +1172,8 @@ async function editRepeatOrder() {
 				name: item.product.name,
 				price: item.unit_price,
 				points: item.points || 0,
-				image_url: item.product.image_url
+				image_url: item.product.image_url,
+				deposit_price: item.product.deposit_price || 0
 			}, item.quantity);
 		}
 

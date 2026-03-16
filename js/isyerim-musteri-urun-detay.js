@@ -544,7 +544,8 @@ function addToCart() {
 			name: currentProduct.name,
 			price: priceInfo.price,
 			points: currentProduct.points_per_unit || 0,
-			image_url: currentProduct.image_url
+			image_url: currentProduct.image_url,
+			deposit_price: currentProduct.deposit_price || 0
 		}, currentQuantity);
 
 		// Badge'i güncelle
@@ -579,7 +580,8 @@ function addRecommendedToCart(btn, productId) {
 			name: product.name,
 			price: priceInfo.price,
 			points: product.points_per_unit || 0,
-			image_url: product.image_url
+			image_url: product.image_url,
+			deposit_price: product.deposit_price || 0
 		});
 
 		updateCartBadge();
