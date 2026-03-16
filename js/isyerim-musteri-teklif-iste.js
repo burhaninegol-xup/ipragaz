@@ -785,7 +785,7 @@
 								image_url: detail.product.image_url,
 								priceType: 'size_ozel',
 								priceLabel: 'Teklif Fiyatı'
-							}, detail.commitment_quantity);
+							}, 1);
 						}
 					}
 				}
