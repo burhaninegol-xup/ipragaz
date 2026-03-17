@@ -58,7 +58,11 @@
       "WebFetch(domain:www.ipragaz.com.tr)",
       "WebFetch(domain:cdn.ipragaz.com.tr)",
       "Bash(pip3 list:*)",
-      "Bash(find /Users/burhaninegol/cluade-code/ipragaz-bayi -type f \\\\\\( -name \"*map*\" -o -name \"*alan*\" -o -name \"*area*\" \\\\\\) ! -path \"*/node_modules/*\" 2>/dev/null | head -20)"
+      "Bash(find /Users/burhaninegol/cluade-code/ipragaz-bayi -type f \\\\\\( -name \"*map*\" -o -name \"*alan*\" -o -name \"*area*\" \\\\\\) ! -path \"*/node_modules/*\" 2>/dev/null | head -20)",
+      "Bash(brew install:*)",
+      "Bash(pdftotext \"/Users/burhaninegol/cluade-code/ipragaz-bayi/analiz/ipragaz_isyerim_brd.pdf\" /tmp/ipragaz_brd.txt)",
+      "Read(//tmp/**)",
+      "Bash(for file:*)"
     ]
   },
   "hooks": {
