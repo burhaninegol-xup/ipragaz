@@ -62,7 +62,9 @@
       "Bash(brew install:*)",
       "Bash(pdftotext \"/Users/burhaninegol/cluade-code/ipragaz-bayi/analiz/ipragaz_isyerim_brd.pdf\" /tmp/ipragaz_brd.txt)",
       "Read(//tmp/**)",
-      "Bash(for file:*)"
+      "Bash(for file:*)",
+      "Bash(/dev/null -exec wc -l {} +)",
+      "Bash(find /Users/burhaninegol/cluade-code/ipragaz-bayi -type f \\\\\\(-name *.py -o -name *.ts -o -name server.* -o -name index.* \\\\\\) ! -path */node_modules/* ! -path */.git/*)"
     ]
   },
   "hooks": {
