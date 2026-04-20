@@ -1335,6 +1335,76 @@ const OffersService = {
         } catch (error) {
             return handleSupabaseError(error, 'OffersService.getLatestOfferForCity');
         }
+    },
+
+    /**
+     * Tek bir offer_detail kaydının fiyatını güncelle
+     * @param {string} detailId - offer_details UUID
+     * @param {number} newUnitPrice - Yeni birim fiyat
+     */
+    async updateOfferDetailPrice(detailId, newUnitPrice) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('offer_details')
+                .update({
+                    unit_price: newUnitPrice,
+                    pricing_type: 'fixed_price',
+                    discount_value: 0,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', detailId)
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'OffersService.updateOfferDetailPrice');
+        }
+    },
+
+    /**
+     * Toplu offer_detail fiyat güncelleme
+     * @param {Array} updates - [{detailId, offerId, newUnitPrice, oldUnitPrice}]
+     * @returns {Promise<{data: {success: Array, failed: Array}, error: null}>}
+     */
+    async bulkUpdateOfferDetailPrices(updates) {
+        var success = [];
+        var failed = [];
+
+        // detailId'ye göre deduplicate
+        var seen = {};
+        var uniqueUpdates = [];
+        updates.forEach(function(u) {
+            if (!seen[u.detailId]) {
+                seen[u.detailId] = true;
+                uniqueUpdates.push(u);
+            }
+        });
+
+        for (var i = 0; i < uniqueUpdates.length; i++) {
+            var update = uniqueUpdates[i];
+            var result = await this.updateOfferDetailPrice(update.detailId, update.newUnitPrice);
+            if (result.error) {
+                failed.push({ detailId: update.detailId, error: result.error });
+            } else {
+                success.push({ detailId: update.detailId, data: result.data });
+            }
+        }
+
+        // Güncellenen offer'ların updated_at alanını güncelle
+        var offerIds = {};
+        uniqueUpdates.forEach(function(u) { offerIds[u.offerId] = true; });
+        var uniqueOfferIds = Object.keys(offerIds);
+
+        for (var j = 0; j < uniqueOfferIds.length; j++) {
+            await supabaseClient
+                .from('offers')
+                .update({ updated_at: new Date().toISOString() })
+                .eq('id', uniqueOfferIds[j]);
+        }
+
+        return { data: { success: success, failed: failed }, error: null };
     }
 };
 

@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Fiyatlandirma Raporu - Ipragaz Bayi</title>
+	<title>Fiyatlandırma Raporu - İpragaz Bayi</title>
 	<meta http-equiv="Content-Language" content="Turkish">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -22,8 +22,8 @@
 		<!-- Page Header -->
 		<div class="page-header">
 			<div class="page-header-left">
-				<h1>Fiyatlandirma Raporu</h1>
-				<p>Musterilerinize verdiginiz fiyatlari il bazli perakende fiyatlarla karsilastirin</p>
+				<h1>Fiyatlandırma Raporu</h1>
+				<p>Müşterilerinize verdiğiniz fiyatları il bazlı perakende fiyatlarla karşılaştırın</p>
 			</div>
 		</div>
 
@@ -31,33 +31,43 @@
 		<div class="filter-section">
 			<div class="filter-row">
 				<div class="filter-group">
-					<label for="filterCity">Il</label>
+					<label for="filterCity">İl</label>
 					<select id="filterCity">
-						<option value="">Tum Iller</option>
+						<option value="">Tüm İller</option>
 					</select>
 				</div>
 				<div class="filter-group">
-					<label for="filterDistrict">Ilce</label>
+					<label for="filterDistrict">İlçe</label>
 					<select id="filterDistrict" disabled>
-						<option value="">Once il seciniz</option>
+						<option value="">Önce il seçiniz</option>
 					</select>
 				</div>
 				<div class="filter-group">
 					<label for="filterNeighborhood">Mahalle</label>
 					<select id="filterNeighborhood" disabled>
-						<option value="">Once ilce seciniz</option>
+						<option value="">Önce ilçe seçiniz</option>
 					</select>
 				</div>
 				<div class="filter-group">
-					<label for="filterCustomer">Musteri</label>
+					<label for="filterCustomer">Müşteri</label>
 					<select id="filterCustomer">
-						<option value="">Tum Musteriler</option>
+						<option value="">Tüm Müşteriler</option>
 					</select>
 				</div>
 				<div class="filter-group">
-					<label for="filterProduct">Urun</label>
+					<label for="filterProduct">Ürün</label>
 					<select id="filterProduct">
-						<option value="">Tum Urunler</option>
+						<option value="">Tüm Ürünler</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label for="filterPricingType">İndirim Yöntemi</label>
+					<select id="filterPricingType">
+						<option value="">Tüm Yöntemler</option>
+						<option value="fixed_price">Sabit Fiyat</option>
+						<option value="fixed_discount">Sabit Fiyat İndirimi</option>
+						<option value="percentage_discount">Yüzdesel İndirim</option>
+						<option value="retail_price">Perakende</option>
 					</select>
 				</div>
 				<div class="filter-group filter-action">
@@ -69,15 +79,15 @@
 		<!-- Summary Cards -->
 		<div class="summary-cards" id="summaryCards" style="display:none;">
 			<div class="summary-card">
-				<div class="summary-label">Toplam Musteri</div>
+				<div class="summary-label">Toplam Müşteri</div>
 				<div class="summary-value" id="sumCustomers">0</div>
 			</div>
 			<div class="summary-card">
-				<div class="summary-label">Toplam Urun Satiri</div>
+				<div class="summary-label">Toplam Ürün Satırı</div>
 				<div class="summary-value" id="sumRows">0</div>
 			</div>
 			<div class="summary-card">
-				<div class="summary-label">Ort. Indirim Orani</div>
+				<div class="summary-label">Ort. İndirim Oranı</div>
 				<div class="summary-value" id="sumAvgDiscount">%0</div>
 			</div>
 		</div>
@@ -88,22 +98,29 @@
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
 					<path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
 				</svg>
-				<p>Filtreleri secip "Raporu Getir" butonuna basin</p>
+				<p>Filtreleri seçip "Raporu Getir" butonuna basın</p>
 			</div>
 			<div class="report-loading" id="reportLoading" style="display:none;">
 				<div class="spinner"></div>
-				<p>Rapor hazirlaniyor...</p>
+				<p>Rapor hazırlanıyor...</p>
 			</div>
 			<div class="report-table-wrapper" id="reportTableWrapper" style="display:none;">
 				<table class="report-table" id="reportTable">
 					<thead>
 						<tr>
-							<th data-sort-key="customerName">Musteri <span class="sort-icon">&#9650;</span></th>
-							<th data-sort-key="branchName">Sube <span class="sort-icon">&#9650;</span></th>
-							<th data-sort-key="productName">Urun <span class="sort-icon">&#9650;</span></th>
+							<th class="checkbox-col">
+									<label class="row-checkbox-label">
+										<input type="checkbox" id="selectAllCheckbox">
+										<span class="row-checkbox"></span>
+									</label>
+								</th>
+								<th data-sort-key="customerName">Müşteri <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="branchName">Şube <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="productName">Ürün <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="pricingTypeLabel">İndirim Yöntemi <span class="sort-icon">&#9650;</span></th>
 							<th data-sort-key="thisMonthQty" class="text-center">Kull. / Taah. <span class="sort-icon">&#9650;</span></th>
-							<th data-sort-key="retailPrice" class="text-right">Il Fiyati <span class="sort-icon">&#9650;</span></th>
-							<th data-sort-key="offerPrice" class="text-right">Teklif Fiyati <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="retailPrice" class="text-right">İl Fiyatı <span class="sort-icon">&#9650;</span></th>
+							<th data-sort-key="offerPrice" class="text-right">Teklif Fiyatı <span class="sort-icon">&#9650;</span></th>
 							<th data-sort-key="diff" class="text-right">Fark (TL) <span class="sort-icon">&#9650;</span></th>
 							<th data-sort-key="diffPercent" class="text-right">Fark (%) <span class="sort-icon">&#9650;</span></th>
 						</tr>
@@ -113,10 +130,79 @@
 				</table>
 			</div>
 			<div class="report-no-data" id="reportNoData" style="display:none;">
-				<p>Secilen kriterlere uygun veri bulunamadi.</p>
+				<p>Seçilen kriterlere uygun veri bulunamadı.</p>
 			</div>
 		</div>
 	</main>
+
+	<!-- Floating Action Bar -->
+	<div class="bulk-action-bar" id="bulkActionBar">
+		<div class="bulk-action-info">
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+			<span><strong id="selectedCount">0</strong> satır seçildi</span>
+		</div>
+		<button class="btn-primary" id="btnBulkPriceUpdate">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+			Fiyat Güncelle
+		</button>
+	</div>
+
+	<!-- Price Update Confirmation Modal -->
+	<div class="modal-overlay" id="priceUpdateModal">
+		<div class="modal price-update-modal">
+			<div class="modal-header">
+				<h3>
+					<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+					Toplu Fiyat Güncelleme
+				</h3>
+				<button type="button" class="modal-close-btn" id="priceModalClose">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="bulk-apply-row">
+					<label for="bulkApplyInput">Tümüne uygula:</label>
+					<div class="bulk-apply-input-wrapper">
+						<input type="number" class="bulk-apply-input" id="bulkApplyInput" placeholder="Örn: 950" step="0.01" min="0">
+						<span class="bulk-apply-suffix">TL</span>
+					</div>
+					<button type="button" class="btn-secondary bulk-apply-btn" id="bulkApplyBtn">
+						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+						Tümüne Uygula
+					</button>
+				</div>
+				<div class="price-update-summary" id="priceUpdateSummary"></div>
+				<div class="price-update-table-wrapper">
+					<table class="price-update-table">
+						<thead>
+							<tr>
+								<th>Müşteri</th>
+								<th>Ürün</th>
+								<th class="text-right">Mevcut Fiyat</th>
+								<th class="text-right">Yeni Fiyat</th>
+								<th class="text-right">Fark</th>
+							</tr>
+						</thead>
+						<tbody id="priceUpdateBody"></tbody>
+					</table>
+				</div>
+				<div class="price-update-warning">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+					<span>Bu işlem geri alınamaz. Teklif fiyatları kalıcı olarak güncellenecektir.</span>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-secondary" id="priceModalCancel">İptal</button>
+				<button class="btn-primary" id="priceModalConfirm">
+					<span class="btn-text">Güncelle</span>
+					<span class="btn-spinner" style="display:none;"></span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Toast Notification -->
+	<div class="toast-notification" id="priceUpdateToast"></div>
 
 	<!-- Mobile Sidebar Component -->
 	<div id="bayi-mobile-sidebar"></div>
@@ -133,6 +219,7 @@
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
 	<script src="./js/services/customers-service.js"></script>
 	<script src="./js/services/dealer-districts-service.js"></script>
+	<script src="./js/services/offer-logs-service.js"></script>
 	<script src="./js/component-loader.js"></script>
 	<script src="./js/bayi-fiyatlandirma-raporu.js"></script>
 </body>
