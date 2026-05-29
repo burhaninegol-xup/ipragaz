@@ -179,16 +179,83 @@
 		font-weight: 500;
 	}
 
+	/* Mobil aç/kapa çubuğu (accordion) — masaüstünde gizli */
+	.settings-mobile-toggle {
+		display: none;
+		width: 100%;
+		align-items: center;
+		gap: 12px;
+		padding: 16px 20px;
+		background: #fff;
+		border: none;
+		border-bottom: 1px solid #eee;
+		cursor: pointer;
+		font-family: inherit;
+		text-align: left;
+	}
+	.settings-mobile-toggle .toggle-hamburger {
+		width: 22px;
+		height: 22px;
+		color: #e31e24;
+		flex-shrink: 0;
+	}
+	.settings-mobile-toggle .toggle-label {
+		flex: 1;
+		min-width: 0;
+		font-size: 15px;
+		font-weight: 600;
+		color: #333;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.settings-mobile-toggle .toggle-chevron {
+		width: 18px;
+		height: 18px;
+		color: #888;
+		flex-shrink: 0;
+		transition: transform 0.25s ease;
+	}
+
 	/* Mobile Responsive */
 	@media (max-width: 992px) {
 		.settings-sidebar {
 			width: 100%;
 			margin-bottom: 20px;
 		}
+		/* Toggle çubuğu görünür olur; menü içeriği varsayılan kapalı,
+		   .expanded eklenince açılır. */
+		.settings-mobile-toggle {
+			display: flex;
+		}
+		.settings-collapsible {
+			display: none;
+		}
+		.settings-sidebar.expanded .settings-collapsible {
+			display: block;
+		}
+		.settings-sidebar.expanded .settings-mobile-toggle .toggle-chevron {
+			transform: rotate(180deg);
+		}
 	}
 </style>
 
-<aside class="settings-sidebar">
+<aside class="settings-sidebar" id="settingsSidebar">
+	<!-- Mobil aç/kapa çubuğu (yalnızca ≤992px görünür) -->
+	<button type="button" class="settings-mobile-toggle" id="settingsMobileToggle" onclick="toggleSettingsMenu()" aria-expanded="false">
+		<svg class="toggle-hamburger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<line x1="3" y1="6" x2="21" y2="6"/>
+			<line x1="3" y1="12" x2="21" y2="12"/>
+			<line x1="3" y1="18" x2="21" y2="18"/>
+		</svg>
+		<span class="toggle-label" id="settingsToggleLabel">Ayarlar Menüsü</span>
+		<svg class="toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<polyline points="6 9 12 15 18 9"/>
+		</svg>
+	</button>
+
+	<!-- Açılır içerik: mobilde toggle ile aç/kapa, masaüstünde her zaman açık -->
+	<div class="settings-collapsible" id="settingsCollapsible">
 	<!-- User Info -->
 	<div class="sidebar-user-info">
 		<div class="sidebar-user-details">
@@ -381,6 +448,7 @@
 			</svg>
 			<span class="sidebar-logout-text">Cikis Yap</span>
 		</a>
+	</div>
 	</div>
 </aside>
 

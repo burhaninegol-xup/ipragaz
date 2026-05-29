@@ -32,6 +32,22 @@ function initSettingsSidebar(activePage) {
 			}
 		});
 	}
+
+	// Mobil accordion toggle etiketini aktif sayfaya gore ayarla
+	var toggleLabel = document.getElementById('settingsToggleLabel');
+	if (toggleLabel) {
+		var activeText = document.querySelector('.sidebar-menu-link.active .sidebar-menu-text');
+		toggleLabel.textContent = activeText ? activeText.textContent : 'Ayarlar Menüsü';
+	}
+}
+
+// Mobil ayarlar menusunu ac/kapa (accordion)
+function toggleSettingsMenu() {
+	var sidebar = document.getElementById('settingsSidebar');
+	if (!sidebar) return;
+	var isOpen = sidebar.classList.toggle('expanded');
+	var toggle = document.getElementById('settingsMobileToggle');
+	if (toggle) toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 }
 
 // Cikis islemi

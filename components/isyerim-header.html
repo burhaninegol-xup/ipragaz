@@ -57,6 +57,12 @@
 		align-items: center;
 		gap: 8px;
 	}
+	/* Wrapper'lar masaüstünde şeffaftır (display:contents) → mevcut düzeni hiç etkilemezler.
+	   Mobilde (en alttaki media query'de) flex'e dönüşüp seçicileri tek satıra indirirler. */
+	.header-selectors,
+	.header-icons {
+		display: contents;
+	}
 	.header-action {
 		width: 40px;
 		height: 40px;
@@ -851,20 +857,7 @@
 		word-break: break-all;
 		margin-top: 2px;
 	}
-	@media (max-width: 768px) {
-		.header .container {
-			padding: 0 15px;
-		}
-		.header-logo img {
-			height: 28px;
-		}
-		.header-user-location {
-			display: none;
-		}
-		.header-dealer-select {
-			display: none;
-		}
-	}
+	/* Mobil header düzeni en alttaki tek media query'de toplanmıştır (cascade'de son söz). */
 	/* Dealer Selection Button */
 	.header-dealer-select {
 		display: flex;
@@ -1158,6 +1151,64 @@
 			padding: 24px;
 		}
 	}
+
+	/* ============================================================
+	   MOBİL HEADER DÜZENİ (≤768px) — masaüstünü ETKİLEMEZ
+	   Üst satır : logo (sol) + bildirim & profil ikonları (sağ)
+	   Alt satır : adres seçimi + bayi seçimi (tam genişlik, alt alta)
+	   Not: bu blok stilin en sonunda olduğu için cascade'de son sözü söyler;
+	        !important gerekmez.
+	   ============================================================ */
+	@media (max-width: 768px) {
+		.header .container {
+			flex-wrap: wrap;
+			height: auto;
+			row-gap: 12px;
+			padding: 12px 15px;
+		}
+		.header-logo {
+			order: 1;
+		}
+		.header-logo img {
+			height: 28px;
+		}
+		/* header-actions şeffaflaşır → çocuk wrapper'ları doğrudan container'ın
+		   flex elemanı olur; böylece seçiciler tam genişlik alt satıra inebilir. */
+		.header-actions {
+			display: contents;
+		}
+		/* Bildirim + profil: üst satırda, sağda */
+		.header-icons {
+			order: 2;
+			display: flex;
+			align-items: center;
+			gap: 4px;
+		}
+		/* Adres + bayi seçicileri: alt satırda, tam genişlik, alt alta */
+		.header-selectors {
+			order: 3;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			flex-basis: 100%;
+			width: 100%;
+		}
+		.header-user-location,
+		.header-dealer-select {
+			display: flex;
+			width: 100%;
+			max-width: none;
+			box-sizing: border-box;
+			justify-content: flex-start;
+			padding: 10px 16px;
+		}
+		.header-user-location .location-text,
+		.header-dealer-select .dealer-name {
+			max-width: none;
+			flex: 1;
+			min-width: 0;
+		}
+	}
 </style>
 
 <header class="header">
@@ -1169,6 +1220,8 @@
 
 		<!-- Right Section -->
 		<div class="header-actions">
+			<!-- Seçiciler (adres + bayi) — mobilde alt satıra tek blok olarak iner -->
+			<div class="header-selectors">
 			<!-- User + Location Pill -->
 			<div class="header-user-location">
 				<span class="user-name" id="headerUserName">Kullanıcı</span>
@@ -1189,6 +1242,9 @@
 					<polyline points="6 9 12 15 18 9"/>
 				</svg>
 			</div>
+			</div>
+			<!-- Aksiyon ikonları (bildirim + profil) -->
+			<div class="header-icons">
 			<!-- Notification -->
 			<div class="notification-container">
 				<a href="#" class="header-action notification-btn" id="notificationBtn">
@@ -1254,6 +1310,7 @@
 						Çıkış Yap
 					</a>
 				</div>
+			</div>
 			</div>
 		</div>
 	</div>

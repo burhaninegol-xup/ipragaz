@@ -1038,18 +1038,11 @@ a {
 		display: none;
 	}
 
-	/* Mobil header düzeltmesi */
-	.header .container {
-		padding: 0 15px;
-	}
-
+	/* Mobil header düzeni artık isyerim-header bileşeninin kendi <style>'ında
+	   yönetiliyor (adres + bayi seçicileri tam genişlik alt satıra iniyor).
+	   Buradaki eski .header-user-location { display:none } kuralı kaldırıldı. */
 	.header-logo svg {
 		height: 28px;
-	}
-
-	/* Kullanıcı + konum pill'ini mobilde gizle */
-	.header-user-location {
-		display: none;
 	}
 }
 

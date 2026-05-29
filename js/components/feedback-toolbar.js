@@ -22,6 +22,11 @@ var FeedbackToolbar = (function () {
         var currentPadding = parseInt(getComputedStyle(document.body).paddingTop) || 0;
         document.body.style.paddingTop = (currentPadding + 40) + 'px';
 
+        // Tam ekran overlay'lerin ( or. mobil sohbet drawer'i) toolbar'in altindan
+        // baslamasi icin offset'i CSS degiskeni olarak yayinla. Toolbar yoksa
+        // degisken tanimsiz kalir ve overlay'ler top:0 ile calisir (prod davranisi).
+        document.documentElement.style.setProperty('--feedback-toolbar-offset', '40px');
+
         bindEvents();
         updateFeedbackCount();
     }

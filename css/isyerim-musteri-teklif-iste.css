@@ -655,6 +655,37 @@ a {
 	.products-grid {
 		grid-template-columns: 1fr;
 	}
+
+	/* Read-only kart: dar ekranda istatistik kutuları (Tüketim / Tavan / Teklif)
+	   tek satıra sığmayıp kart içinde kırpılıyordu. Sarmalayıp 2'li dizip,
+	   değer metinlerinin gerektiğinde alta inmesine izin veriyoruz. */
+	.product-card.readonly {
+		gap: 14px;
+		padding: 14px 16px;
+	}
+
+	.product-card.readonly .product-image {
+		width: 64px;
+		height: 64px;
+	}
+
+	.product-card.readonly .product-stats {
+		width: 100%;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.product-card.readonly .product-stats > * {
+		flex: 1 1 calc(50% - 4px);
+		min-width: 0;
+	}
+
+	.consumption-display,
+	.ceiling-price-display,
+	.price-display,
+	.price-display-pending {
+		white-space: normal;
+	}
 }
 
 /* Offer Status Banner - Enhanced & Compact */
@@ -2140,33 +2171,61 @@ a {
 
 /* Responsive - Chat Column */
 @media (max-width: 992px) {
-	.content-with-chat {
+	/* Tek kolona indir. ÖNEMLİ: .chat-minimized varyantı (specificity 0,2,0)
+	   masaüstü için 1fr 380px tanımlıyordu ve bu mobil kuralı eziyordu;
+	   bu yüzden aynı specificity ile burada da hedefliyoruz. */
+	.content-with-chat,
+	.content-with-chat.chat-minimized {
 		grid-template-columns: 1fr;
 		grid-template-rows: auto auto auto;
 	}
 
-	.offer-status-banner {
+	.content-with-chat .offer-status-banner,
+	.content-with-chat.chat-minimized .offer-status-banner {
 		grid-column: 1;
 		grid-row: 1;
 	}
 
-	.main-column {
+	/* main-column: minimized durumundaki display:contents'i geri al.
+	   Aksi halde kartlar grid item olup 1/-1 ile taşan grid'i kaplıyor ve
+	   sağa doğru kayma/taşma oluşuyordu. Tek kolonda normal blok akışı. */
+	.content-with-chat .main-column,
+	.content-with-chat.chat-minimized .main-column {
+		display: block;
 		grid-column: 1;
 		grid-row: 2;
+		min-width: 0;
+		overflow: hidden;
 	}
 
-	.chat-column {
+	/* Chat: mobilde tam ekran drawer; varsayılan gizli, .active ile açılır.
+	   .chat-minimized .chat-column (0,3,0) ve .chat-column.minimized (0,2,0)
+	   kurallarını ezecek specificity kullanıldı. */
+	.content-with-chat .chat-column,
+	.content-with-chat.chat-minimized .chat-column {
 		display: none;
 		position: fixed;
-		inset: 0;
-		top: 0;
-		height: 100vh;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		/* Geliştirme feedback-toolbar'ı varsa onun altından başla; yoksa (prod) 0.
+		   Böylece drawer'ın üst kısmı (başlık + kapatma butonu) toolbar altında kalmaz. */
+		top: var(--feedback-toolbar-offset, 0px);
+		height: auto;
 		border-radius: 0;
 		z-index: 1000;
+		grid-column: 1;
 	}
 
-	.chat-column.active {
+	.content-with-chat .chat-column.active,
+	.content-with-chat.chat-minimized .chat-column.active {
 		display: flex;
+	}
+
+	/* Drawer açıkken mesaj alanı görünür olsun (minimized'ın !important gizlemesini ez) */
+	.chat-column.minimized.active .chat-messages,
+	.chat-column.minimized.active .no-messages {
+		display: flex !important;
 	}
 
 	.chat-toggle-mobile {
