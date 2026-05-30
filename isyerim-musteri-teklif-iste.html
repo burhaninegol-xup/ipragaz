@@ -8,6 +8,7 @@
 	<script src="js/project-auth-check.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
 	<link rel="stylesheet" href="css/isyerim-musteri-teklif-iste.css">
+	<link rel="stylesheet" href="./css/components/delete-account-overlay.css">
 </head>
 <body>
 	<!-- Top Bar (Component) -->
@@ -26,6 +27,10 @@
 
 	<!-- Main Content -->
 	<main class="main-content">
+		<!-- Ayarlar menüsü (yalnızca mobilde ≤992px görünür; masaüstünde gizli) -->
+		<div class="container settings-mobile-menu" id="settingsMobileMenu">
+			<div id="isyerim-settings-sidebar"></div>
+		</div>
 		<div class="container content-with-chat chat-minimized">
 			<!-- Status Banner (Aktif teklif varken gosterilecek) - Grid'in doğrudan child'ı -->
 			<div class="offer-status-banner" id="offerStatusBanner" style="display: none;">
@@ -216,6 +221,9 @@
 	<!-- Footer (Component) -->
 	<div id="isyerim-footer"></div>
 
+	<!-- Hesabımı Sil Overlay (ayarlar menüsü için) -->
+	<div id="delete-account-overlay-container"></div>
+
 	<!-- Offer Summary Overlay -->
 	<div class="offer-summary-overlay" id="offerSummaryOverlay">
 		<div class="offer-summary-modal">
@@ -392,6 +400,7 @@
 	<script src="./js/services/branches-service.js"></script>
 	<script src="./js/services/offers-service.js"></script>
 	<script src="./js/services/offer-logs-service.js"></script>
+	<script src="./js/services/orders-service.js"></script>
 	<script src="./js/services/dealers-service.js"></script>
 	<script src="./js/services/dealer-products-service.js"></script>
 	<script src="./js/services/dealer-districts-service.js"></script>
@@ -400,7 +409,31 @@
 	<script src="./js/services/retail-prices-by-city-service.js"></script>
 	<script src="./js/services/cart-service.js?v=5"></script>
 	<script src="./js/services/settings-service.js"></script>
+	<script src="./js/services/account-deletion-service.js"></script>
 	<script src="./js/component-loader.js"></script>
+	<script src="./js/components/settings-sidebar.js"></script>
 	<script src="./js/isyerim-musteri-teklif-iste.js"></script>
+
+	<!-- Ayarlar menüsünü (mobil accordion) yükle: bu sayfada yalnızca ≤992px'de görünür -->
+	<script>
+		document.addEventListener('DOMContentLoaded', async function () {
+			try {
+				var response = await fetch('./components/isyerim-settings-sidebar.html');
+				var html = await response.text();
+				document.getElementById('isyerim-settings-sidebar').innerHTML = html;
+				// Hesabımı Sil overlay'ini yükle
+				var overlayResponse = await fetch('./components/delete-account-overlay.html');
+				var overlayHtml = await overlayResponse.text();
+				var overlayContainer = document.getElementById('delete-account-overlay-container');
+				if (overlayContainer) overlayContainer.innerHTML = overlayHtml;
+				// Aktif sayfa: Tekliflerim
+				setTimeout(function () {
+					if (typeof initSettingsSidebar === 'function') initSettingsSidebar('tekliflerim');
+				}, 100);
+			} catch (err) {
+				console.error('Ayarlar menüsü yükleme hatası:', err);
+			}
+		});
+	</script>
 </body>
 </html>

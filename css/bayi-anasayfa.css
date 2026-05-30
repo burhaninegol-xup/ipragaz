@@ -1036,3 +1036,39 @@ body {
 		padding: 20px 10px;
 	}
 }
+
+/* ============================================================
+   Mobilde Tekliflerim + Müşterilerim hızlı erişimi sayfanın üstünde
+   (JS ile taşınır). Masaüstünde gizli; butonlar altta kalır.
+   Daha alçak (kompakt) yatay düzen.
+   ============================================================ */
+.quick-actions-top {
+	display: none;
+}
+@media (max-width: 768px) {
+	.quick-actions-top {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 12px;
+		margin-bottom: 18px;
+	}
+	/* Üstteki butonlar: kompakt, yatay (ikon + yazı), daha alçak */
+	.quick-actions-top .quick-action-btn {
+		flex-direction: row;
+		gap: 10px;
+		padding: 12px 14px;
+	}
+	.quick-actions-top .quick-action-btn .action-icon {
+		width: 36px;
+		height: 36px;
+		flex-shrink: 0;
+	}
+	.quick-actions-top .quick-action-btn .action-icon svg {
+		width: 20px;
+		height: 20px;
+	}
+	.quick-actions-top .quick-action-btn span {
+		font-size: 14px;
+		font-weight: 600;
+	}
+}

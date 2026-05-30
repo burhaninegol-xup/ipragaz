@@ -174,7 +174,11 @@
 			.order-actions { justify-content: stretch; }
 			.order-actions button { flex: 1; }
 			.filter-row { flex-direction: column; align-items: stretch; }
-			.date-filter { min-width: auto; }
+			/* Native tarih kutuları yan yana 390px'e sığmadığından (min-content boyutları
+			   daralmaya direniyor) mobilde alt alta, tam genişlik diziyoruz. */
+			.date-filter { min-width: 0; flex-direction: column; align-items: stretch; gap: 8px; }
+			.date-input { width: 100%; min-width: 0; box-sizing: border-box; }
+			.date-separator { display: none; }
 			.branch-filter-wrapper { width: 100%; }
 			.branch-filter-btn { width: 100%; justify-content: center; }
 			.branch-dropdown { left: 0; right: 0; min-width: auto; }

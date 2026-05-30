@@ -276,15 +276,25 @@
 		.offer-product-row-ozet {
 			display: flex;
 			justify-content: space-between;
-			align-items: center;
+			align-items: flex-start;
+			gap: 12px;
 			padding: 5px 0;
 			font-size: 13px;
 			border-bottom: 1px solid #f5f5f5;
 		}
 		.offer-product-row-ozet:last-child { border-bottom: none; }
-		.offer-product-name-ozet { color: #333; }
-		.offer-product-price-ozet { font-weight: 600; color: #e31e24; }
-		.offer-product-commitment-ozet { font-size: 12px; color: #888; margin-left: 8px; }
+		/* İsim kalan genişliği alır ve gerekirse sarılır; fiyat ile çarpışmaz. */
+		.offer-product-name-ozet { color: #333; flex: 1; min-width: 0; }
+		/* Fiyat + taahhüt sağda, alt alta (dar ekranda satıra sığar). */
+		.offer-product-pricecol-ozet {
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			text-align: right;
+		}
+		.offer-product-price-ozet { font-weight: 600; color: #e31e24; white-space: nowrap; }
+		.offer-product-commitment-ozet { font-size: 12px; color: #888; margin-left: 0; }
 		.offer-empty-msg-ozet {
 			text-align: center;
 			padding: 16px;
@@ -1334,6 +1344,17 @@
 			.product-total-price {
 				font-size: 16px;
 			}
+
+			/* Sıklık seçici: dar ekranda "2 Haftalık" tek satıra sığmayıp kayıyordu.
+			   2x2 grid ile her seçenek tam genişlik, tek satır ve eşit yükseklik olur. */
+			.routine-frequency-selector {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 6px;
+			}
+			.routine-freq-option {
+				white-space: nowrap;
+			}
 		}
 	</style>
 </head>
@@ -1773,7 +1794,7 @@
 						var unitPrice = parseFloat(detail.unit_price || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 						html += '<div class="offer-product-row-ozet">';
 						html += '<span class="offer-product-name-ozet">' + productName + '</span>';
-						html += '<span>';
+						html += '<span class="offer-product-pricecol-ozet">';
 						html += '<span class="offer-product-price-ozet">' + unitPrice + ' TL</span>';
 						if (detail.commitment_quantity > 0) {
 							html += '<span class="offer-product-commitment-ozet">(Taahhut: ' + detail.commitment_quantity + ' adet/ay)</span>';
@@ -2135,7 +2156,8 @@
 		// Toggle checkbox - butonu ve frekans seçiciyi aktif/pasif yap
 		routineCheckbox.addEventListener('change', function() {
 			btnCreateRoutine.disabled = !this.checked;
-			frequencySelector.style.display = this.checked ? 'flex' : 'none';
+			/* '' bırakıyoruz ki CSS karar versin: masaüstü flex, mobil 2x2 grid. */
+			frequencySelector.style.display = this.checked ? '' : 'none';
 			if (this.checked && currentOrder) {
 				updateRoutineScheduleText();
 			}

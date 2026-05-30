@@ -19,6 +19,39 @@
 		var countdownEndTime = null; // Geri sayim bitis zamani
 		var inactiveProductIds = []; // Bayinin pasife aldigi urun ID'leri
 
+		// Mobil aksiyon barı: "Yeni Ürün Ekle" + "Teklif Gönder" + "Mesajlar"
+		// butonlarını mobilde tek sticky bara taşır; masaüstünde geri taşır.
+		// DOM düğümleri taşındığı için id'ler ve event'ler korunur.
+		function setupMobileActionBar() {
+			var bar = document.getElementById('mobileActionBar');
+			if (!bar) return;
+			var ids = ['addProductSection', 'form-actions', 'chatToggleMobile'];
+			ids.forEach(function(id) {
+				var el = document.getElementById(id);
+				if (el && !el.__homeAnchor && el.parentNode) {
+					var anchor = document.createComment('home:' + id);
+					el.parentNode.insertBefore(anchor, el);
+					el.__homeAnchor = anchor;
+				}
+			});
+			var mq = window.matchMedia('(max-width: 768px)');
+			function apply() {
+				ids.forEach(function(id) {
+					var el = document.getElementById(id);
+					if (!el) return;
+					if (mq.matches) {
+						if (el.parentNode !== bar) bar.appendChild(el);
+					} else if (el.__homeAnchor && el.__homeAnchor.parentNode && el.parentNode === bar) {
+						el.__homeAnchor.parentNode.insertBefore(el, el.__homeAnchor.nextSibling);
+					}
+				});
+			}
+			apply();
+			if (mq.addEventListener) mq.addEventListener('change', apply);
+			else if (mq.addListener) mq.addListener(apply);
+		}
+		setupMobileActionBar();
+
 		// Loading overlay
 		function showLoading(text) {
 			isLoading = true;
@@ -838,7 +871,7 @@
 						'<div class="pricing-option' + (selectedType === 'retail_price' ? ' selected' : '') + '" data-type="retail_price">' +
 							'<input type="radio" name="pricing_' + product.id + '" value="retail_price"' + (selectedType === 'retail_price' ? ' checked' : '') + '>' +
 							'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
-							'<div class="pricing-label">Perakende Fiyatı Uygula</div>' +
+							'<div class="pricing-label"><span class="pricing-type-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg></span>Perakende Fiyatı Uygula</div>' +
 							'<div class="pricing-input-wrapper">' +
 								'<span class="retail-price-display">' + formatPrice(basePrice) + ' TL</span>' +
 							'</div>' +
@@ -847,7 +880,7 @@
 						'<div class="pricing-option' + (selectedType === 'fixed_price' ? ' selected' : '') + '" data-type="fixed_price">' +
 							'<input type="radio" name="pricing_' + product.id + '" value="fixed_price"' + (selectedType === 'fixed_price' ? ' checked' : '') + '>' +
 							'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
-							'<div class="pricing-label">Sabit Fiyat</div>' +
+							'<div class="pricing-label"><span class="pricing-type-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></span>Sabit Fiyat</div>' +
 							'<div class="pricing-input-wrapper">' +
 								'<input type="number" class="discount-input fixed-price-input" placeholder="0" value="' + fixedPriceValue + '" min="0" step="0.01"' + (selectedType !== 'fixed_price' ? ' disabled' : '') + '>' +
 								'<span class="input-unit">TL</span>' +
@@ -857,7 +890,7 @@
 						'<div class="pricing-option' + (selectedType === 'fixed_discount' ? ' selected' : '') + '" data-type="fixed_discount">' +
 							'<input type="radio" name="pricing_' + product.id + '" value="fixed_discount"' + (selectedType === 'fixed_discount' ? ' checked' : '') + '>' +
 							'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
-							'<div class="pricing-label">Sabit Fiyat İndirimi</div>' +
+							'<div class="pricing-label"><span class="pricing-type-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/></svg></span>Sabit Fiyat İndirimi</div>' +
 							'<div class="pricing-input-wrapper">' +
 								'<input type="number" class="discount-input fixed-discount-input" placeholder="0" value="' + fixedDiscountValue + '" min="0" step="0.01"' + (selectedType !== 'fixed_discount' ? ' disabled' : '') + '>' +
 								'<span class="input-unit">TL indirim</span>' +
@@ -867,7 +900,7 @@
 						'<div class="pricing-option' + (selectedType === 'percentage_discount' ? ' selected' : '') + '" data-type="percentage_discount">' +
 							'<input type="radio" name="pricing_' + product.id + '" value="percentage_discount"' + (selectedType === 'percentage_discount' ? ' checked' : '') + '>' +
 							'<div class="pricing-radio"><div class="pricing-radio-inner"></div></div>' +
-							'<div class="pricing-label">Yüzdesel İndirim</div>' +
+							'<div class="pricing-label"><span class="pricing-type-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 11C9.43 11 11 9.43 11 7.5S9.43 4 7.5 4 4 5.57 4 7.5 5.57 11 7.5 11zm0-5c.83 0 1.5.67 1.5 1.5S8.33 9 7.5 9 6 8.33 6 7.5 6.67 6 7.5 6zM16.5 13c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zm0 5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5.41 20L4 18.59 18.59 4 20 5.41 5.41 20z"/></svg></span>Yüzdesel İndirim</div>' +
 							'<div class="pricing-input-wrapper">' +
 								'<input type="number" class="discount-input percentage-input" placeholder="0" value="' + percentageValue + '" min="0" max="100" step="0.1"' + (selectedType !== 'percentage_discount' ? ' disabled' : '') + '>' +
 								'<span class="input-unit">%</span>' +

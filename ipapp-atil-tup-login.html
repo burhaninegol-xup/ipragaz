@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İPApp Atıl Tüp Bildirimi - Giriş</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh;
+			background-color: #e31e24;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			overflow: hidden;
+		}
+		.bg-pattern { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+		.bg-pattern::before {
+			content: 'B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B';
+			position: absolute; top: -50px; left: -50px;
+			width: calc(100% + 100px); height: calc(100% + 100px);
+			font-size: 80px; font-weight: 700; color: rgba(255, 255, 255, 0.08);
+			word-spacing: 30px; line-height: 1.2; letter-spacing: 20px; word-break: break-all;
+		}
+		.login-container { position: relative; z-index: 1; width: 100%; max-width: 420px; padding: 20px; }
+		.login-card { background: #fff; border-radius: 12px; padding: 40px 35px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+		.logo { text-align: center; margin-bottom: 24px; }
+		.logo img { width: 140px; height: auto; }
+		.module-badge {
+			display: block; text-align: center; font-size: 13px; font-weight: 600;
+			color: #0d9488; background: #e6fffb; border: 1px solid #b2f5ea;
+			border-radius: 20px; padding: 6px 12px; margin: 0 auto 18px; max-width: 240px;
+		}
+		.back-link { display: flex; align-items: center; gap: 8px; color: #333; font-size: 18px; font-weight: 600; margin-bottom: 18px; text-decoration: none; }
+		.back-link:hover { color: #e31e24; }
+		.back-link svg { width: 20px; height: 20px; }
+		.description { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 25px; }
+		.form-group { margin-bottom: 25px; }
+		.form-group label { display: block; color: #888; font-size: 12px; margin-bottom: 8px; }
+		.form-group input {
+			width: 100%; padding: 14px 16px; border: 1px solid #e0e0e0; border-radius: 8px;
+			font-size: 15px; font-family: inherit; color: #333; transition: border-color 0.2s, box-shadow 0.2s;
+		}
+		.form-group input:focus { outline: none; border-color: #e31e24; box-shadow: 0 0 0 3px rgba(227,30,36,0.1); }
+		.form-group input::placeholder { color: #bbb; }
+		.btn-submit {
+			width: 100%; padding: 14px 20px; background: #c41e24; border: none; border-radius: 25px;
+			color: #fff; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s, transform 0.2s;
+		}
+		.btn-submit:hover { background: #a81a1f; transform: translateY(-1px); }
+		.btn-submit:active { transform: translateY(0); }
+		.quick-login-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee; }
+		.quick-login-title { font-size: 13px; color: #666; margin-bottom: 12px; text-align: center; }
+		.user-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
+		.user-item {
+			padding: 12px 14px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px;
+			cursor: pointer; font-size: 13px; transition: all 0.2s;
+		}
+		.user-item:hover { background: #fde8e8; border-color: #e31e24; }
+		.user-item .user-name { font-weight: 500; color: #1a1a2e; }
+		.user-item .user-phone { font-size: 11px; color: #888; }
+		@media (max-width: 480px) {
+			.login-card { padding: 30px 25px; }
+			.logo img { width: 120px; }
+			.back-link { font-size: 16px; }
+			.bg-pattern::before { font-size: 50px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="bg-pattern"></div>
+
+	<div class="login-container">
+		<div class="login-card">
+			<div class="logo">
+				<img src="ipragaz-160x34px.svg" alt="İpragaz">
+			</div>
+			<span class="module-badge">İPApp · Atıl Tüp Bildirimi</span>
+
+			<a href="default.html" class="back-link">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M19 12H5M12 19l-7-7 7-7"/>
+				</svg>
+				Giriş Yap
+			</a>
+
+			<p class="description">
+				Boş tüp iade bildiriminizi oluşturabilmeniz için telefon numaranızı girmelisiniz. Numaranıza bir doğrulama kodu göndereceğiz.
+			</p>
+
+			<div class="form-group">
+				<label>Telefon Numarası</label>
+				<input type="tel" id="phone" placeholder="5xx xxx xxxx" maxlength="12">
+			</div>
+
+			<button class="btn-submit" id="submit-btn">Devam</button>
+
+			<!-- Hızlı Giriş (varsa kayıtlı İPApp kullanıcıları) -->
+			<div class="quick-login-section" id="quickLoginSection" style="display:none;">
+				<p class="quick-login-title">Hızlı Giriş</p>
+				<div class="user-list" id="userList"></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/ipapp-users-service.js"></script>
+	<script>
+		// Önceki oturum bilgilerini temizle
+		sessionStorage.removeItem('ipapp_phone');
+		sessionStorage.removeItem('ipapp_user_id');
+		sessionStorage.removeItem('ipapp_user_name');
+
+		// Telefon formatla (5xx xxx xxxx)
+		document.getElementById('phone').addEventListener('input', function (e) {
+			var v = e.target.value.replace(/\D/g, '').slice(0, 10);
+			var out = v;
+			if (v.length > 3 && v.length <= 6) out = v.slice(0, 3) + ' ' + v.slice(3);
+			else if (v.length > 6) out = v.slice(0, 3) + ' ' + v.slice(3, 6) + ' ' + v.slice(6);
+			e.target.value = out;
+		});
+
+		function goToOtp(phone) {
+			sessionStorage.setItem('ipapp_phone', phone);
+			window.location.href = 'ipapp-atil-tup-otp.html?phone=' + phone;
+		}
+
+		document.getElementById('submit-btn').addEventListener('click', function () {
+			var phone = document.getElementById('phone').value.replace(/\s/g, '');
+			if (phone.length < 10) {
+				alert('Lütfen geçerli bir telefon numarası giriniz.');
+				return;
+			}
+			goToOtp(phone);
+		});
+
+		document.getElementById('phone').addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') document.getElementById('submit-btn').click();
+		});
+
+		// Kayıtlı İPApp kullanıcılarını hızlı giriş olarak listele (tablo varsa)
+		(async function loadQuickLogin() {
+			try {
+				if (typeof supabaseClient === 'undefined') return;
+				const { data, error } = await supabaseClient
+					.from('ipapp_users')
+					.select('id, phone, name')
+					.eq('is_active', true)
+					.order('created_at', { ascending: false })
+					.limit(10);
+				if (error || !data || !data.length) return;
+
+				var list = document.getElementById('userList');
+				list.innerHTML = '';
+				data.forEach(function (u) {
+					var el = document.createElement('div');
+					el.className = 'user-item';
+					el.innerHTML = '<div class="user-name">' + (u.name || 'İsimsiz Kullanıcı') + '</div>' +
+						'<div class="user-phone">' + (u.phone || '') + '</div>';
+					el.onclick = function () { goToOtp(u.phone); };
+					list.appendChild(el);
+				});
+				document.getElementById('quickLoginSection').style.display = 'block';
+			} catch (e) {
+				/* tablo henüz yoksa sessizce geç */
+			}
+		})();
+	</script>
+</body>
+</html>

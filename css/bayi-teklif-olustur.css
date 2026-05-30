@@ -799,20 +799,18 @@ body {
 	}
 }
 
-/* Responsive: Mobil */
+/* Responsive: Mobil — stat kutuları tam genişlik (kullanıcı isteği: %100) */
 @media (max-width: 767px) {
 	.product-stats-header {
-		flex-wrap: wrap;
-		justify-content: flex-end;
+		flex-direction: column;
+		align-items: stretch;
 		gap: 10px;
 	}
-	.stat-box-compact {
-		flex: 0 1 auto;
-		min-width: 90px;
-	}
+	.stat-box-compact,
 	.consumption-box-compact {
-		flex: 0 1 auto;
-		min-width: 110px;
+		width: 100%;
+		min-width: 0;
+		max-width: none;
 	}
 }
 
@@ -820,13 +818,14 @@ body {
 @media (max-width: 575px) {
 	.product-stats-header {
 		flex-direction: column;
-		align-items: flex-end;
+		align-items: stretch;
 		gap: 8px;
 	}
 	.stat-box-compact,
 	.consumption-box-compact {
-		min-width: 140px;
-		max-width: 160px;
+		width: 100%;
+		min-width: 0;
+		max-width: none;
 	}
 }
 
@@ -1246,22 +1245,34 @@ body {
 .pricing-input-wrapper input {
 	width: 80px;
 	padding: 8px 10px;
-	border: 1px solid #e0e0e0;
+	border: 2px solid #cbd5e1;
 	border-radius: 6px;
 	font-size: 13px;
 	text-align: right;
+	background: #fff;
 	transition: all 0.2s;
+}
+
+/* Aktif (seçili indirim türü) giriş alanı: yüksek kontrast — kullanıcılar
+   yazabilecekleri inputu kolayca fark etsin. */
+.pricing-input-wrapper input:not(:disabled) {
+	border-color: #2563eb;
+	background: #eff6ff;
+	color: #0b2e6b;
+	font-weight: 600;
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .pricing-input-wrapper input:focus {
 	outline: none;
-	border-color: #002c77;
-	box-shadow: 0 0 0 2px rgba(0,44,119,0.1);
+	border-color: #1d4ed8;
+	box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.25);
 }
 
 .pricing-input-wrapper input:disabled {
-	background: #f5f5f5;
-	color: #999;
+	background: #fff;
+	border: 2px solid #94a3b8;
+	color: #475569;
 	cursor: not-allowed;
 }
 
@@ -1372,25 +1383,48 @@ body {
 		order: 2;
 	}
 
+	/* Fiyatlandırma seçeneği: mobilde radio+etiket üst satır, giriş alt satır.
+	   Eski kuralda width:100% + margin-left:32px birlikte kutudan taşmaya
+	   (kayma) sebep oluyordu; grid ile hizalı ve taşmasız düzene geçildi. */
 	.pricing-option {
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-
-	.pricing-label {
-		width: 100%;
-		order: 1;
-		margin-left: 32px;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 8px 10px;
 	}
 
 	.pricing-radio {
-		order: 0;
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.pricing-label {
+		grid-column: 2;
+		grid-row: 1;
+		width: auto;
+		min-width: 0;
+		margin-left: 0;
 	}
 
 	.pricing-input-wrapper {
-		order: 2;
+		grid-column: 2;
+		grid-row: 2;
 		width: 100%;
-		margin-left: 32px;
+		margin-left: 0;
+	}
+
+	.pricing-input-wrapper input,
+	.pricing-input-wrapper .retail-price-display {
+		flex: 1;
+		width: auto;
+		text-align: left;
+	}
+
+	/* "Müşteriye Uygulanacak BİRİM FİYAT": mobilde alt alta, sola hizalı */
+	.final-price-display {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
 	}
 }
 
@@ -1544,6 +1578,19 @@ body {
 	cursor: not-allowed;
 	transform: none;
 	box-shadow: none;
+}
+
+/* "Teklif Gönder / Kaydet" butonu yeşil (kullanıcı isteği) */
+#save-btn {
+	background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+#save-btn:hover {
+	background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+	box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+	color: #fff;
+}
+#save-btn:disabled {
+	background: #ccc;
 }
 
 .btn svg {
@@ -2873,3 +2920,159 @@ body {
 	opacity: 1 !important;
 	position: static !important;
 }
+
+/* ============================================================
+   MOBİL AKSİYON BARI (≤768px)
+   "Yeni Ürün Ekle" + "Teklif Gönder" + "Mesajlar" butonları JS ile bu
+   bara taşınır (masaüstünde geri taşınır → desktop etkilenmez).
+   Sığmazlarsa satır kayar; Mesajlar yalnızca ikon olarak görünür.
+   ============================================================ */
+.mobile-action-bar {
+	display: none;
+}
+
+@media (max-width: 768px) {
+	.mobile-action-bar {
+		display: flex;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 950;
+		gap: 8px;
+		padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+		background: #fff;
+		box-shadow: 0 -2px 14px rgba(0, 0, 0, 0.12);
+		align-items: stretch;
+		flex-wrap: wrap;
+	}
+
+	/* Taşınan bölümlerin kendi dış boşluklarını sıfırla */
+	.mobile-action-bar .add-product-section {
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: none;
+		flex: 1 1 130px;
+		min-width: 0;
+	}
+	.mobile-action-bar .btn-add-product {
+		width: 100%;
+		margin: 0;
+	}
+	.mobile-action-bar #form-actions {
+		margin: 0;
+		flex: 2 1 160px;
+		flex-direction: row;
+		gap: 8px;
+		min-width: 0;
+	}
+	.mobile-action-bar #form-actions .btn {
+		flex: 1;
+		width: auto;
+		min-width: 0;
+		white-space: nowrap;
+	}
+
+	/* Mesajlar: bar içinde, yalnızca ikon (sığması için) */
+	.mobile-action-bar .chat-toggle-mobile {
+		position: relative;
+		bottom: auto;
+		right: auto;
+		flex: 0 0 auto;
+		width: 48px;
+		height: 48px;
+		padding: 0;
+		border-radius: 12px;
+		justify-content: center;
+		align-items: center;
+	}
+	.mobile-action-bar .chat-toggle-mobile .chat-toggle-text {
+		display: none;
+	}
+	.mobile-action-bar .chat-toggle-mobile .unread-badge {
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		margin: 0;
+	}
+	.chat-toggle-icon {
+		width: 22px;
+		height: 22px;
+	}
+
+	/* Sabit bar içeriği örtmesin */
+	body {
+		padding-bottom: 92px;
+	}
+}
+
+/* Mobil aksiyon barı rötuşları */
+@media (max-width: 768px) {
+	/* VAZGEÇ sticky barda görünmesin (geri için üstteki ok / akış yeterli) */
+	.mobile-action-bar #form-actions .btn-secondary {
+		display: none;
+	}
+	/* "Ürün Ekle" ve "Teklif Gönder" tek satır, biraz küçük font ile yan yana sığsın */
+	.mobile-action-bar .btn-add-product,
+	.mobile-action-bar #form-actions .btn {
+		font-size: 13px;
+		padding: 12px 12px;
+		gap: 6px;
+		white-space: nowrap;
+		line-height: 1.1;
+	}
+	.mobile-action-bar .btn-add-product svg,
+	.mobile-action-bar #form-actions .btn svg {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+	}
+	.mobile-action-bar .add-product-section {
+		flex: 1 1 110px;
+	}
+}
+
+/* Mobil bar: üç butonun yükseklikleri eşit olsun */
+@media (max-width: 768px) {
+	.mobile-action-bar {
+		align-items: center;
+	}
+	.mobile-action-bar #form-actions {
+		align-items: center;
+	}
+	.mobile-action-bar .btn-add-product,
+	.mobile-action-bar #form-actions .btn,
+	.mobile-action-bar .chat-toggle-mobile {
+		height: 48px;
+		box-sizing: border-box;
+	}
+}
+
+/* ============================================================
+   İndirim türü ayırt ediciliği: her türe kendine özgü renkli ikon
+   rozeti (bayilerin türleri karıştırmaması için). Bütünlüğü bozmayan,
+   uçuk olmayan; seçili/hover durumlarıyla çakışmaz (sadece ikon renklenir).
+   ============================================================ */
+.pricing-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.pricing-type-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 8px;
+	flex-shrink: 0;
+}
+.pricing-type-icon svg {
+	width: 16px;
+	height: 16px;
+}
+.pricing-option[data-type="retail_price"] .pricing-type-icon   { background: #e7f0fb; color: #1565c0; }
+.pricing-option[data-type="fixed_price"] .pricing-type-icon    { background: #e1f3f1; color: #00897b; }
+.pricing-option[data-type="fixed_discount"] .pricing-type-icon { background: #fdeede; color: #e67e00; }
+.pricing-option[data-type="percentage_discount"] .pricing-type-icon { background: #f1e6f7; color: #8e24aa; }

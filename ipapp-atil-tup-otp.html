@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İPApp Atıl Tüp Bildirimi - Doğrulama</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			min-height: 100vh; background-color: #e31e24;
+			display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+		}
+		.bg-pattern { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
+		.bg-pattern::before {
+			content: 'B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B';
+			position: absolute; top: -50px; left: -50px; width: calc(100% + 100px); height: calc(100% + 100px);
+			font-size: 80px; font-weight: 700; color: rgba(255,255,255,0.08);
+			word-spacing: 30px; line-height: 1.2; letter-spacing: 20px; word-break: break-all;
+		}
+		.login-container { position: relative; z-index: 1; width: 100%; max-width: 420px; padding: 20px; }
+		.login-card { background: #fff; border-radius: 12px; padding: 40px 35px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+		.logo { text-align: center; margin-bottom: 24px; }
+		.logo img { width: 140px; height: auto; }
+		.back-link { display: flex; align-items: center; gap: 8px; color: #333; font-size: 18px; font-weight: 600; margin-bottom: 18px; text-decoration: none; }
+		.back-link:hover { color: #e31e24; }
+		.back-link svg { width: 20px; height: 20px; }
+		.description { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 25px; text-align: center; }
+		.description .phone-number { color: #e31e24; font-weight: 600; }
+		.otp-container { display: flex; gap: 12px; justify-content: center; margin-bottom: 18px; }
+		.otp-input {
+			width: 60px; height: 60px; text-align: center; font-size: 24px; font-weight: 600;
+			border: 2px solid #e0e0e0; border-radius: 12px; font-family: inherit; color: #333; transition: all 0.2s;
+		}
+		.otp-input:focus { outline: none; border-color: #e31e24; box-shadow: 0 0 0 3px rgba(227,30,36,0.1); }
+		.otp-input.error { border-color: #e31e24; }
+		.timer { text-align: center; color: #888; font-size: 13px; margin-bottom: 22px; }
+		.timer #countdown { color: #333; font-weight: 600; }
+		.timer.expired #countdown { color: #e31e24; }
+		.btn-submit {
+			width: 100%; padding: 14px 20px; background: #c41e24; border: none; border-radius: 25px;
+			color: #fff; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s, transform 0.2s;
+		}
+		.btn-submit:hover { background: #a81a1f; transform: translateY(-1px); }
+		.btn-submit:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+		.resend-link { text-align: center; margin-top: 16px; }
+		.resend-link a { color: #888; font-size: 13px; text-decoration: none; }
+		.resend-link a:not(.disabled) { color: #e31e24; cursor: pointer; }
+		.resend-link a.disabled { pointer-events: none; }
+		@media (max-width: 480px) {
+			.login-card { padding: 30px 22px; }
+			.otp-input { width: 52px; height: 52px; font-size: 20px; }
+			.bg-pattern::before { font-size: 50px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="bg-pattern"></div>
+
+	<div class="login-container">
+		<div class="login-card">
+			<div class="logo">
+				<img src="ipragaz-160x34px.svg" alt="İpragaz">
+			</div>
+
+			<a href="ipapp-atil-tup-login.html" class="back-link">
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M19 12H5M12 19l-7-7 7-7"/>
+				</svg>
+				Giriş Yap
+			</a>
+
+			<p class="description">
+				<span class="phone-number" id="phone-display">0 599 999 9999</span> numaralı telefona gönderilen 4 haneli doğrulama kodunu girmelisiniz.
+			</p>
+
+			<div class="otp-container">
+				<input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code">
+				<input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+				<input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+				<input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]">
+			</div>
+
+			<div class="timer" id="timer">Kalan Süre:<span id="countdown">10:00</span></div>
+
+			<button class="btn-submit" id="submit-btn">Devam</button>
+
+			<div class="resend-link">
+				<a href="#" id="resend-link" class="disabled">Kodu tekrar gönder</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/ipapp-users-service.js"></script>
+	<script>
+		var urlParams = new URLSearchParams(window.location.search);
+		var phone = urlParams.get('phone') || sessionStorage.getItem('ipapp_phone');
+
+		if (phone) {
+			sessionStorage.setItem('ipapp_phone', phone);
+			var f = '0 ' + phone.slice(0, 3) + ' ' + phone.slice(3, 6) + ' ' + phone.slice(6, 10);
+			document.getElementById('phone-display').textContent = f;
+		} else {
+			window.location.href = 'ipapp-atil-tup-login.html';
+		}
+
+		var otpInputs = document.querySelectorAll('.otp-input');
+		otpInputs.forEach(function (input, index) {
+			input.addEventListener('input', function () {
+				this.classList.remove('error');
+				this.value = this.value.replace(/\D/g, '');
+				if (this.value && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+			});
+			input.addEventListener('keydown', function (e) {
+				if (e.key === 'Backspace' && !this.value && index > 0) otpInputs[index - 1].focus();
+			});
+			input.addEventListener('paste', function (e) {
+				e.preventDefault();
+				var digits = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 4);
+				digits.split('').forEach(function (d, i) { if (otpInputs[i]) { otpInputs[i].value = d; otpInputs[i].classList.remove('error'); } });
+				var last = Math.min(digits.length, otpInputs.length) - 1;
+				if (last >= 0) otpInputs[last].focus();
+			});
+		});
+		otpInputs[0].focus();
+
+		// Geri sayım (10 dk)
+		var totalSeconds = 600;
+		var timerEl = document.getElementById('countdown');
+		var timerBox = document.getElementById('timer');
+		var resendLink = document.getElementById('resend-link');
+		var submitBtn = document.getElementById('submit-btn');
+		function tick() {
+			var m = Math.floor(totalSeconds / 60), s = totalSeconds % 60;
+			timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+			if (totalSeconds <= 0) {
+				clearInterval(timerInt);
+				timerBox.classList.add('expired');
+				timerEl.textContent = 'Süre doldu';
+				resendLink.classList.remove('disabled');
+				submitBtn.disabled = true;
+			} else { totalSeconds--; }
+		}
+		var timerInt = setInterval(tick, 1000); tick();
+
+		resendLink.addEventListener('click', function (e) {
+			e.preventDefault();
+			if (resendLink.classList.contains('disabled')) return;
+			totalSeconds = 600; timerBox.classList.remove('expired'); submitBtn.disabled = false;
+			resendLink.classList.add('disabled');
+			otpInputs.forEach(function (i) { i.value = ''; });
+			otpInputs[0].focus();
+		});
+
+		submitBtn.addEventListener('click', async function () {
+			var code = '', empty = false;
+			otpInputs.forEach(function (i) { if (!i.value) { i.classList.add('error'); empty = true; } code += i.value; });
+			if (empty || code.length !== 4) return;
+
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Kontrol ediliyor...';
+			try {
+				// Mock OTP: 4 haneli herhangi bir kod kabul edilir; telefona göre İPApp
+				// kullanıcısı bulunur ya da oluşturulur (ayrı ipapp_users tablosu).
+				var res = await IpappUsersService.findOrCreateByPhone(phone, null);
+				if (res.error || !res.data) {
+					alert('Giriş yapılamadı. Lütfen tekrar deneyin. (Veritabanı tablosu oluşturulmamış olabilir.)');
+					submitBtn.disabled = false; submitBtn.textContent = 'Devam';
+					return;
+				}
+				sessionStorage.setItem('ipapp_user_id', res.data.id);
+				sessionStorage.setItem('ipapp_phone', res.data.phone);
+				if (res.data.name) sessionStorage.setItem('ipapp_user_name', res.data.name);
+				window.location.href = 'ipapp-atil-tup-form.html';
+			} catch (err) {
+				alert('Bir hata oluştu: ' + err.message);
+				submitBtn.disabled = false; submitBtn.textContent = 'Devam';
+			}
+		});
+	</script>
+</body>
+</html>

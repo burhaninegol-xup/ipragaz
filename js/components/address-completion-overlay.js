@@ -22,6 +22,20 @@ var AddressCompletionOverlay = (function() {
 			submitBtn.addEventListener('click', submit);
 		}
 
+		// Doldurulmasi gereken (bos) alanlar maviyle vurgulanir; bir deger girilince
+		// o alanin vurgusu kalkar, kalan bos alanlar vurgulu kalir (event delegation).
+		var acForm = document.getElementById('addressCompletionForm');
+		if (acForm) {
+			var clearNeedsFill = function(e) {
+				var field = e.target.closest ? e.target.closest('.address-field') : null;
+				if (field && e.target.value && String(e.target.value).trim() !== '') {
+					field.classList.remove('needs-fill');
+				}
+			};
+			acForm.addEventListener('input', clearNeedsFill);
+			acForm.addEventListener('change', clearNeedsFill);
+		}
+
 		// Overlay'e tiklaninca kapat
 		var overlay = document.getElementById('addressCompletionOverlay');
 		if (overlay) {
@@ -182,11 +196,13 @@ var AddressCompletionOverlay = (function() {
 		if (missing.indexOf(fieldKey) === -1) {
 			// Alan dolu - disabled goster
 			container.classList.add('disabled');
+			container.classList.remove('needs-fill');
 			select.innerHTML = '<option value="' + (branch[fieldKey + '_id'] || '') + '">' + (branch[fieldKey] || '') + '</option>';
 			select.disabled = true;
 		} else {
-			// Alan bos - aktif dropdown
+			// Alan bos - aktif dropdown; doldurulmasi gerektigi icin mavi vurgu
 			container.classList.remove('disabled');
+			container.classList.add('needs-fill');
 			select.disabled = true; // Veri yuklenene kadar disabled
 			var placeholders = {
 				city: 'Il Seciniz',
@@ -209,11 +225,13 @@ var AddressCompletionOverlay = (function() {
 		if (missing.indexOf(fieldKey) === -1) {
 			// Alan dolu - disabled goster
 			container.classList.add('disabled');
+			container.classList.remove('needs-fill');
 			input.value = branch[fieldKey] || '';
 			input.disabled = true;
 		} else {
-			// Alan bos - aktif input
+			// Alan bos - aktif input; doldurulmasi gerektigi icin mavi vurgu
 			container.classList.remove('disabled');
+			container.classList.add('needs-fill');
 			input.value = '';
 			input.disabled = false;
 		}

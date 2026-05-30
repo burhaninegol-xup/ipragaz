@@ -613,6 +613,23 @@
 			.sidebar {
 				width: 100%;
 			}
+
+			/* "Siparişe Devam Et" mobilde ekranın altına sabit (floating).
+			   Sadece responsive'de; masaüstünde özet kartı içinde kalır. */
+			.btn-proceed {
+				position: fixed;
+				left: 12px;
+				right: 12px;
+				bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+				width: auto;
+				margin-top: 0;
+				z-index: 900;
+				box-shadow: 0 6px 20px rgba(227, 30, 36, 0.4);
+			}
+			/* Sabit buton içeriği (footer) örtmesin diye altta boşluk bırak. */
+			body {
+				padding-bottom: 88px;
+			}
 		}
 
 		@media (max-width: 600px) {

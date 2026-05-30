@@ -167,7 +167,7 @@
 						<line x1="12" y1="8" x2="12" y2="16"/>
 						<line x1="8" y1="12" x2="16" y2="12"/>
 					</svg>
-					Yeni Ürün Ekle
+					Ürün Ekle
 				</button>
 			</div>
 
@@ -313,9 +313,14 @@
 		</aside>
 	</main>
 
+	<!-- Mobil aksiyon barı: mobilde Yeni Ürün Ekle + Teklif Gönder + Mesajlar
+	     butonları JS ile buraya taşınır; masaüstünde geri taşınır. -->
+	<div id="mobileActionBar" class="mobile-action-bar"></div>
+
 	<!-- Mobile Chat Toggle -->
 	<button class="chat-toggle-mobile" id="chatToggleMobile" onclick="openChatMobile()">
-		Mesajlar
+		<svg class="chat-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+		<span class="chat-toggle-text">Mesajlar</span>
 		<span class="unread-badge" id="unreadBadgeMobile" style="display: none;">0</span>
 	</button>
 

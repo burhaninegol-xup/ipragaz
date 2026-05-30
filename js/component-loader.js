@@ -274,6 +274,16 @@ const ComponentLoader = {
                 if (profileDropdown) profileDropdown.classList.remove('active');
             });
 
+            // Mobil kapatma butonu (tam ekran panelde dışarı tıklama olmadığı için)
+            const notificationCloseMobile = document.getElementById('notificationCloseMobile');
+            if (notificationCloseMobile) {
+                notificationCloseMobile.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    notificationDropdown.classList.remove('active');
+                });
+            }
+
             document.addEventListener('click', function(e) {
                 if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
                     notificationDropdown.classList.remove('active');
@@ -792,11 +802,11 @@ const ComponentLoader = {
 
         container.appendChild(toast);
 
-        // 5 saniye sonra kaldir
+        // 15 saniye sonra kaldir (eski sure 5sn idi, kullanici talebiyle 3 katina cikarildi)
         setTimeout(() => {
             toast.classList.add('removing');
             setTimeout(() => toast.remove(), 300);
-        }, 5000);
+        }, 15000);
     },
 
     /**
@@ -1311,11 +1321,11 @@ const ComponentLoader = {
 
         container.appendChild(toast);
 
-        // 5 saniye sonra kaldir
+        // 15 saniye sonra kaldir (eski sure 5sn idi, kullanici talebiyle 3 katina cikarildi)
         setTimeout(() => {
             toast.classList.add('removing');
             setTimeout(() => toast.remove(), 300);
-        }, 5000);
+        }, 15000);
     },
 
     /**

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İPApp - Boş Tüp İade Formu</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background: #f0f2f5; color: #1f2937; padding: 24px 16px 60px;
+		}
+		.page-head { text-align: center; margin-bottom: 24px; }
+		.page-head img { width: 150px; height: auto; margin-bottom: 12px; }
+		.page-head h1 { font-size: 20px; font-weight: 600; color: #374151; }
+		.form-card {
+			max-width: 720px; margin: 0 auto; background: #fff; border-radius: 14px;
+			padding: 28px 24px; box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+		}
+		.field { margin-bottom: 16px; }
+		.field label { display: block; font-size: 12px; font-weight: 500; color: #6b7280; margin-bottom: 6px; }
+		.field label .req { color: #e31e24; }
+		.field input, .field select, .field textarea {
+			width: 100%; padding: 13px 14px; border: 1px solid #d1d5db; border-radius: 10px;
+			font-size: 14px; font-family: inherit; color: #1f2937; background: #fff; transition: border-color 0.2s, box-shadow 0.2s;
+		}
+		.field input:focus, .field select:focus, .field textarea:focus {
+			outline: none; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+		}
+		.field input:disabled, .field input[readonly] { background: #eef0f3; color: #6b7280; cursor: not-allowed; }
+		.field textarea { resize: vertical; min-height: 90px; }
+		.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+		/* Tüp satırı grubu */
+		.tube-group {
+			display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px;
+			background: #f3f4f6; border-radius: 10px; padding: 14px; margin-bottom: 14px;
+		}
+		.tube-group .field { margin-bottom: 0; }
+		.btn-submit {
+			width: 100%; margin-top: 10px; padding: 16px; background: #1a1a2e; color: #fff;
+			border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s;
+		}
+		.btn-submit:hover { background: #0f0f1e; }
+		.btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+		/* Başarı ekranı */
+		.success-box { display: none; text-align: center; padding: 30px 10px; }
+		.success-box .check {
+			width: 72px; height: 72px; border-radius: 50%; background: #dcfce7; color: #16a34a;
+			display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+		}
+		.success-box .check svg { width: 38px; height: 38px; }
+		.success-box h2 { font-size: 20px; margin-bottom: 8px; }
+		.success-box p { color: #6b7280; font-size: 14px; margin-bottom: 20px; }
+		.success-box a { display: inline-block; padding: 12px 22px; background: #0d9488; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600; }
+		/* Kullanım koşulları onayı */
+		.terms-row { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 18px; font-size: 13px; color: #374151; }
+		.terms-row input { width: 18px; height: 18px; margin-top: 1px; accent-color: #0d9488; flex-shrink: 0; cursor: pointer; }
+		.terms-row a { color: #0d9488; font-weight: 600; text-decoration: underline; cursor: pointer; }
+		.deposit-note { font-size: 12px; color: #6b7280; margin: -6px 0 14px; line-height: 1.6; }
+		/* Alacağınız Toplam Tutar */
+		.total-amount-row {
+			display: flex; align-items: center; justify-content: space-between; gap: 12px;
+			background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+			border-radius: 10px; padding: 14px 18px; margin: 4px 0 12px;
+		}
+		.total-amount-label { font-size: 14px; font-weight: 600; color: #2e7d32; }
+		.total-amount-value { font-size: 20px; font-weight: 700; color: #1b5e20; white-space: nowrap; }
+		/* Koşullar popover/modal */
+		.terms-overlay {
+			display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+			z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+		}
+		.terms-overlay.active { display: flex; }
+		.terms-modal {
+			background: #fff; border-radius: 14px; width: 640px; max-width: 100%; max-height: 85vh;
+			display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+		}
+		.terms-modal-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #eee; }
+		.terms-modal-head h3 { font-size: 16px; color: #111827; }
+		.terms-modal-close { background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; line-height: 0; }
+		.terms-modal-close svg { width: 24px; height: 24px; }
+		.terms-modal-body { padding: 20px 22px; overflow-y: auto; }
+		.terms-modal-body h4 { font-size: 14px; color: #0d9488; margin: 16px 0 6px; }
+		.terms-modal-body h4:first-child { margin-top: 0; }
+		.terms-modal-body p { font-size: 13px; line-height: 1.65; color: #374151; margin-bottom: 10px; }
+		.terms-modal-foot { padding: 14px 22px; border-top: 1px solid #eee; text-align: right; }
+		.terms-modal-foot button { padding: 10px 22px; background: #0d9488; color: #fff; border: none; border-radius: 10px; font-weight: 600; font-family: inherit; cursor: pointer; }
+		@media (max-width: 640px) {
+			.row { grid-template-columns: 1fr; }
+			.tube-group { grid-template-columns: 1fr 1fr; }
+			.form-card { padding: 22px 16px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="page-head">
+		<img src="ipragaz-160x34px.svg" alt="İpragaz">
+		<h1>İPApp · Boş Tüp İade Formu</h1>
+	</div>
+
+	<div class="form-card" id="formCard">
+		<div class="field">
+			<label>İlgili Kişi Ad/Soyad <span class="req">*</span></label>
+			<input type="text" id="contactName" placeholder="Ad Soyad">
+		</div>
+
+		<div class="row">
+			<div class="field">
+				<label>Tüp Bayi İl <span class="req">*</span></label>
+				<select id="citySelect"><option value="">İl Seçiniz</option></select>
+			</div>
+			<div class="field">
+				<label>Tüp Bayi İlçe <span class="req">*</span></label>
+				<select id="districtSelect" disabled><option value="">İlçe Seçiniz</option></select>
+			</div>
+		</div>
+
+		<div class="field">
+			<label>Boş Tüpü İade Alacak Bayi <span class="req">*</span></label>
+			<select id="dealerSelect" disabled><option value="">Bayi Seçiniz</option></select>
+		</div>
+
+		<div class="row">
+			<div class="field">
+				<label>İade Adresi (1) <span class="req">*</span></label>
+				<input type="text" id="address1" placeholder="İade adresi">
+			</div>
+			<div class="field">
+				<label>İade Adresi (2)</label>
+				<input type="text" id="address2" placeholder="İade adresi (devamı)">
+			</div>
+		</div>
+
+		<!-- Tüp Satırı 1 -->
+		<div class="tube-group">
+			<div class="field">
+				<label>Tüp Marka <span class="req">*</span></label>
+				<select class="tube-brand" data-default="İpragaz"></select>
+			</div>
+			<div class="field">
+				<label>Tüp Cinsi <span class="req">*</span></label>
+				<select class="tube-type"></select>
+			</div>
+			<div class="field">
+				<label>Boş Tüp Adet <span class="req">*</span></label>
+				<input type="number" class="tube-count" placeholder="0" min="0">
+			</div>
+			<div class="field">
+				<label>Depozito Bedeli</label>
+				<input type="text" class="tube-deposit" placeholder="Depozito Bedeli" readonly>
+			</div>
+		</div>
+
+		<!-- Tüp Satırı 2 -->
+		<div class="tube-group">
+			<div class="field">
+				<label>Tüp Marka</label>
+				<select class="tube-brand" data-default="Bizimgaz"></select>
+			</div>
+			<div class="field">
+				<label>Tüp Cinsi</label>
+				<select class="tube-type"></select>
+			</div>
+			<div class="field">
+				<label>Boş Tüp Adet</label>
+				<input type="number" class="tube-count" placeholder="0" min="0">
+			</div>
+			<div class="field">
+				<label>Depozito Bedeli</label>
+				<input type="text" class="tube-deposit" placeholder="Depozito Bedeli" readonly>
+			</div>
+		</div>
+
+		<!-- Alacağınız Toplam Tutar -->
+		<div class="total-amount-row">
+			<span class="total-amount-label">Alacağınız Toplam Tutar</span>
+			<span class="total-amount-value" id="totalAmount">0 TL</span>
+		</div>
+
+		<p class="deposit-note">
+			Depozito bedeli: her 2 kg tüp için <strong>250 TL</strong>, her 12 kg tüp için <strong>350 TL</strong>.<br>
+			<strong>Not:</strong> 2 kg'lık tüpler tek başına iade edilemez; yalnızca 12 kg'lık tüplerle birlikte iade edilebilir.
+		</p>
+
+		<div class="field">
+			<label>Açıklama</label>
+			<textarea id="description" placeholder="Açıklama"></textarea>
+		</div>
+
+		<label class="terms-row">
+			<input type="checkbox" id="termsCheck">
+			<span><a id="termsLink">Kullanım koşulları</a>'nı okudum ve kabul ediyorum. <span class="req" style="color:#e31e24;">*</span></span>
+		</label>
+
+		<button class="btn-submit" id="submitBtn">Boş Tüp İade Talebi Oluştur</button>
+	</div>
+
+	<!-- Başarı ekranı -->
+	<div class="form-card success-box" id="successBox">
+		<div class="check">
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+		</div>
+		<h2>Talebiniz Alındı</h2>
+		<p>Boş tüp iade talebiniz başarıyla oluşturuldu. En kısa sürede ilgili bayi sizinle iletişime geçecektir.</p>
+		<a href="ipapp-atil-tup-form.html">Yeni Talep Oluştur</a>
+	</div>
+
+	<!-- Kullanım Koşulları Popover -->
+	<div class="terms-overlay" id="termsOverlay">
+		<div class="terms-modal">
+			<div class="terms-modal-head">
+				<h3>Yedek Tüp Toplama Projesi Bilgilendirme Metni</h3>
+				<button class="terms-modal-close" id="termsClose" aria-label="Kapat">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+				</button>
+			</div>
+			<div class="terms-modal-body">
+				<p>Değerli Müşterimiz,</p>
+				<p>Kullanılmayan boş yedek tüplerinizin toplanması ve depozito iadesi işlemlerine ilişkin bilgilendirmeler aşağıda yer almaktadır. İşlemlerin sorunsuz bir şekilde gerçekleşmesi için lütfen bu metni dikkatlice okuyunuz.</p>
+
+				<h4>Geri Alım Koşulları</h4>
+				<p>İade edilmek istenen tüpler, yalnızca sistemde seçenek olarak sunulan ve marka hakkı İpragaz A.Ş.'ye ait olan markalardan biri olmalıdır. Bunların dışındaki markalara ait tüpler geri alınamayacaktır.</p>
+				<p>Yedek Tüp Toplama Projesi 2 kg'lık ve 12 kg'lık tüpler için geçerlidir. Ancak tek başına 2 kg'lık tüplerin iade işlemleri sistem üzerinden yapılamamakta olup, 2 kg'lık tüpler yalnızca 12 kg'lık tüplerle birlikte iade edilebilecektir.</p>
+				<p>Tüplerin fiziksel durumu önemlidir. Tüplerin hurda, kırık veya kullanılamaz halde olması durumunda, bayi tüpü geri almayı reddedebilir.</p>
+				<p>Yedek tüp toplama işlemi, yalnızca İPApp platformunun geçerli olduğu lokasyonlarda yapılabilecektir.</p>
+
+				<h4>Depozito İadesi</h4>
+				<p>İade edilen her bir 2 kg'lık tüp için depozito bedeli 250 TL, her bir 12 kg'lık tüp için ise depozito bedeli 350 TL olarak belirlenmiştir.</p>
+				<p>Depozito iade bedeli, iade işlemini gerçekleştiren yetkili bayimiz tarafından tarafınıza ödenecektir.</p>
+				<p>Depozito bedelinde, piyasa koşulları veya diğer sebeplerle İpragaz'ın değişiklik yapma hakkı saklıdır.</p>
+
+				<h4>İade Talebi Oluşturma ve Süreç</h4>
+				<p>İade talebi oluşturmak için İPApp üyesi olmanız gerekmektedir.</p>
+				<p>İPApp üzerinden yönlendirilerek yedektup.ipragaz.com.tr adresine giriş yapmanız, girişte GSM numaranızla OTP doğrulama işlemini tamamlamanız gerekmektedir.</p>
+				<p>Talep formunda adres bilgilerinizi kontrol edebilir veya yeni bir adres ekleyebilirsiniz. Sistem, size en yakın bayiyi otomatik olarak gösterecektir.</p>
+				<p>Formu doldurup "Boş Tüp İade Talebi Oluştur" butonuna bastığınızda işleminiz kaydedilecektir.</p>
+				<p>İade talebiniz sırasında verdiğiniz bilgilerin doğruluğu önemlidir. Yanlış bilgi verilmesi nedeniyle meydana gelebilecek zararlardan İpragaz A.Ş.'nin sorumluluğu bulunmamaktadır.</p>
+
+				<h4>Talep Onayı ve Süreç İlerlemesi</h4>
+				<p>Talebiniz onaylandıktan sonra tarafınıza bir bilgilendirme SMS'i gönderilecektir. SMS içeriğinde iade işlemiyle ilgili detaylar ve sürecin devamı yer alacaktır.</p>
+				<p>Bayimize, doldurduğunuz form bilgileri SMS ile iletilecek olup, yetkili bayi sizinle iletişime geçerek tüpünüzün geri alım işlemini gerçekleştirecektir.</p>
+				<p>Herhangi bir sorunuz veya destek talebiniz olması durumunda 444 4772 numaralı çağrı merkezimizden veya İPApp üzerinden bizimle iletişime geçebilirsiniz.</p>
+				<p>Teşekkür eder, iyi günler dileriz.<br><strong>İpragaz A.Ş.</strong></p>
+			</div>
+			<div class="terms-modal-foot">
+				<button id="termsAccept">Okudum, Kabul Ediyorum</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/locations-service.js"></script>
+	<script src="./js/services/dealers-service.js"></script>
+	<script src="./js/services/ipapp-users-service.js"></script>
+	<script src="./js/services/atil-tup-service.js"></script>
+	<script>
+		// Oturum kontrolü: İPApp kullanıcısı değilse login'e
+		var IPAPP_USER_ID = sessionStorage.getItem('ipapp_user_id');
+		var IPAPP_PHONE = sessionStorage.getItem('ipapp_phone');
+		if (!IPAPP_USER_ID || !IPAPP_PHONE) {
+			window.location.href = 'ipapp-atil-tup-login.html';
+		}
+
+		var TUBE_BRANDS = ['İpragaz', 'Bizimgaz', 'Aygaz', 'Milangaz', 'Likidgaz', 'Mutfakgaz', 'Diğer'];
+		// Proje yalnızca 2 kg ve 12 kg tüpler için geçerli
+		var TUBE_TYPES = ['2 KG', '12 KG'];
+		// Birim depozito bedelleri (TL)
+		var DEPOSIT_UNIT = { '2 KG': 250, '12 KG': 350 };
+		function fmtTL(n) { return (n || 0).toLocaleString('tr-TR') + ' TL'; }
+
+		// Tüp marka/cins selectlerini doldur
+		document.querySelectorAll('.tube-brand').forEach(function (sel) {
+			var def = sel.getAttribute('data-default') || '';
+			sel.innerHTML = '<option value="">Tüp Marka</option>' +
+				TUBE_BRANDS.map(function (b) { return '<option value="' + b + '"' + (b === def ? ' selected' : '') + '>' + b + '</option>'; }).join('');
+		});
+		document.querySelectorAll('.tube-type').forEach(function (sel) {
+			sel.innerHTML = '<option value="">Tüp Cinsi</option>' +
+				TUBE_TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('');
+		});
+
+		// Depozito bedelini otomatik hesapla (birim × adet)
+		function recalcDeposit(group) {
+			var type = group.querySelector('.tube-type').value;
+			var count = parseInt(group.querySelector('.tube-count').value, 10) || 0;
+			var unit = DEPOSIT_UNIT[type] || 0;
+			group.querySelector('.tube-deposit').value = (unit && count) ? fmtTL(unit * count) : '';
+		}
+		// Alacağınız toplam tutar (tüm satırların birim × adet toplamı)
+		function recalcTotal() {
+			var total = 0;
+			document.querySelectorAll('.tube-group').forEach(function (g) {
+				var type = g.querySelector('.tube-type').value;
+				var count = parseInt(g.querySelector('.tube-count').value, 10) || 0;
+				total += (DEPOSIT_UNIT[type] || 0) * count;
+			});
+			document.getElementById('totalAmount').textContent = fmtTL(total);
+		}
+		document.querySelectorAll('.tube-group').forEach(function (g) {
+			g.querySelector('.tube-type').addEventListener('change', function () { recalcDeposit(g); recalcTotal(); });
+			g.querySelector('.tube-count').addEventListener('input', function () { recalcDeposit(g); recalcTotal(); });
+		});
+		recalcTotal();
+
+		// Kullanım koşulları popover'ı
+		var termsOverlay = document.getElementById('termsOverlay');
+		function openTerms() { termsOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+		function closeTerms() { termsOverlay.classList.remove('active'); document.body.style.overflow = ''; }
+		document.getElementById('termsLink').addEventListener('click', function (e) { e.preventDefault(); openTerms(); });
+		document.getElementById('termsClose').addEventListener('click', closeTerms);
+		document.getElementById('termsAccept').addEventListener('click', function () {
+			document.getElementById('termsCheck').checked = true;
+			closeTerms();
+		});
+		termsOverlay.addEventListener('click', function (e) { if (e.target === termsOverlay) closeTerms(); });
+
+		var citySelect = document.getElementById('citySelect');
+		var districtSelect = document.getElementById('districtSelect');
+		var dealerSelect = document.getElementById('dealerSelect');
+
+		function cityName() { return citySelect.options[citySelect.selectedIndex] ? citySelect.options[citySelect.selectedIndex].text : ''; }
+		function districtName() { return districtSelect.options[districtSelect.selectedIndex] ? districtSelect.options[districtSelect.selectedIndex].text : ''; }
+
+		// İlleri yükle
+		(async function loadCities() {
+			try {
+				var res = await LocationsService.getCities();
+				var cities = (res && res.data) || [];
+				cities.forEach(function (c) {
+					var o = document.createElement('option');
+					o.value = c.id; o.textContent = c.name;
+					citySelect.appendChild(o);
+				});
+			} catch (e) { console.error('İller yüklenemedi', e); }
+		})();
+
+		// İl seçilince ilçeleri yükle
+		citySelect.addEventListener('change', async function () {
+			districtSelect.innerHTML = '<option value="">İlçe Seçiniz</option>';
+			dealerSelect.innerHTML = '<option value="">Bayi Seçiniz</option>';
+			districtSelect.disabled = true; dealerSelect.disabled = true;
+			if (!this.value) return;
+			try {
+				var res = await LocationsService.getDistricts(this.value);
+				var districts = (res && res.data) || [];
+				districts.forEach(function (d) {
+					var o = document.createElement('option');
+					o.value = d.id; o.textContent = d.name;
+					districtSelect.appendChild(o);
+				});
+				districtSelect.disabled = false;
+			} catch (e) { console.error('İlçeler yüklenemedi', e); }
+		});
+
+		// İlçe seçilince bayileri yükle
+		districtSelect.addEventListener('change', async function () {
+			dealerSelect.innerHTML = '<option value="">Bayi Seçiniz</option>';
+			dealerSelect.disabled = true;
+			if (!this.value) return;
+			try {
+				var res = await DealersService.getByDistrict(cityName(), districtName());
+				var dealers = (res && res.data) || [];
+				if (!dealers.length) {
+					// İlçede bayi yoksa il bazında dene
+					var resCity = await DealersService.getByCity(cityName());
+					dealers = (resCity && resCity.data) || [];
+				}
+				dealers.forEach(function (d) {
+					var o = document.createElement('option');
+					o.value = d.id; o.textContent = d.name + (d.district ? ' - ' + d.district : '');
+					dealerSelect.appendChild(o);
+				});
+				dealerSelect.disabled = false;
+			} catch (e) { console.error('Bayiler yüklenemedi', e); }
+		});
+
+		// Tüp satırlarını topla
+		function collectTubes() {
+			var tubes = [];
+			document.querySelectorAll('.tube-group').forEach(function (g) {
+				var brand = g.querySelector('.tube-brand').value;
+				var type = g.querySelector('.tube-type').value;
+				var count = parseInt(g.querySelector('.tube-count').value, 10) || 0;
+				if (count > 0 && brand && type) {
+					var unit = DEPOSIT_UNIT[type] || 0;
+					tubes.push({ brand: brand, type: type, count: count, unit_deposit: unit, deposit: unit * count });
+				}
+			});
+			return tubes;
+		}
+
+		var submitBtn = document.getElementById('submitBtn');
+		submitBtn.addEventListener('click', async function () {
+			var contactName = document.getElementById('contactName').value.trim();
+			var address1 = document.getElementById('address1').value.trim();
+			var dealerName = dealerSelect.options[dealerSelect.selectedIndex] ? dealerSelect.options[dealerSelect.selectedIndex].text : '';
+			var tubes = collectTubes();
+
+			// Doğrulama
+			if (!contactName) { alert('Lütfen İlgili Kişi Ad/Soyad giriniz.'); return; }
+			if (!citySelect.value) { alert('Lütfen Tüp Bayi İl seçiniz.'); return; }
+			if (!districtSelect.value) { alert('Lütfen Tüp Bayi İlçe seçiniz.'); return; }
+			if (!dealerSelect.value) { alert('Lütfen Boş Tüpü İade Alacak Bayi seçiniz.'); return; }
+			if (!address1) { alert('Lütfen İade Adresi (1) giriniz.'); return; }
+			if (!tubes.length) { alert('Lütfen en az bir tüp için Marka, Cins ve Adet giriniz.'); return; }
+
+			// Kural: 2 kg'lık tüpler tek başına iade edilemez; 12 kg ile birlikte olmalı
+			var count2 = tubes.filter(function (t) { return t.type === '2 KG'; }).reduce(function (s, t) { return s + t.count; }, 0);
+			var count12 = tubes.filter(function (t) { return t.type === '12 KG'; }).reduce(function (s, t) { return s + t.count; }, 0);
+			if (count2 > 0 && count12 === 0) {
+				alert("2 kg'lık tüpler tek başına iade edilemez.\n2 kg'lık tüpleri yalnızca 12 kg'lık tüplerle birlikte iade edebilirsiniz.");
+				return;
+			}
+
+			// Kural: Kullanım koşulları onayı zorunlu
+			if (!document.getElementById('termsCheck').checked) {
+				alert('Devam etmek için kullanım koşullarını okuyup onaylamanız gerekmektedir.');
+				return;
+			}
+
+			submitBtn.disabled = true;
+			submitBtn.textContent = 'Gönderiliyor...';
+			try {
+				// Kullanıcı adını da güncelle (ilk kez giriliyorsa)
+				if (IPAPP_USER_ID) { try { await IpappUsersService.updateName(IPAPP_USER_ID, contactName); } catch (e) {} }
+
+				var res = await AtilTupService.create({
+					ipapp_user_id: IPAPP_USER_ID,
+					phone: IPAPP_PHONE,
+					contact_name: contactName,
+					city: cityName(),
+					district: districtName(),
+					dealer_id: dealerSelect.value || null,
+					dealer_name: dealerName,
+					return_address_1: address1,
+					return_address_2: document.getElementById('address2').value.trim() || null,
+					tubes: tubes,
+					description: document.getElementById('description').value.trim() || null
+				});
+
+				if (res.error || !res.data) {
+					alert('Talep oluşturulamadı: ' + (res.error ? (res.error.message || res.error) : 'Bilinmeyen hata') + '\n(Veritabanı tablosu oluşturulmamış olabilir.)');
+					submitBtn.disabled = false;
+					submitBtn.textContent = 'Boş Tüp İade Talebi Oluştur';
+					return;
+				}
+
+				// Başarı
+				document.getElementById('formCard').style.display = 'none';
+				document.getElementById('successBox').style.display = 'block';
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			} catch (err) {
+				alert('Bir hata oluştu: ' + err.message);
+				submitBtn.disabled = false;
+				submitBtn.textContent = 'Boş Tüp İade Talebi Oluştur';
+			}
+		});
+	</script>
+</body>
+</html>

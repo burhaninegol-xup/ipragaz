@@ -640,8 +640,25 @@ a {
 		padding: 20px;
 	}
 
+	/* Mobilde dolu kırmızı kutu "Teklif İste" butonuna benziyordu.
+	   Bilgi paneline çeviriyoruz: açık zemin + sol kırmızı vurgu çizgisi.
+	   Bayi adı önemli olduğu için koyu/kalın kalıyor; etiket nötrleşiyor. */
 	.dealer-info {
 		grid-column: 1;
+		background: #fff5f5;
+		border: 1px solid #f6d3d4;
+		border-left: 4px solid #e31e24;
+		border-radius: 10px;
+		color: #6b7280;
+	}
+	.dealer-info svg {
+		color: #e31e24;
+	}
+	.dealer-info-text {
+		color: #6b7280;
+	}
+	.dealer-info-text strong {
+		color: #1f2937;
 	}
 
 	.btn-submit {
@@ -685,6 +702,47 @@ a {
 	.price-display,
 	.price-display-pending {
 		white-space: normal;
+	}
+
+	/* Düzenlenebilir ürün kartı (teklif talep): mobilde dikey kart çok yer
+	   kaplıyor ve klavye açılınca seçim takibi zorlaşıyor. Yatay/kompakt
+	   düzene çeviriyoruz: küçük görsel solda, isim/kod/giriş sağda.
+	   Font boyutları DEĞİŞTİRİLMEDİ (okunaklılık korunur). */
+	.product-card:not(.readonly) {
+		display: grid;
+		grid-template-columns: 56px 1fr;
+		column-gap: 14px;
+		align-items: center;
+		padding: 12px 14px;
+	}
+	.product-card:not(.readonly) .product-image {
+		grid-column: 1;
+		grid-row: 1 / -1;
+		width: 56px;
+		height: 56px;
+		margin-bottom: 0;
+		align-self: center;
+	}
+	.product-card:not(.readonly) .product-name {
+		grid-column: 2;
+		text-align: left;
+		margin-bottom: 2px;
+	}
+	.product-card:not(.readonly) .product-code {
+		grid-column: 2;
+		text-align: left;
+		margin-bottom: 8px;
+	}
+	.product-card:not(.readonly) .consumption-input-wrapper {
+		grid-column: 2;
+		padding: 8px 10px;
+	}
+	.product-card:not(.readonly) .consumption-input-wrapper label {
+		text-align: left;
+		margin-bottom: 4px;
+	}
+	.product-card:not(.readonly) .consumption-input {
+		padding: 8px 10px;
 	}
 }
 
@@ -1603,6 +1661,21 @@ a {
 
 	.status-message {
 		font-size: 13px;
+		/* Mobilde metin 2 satıra kırpılıp "..." ile kesiliyordu; tam metni göster. */
+		-webkit-line-clamp: unset;
+		display: block;
+		overflow: visible;
+	}
+
+	/* "Bayi:" etiketi + bayi adı pill'i: pill dar ekranda iki satıra bölünüp
+	   kötü duruyordu. Adı tek satırda tut; sığmazsa "Bayi:" üst satıra kayar. */
+	.status-dealer {
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.status-dealer strong {
+		white-space: nowrap;
+		max-width: 100%;
 	}
 
 	.branch-section {
@@ -1741,6 +1814,12 @@ a {
 }
 
 /* Two Column Layout with Chat */
+/* Mobil ayarlar menüsü sarmalayıcı: masaüstünde gizli, mobilde (≤992px) görünür.
+   Sohbetli masaüstü düzenini hiç etkilemez. */
+.settings-mobile-menu {
+	display: none;
+}
+
 .content-with-chat {
 	display: grid;
 	grid-template-columns: 1fr 380px;
@@ -2180,6 +2259,12 @@ a {
 		grid-template-rows: auto auto auto;
 	}
 
+	/* Ayarlar menüsü mobilde görünür (accordion bileşenin kendi içinde) */
+	.settings-mobile-menu {
+		display: block;
+		margin-bottom: 16px;
+	}
+
 	.content-with-chat .offer-status-banner,
 	.content-with-chat.chat-minimized .offer-status-banner {
 		grid-column: 1;
@@ -2235,6 +2320,29 @@ a {
 
 	.chat-close-mobile {
 		display: flex;
+	}
+
+	/* Yeni teklif isteme aşaması (mesaj gönderilemez):
+	   - "Bayinize Sorun" mobil butonu gizlenir.
+	   - "Teklif İste" butonu ekranın altına sabit (sticky) gelir.
+	   Masaüstü etkilenmez (bu blok ≤992px). */
+	body.offer-request-mode .chat-toggle-mobile {
+		display: none;
+	}
+	body.offer-request-mode {
+		padding-bottom: 88px;
+	}
+	body.offer-request-mode .btn-submit {
+		position: fixed;
+		left: 12px;
+		right: 12px;
+		bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+		width: auto;
+		margin: 0;
+		justify-content: center;
+		border-radius: 30px;
+		z-index: 900;
+		box-shadow: 0 6px 20px rgba(227, 30, 36, 0.4);
 	}
 }
 

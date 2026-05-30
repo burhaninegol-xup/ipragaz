@@ -229,6 +229,21 @@
 	.notification-mark-all:hover {
 		text-decoration: underline;
 	}
+	/* Mobil kapatma butonu — tam ekran bildirim panelini kapatmak için (masaüstünde gizli) */
+	.notification-close-mobile {
+		display: none;
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 4px;
+		color: #666;
+		align-items: center;
+		justify-content: center;
+	}
+	.notification-close-mobile svg {
+		width: 22px;
+		height: 22px;
+	}
 	.notification-list {
 		overflow-y: auto;
 		flex: 1;
@@ -354,7 +369,7 @@
 		left: 0;
 		height: 3px;
 		background: #e31e24;
-		animation: toast-progress 5s linear;
+		animation: toast-progress 15s linear;
 	}
 	@keyframes toast-progress {
 		from { width: 100%; }
@@ -432,16 +447,21 @@
 	@media (max-width: 768px) {
 		.notification-dropdown {
 			position: fixed;
-			top: 0;
+			/* Geliştirme feedback-toolbar'ı varsa onun altından başla; yoksa (prod) 0.
+			   Böylece panel başlığı + kapatma/işaretle butonu toolbar altında kalmaz. */
+			top: var(--feedback-toolbar-offset, 0px);
 			left: 0;
 			right: 0;
 			bottom: 0;
 			width: 100%;
-			max-height: 100%;
+			max-height: calc(100% - var(--feedback-toolbar-offset, 0px));
 			border-radius: 0;
 		}
 		.notification-header {
 			padding: 20px;
+		}
+		.notification-close-mobile {
+			display: flex;
 		}
 		.toast-container {
 			top: auto;
@@ -1259,6 +1279,12 @@
 					<div class="notification-header">
 						<span class="notification-header-title">Bildirimler</span>
 						<button class="notification-mark-all" id="markAllReadBtn">Tümünü Okundu İşaretle</button>
+						<button class="notification-close-mobile" id="notificationCloseMobile" type="button" aria-label="Kapat">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<line x1="18" y1="6" x2="6" y2="18"/>
+								<line x1="6" y1="6" x2="18" y2="18"/>
+							</svg>
+						</button>
 					</div>
 					<div class="notification-list" id="notificationList">
 						<div class="notification-empty">

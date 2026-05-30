@@ -857,11 +857,56 @@
 				if (error) throw new Error(error);
 
 				products = data || [];
+				// Kullanicinin bu lokasyon icin gecmis siparislerindeki urunleri uste tasi
+				// (alinma olasiligi yuksek -> dusuk siralama). Hem mobil hem desktop.
+				await sortProductsByOrderHistory();
 				renderProducts();
 			} catch (err) {
 				console.error('Urun yukleme hatasi:', err);
 				document.getElementById('productsGrid').innerHTML =
 					'<div class="empty-state" style="grid-column: 1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><h3>Ürünler Yüklenemedi</h3><p>Lütfen sayfayı yenileyip tekrar deneyin.</p></div>';
+			}
+		}
+
+		// Urunleri kullanicinin gecmis siparislerine gore sirala:
+		// Bu lokasyon (secili adres) icin daha once siparis edilen urunler uste gelir.
+		// Skor = toplam siparis miktari (cok = "almaya yakin"); esitlikte daha yeni siparis ustte.
+		// Hic siparis edilmemis urunler mevcut sirayla altta kalir.
+		async function sortProductsByOrderHistory() {
+			try {
+				if (typeof OrdersService === 'undefined' || !products.length) return;
+
+				var customerId = (currentCustomer && currentCustomer.id) || sessionStorage.getItem('isyerim_customer_id');
+				var selectedBranchId = sessionStorage.getItem('selected_address_id');
+				if (!customerId || !selectedBranchId) return;
+
+				var result = await OrdersService.getByCustomerAndBranches(customerId, [selectedBranchId], 100);
+				var orders = (result && result.data) || [];
+				if (!orders.length) return;
+
+				// orders created_at'e gore azalan (en yeni ilk) geliyor.
+				var scoreMap = {}; // productId -> { qty, recency }
+				orders.forEach(function(order, oi) {
+					var recencyWeight = orders.length - oi; // en yeni = en yuksek
+					(order.order_items || []).forEach(function(item) {
+						var pid = item.product && item.product.id;
+						if (!pid) return;
+						if (!scoreMap[pid]) scoreMap[pid] = { qty: 0, recency: 0 };
+						scoreMap[pid].qty += (item.quantity || 0);
+						if (recencyWeight > scoreMap[pid].recency) scoreMap[pid].recency = recencyWeight;
+					});
+				});
+
+				products.sort(function(a, b) {
+					var sa = scoreMap[a.id], sb = scoreMap[b.id];
+					var oa = sa ? 1 : 0, ob = sb ? 1 : 0;
+					if (oa !== ob) return ob - oa;            // siparis edilenler once
+					if (!sa) return 0;                         // ikisi de yok -> mevcut sira korunur
+					if (sb.qty !== sa.qty) return sb.qty - sa.qty;   // cok siparis edilen ustte
+					return sb.recency - sa.recency;            // esitlikte daha yeni ustte
+				});
+			} catch (e) {
+				console.error('Urun siralama (gecmis siparis) hatasi:', e);
 			}
 		}
 
@@ -1532,6 +1577,9 @@
 			document.getElementById('chatMessages').style.display = 'none';
 			document.getElementById('chatInputWrapper').style.display = 'none';
 			document.getElementById('chatDisabled').style.display = 'flex';
+			// Mesajlasma yok = yeni teklif isteme asamasi. Mobilde "Bayinize Sorun"
+			// gizlenir, "Teklif Iste" ekran altina sabitlenir (CSS bu sinifi kullanir).
+			document.body.classList.add('offer-request-mode');
 		}
 
 		// Chat'i aktif goster
@@ -1539,6 +1587,7 @@
 			document.getElementById('chatMessages').style.display = 'flex';
 			document.getElementById('chatInputWrapper').style.display = 'flex';
 			document.getElementById('chatDisabled').style.display = 'none';
+			document.body.classList.remove('offer-request-mode');
 		}
 
 		// Okunmamis mesaj badge'i guncelle

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>İPApp - Boş Tüp İade Formları</title>
+	<link rel="shortcut icon" type="image/x-icon" href="https://ipappbayi.ipragaz.com.tr/bayi/_ui/responsive/theme-ipragaz/images/faviconNew.jpg">
+	<script src="js/project-auth-check.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body { font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; color: #1f2937; padding: 28px 16px 60px; }
+		.head { text-align: center; margin-bottom: 24px; }
+		.head img { width: 170px; height: auto; margin-bottom: 14px; }
+		.head h1 { font-size: 24px; font-weight: 600; color: #374151; }
+		.filter-card { max-width: 640px; margin: 0 auto 26px; }
+		.field { margin-bottom: 16px; }
+		.field label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+		.field label .req { color: #e31e24; }
+		.field input {
+			width: 100%; padding: 14px 16px; border: 1px solid #d1d5db; border-radius: 8px;
+			font-size: 15px; font-family: inherit; color: #1f2937; background: #fff;
+		}
+		.field input:focus { outline: none; border-color: #1a1a2e; box-shadow: 0 0 0 3px rgba(26,26,46,0.08); }
+		.btn-show {
+			width: 100%; padding: 16px; background: #1a1a2e; color: #fff; border: none; border-radius: 8px;
+			font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s;
+		}
+		.btn-show:hover { background: #0f0f1e; }
+		.btn-show:disabled { background: #9ca3af; cursor: not-allowed; }
+		.table-card { background: #fff; border-radius: 14px; padding: 18px; box-shadow: 0 2px 14px rgba(0,0,0,0.06); overflow: hidden; }
+		.table-scroll { overflow-x: auto; }
+		table { width: 100%; border-collapse: collapse; min-width: 720px; }
+		thead th {
+			background: #e31e24; color: #fff; font-size: 13px; font-weight: 600; text-align: left;
+			padding: 14px 12px; white-space: nowrap; vertical-align: top;
+		}
+		thead th:first-child { border-top-left-radius: 8px; }
+		thead th:last-child { border-top-right-radius: 8px; }
+		tbody td { padding: 14px 12px; border-bottom: 1px solid #eef0f2; font-size: 13px; color: #374151; vertical-align: top; }
+		tbody tr:hover { background: #fafbfc; }
+		.tube-chip { background: #f3f4f6; border-radius: 8px; padding: 8px 10px; font-size: 12px; line-height: 1.5; margin-bottom: 6px; }
+		.tube-chip:last-child { margin-bottom: 0; }
+		.tube-chip .brand { font-weight: 600; color: #111827; }
+		.state-msg { text-align: center; padding: 40px 16px; color: #6b7280; font-size: 14px; }
+		.count-badge { font-size: 13px; color: #6b7280; margin-bottom: 12px; }
+		/* Tarih filtresi: iki kutu yan yana */
+		.date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+		.date-row .field { margin-bottom: 16px; }
+		/* Detay butonu + toplam tutar hücresi */
+		.btn-detail { padding: 8px 16px; background: #1a1a2e; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; }
+		.btn-detail:hover { background: #0f0f1e; }
+		.total-cell { font-weight: 700; color: #1b5e20; white-space: nowrap; }
+		/* Detay popup */
+		.detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+		.detail-overlay.active { display: flex; }
+		.detail-modal { background: #fff; border-radius: 14px; width: 560px; max-width: 100%; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+		.detail-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid #eee; }
+		.detail-head h3 { font-size: 16px; color: #111827; }
+		.detail-close { background: none; border: none; cursor: pointer; color: #6b7280; padding: 4px; line-height: 0; }
+		.detail-close svg { width: 24px; height: 24px; }
+		.detail-body { padding: 18px 22px; overflow-y: auto; }
+		.detail-item { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+		.detail-item .k { width: 160px; flex-shrink: 0; color: #6b7280; }
+		.detail-item .v { color: #111827; flex: 1; word-break: break-word; }
+		.detail-tubes { margin-top: 16px; }
+		.detail-tubes h4 { font-size: 13px; color: #0d9488; margin-bottom: 8px; }
+		.detail-tube { background: #f3f4f6; border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.6; margin-bottom: 8px; }
+		.detail-tube .brand { font-weight: 600; color: #111827; }
+		.detail-total { margin-top: 14px; padding: 13px 16px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: #1b5e20; }
+		@media (max-width: 600px) { .head h1 { font-size: 20px; } .date-row { grid-template-columns: 1fr; } }
+	</style>
+</head>
+<body>
+	<div class="head">
+		<img src="ipragaz-160x34px.svg" alt="İpragaz">
+		<h1>Boş Tüp İade Formları</h1>
+	</div>
+
+	<div class="filter-card">
+		<div class="date-row">
+			<div class="field">
+				<label>Başlangıç Tarihi <span class="req">*</span></label>
+				<input type="date" id="startDate">
+			</div>
+			<div class="field">
+				<label>Bitiş Tarihi <span class="req">*</span></label>
+				<input type="date" id="endDate">
+			</div>
+		</div>
+		<button class="btn-show" id="showBtn">Göster</button>
+	</div>
+
+	<div class="table-card">
+		<div class="count-badge" id="countBadge"></div>
+		<div class="table-scroll">
+			<table>
+				<thead>
+					<tr>
+						<th>Müşteri</th>
+						<th>Tarih</th>
+						<th>Şehir</th>
+						<th>İlçe</th>
+						<th>Bayi</th>
+						<th>Toplam Tutar</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					<tr><td colspan="7" class="state-msg">Tarih aralığı seçip "Göster"e basın.</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Detay Popup -->
+	<div class="detail-overlay" id="detailOverlay">
+		<div class="detail-modal">
+			<div class="detail-head">
+				<h3>Talep Detayı</h3>
+				<button class="detail-close" id="detailClose" aria-label="Kapat">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+				</button>
+			</div>
+			<div class="detail-body" id="detailBody"></div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="./js/supabase-client.js"></script>
+	<script src="./js/services/atil-tup-service.js"></script>
+	<script>
+		function pad(n) { return String(n).padStart(2, '0'); }
+		function toInputDate(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+		function esc(s) {
+			return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+			});
+		}
+		function fmtDate(iso) {
+			if (!iso) return '';
+			try { return new Date(iso).toLocaleString('tr-TR'); } catch (e) { return iso; }
+		}
+		function tubesHtml(tubes) {
+			if (!tubes || !tubes.length) return '-';
+			return tubes.map(function (t) {
+				var dep = (t.deposit != null) ? Number(t.deposit).toLocaleString('tr-TR') + ' TL' : '-';
+				return '<div class="tube-chip">' +
+					'<span class="brand">' + esc(t.brand || '-') + '</span><br>' +
+					'Tip: ' + esc(t.type || '-') + '<br>' +
+					'Depozito: ' + dep + '<br>' +
+					'Adet: ' + esc(t.count != null ? t.count : '-') +
+				'</div>';
+			}).join('');
+		}
+
+		function fmtTL(n) { return (n || 0).toLocaleString('tr-TR') + ' TL'; }
+		function tubeTotal(tubes) { return (tubes || []).reduce(function (s, t) { return s + (Number(t.deposit) || 0); }, 0); }
+		var currentRows = [];
+
+		// Varsayılan tarihler: 2025-01-01 → bugün
+		var startEl = document.getElementById('startDate');
+		var endEl = document.getElementById('endDate');
+		startEl.value = '2025-01-01';
+		endEl.value = toInputDate(new Date());
+
+		var tbody = document.getElementById('tbody');
+		var countBadge = document.getElementById('countBadge');
+		var showBtn = document.getElementById('showBtn');
+
+		async function loadList() {
+			var s = startEl.value, e = endEl.value;
+			if (!s || !e) { alert('Lütfen başlangıç ve bitiş tarihini seçin.'); return; }
+			var startISO = s + 'T00:00:00';
+			var endISO = e + 'T23:59:59';
+
+			showBtn.disabled = true; showBtn.textContent = 'Yükleniyor...';
+			tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Yükleniyor...</td></tr>';
+			countBadge.textContent = '';
+			try {
+				var res = await AtilTupService.getAll(startISO, endISO);
+				if (res.error) {
+					tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Kayıtlar yüklenemedi. (Tablo henüz oluşturulmamış olabilir.)</td></tr>';
+					return;
+				}
+				var rows = res.data || [];
+				if (!rows.length) {
+					tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Seçili tarih aralığında kayıt bulunamadı.</td></tr>';
+					countBadge.textContent = 'Toplam 0 kayıt';
+					return;
+				}
+				countBadge.textContent = 'Toplam ' + rows.length + ' kayıt';
+				currentRows = rows;
+				tbody.innerHTML = rows.map(function (r, i) {
+					return '<tr>' +
+						'<td>' + esc(r.contact_name) + '</td>' +
+						'<td>' + esc(fmtDate(r.created_at)) + '</td>' +
+						'<td>' + esc(r.city) + '</td>' +
+						'<td>' + esc(r.district) + '</td>' +
+						'<td>' + esc(r.dealer_name) + '</td>' +
+						'<td class="total-cell">' + fmtTL(tubeTotal(r.tubes)) + '</td>' +
+						'<td><button class="btn-detail" data-i="' + i + '">Detay</button></td>' +
+					'</tr>';
+				}).join('');
+			} catch (err) {
+				tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Hata: ' + esc(err.message) + '</td></tr>';
+			} finally {
+				showBtn.disabled = false; showBtn.textContent = 'Göster';
+			}
+		}
+
+		// Detay popup
+		var detailOverlay = document.getElementById('detailOverlay');
+		var detailBody = document.getElementById('detailBody');
+		function closeDetail() { detailOverlay.classList.remove('active'); document.body.style.overflow = ''; }
+		document.getElementById('detailClose').addEventListener('click', closeDetail);
+		detailOverlay.addEventListener('click', function (e) { if (e.target === detailOverlay) closeDetail(); });
+
+		function detailItem(k, v) {
+			return '<div class="detail-item"><div class="k">' + k + '</div><div class="v">' + esc(v || '-') + '</div></div>';
+		}
+		function openDetail(i) {
+			var r = currentRows[i];
+			if (!r) return;
+			var tubesH = (r.tubes && r.tubes.length) ? r.tubes.map(function (t) {
+				var dep = (t.deposit != null) ? Number(t.deposit).toLocaleString('tr-TR') + ' TL' : '-';
+				return '<div class="detail-tube"><span class="brand">' + esc(t.brand || '-') + '</span> · Tip: ' + esc(t.type || '-') + ' · Depozito: ' + dep + ' · Adet: ' + esc(t.count != null ? t.count : '-') + '</div>';
+			}).join('') : '<div class="detail-tube">-</div>';
+			detailBody.innerHTML =
+				detailItem('Müşteri', r.contact_name) +
+				detailItem('Telefon', r.phone) +
+				detailItem('Tarih', fmtDate(r.created_at)) +
+				detailItem('Şehir', r.city) +
+				detailItem('İlçe', r.district) +
+				detailItem('Bayi', r.dealer_name) +
+				detailItem('İade Adresi', r.return_address_1) +
+				detailItem('İade Adres Ek Bilgi', r.return_address_2) +
+				detailItem('Açıklama', r.description) +
+				'<div class="detail-tubes"><h4>Tüp Bilgileri</h4>' + tubesH + '</div>' +
+				'<div class="detail-total"><span>Alacağınız Toplam Tutar</span><span>' + fmtTL(tubeTotal(r.tubes)) + '</span></div>';
+			detailOverlay.classList.add('active');
+			document.body.style.overflow = 'hidden';
+		}
+		tbody.addEventListener('click', function (e) {
+			var btn = e.target.closest ? e.target.closest('.btn-detail') : null;
+			if (btn) openDetail(parseInt(btn.getAttribute('data-i'), 10));
+		});
+
+		showBtn.addEventListener('click', loadList);
+		// İlk açılışta otomatik yükle
+		loadList();
+	</script>
+</body>
+</html>
