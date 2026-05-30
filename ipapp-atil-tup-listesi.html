@@ -51,6 +51,12 @@
 		.btn-detail { padding: 8px 16px; background: #1a1a2e; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; }
 		.btn-detail:hover { background: #0f0f1e; }
 		.total-cell { font-weight: 700; color: #1b5e20; white-space: nowrap; }
+		/* Durum rozeti */
+		.status-badge { display: inline-block; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+		.status-badge.waiting_for_assignment { background: #fff8e1; color: #f57c00; border: 1px solid #ffe0b2; }
+		.status-badge.on_the_way { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+		.status-badge.completed { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+		.status-badge.cancelled { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 		/* Detay popup */
 		.detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
 		.detail-overlay.active { display: flex; }
@@ -103,11 +109,12 @@
 						<th>İlçe</th>
 						<th>Bayi</th>
 						<th>Toplam Tutar</th>
+						<th>Durum</th>
 						<th></th>
 					</tr>
 				</thead>
 				<tbody id="tbody">
-					<tr><td colspan="7" class="state-msg">Tarih aralığı seçip "Göster"e basın.</td></tr>
+					<tr><td colspan="8" class="state-msg">Tarih aralığı seçip "Göster"e basın.</td></tr>
 				</tbody>
 			</table>
 		</div>
@@ -156,6 +163,20 @@
 
 		function fmtTL(n) { return (n || 0).toLocaleString('tr-TR') + ' TL'; }
 		function tubeTotal(tubes) { return (tubes || []).reduce(function (s, t) { return s + (Number(t.deposit) || 0); }, 0); }
+
+		// Durum etiketleri (eski 'pending' kayıtları "Atama Bekliyor" gösterir)
+		var STATUS_LABELS = {
+			waiting_for_assignment: 'Atama Bekliyor',
+			on_the_way: 'Dağıtımda',
+			completed: 'Tamamlandı',
+			cancelled: 'İptal'
+		};
+		function normalizeStatus(s) { return (!s || s === 'pending') ? 'waiting_for_assignment' : s; }
+		function statusBadge(s) {
+			var st = normalizeStatus(s);
+			return '<span class="status-badge ' + st + '">' + (STATUS_LABELS[st] || esc(st)) + '</span>';
+		}
+
 		var currentRows = [];
 
 		// Varsayılan tarihler: 2025-01-01 → bugün
@@ -175,17 +196,17 @@
 			var endISO = e + 'T23:59:59';
 
 			showBtn.disabled = true; showBtn.textContent = 'Yükleniyor...';
-			tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Yükleniyor...</td></tr>';
+			tbody.innerHTML = '<tr><td colspan="8" class="state-msg">Yükleniyor...</td></tr>';
 			countBadge.textContent = '';
 			try {
 				var res = await AtilTupService.getAll(startISO, endISO);
 				if (res.error) {
-					tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Kayıtlar yüklenemedi. (Tablo henüz oluşturulmamış olabilir.)</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="8" class="state-msg">Kayıtlar yüklenemedi. (Tablo henüz oluşturulmamış olabilir.)</td></tr>';
 					return;
 				}
 				var rows = res.data || [];
 				if (!rows.length) {
-					tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Seçili tarih aralığında kayıt bulunamadı.</td></tr>';
+					tbody.innerHTML = '<tr><td colspan="8" class="state-msg">Seçili tarih aralığında kayıt bulunamadı.</td></tr>';
 					countBadge.textContent = 'Toplam 0 kayıt';
 					return;
 				}
@@ -199,11 +220,12 @@
 						'<td>' + esc(r.district) + '</td>' +
 						'<td>' + esc(r.dealer_name) + '</td>' +
 						'<td class="total-cell">' + fmtTL(tubeTotal(r.tubes)) + '</td>' +
+						'<td>' + statusBadge(r.status) + '</td>' +
 						'<td><button class="btn-detail" data-i="' + i + '">Detay</button></td>' +
 					'</tr>';
 				}).join('');
 			} catch (err) {
-				tbody.innerHTML = '<tr><td colspan="7" class="state-msg">Hata: ' + esc(err.message) + '</td></tr>';
+				tbody.innerHTML = '<tr><td colspan="8" class="state-msg">Hata: ' + esc(err.message) + '</td></tr>';
 			} finally {
 				showBtn.disabled = false; showBtn.textContent = 'Göster';
 			}
@@ -228,6 +250,7 @@
 			}).join('') : '<div class="detail-tube">-</div>';
 			detailBody.innerHTML =
 				detailItem('Müşteri', r.contact_name) +
+				'<div class="detail-item"><div class="k">Durum</div><div class="v">' + statusBadge(r.status) + '</div></div>' +
 				detailItem('Telefon', r.phone) +
 				detailItem('Tarih', fmtDate(r.created_at)) +
 				detailItem('Şehir', r.city) +

@@ -371,6 +371,102 @@
 			border: 1px solid #ffcdd2;
 		}
 
+		/* Atıl Tüp İadesi kartı - teal vurgu */
+		.order-card.atil-tup {
+			border-left: 4px solid #0d9488;
+			background: linear-gradient(90deg, rgba(13,148,136,0.04) 0%, rgba(255,255,255,0) 60%);
+		}
+		.order-card.atil-tup:hover {
+			border-color: #0d9488;
+			box-shadow: 0 4px 15px rgba(13,148,136,0.12);
+		}
+		.order-icon.atil {
+			background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
+			color: #0d9488;
+		}
+		.atil-type-tag {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			padding: 2px 8px;
+			border-radius: 6px;
+			background: #0d9488;
+			color: #fff;
+			font-size: 10px;
+			font-weight: 700;
+			letter-spacing: .3px;
+			text-transform: uppercase;
+		}
+		.atil-type-tag svg { width: 12px; height: 12px; }
+
+		/* Atıl Tüp Detay Modalı */
+		.atil-detail-modal {
+			background: #fff;
+			border-radius: 16px;
+			padding: 24px;
+			max-width: 480px;
+			width: 92%;
+			max-height: 85vh;
+			overflow-y: auto;
+			text-align: left;
+		}
+		.atil-detail-modal h3 {
+			font-size: 18px;
+			color: #0d9488;
+			margin-bottom: 16px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+		.atil-detail-item {
+			display: flex;
+			justify-content: space-between;
+			gap: 16px;
+			padding: 8px 0;
+			border-bottom: 1px solid #f0f2f5;
+			font-size: 13px;
+		}
+		.atil-detail-item .k { color: #888; flex-shrink: 0; }
+		.atil-detail-item .v { color: #222; font-weight: 600; text-align: right; }
+		.atil-detail-tubes { margin-top: 14px; }
+		.atil-detail-tubes .label {
+			font-size: 12px; font-weight: 700; color: #555;
+			text-transform: uppercase; letter-spacing: .3px; margin-bottom: 8px;
+		}
+		.atil-detail-tube {
+			background: #f0fdfa;
+			border: 1px solid #99f6e4;
+			border-radius: 8px;
+			padding: 8px 10px;
+			font-size: 12px;
+			color: #134e4a;
+			margin-bottom: 6px;
+		}
+		.atil-detail-total {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 14px;
+			padding: 12px 14px;
+			background: #e8f5e9;
+			border-radius: 10px;
+			font-weight: 700;
+			color: #2e7d32;
+		}
+		.atil-detail-close {
+			margin-top: 18px;
+			width: 100%;
+			padding: 12px;
+			border: none;
+			border-radius: 10px;
+			background: #0d9488;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+		}
+		.atil-detail-close:hover { background: #0f766e; }
+
 		/* Status Dropdown */
 		.order-status-dropdown {
 			position: relative;
@@ -999,10 +1095,23 @@
 		</div>
 	</div>
 
+	<!-- Atıl Tüp İade Detay Modalı -->
+	<div class="confirm-modal-overlay" id="atil-detail-modal">
+		<div class="atil-detail-modal">
+			<h3>
+				<svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
+				Atıl Tüp İade Talebi
+			</h3>
+			<div id="atil-detail-body"></div>
+			<button class="atil-detail-close" onclick="closeAtilDetail()">Kapat</button>
+		</div>
+	</div>
+
 	<script src="./İpragaz Bayi_files/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="./js/supabase-client.js"></script>
 	<script src="./js/services/orders-service.js"></script>
+	<script src="./js/services/atil-tup-service.js"></script>
 	<script src="./js/services/recurring-orders-service.js"></script>
 	<script src="./js/services/notifications-service.js"></script>
 	<script src="./js/component-loader.js"></script>
@@ -1158,7 +1267,37 @@
 				const { data, error } = await OrdersService.getByDealerId(currentDealerId, filters);
 				if (error) throw new Error(error);
 
-				allOrders = data || [];
+				var orders = (data || []).map(function(o) { o.__atil = false; return o; });
+
+				// Atıl (boş) tüp iade talepleri - sipariş listesine harmanla
+				var atilItems = [];
+				try {
+					var atilFilters = {};
+					if (dateRange) {
+						if (dateRange.from) atilFilters.dateFrom = dateRange.from;
+						if (dateRange.to) atilFilters.dateTo = dateRange.to;
+					}
+					const atilRes = await AtilTupService.getByDealerId(currentDealerId, atilFilters);
+					if (!atilRes.error) {
+						atilItems = (atilRes.data || []).map(function(r) {
+							r.__atil = true;
+							r.status = normalizeAtilStatus(r.status);
+							return r;
+						});
+						// Durum filtresi (atıl talepler için istemci tarafında uygula)
+						if (currentFilter !== 'all') {
+							atilItems = atilItems.filter(function(r) { return r.status === currentFilter; });
+						}
+					}
+				} catch (e) {
+					console.warn('Atıl tüp talepleri yüklenemedi:', e);
+				}
+
+				// Birleştir ve tarihe göre sırala (yeniden eskiye)
+				allOrders = orders.concat(atilItems).sort(function(a, b) {
+					return new Date(b.created_at) - new Date(a.created_at);
+				});
+
 				renderOrders();
 				updateFilterCounts();
 
@@ -1166,6 +1305,26 @@
 				console.error('Siparis yukleme hatasi:', err);
 				$('#order-list').html('<div class="empty-state"><p>Siparisler yuklenirken hata olustu</p></div>');
 			}
+		}
+
+		// Atıl tüp durumunu sipariş durum sözlüğüne normalize et (eski 'pending' kayıtları)
+		function normalizeAtilStatus(s) {
+			if (!s || s === 'pending') return 'waiting_for_assignment';
+			return s;
+		}
+
+		// Atıl tüp toplam depozito tutarı
+		function atilTubeTotal(tubes) {
+			if (!Array.isArray(tubes)) return 0;
+			return tubes.reduce(function(sum, t) {
+				return sum + (parseFloat(t.deposit) || (parseFloat(t.unit_deposit) || 0) * (parseInt(t.count, 10) || 0));
+			}, 0);
+		}
+
+		// Atıl tüp özeti: "2x 2 KG, 3x 12 KG"
+		function atilTubeSummary(tubes) {
+			if (!Array.isArray(tubes) || !tubes.length) return '';
+			return tubes.map(function(t) { return (t.count || 0) + 'x ' + (t.type || ''); }).join(', ');
 		}
 
 		// Update filter counts
@@ -1191,8 +1350,45 @@
 			$('#count-cancelled').text(counts.cancelled);
 		}
 
+		// Atıl tüp iade talebi kartı
+		function createAtilCard(rec) {
+			var status = normalizeAtilStatus(rec.status);
+			var customerName = rec.contact_name || 'Bilinmeyen';
+			var shortId = (rec.id || '').substring(0, 8);
+			var total = atilTubeTotal(rec.tubes);
+			var summary = atilTubeSummary(rec.tubes);
+			var tubeCount = Array.isArray(rec.tubes)
+				? rec.tubes.reduce(function(s, t) { return s + (parseInt(t.count, 10) || 0); }, 0)
+				: 0;
+			var recycleIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>';
+
+			return '<div class="order-card atil-tup" data-atil-id="' + rec.id + '" data-status="' + status + '" data-customer="' + customerName.toLowerCase() + '">' +
+				'<div class="order-icon atil">' + recycleIcon + '</div>' +
+				'<div class="order-info">' +
+					'<div class="order-header">' +
+						'<span class="atil-type-tag">' + recycleIcon + 'Atıl Tüp İadesi</span>' +
+						'<span class="order-date">' + formatDate(rec.created_at) + '</span>' +
+					'</div>' +
+					'<div class="order-customer">' + customerName + '</div>' +
+					'<div class="order-products">' + (summary || '#' + shortId) + '</div>' +
+				'</div>' +
+				'<div class="order-status-badge ' + status + '">' +
+					statusIcons[status] +
+					'<span>' + statusLabels[status] + '</span>' +
+				'</div>' +
+				'<div class="order-total">' +
+					'<div class="order-total-amount">' + formatPrice(total) + '</div>' +
+					'<div class="order-total-items">' + tubeCount + ' tüp</div>' +
+				'</div>' +
+				'<a href="#" class="order-action" onclick="event.preventDefault();event.stopPropagation();openAtilDetail(\'' + rec.id + '\');">' +
+					'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>' +
+				'</a>' +
+			'</div>';
+		}
+
 		// Create order card
 		function createOrderCard(order) {
+			if (order.__atil) return createAtilCard(order);
 			var status = order.status || 'waiting_for_assignment';
 			var statusClass = status === 'waiting_for_assignment' ? 'waiting' : status;
 			var customerName = order.customer ? order.customer.name : 'Bilinmeyen Musteri';
@@ -1251,8 +1447,14 @@
 			var searchTerm = $('#search-input').val().toLowerCase();
 			var filteredOrders = allOrders.filter(function(order) {
 				if (searchTerm) {
-					var customerName = order.customer ? order.customer.name.toLowerCase() : '';
-					var orderNumber = (order.order_number || order.id).toLowerCase();
+					var customerName, orderNumber;
+					if (order.__atil) {
+						customerName = (order.contact_name || '').toLowerCase();
+						orderNumber = (order.id || '').toLowerCase();
+					} else {
+						customerName = order.customer ? order.customer.name.toLowerCase() : '';
+						orderNumber = (order.order_number || order.id).toLowerCase();
+					}
 					if (customerName.indexOf(searchTerm) === -1 && orderNumber.indexOf(searchTerm) === -1) {
 						return false;
 					}
@@ -1293,9 +1495,58 @@
 
 			// Card click event
 			$('.order-card').on('click', function() {
+				var atilId = $(this).data('atil-id');
+				if (atilId) {
+					openAtilDetail(atilId);
+					return;
+				}
 				var orderId = $(this).data('id');
 				window.location.href = 'bayi-siparis-detay.html?id=' + orderId;
 			});
+		}
+
+		// Atıl tüp iade talebi detay modalı
+		function openAtilDetail(recId) {
+			var rec = allOrders.filter(function(o) { return o.__atil && o.id === recId; })[0];
+			if (!rec) return;
+
+			var status = normalizeAtilStatus(rec.status);
+			function row(k, v) {
+				if (!v) return '';
+				return '<div class="atil-detail-item"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+			}
+
+			var html = '';
+			html += row('Talep No', '#' + (rec.id || '').substring(0, 8));
+			html += '<div class="atil-detail-item"><span class="k">Durum</span><span class="v"><span class="order-status-badge ' + status + '" style="display:inline-flex;text-transform:none;">' + statusIcons[status] + '<span>' + statusLabels[status] + '</span></span></span></div>';
+			html += row('İlgili Kişi', rec.contact_name);
+			html += row('Telefon', rec.phone);
+			html += row('Tarih', formatDate(rec.created_at));
+			html += row('İl', rec.city);
+			html += row('İlçe', rec.district);
+			html += row('Bayi', rec.dealer_name);
+			html += row('İade Adresi', rec.return_address_1);
+			html += row('İade Adresi (Ek)', rec.return_address_2);
+			html += row('Açıklama', rec.description);
+
+			if (Array.isArray(rec.tubes) && rec.tubes.length) {
+				html += '<div class="atil-detail-tubes"><div class="label">Tüp Bilgileri</div>';
+				rec.tubes.forEach(function(t) {
+					var dep = parseFloat(t.deposit) || (parseFloat(t.unit_deposit) || 0) * (parseInt(t.count, 10) || 0);
+					html += '<div class="atil-detail-tube">' + (t.brand || '-') + ' · Tip: ' + (t.type || '-') +
+						' · Adet: ' + (t.count || 0) + ' · Depozito: ' + formatPrice(dep) + '</div>';
+				});
+				html += '</div>';
+			}
+
+			html += '<div class="atil-detail-total"><span>Alacağınız Toplam Tutar</span><span>' + formatPrice(atilTubeTotal(rec.tubes)) + '</span></div>';
+
+			$('#atil-detail-body').html(html);
+			$('#atil-detail-modal').addClass('active');
+		}
+
+		function closeAtilDetail() {
+			$('#atil-detail-modal').removeClass('active');
 		}
 
 		// Render page numbers
@@ -1588,6 +1839,13 @@
 			$('#confirm-modal').on('click', function(e) {
 				if (e.target === this) {
 					closeConfirmModal();
+				}
+			});
+
+			// Atıl tüp detay modalını overlay tıklamasıyla kapat
+			$('#atil-detail-modal').on('click', function(e) {
+				if (e.target === this) {
+					closeAtilDetail();
 				}
 			});
 		});

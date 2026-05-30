@@ -23,7 +23,9 @@ const AtilTupService = {
                 return_address_1: payload.return_address_1,
                 return_address_2: payload.return_address_2 || null,
                 tubes: payload.tubes || [],
-                description: payload.description || null
+                description: payload.description || null,
+                // Yeni gelen atıl tüp talebinin ilk durumu "Atama Bekliyor"
+                status: payload.status || 'waiting_for_assignment'
             };
 
             const { data, error } = await supabaseClient
@@ -58,6 +60,31 @@ const AtilTupService = {
             return { data, error: null };
         } catch (error) {
             return handleSupabaseError(error, 'AtilTupService.getAll');
+        }
+    },
+
+    /**
+     * Bir bayiye ait atıl tüp bildirimlerini getir (sipariş listesine harmanlamak için)
+     * @param {string} dealerId  bayi (dealers.id)
+     * @param {Object} filters   { dateFrom, dateTo, status }  (ISO tarih, opsiyonel)
+     */
+    async getByDealerId(dealerId, filters = {}) {
+        try {
+            let query = supabaseClient
+                .from('atil_tup_bildirimleri')
+                .select('*')
+                .eq('dealer_id', dealerId)
+                .order('created_at', { ascending: false });
+
+            if (filters.status) query = query.eq('status', filters.status);
+            if (filters.dateFrom) query = query.gte('created_at', filters.dateFrom);
+            if (filters.dateTo) query = query.lte('created_at', filters.dateTo);
+
+            const { data, error } = await query;
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return handleSupabaseError(error, 'AtilTupService.getByDealerId');
         }
     },
 
